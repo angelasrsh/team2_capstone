@@ -7,6 +7,6 @@ public class ResourceInfo : ScriptableObject
 {
 
     [field: SerializeField] public string Name { get; private set; }
-    [field: SerializeField] public Sprite Icon { get; private set; }
+    [field: SerializeField] public Sprite Image { get; private set; }
     [field: SerializeField] public float DropRate { get; private set; }
 }
