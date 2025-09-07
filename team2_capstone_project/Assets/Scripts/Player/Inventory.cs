@@ -7,6 +7,7 @@ using UnityEditor.iOS;
 using UnityEngine;
 using Grimoire;
 using System.Runtime.CompilerServices;
+using UnityEngine.InputSystem;
 
 // Gives the player a collection of items of a fixed size
 public class Inventory : MonoBehaviour
@@ -68,7 +69,7 @@ public class Inventory : MonoBehaviour
         return numToRemove;
     }
 
-    public void DisplayInventory()
+    public void DisplayInventory(InputAction.CallbackContext context)
     {
         if (ResourceList.Count == 0)
         {
