@@ -1,33 +1,96 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using Unity.Android.Types;
 using Unity.VisualScripting;
 using UnityEditor.iOS;
 using UnityEngine;
+using Grimoire;
+using System.Runtime.CompilerServices;
 
 // Gives the player a collection of items of a fixed size
 public class Inventory : MonoBehaviour
 {
-    public ResourceInfo test;
+    // Inventory specifications
+    public int InventorySizeLimit = 10;
+    public ResourceInfo test; // for testing purposes only
+
+    // Inventory status
+    private int inventoryCurrentCount = 0;
+
+
     [field: SerializeField] private Dictionary<ResourceInfo, int> ResourceList { get; set; } = new Dictionary<ResourceInfo, int>();
 
     void Start()
     {
         //ResourceList = new Dictionary<ResourceInfo, int>;
         Debug.Log("[Invtry] test: " + test);
+        DisplayInventory();
         AddResources(test, 1);
+        AddResources(test, 1);
+        AddResources(test, 3);
+        DisplayInventory();
+        AddResources(test, 6);
+        DisplayInventory();
+        RemoveResources(test, 20);
+        DisplayInventory();
     }
 
-    public void AddResources(ResourceInfo type, int count)
+    // Add resources and 
+    // Return the number added
+    
+    public int AddResources(ResourceInfo type, int count)
     {
+        if (inventoryCurrentCount >= InventorySizeLimit)
+        {
+            Debug.Log("[Invtry] Inventory full");
+            return 0;
+        }
+
+        int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
         if (ResourceList.ContainsKey(type))
         {
-            ResourceList[type] += count;
+            ResourceList[type] += numToAdd;
         }
         else
         {
-            ResourceList.Add(type, count);
+            ResourceList.Add(type, numToAdd);
+        }
+
+        inventoryCurrentCount += numToAdd;
+        Debug.Log("Added " + numToAdd + " " + type.name);
+        return numToAdd;
+    }
+
+    // Remove count number of a specific resource or as much of it that exists
+    // Return the number removed
+    public int RemoveResources(ResourceInfo type, int count)
+    {
+        int numToRemove = 0;
+        if (ResourceList.ContainsKey(type))
+        {
+            numToRemove = Math.Min(ResourceList[type], count);
+            ResourceList[type] -= numToRemove;
         }
         
-        Debug.Log("Added " + count + " " + type.name);
+        inventoryCurrentCount += numToRemove;
+        Debug.Log($"Removed {numToRemove} {type.Name}");
+        return numToRemove;
     }
+
+    public void DisplayInventory()
+    {
+        if (ResourceList.Count == 0)
+        {
+            Debug.Log("[Invtry] Inventory is empty");
+        }
+
+        foreach (KeyValuePair<ResourceInfo, int> kvp in ResourceList)
+        {
+            Debug.Log($"[Invtry] Item = {kvp.Key.Name}, Value = {kvp.Value}");
+        }
+
+
+    }
+
 }
