@@ -13,8 +13,6 @@ public class Inventory : MonoBehaviour
 {
     // Inventory specifications
     public int InventorySizeLimit = 10;
-    public ResourceInfo test; // for testing purposes only
-    public ResourceInfo test2; // for testing purposes only
 
     // Inventory status
     private int inventoryCurrentCount = 0;
@@ -22,24 +20,7 @@ public class Inventory : MonoBehaviour
 
     [field: SerializeField] private Dictionary<ResourceInfo, int> ResourceList { get; set; } = new Dictionary<ResourceInfo, int>();
 
-    void Start()
-    {
-        //ResourceList = new Dictionary<ResourceInfo, int>;
-        Debug.Log("[Invtry] test: " + test);
-        DisplayInventory();
-        AddResources(test, 1);
-        AddResources(test, 1);
-        AddResources(test2, 3);
-        DisplayInventory();
-        AddResources(test, 6);
-        DisplayInventory();
-        RemoveResources(test2, 2);
-        RemoveResources(test2, 20);
-        RemoveResources(test, 3);
-        DisplayInventory();
-    }
-
-    // Add resources and 
+    // Add resources 
     // Return the number added
     
     public int AddResources(ResourceInfo type, int count)

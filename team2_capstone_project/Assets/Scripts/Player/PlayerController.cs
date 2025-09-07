@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
         if (parentObj.GetComponent<InteractableObject>() != null)
         {
             InteractableObject getObj = parentObj.gameObject.GetComponent<InteractableObject>();
-            Debug.Log("[PC] Add " + getObj);
+            Debug.Log("[PC] Now in range: " + getObj);
             InteractableObjects.Add(getObj);
             Debug.Log("[PC] List size: " + InteractableObjects.Count);
         }
@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
         if (parentObj.GetComponent<InteractableObject>() != null) 
         {
             InteractableObject getObj = parentObj.GetComponent<InteractableObject>();
-            Debug.Log("[PC] Remove " + getObj);
+            Debug.Log("[PC] Now out of range: " + getObj);
             InteractableObjects.Remove(getObj);
             Debug.Log("[PC] List size: " + InteractableObjects.Count);
             //Debug.Log("[PC] Interactable Objects:" + InteractableObjects);
@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
         foreach (InteractableObject obj in InteractableObjects)
         {
             Debug.Log("[PC] interact on " + obj.ToString() + ".");
-            obj.PerformInteract();
+            obj.PerformInteract(this.gameObject);
         }
     }
 }
