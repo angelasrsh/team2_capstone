@@ -53,7 +53,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     {
         Debug.Log("Creating Dish");
 
-        Vector3 dishPosition = this.rectTransform.position;
+        Vector3 dishPosition = redZone.transform.position;
         Transform parentTransform = this.rectTransform.parent;
 
         List<Inventory_Overlap> ingredientsToDestroy = new List<Inventory_Overlap>(ingredientOnPot);
