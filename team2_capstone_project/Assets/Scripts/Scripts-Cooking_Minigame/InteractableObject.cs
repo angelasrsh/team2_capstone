@@ -32,6 +32,7 @@ namespace Grimoire
 
         }
 
+        // Action that happens when player presses 'E' to interact while nearby.
         public void PerformInteract()
         {
             Debug.Log("[IntObj] Interaction on " + gameObject.ToString() + " performed");

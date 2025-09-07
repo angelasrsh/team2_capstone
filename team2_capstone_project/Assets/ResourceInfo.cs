@@ -6,7 +6,7 @@ using UnityEngine;
 public class ResourceInfo : ScriptableObject
 {
 
-    [field: SerializeField] public string DisplayName { get; private set; }
+    [field: SerializeField] public string Name { get; private set; }
     [field: SerializeField] public Sprite Icon { get; private set; }
     [field: SerializeField] public float DropRate { get; private set; }
 }

@@ -21,7 +21,6 @@ public class PlayerController : MonoBehaviour
     // Start called once
     void Start()
     {
-        Debug.Log("[PC] Start()");
         InteractableObjects = new List<InteractableObject>();
     }
 
