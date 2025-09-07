@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     // Start called once
     void Start()
     {
+        Debug.Log("[PC] Start()");
         InteractableObjects = new List<InteractableObject>();
     }
 
@@ -55,9 +56,10 @@ public class PlayerController : MonoBehaviour
         {
             InteractableObject getObj = parentObj.gameObject.GetComponent<InteractableObject>();
             Debug.Log("[PC] Add " + getObj);
-            InteractableObjects.Add(other.gameObject.GetComponent<InteractableObject>());
+            InteractableObjects.Add(getObj);
             Debug.Log("[PC] List size: " + InteractableObjects.Count);
         }
+
     }
 
     void OnTriggerExit(Collider other)
@@ -74,7 +76,7 @@ public class PlayerController : MonoBehaviour
         {
             InteractableObject getObj = parentObj.GetComponent<InteractableObject>();
             Debug.Log("[PC] Remove " + getObj);
-            InteractableObjects.Remove(other.gameObject.GetComponent<InteractableObject>());
+            InteractableObjects.Remove(getObj);
             Debug.Log("[PC] List size: " + InteractableObjects.Count);
             //Debug.Log("[PC] Interactable Objects:" + InteractableObjects);
         }
@@ -91,18 +93,16 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("[PC] Interact called");
         Debug.Log("[PC] List size: " + InteractableObjects.Count);
-        Debug.Log("[PC] " + InteractableObjects.ToString());
         if (InteractableObjects == null)
         {
             return;
         }
 
-        Debug.Log("[PC] IntObj1 = " + InteractableObjects[0].ToString());
 
         foreach (InteractableObject obj in InteractableObjects)
         {
             Debug.Log("[PC] interact on " + obj.ToString() + ".");
-            //obj.PerformInteract();
+            obj.PerformInteract();
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Grimoire
 
         public void PerformInteract()
         {
-            Debug.Log("[IntObj] Interaction performed");
+            Debug.Log("[IntObj] Interaction on " + gameObject.ToString() + " performed");
         }
     }
 
