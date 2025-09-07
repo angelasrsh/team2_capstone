@@ -81,7 +81,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-// Press 'E' to interact (called by Unity Input System)
+    // Press 'E' to interact (called by Unity Input System)
+    // Interacts on all objects in range in the order they entered-
+    // may have some issues or undefined behavior with lots of objects together
     public void Interact(InputAction.CallbackContext context)
     {
         // Only interact on complete button presses

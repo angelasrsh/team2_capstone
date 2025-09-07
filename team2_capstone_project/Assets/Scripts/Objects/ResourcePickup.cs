@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Runtime.CompilerServices;
 using Grimoire;
 using UnityEngine;
@@ -17,8 +18,13 @@ public class ResourcePickup : InteractableObject
         Inventory inventoryToJoin = interactor.GetComponent<Inventory>();
         if (inventoryToJoin != null)
         {
-            inventoryToJoin.AddResources(ResourceType, 1); // Add self to inventory
-            Destroy(gameObject); // Disappear
+            int added = inventoryToJoin.AddResources(ResourceType, 1); // Add self to inventory
+            // Only disappear if item was actually added
+            if (added > 0)
+            {
+                Destroy(gameObject);
+            }
+            
         }
     }
 }
