@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
         // Sense colliders for interactable objects are children of the Interactable Object with the script
         GameObject parentObj = other.transform.parent.gameObject;
 
-        if (parentObj.GetComponent<InteractableObject>() != null) 
+        if (parentObj.GetComponent<InteractableObject>() != null)
         {
             InteractableObject getObj = parentObj.GetComponent<InteractableObject>();
             Debug.Log("[PC] Now out of range: " + getObj);
@@ -99,11 +99,20 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        // Make a list to iterate through that doesn't change
+        List<InteractableObject> tempSaveInteractableObjects = new List<InteractableObject>(InteractableObjects);
 
-        foreach (InteractableObject obj in InteractableObjects)
+        foreach (InteractableObject obj in tempSaveInteractableObjects) // shallow copy- same references
         {
             Debug.Log("[PC] interact on " + obj.ToString() + ".");
-            obj.PerformInteract(this.gameObject);
+            obj.PerformInteract(this.gameObject); // May remove item from original list
         }
+    }
+
+    // For when items go out of range and don't call OnTriggerExit();
+    public void RemoveFromRange(InteractableObject obj)
+    {
+        Debug.Log($"[PC] told to remove {obj} from in-range list");
+        InteractableObjects.Remove(obj);
     }
 }
