@@ -10,6 +10,12 @@ public class ResourcePickup : InteractableObject
 {
     [field: SerializeField] public ResourceInfo ResourceType { get; private set; }
 
+    void Start()
+    {
+        // Set item sprite to the ResourceType
+        GetComponent<SpriteRenderer>().sprite = ResourceType.Image;
+    }
+
     public override void PerformInteract(GameObject interactor)
     {
         Debug.Log($"[RsrPkcp] {interactor} interacted on " + gameObject.ToString() + " performed");
@@ -24,7 +30,7 @@ public class ResourcePickup : InteractableObject
             {
                 Destroy(gameObject);
             }
-            
+
         }
     }
 }
