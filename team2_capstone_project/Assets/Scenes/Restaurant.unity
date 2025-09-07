@@ -329,7 +329,7 @@ GameObject:
   - component: {fileID: 255175484}
   - component: {fileID: 255175483}
   - component: {fileID: 255175482}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Back_Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -673,7 +673,7 @@ GameObject:
   - component: {fileID: 578867407}
   - component: {fileID: 578867406}
   - component: {fileID: 578867405}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -770,7 +770,7 @@ GameObject:
   - component: {fileID: 672664987}
   - component: {fileID: 672664986}
   - component: {fileID: 672664985}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Front_Wall_Invis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1934,7 +1934,7 @@ GameObject:
   - component: {fileID: 1274790090}
   - component: {fileID: 1274790089}
   - component: {fileID: 1274790088}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Split_Wall_Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2163,7 +2163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1414869684}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2204,7 +2204,7 @@ GameObject:
   - component: {fileID: 1436904766}
   - component: {fileID: 1436904765}
   - component: {fileID: 1436904764}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right_Wall_Invis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2398,7 +2398,7 @@ GameObject:
   - component: {fileID: 1505759513}
   - component: {fileID: 1505759512}
   - component: {fileID: 1505759511}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left_Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2567,7 +2567,6 @@ GameObject:
   - component: {fileID: 1554022879}
   - component: {fileID: 1554022883}
   - component: {fileID: 1554022882}
-  - component: {fileID: 1554022884}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2721,19 +2720,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!65 &1554022884
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1554022878}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &1556169517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2848,7 +2834,7 @@ GameObject:
   - component: {fileID: 1663976976}
   - component: {fileID: 1663976975}
   - component: {fileID: 1663976974}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Split_Wall_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3493,6 +3479,40 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12c02fefef9590848804314437e70191, type: 3}
+--- !u!1 &2082985077 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6613256111589768622, guid: 7ecd41d74e617ce4cb7c8288141eaac8, type: 3}
+  m_PrefabInstance: {fileID: 6613256112420727877}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &2082985081
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082985077}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &2082985082
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082985077}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1001 &6613256112420727877
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3544,9 +3564,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6613256111589768617, guid: 7ecd41d74e617ce4cb7c8288141eaac8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6613256111589768622, guid: 7ecd41d74e617ce4cb7c8288141eaac8, type: 3}
       propertyPath: m_Name
       value: InteractableObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 6613256111589768622, guid: 7ecd41d74e617ce4cb7c8288141eaac8, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6613256111664619032, guid: 7ecd41d74e617ce4cb7c8288141eaac8, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6613256113086441546, guid: 7ecd41d74e617ce4cb7c8288141eaac8, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ecd41d74e617ce4cb7c8288141eaac8, type: 3}
