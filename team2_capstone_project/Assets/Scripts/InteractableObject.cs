@@ -17,6 +17,7 @@ namespace Grimoire
             {
                 InteractIcon.SetActive(true);
             }
+            //Debug.Log("[" + gameObject + "] Called OnTriggerEnter");
 
         }
 
@@ -27,7 +28,13 @@ namespace Grimoire
             {
                 InteractIcon.SetActive(false);
             }
+            //Debug.Log("[" + gameObject + "] Called OnTriggerExit");
 
+        }
+
+        public void PerformInteract()
+        {
+            Debug.Log("[IntObj] Interaction performed");
         }
     }
 
