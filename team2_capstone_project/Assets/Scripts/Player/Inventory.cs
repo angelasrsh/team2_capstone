@@ -14,6 +14,7 @@ public class Inventory : MonoBehaviour
     // Inventory specifications
     public int InventorySizeLimit = 10;
     public ResourceInfo test; // for testing purposes only
+    public ResourceInfo test2; // for testing purposes only
 
     // Inventory status
     private int inventoryCurrentCount = 0;
@@ -28,11 +29,13 @@ public class Inventory : MonoBehaviour
         DisplayInventory();
         AddResources(test, 1);
         AddResources(test, 1);
-        AddResources(test, 3);
+        AddResources(test2, 3);
         DisplayInventory();
         AddResources(test, 6);
         DisplayInventory();
-        RemoveResources(test, 20);
+        RemoveResources(test2, 2);
+        RemoveResources(test2, 20);
+        RemoveResources(test, 3);
         DisplayInventory();
     }
 
@@ -58,7 +61,7 @@ public class Inventory : MonoBehaviour
         }
 
         inventoryCurrentCount += numToAdd;
-        Debug.Log("Added " + numToAdd + " " + type.name);
+        Debug.Log("[Invtry] Added " + numToAdd + " " + type.name);
         return numToAdd;
     }
 
@@ -71,10 +74,16 @@ public class Inventory : MonoBehaviour
         {
             numToRemove = Math.Min(ResourceList[type], count);
             ResourceList[type] -= numToRemove;
+
+            // Clean up list if none of an item exists
+            if (ResourceList[type] == 0)
+            {
+                ResourceList.Remove(type);
+            }
         }
-        
-        inventoryCurrentCount += numToRemove;
-        Debug.Log($"Removed {numToRemove} {type.Name}");
+
+        inventoryCurrentCount -= numToRemove;
+        Debug.Log($"[Invtry] Removed {numToRemove} {type.Name}");
         return numToRemove;
     }
 
@@ -85,6 +94,7 @@ public class Inventory : MonoBehaviour
             Debug.Log("[Invtry] Inventory is empty");
         }
 
+        Debug.Log($"[Invtry] Limit: {InventorySizeLimit} Count: {inventoryCurrentCount}");
         foreach (KeyValuePair<ResourceInfo, int> kvp in ResourceList)
         {
             Debug.Log($"[Invtry] Item = {kvp.Key.Name}, Value = {kvp.Value}");
