@@ -18,12 +18,21 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.velocity = new Vector3(horizontalMovement * moveSpeed, rb.velocity.y, verticalMovement * moveSpeed);
 
-
     }
 
-    // public void Move(InputAction.CallbackContext context)
-    // {
-    //     horizontalMovement = context.ReadValue<Vector2>().x;
-    //     verticalMovement = context.ReadValue<Vector2>().y;
-    // }
+    public void Move(InputAction.CallbackContext context)
+    {
+        horizontalMovement = context.ReadValue<Vector2>().x;
+        verticalMovement = context.ReadValue<Vector2>().y;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Player calls OnTriggerEnter");
+    }
+
+      void OnTriggerExit(Collider other)
+    {
+        Debug.Log("Player calls OnTriggerExit");
+    }
 }
