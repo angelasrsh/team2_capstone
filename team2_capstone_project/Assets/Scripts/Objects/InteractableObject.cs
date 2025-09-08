@@ -17,6 +17,7 @@ namespace Grimoire
             {
                 InteractIcon.SetActive(true);
             }
+            //Debug.Log("[" + gameObject + "] Called OnTriggerEnter");
 
         }
 
@@ -27,7 +28,14 @@ namespace Grimoire
             {
                 InteractIcon.SetActive(false);
             }
+            //Debug.Log("[" + gameObject + "] Called OnTriggerExit");
 
+        }
+
+        // Action that happens when player presses 'E' to interact while nearby.
+        public virtual void PerformInteract(GameObject interactor)
+        {
+            Debug.Log($"[IntObj] {interactor} interacted on " + gameObject.ToString() + " performed");
         }
     }
 
