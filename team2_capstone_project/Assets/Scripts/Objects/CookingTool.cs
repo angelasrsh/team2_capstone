@@ -22,7 +22,7 @@ public class CookingTool : InteractableObject
     {
         Debug.Log($"[CookEqpt] {interactor} interacted on " + gameObject.ToString() + " performed");
 
-        // If the interactor has an inventory, add yourself to it and disappear
+
         SceneManager.LoadScene("Cooking_Minigame");
     }
 }
