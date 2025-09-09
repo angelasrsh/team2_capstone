@@ -7,13 +7,14 @@ using UnityEngine.UI;
 public class CafeCustomerController : MonoBehaviour
 {
     public CustomerData data;
-    
+
     [SerializeField] private GameObject thoughtBubble;
     [SerializeField] private Image bubbleDishImage;
 
     // Internal components
     private NavMeshAgent agent;
     private Transform seat;
+    private DishData requestedDish;
 
     void Awake()
     {
@@ -41,22 +42,52 @@ public class CafeCustomerController : MonoBehaviour
         transform.forward = Vector3.forward;
     }
 
+    private void OnCollisionEnter()
+    {
+        if (tag == "Player")
+        {
+            TryServeDish(FindObjectOfType<Inventory>());
+        }
+    }
+
     private void SitDown()
     {
         agent.isStopped = true;
 
-        // Pick a random favorite dish
         if (data.favoriteDishes.Length > 0)
         {
-            DishData chosenDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
+            requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
 
-            // Enable bubble & set sprite dynamically
             thoughtBubble.SetActive(true);
-            bubbleDishImage.sprite = chosenDish.dishSprite;
+            bubbleDishImage.sprite = requestedDish.dishSprite;
 
-            Debug.Log($"{data.customerName} wants {chosenDish.dishName}!");
+            Debug.Log($"{data.customerName} wants {requestedDish.dishName}!");
         }
 
         seat = null; // Prevent repeating
+    }
+    
+    public bool TryServeDish(Inventory playerInventory)
+    {
+        if (requestedDish == null)
+        {
+            Debug.Log($"{data.customerName} has not requested a dish.");
+            return false;
+        }
+
+        if (!playerInventory.HasDish(requestedDish))
+        {
+            Debug.Log($"Player does not have {requestedDish.dishName} to serve.");
+            return false;
+        }
+
+        // Remove the dish from inventory
+        playerInventory.RemoveDish(requestedDish);
+
+        Debug.Log($"{data.customerName} has been served {requestedDish.dishName}!");
+        thoughtBubble.SetActive(false);
+        requestedDish = null;
+
+        return true;
     }
 }
