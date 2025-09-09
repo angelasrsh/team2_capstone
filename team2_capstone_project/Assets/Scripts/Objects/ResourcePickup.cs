@@ -13,7 +13,7 @@ public class ResourcePickup : InteractableObject
     void Start()
     {
         // Set item sprite to the ResourceType
-        GetComponent<SpriteRenderer>().sprite = ResourceType.Image;
+        GetComponentInChildren<SpriteRenderer>().sprite = ResourceType.Image;
     }
 
     public override void PerformInteract(GameObject interactor)
