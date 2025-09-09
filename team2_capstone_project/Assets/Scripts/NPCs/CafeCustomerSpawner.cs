@@ -15,16 +15,21 @@ public class CafeCustomerSpawner : MonoBehaviour
     public Transform entrancePoint;
     public CafeCustomerController customerPrefab;
 
-    public void Awake() {}
+    public void Start()
+    {
+        SpawnCustomers();
+    }
 
     public void SpawnCustomers()
     {
         int customerCount = Random.Range(minCustomers, maxCustomers);
         StartCoroutine(SpawnSequence(customerCount));
+        Debug.Log("Started spawning customers...");
     }
 
     private IEnumerator SpawnSequence(int count)
     {
+        Debug.Log($"Spawning {count} customers...");
         for (int i = 0; i < count; i++)
         {
             SpawnCustomer();
@@ -44,7 +49,7 @@ public class CafeCustomerSpawner : MonoBehaviour
         // Pick random customer data
         CustomerData data = possibleCustomers[Random.Range(0, possibleCustomers.Length)];
 
-        // Spawn NPC prefab
+        // Spawn customer prefab
         CafeCustomerController customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
         customer.Init(data, seat);
     }
