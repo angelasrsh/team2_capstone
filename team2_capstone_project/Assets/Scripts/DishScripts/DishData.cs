@@ -7,6 +7,6 @@ public class DishData : ScriptableObject
 {
     public string dishName;
     public Sprite dishSprite;
-    public List<string> ingredients;
+    public ResourceData[] ingredients;
     public float price;
 }
