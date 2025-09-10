@@ -17,6 +17,8 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     [SerializeField] GameObject badDishPrefab;  // For egg + melon
     private static List<Inventory_Overlap> ingredientOnPot = new List<Inventory_Overlap>();
     private bool isOnPot = false;
+    private Inventory playerInventory;
+    public DishData dishData;
 
     public void OnCurrentDrag()
     {
@@ -41,13 +43,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        playerInventory = FindObjectOfType<Inventory>()?.GetComponent<Inventory>();
     }
 
     private void AddToPot()
@@ -112,6 +108,16 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
             // Since we're using world position, we need to set it after parenting
             newDish.transform.position = dishPosition;
             newDish.transform.SetAsLastSibling(); // This will put it on top
+        }
+
+        if (playerInventory != null && dishData != null)
+        {
+            playerInventory.AddDish(dishData);
+            Debug.Log($"[Overlap] Added {dishData.dishName} to inventory");
+        }
+        else
+        {
+            Debug.Log("[Overlap] Missing Inventory or DishData reference!");
         }
     }
 
