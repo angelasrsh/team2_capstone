@@ -123,35 +123,28 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &15563998 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9083165254151032945, guid: a528dae7b7a186148851741358f9be21, type: 3}
-  m_PrefabInstance: {fileID: 1522612355043038549}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &15564001 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9083165254151032947, guid: a528dae7b7a186148851741358f9be21, type: 3}
   m_PrefabInstance: {fileID: 1522612355043038549}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 15563998}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fa00365e881b7a4ba74a075e1d5364d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &15564005
+--- !u!114 &15564004 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 9021023917353965175, guid: a528dae7b7a186148851741358f9be21, type: 3}
+  m_PrefabInstance: {fileID: 1522612355043038549}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 15563998}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2532bf57145e6524ab28e6ddbe0a836c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InventorySizeLimit: 10
 --- !u!1 &41742208
 GameObject:
   m_ObjectHideFlags: 0
@@ -4170,7 +4163,7 @@ PrefabInstance:
     - target: {fileID: 9083165254151032946, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_ActionEvents.Array.data[12].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 15564005}
+      objectReference: {fileID: 15564004}
     - target: {fileID: 9083165254151032946, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_ActionEvents.Array.data[11].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
@@ -4207,5 +4200,6 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 15564005, guid: a528dae7b7a186148851741358f9be21, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: a528dae7b7a186148851741358f9be21, type: 3}
