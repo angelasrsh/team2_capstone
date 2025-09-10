@@ -24,10 +24,17 @@ public class UIButtons : MonoBehaviour
   {
     panel.SetActive(true);
   }
-  
+
   // Close a specific panel
   public void ClosePanel(GameObject panel)
   {
     panel.SetActive(false);
+  }
+
+  // Quit the application
+  public void QuitGame()
+  {
+    Debug.Log("Quitting game...");
+    Application.Quit();
   }
 }
