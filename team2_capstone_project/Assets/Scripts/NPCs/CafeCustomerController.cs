@@ -16,6 +16,7 @@ public class CafeCustomerController : MonoBehaviour
     private Transform seat;
     private DishData requestedDish;
     private Inventory playerInventory;
+    private bool playerInRange = false;
 
     void Awake()
     {
@@ -35,6 +36,17 @@ public class CafeCustomerController : MonoBehaviour
 
     void Update()
     {
+        if (playerInRange)
+        {
+          Debug.Log("Press R to serve dish");
+          Debug.Log($"Player inventory {playerInventory == null}");
+          if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
+          {
+            Debug.Log("R key pressed, attempting to serve dish");
+            TryServeDish(playerInventory);
+          }
+        }
+        
         if (seat != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             SitDown();
@@ -46,35 +58,40 @@ public class CafeCustomerController : MonoBehaviour
         transform.forward = Vector3.forward;
     }
 
-    private void OnTriggerStay(Collider collision)
+    private void OnCollisionEnter(Collision other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Press R to serve dish");
-            Debug.Log($"Player inventory {playerInventory == null}");
-            if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
-            {
-                TryServeDish(playerInventory);
-            }
+            playerInRange = true;
+            Debug.Log("Player in range of customer");
+        }
+    }
+    
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            playerInRange = false;
+            Debug.Log("Player out of range of customer");
         }
     }
 
     private void SitDown()
+  {
+    agent.isStopped = true;
+
+    if (data.favoriteDishes.Length > 0)
     {
-        agent.isStopped = true;
+      requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
 
-        if (data.favoriteDishes.Length > 0)
-        {
-            requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
+      thoughtBubble.SetActive(true);
+      bubbleDishImage.sprite = requestedDish.dishSprite;
 
-            thoughtBubble.SetActive(true);
-            bubbleDishImage.sprite = requestedDish.dishSprite;
-
-            Debug.Log($"{data.customerName} wants {requestedDish.dishName}!");
-        }
-
-        seat = null; // Prevent repeating
+      Debug.Log($"{data.customerName} wants {requestedDish.dishName}!");
     }
+
+    seat = null; // Prevent repeating
+  }
     
     public bool TryServeDish(Inventory playerInventory)
     {
@@ -99,7 +116,7 @@ public class CafeCustomerController : MonoBehaviour
         requestedDish = null;
 
         DialogueManager dm = FindObjectOfType<DialogueManager>();
-        dm.QueueDialogue("Thanks! (+10 affection)");
+        dm.QueueDialogue("That's my favorite! Thanks! (+10 affection)");
 
         return true;
     }

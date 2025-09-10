@@ -15,6 +15,8 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     [SerializeField] IngredientType ingredientType; // Set this in Inspector for each ingredient
     [SerializeField] GameObject goodDishPrefab; // For egg + egg
     [SerializeField] GameObject badDishPrefab;  // For egg + melon
+
+    public AudioSource goodDishMade;
     private static List<Inventory_Overlap> ingredientOnPot = new List<Inventory_Overlap>();
     private bool isOnPot = false;
     private Inventory playerInventory;
@@ -76,11 +78,8 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
             dishToCreate = goodDishPrefab;
             Debug.Log("Creating good dish: Egg + Egg!");
 
-            GameObject audioObject = new GameObject("FoodCompleteAudio");
-            audioObject.AddComponent<AudioSource>();
-            AudioClip clip = Resources.Load<AudioClip>("Assets/Audio/SFX/Dish_Completed.wav");
-            audio.PlayOneShot(clip);
-            Destroy(audioObject);
+
+            goodDishMade.PlayOneShot(goodDishMade.clip);
         }
         else if ((firstType == IngredientType.Egg && secondType == IngredientType.Melon) ||
                  (firstType == IngredientType.Melon && secondType == IngredientType.Egg))

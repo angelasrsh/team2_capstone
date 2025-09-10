@@ -28,10 +28,13 @@ public class ResourcePickup : InteractableObject
             // Only disappear if item was actually added
             if (added > 0)
             {
+              
                 // If the interactor is player with a PlayerController, remove yourself
                 PlayerController scriptWithRange = interactor.GetComponent<PlayerController>();
                 if (scriptWithRange != null)
                 {
+                    // Play pickup sound
+                    GameObject.Find("Item_Pickup_SFX").GetComponent<Audio_Manager>().PlayOnce();
                     scriptWithRange.RemoveFromRange(this);
                 }
                 Destroy(gameObject);
