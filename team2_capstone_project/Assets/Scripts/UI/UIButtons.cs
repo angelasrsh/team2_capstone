@@ -9,7 +9,7 @@ public class UIButtons : MonoBehaviour
   public void StartGame()
   {
     Debug.Log("Starting game...");
-    LoadScene("Restaurant"); // Change "Restaurant" to whichever scene goes next!!!!!!!!
+    LoadScene("World_Map"); // Change "Restaurant" to whichever scene goes next!!!!!!!!
   }
 
   // Load a specific scene by name

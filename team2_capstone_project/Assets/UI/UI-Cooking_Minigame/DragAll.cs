@@ -72,9 +72,4 @@ public class DragAll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
             Debug.LogError("No ICustomDrag component found on " + gameObject.name);
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
 }

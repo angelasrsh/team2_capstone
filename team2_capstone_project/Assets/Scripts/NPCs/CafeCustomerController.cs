@@ -28,6 +28,7 @@ public class CafeCustomerController : MonoBehaviour
         seat = targetSeat;
         playerInventory = inventory;
         agent.SetDestination(seat.position);
+    agent.speed = 10f;
 
         Debug.Log($"Customer spawned at {transform.position}, isOnNavMesh = {agent.isOnNavMesh}");
     }
@@ -45,13 +46,13 @@ public class CafeCustomerController : MonoBehaviour
         transform.forward = Vector3.forward;
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void OnTriggerStay(Collider collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Press E to serve dish");
-
-            if (Input.GetKeyDown(KeyCode.E) && playerInventory != null)
+            Debug.Log("Press R to serve dish");
+            Debug.Log($"Player inventory {playerInventory == null}");
+            if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
             {
                 TryServeDish(playerInventory);
             }
@@ -77,6 +78,7 @@ public class CafeCustomerController : MonoBehaviour
     
     public bool TryServeDish(Inventory playerInventory)
     {
+      Debug.Log("Attempting to serve dish...");
         if (requestedDish == null)
         {
             Debug.Log($"{data.customerName} has not requested a dish.");
@@ -95,6 +97,9 @@ public class CafeCustomerController : MonoBehaviour
         Debug.Log($"{data.customerName} has been served {requestedDish.dishName}!");
         thoughtBubble.SetActive(false);
         requestedDish = null;
+
+        DialogueManager dm = FindObjectOfType<DialogueManager>();
+        dm.QueueDialogue("Thanks! (+10 affection)");
 
         return true;
     }

@@ -75,6 +75,12 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
         {
             dishToCreate = goodDishPrefab;
             Debug.Log("Creating good dish: Egg + Egg!");
+
+            GameObject audioObject = new GameObject("FoodCompleteAudio");
+            audioObject.AddComponent<AudioSource>();
+            AudioClip clip = Resources.Load<AudioClip>("Assets/Audio/SFX/Dish_Completed.wav");
+            audio.PlayOneShot(clip);
+            Destroy(audioObject);
         }
         else if ((firstType == IngredientType.Egg && secondType == IngredientType.Melon) ||
                  (firstType == IngredientType.Melon && secondType == IngredientType.Egg))
