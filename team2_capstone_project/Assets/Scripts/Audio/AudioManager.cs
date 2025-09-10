@@ -13,9 +13,6 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip defaultMusic;
     [SerializeField] private AudioClip defaultAmbient;
 
-    [Header("SFX Clips")]
-    public AudioClip bellSound;
-
     private void Awake()
         {
         if (instance == null)

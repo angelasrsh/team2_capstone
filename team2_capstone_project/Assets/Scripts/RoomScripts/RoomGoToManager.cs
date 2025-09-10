@@ -105,23 +105,23 @@ public class RoomGoToManager : MonoBehaviour
         }
 
         // Check for music
-        if (targetRoom.music != null && MusicPersistance.instance != null)
+        if (targetRoom.music != null && MusicPersistence.instance != null)
         {
-            MusicPersistance.instance.CheckMusic(targetRoom.music);
+            MusicPersistence.instance.CheckMusic(targetRoom.music);
         }
         else
         {
-            MusicPersistance.instance.StopMusic();
+            MusicPersistence.instance.StopMusic();
         }
 
         // Check for ambient sound
-        if (targetRoom.ambientSound != null && MusicPersistance.instance != null)
+        if (targetRoom.ambientSound != null && MusicPersistence.instance != null)
         {
-            MusicPersistance.instance.CheckAmbient(targetRoom.ambientSound);
+            MusicPersistence.instance.CheckAmbient(targetRoom.ambientSound);
         }
         else
         {
-            MusicPersistance.instance.StopAmbient();
+            MusicPersistence.instance.StopAmbient();
         }
     }
 

@@ -18,6 +18,9 @@ public class PlayerController : MonoBehaviour
     // Interaction
     private List<InteractableObject> InteractableObjects;
 
+    // Room tracking
+    [HideInInspector] public RoomData currentRoom;
+
     // Start called once
     void Start()
     {
@@ -47,7 +50,7 @@ public class PlayerController : MonoBehaviour
 
         // Keep a list of interactable objects within range
         // (i.e. this code won't work if the collider and script are on the same base object)
-        if(other.gameObject.CompareTag("InteractableObject") == false)
+        if (other.gameObject.CompareTag("InteractableObject") == false)
         {
             return;
         }
@@ -71,7 +74,7 @@ public class PlayerController : MonoBehaviour
 
 
         // Update list of interactable objects by removing ones now out of range
-        if(other.gameObject.CompareTag("InteractableObject") == false)
+        if (other.gameObject.CompareTag("InteractableObject") == false)
         {
             return;
         }
@@ -121,5 +124,17 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log($"[PC] told to remove {obj} from in-range list");
         InteractableObjects.Remove(obj);
+    }
+    
+    public void UpdatePlayerRoom(string newRoomName)
+    {
+        if (RoomManager.RoomDictionary.TryGetValue(newRoomName, out var newRoom))
+        {
+            currentRoom = newRoom;
+        }
+        else
+        {
+            Debug.LogWarning("Room not found: " + newRoomName);
+        }
     }
 }
