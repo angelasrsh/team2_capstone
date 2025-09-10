@@ -15,17 +15,20 @@ public class CafeCustomerController : MonoBehaviour
     private NavMeshAgent agent;
     private Transform seat;
     private DishData requestedDish;
+    private Inventory playerInventory;
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
     }
 
-    public void Init(CustomerData customerData, Transform targetSeat)
+    public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory)
     {
         data = customerData;
         seat = targetSeat;
+        playerInventory = inventory;
         agent.SetDestination(seat.position);
+
         Debug.Log($"Customer spawned at {transform.position}, isOnNavMesh = {agent.isOnNavMesh}");
     }
 
@@ -42,11 +45,16 @@ public class CafeCustomerController : MonoBehaviour
         transform.forward = Vector3.forward;
     }
 
-    private void OnCollisionEnter()
+    private void OnCollisionStay(Collision collision)
     {
-        if (tag == "Player")
+        if (collision.gameObject.CompareTag("Player"))
         {
-            TryServeDish(FindObjectOfType<Inventory>());
+            Debug.Log("Press E to serve dish");
+
+            if (Input.GetKeyDown(KeyCode.E) && playerInventory != null)
+            {
+                TryServeDish(playerInventory);
+            }
         }
     }
 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CafeCustomerSpawner : MonoBehaviour
 {
+    [SerializeField] private Inventory inventoryManager;
+
     [Header("Spawner Settings")]
     public int minCustomers = 1;
     public int maxCustomers = 3;
@@ -51,6 +53,6 @@ public class CafeCustomerSpawner : MonoBehaviour
 
         // Spawn customer prefab
         CafeCustomerController customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
-        customer.Init(data, seat);
+        customer.Init(data, seat, inventoryManager.GetComponent<Inventory>());
     }
 }
