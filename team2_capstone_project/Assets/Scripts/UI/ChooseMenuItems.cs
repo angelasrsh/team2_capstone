@@ -7,6 +7,7 @@ public class ChooseMenuItems : MonoBehaviour
 {
   public GameObject menuBox;
   public GameObject darkOverlay;
+  public GameObject dayCanvas;
   private bool selectedDishes;
   private List<string> dishesSelected = new List<string>();
   private GameObject errorText;
@@ -19,6 +20,7 @@ public class ChooseMenuItems : MonoBehaviour
     selectedDishes = false;
     errorText = menuBox.transform.Find("Error_Text").gameObject;
     errorText.SetActive(false);
+    dayCanvas.SetActive(false);
   }
 
   // Resume the game from the pause menu
@@ -30,6 +32,16 @@ public class ChooseMenuItems : MonoBehaviour
       menuBox.SetActive(false);
       darkOverlay.SetActive(false);
       selectedDishes = true;
+
+      // Activate Day Canvas
+      if (dayCanvas != null)
+      {
+        dayCanvas.SetActive(true);
+      }
+      else
+      {
+        Debug.LogWarning("DayCanvas not found in the scene.");
+      }
     }
     else
     {
