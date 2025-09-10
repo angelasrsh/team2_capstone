@@ -28,7 +28,6 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-
     }
 
     // Update is called once per frame
@@ -79,6 +78,16 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
             newDish.transform.SetAsLastSibling(); // This will put it on top
 
         }
+
+        // if (playerInventory != null && dishData != null)
+        // {
+        //     playerInventory.AddDish(dishData);
+        //     Debug.Log($"[Overlap] Added {dishData.dishName} to inventory");
+        // }
+        // else
+        // {
+        //     Debug.Log("[Overlap] Missing Inventory or DishData reference!");
+        // }
     }
 
     // Clean up when object is destroyed

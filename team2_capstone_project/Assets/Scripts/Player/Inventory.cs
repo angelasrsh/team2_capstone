@@ -18,7 +18,6 @@ public class Inventory : MonoBehaviour
     // Inventory status
     private int inventoryCurrentCount = 0;
 
-
     [field: SerializeField] private Dictionary<ResourceInfo, int> ResourceList { get; set; } = new Dictionary<ResourceInfo, int>();
     [field: SerializeField] private Dictionary<DishData, int> DishList { get; set; } = new Dictionary<DishData, int>();
 
