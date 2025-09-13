@@ -126,15 +126,16 @@ public class PlayerController : MonoBehaviour
         InteractableObjects.Remove(obj);
     }
     
-    public void UpdatePlayerRoom(string newRoomName)
+    public void UpdatePlayerRoom(RoomData.RoomID newRoomID)
     {
-        if (RoomManager.RoomDictionary.TryGetValue(newRoomName, out var newRoom))
+        RoomData newRoom = RoomManager.GetRoom(newRoomID);
+        if (newRoom != null)
         {
             currentRoom = newRoom;
         }
         else
         {
-            Debug.LogWarning("Room not found: " + newRoomName);
+            Debug.LogWarning($"Room not found: {newRoomID}");
         }
     }
 }

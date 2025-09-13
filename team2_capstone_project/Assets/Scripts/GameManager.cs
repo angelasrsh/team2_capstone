@@ -4,39 +4,60 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [Header("Room Setup")]
+    [SerializeField] private RoomCollectionData roomCollection;
+
+    private void Awake()
     {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        if (roomCollection != null)
+        {
+            RoomManager.Initialize(roomCollection);
+        }
+        else
+        {
+            Debug.LogError("GameManager: No RoomCollectionData assigned!");
+        }
     }
 }
 
 [System.Serializable]
 public static class RoomManager
 {
-    public static Dictionary<string, RoomData> RoomDictionary;
+    public static Dictionary<RoomData.RoomID, RoomData> RoomDictionary;
 
     public static void Initialize(RoomCollectionData collection)
     {
-        RoomDictionary = new Dictionary<string, RoomData>();
+        RoomDictionary = new Dictionary<RoomData.RoomID, RoomData>();
 
         foreach (var room in collection.rooms)
         {
-            if (!RoomDictionary.ContainsKey(room.roomName))
+            if (!RoomDictionary.ContainsKey(room.roomID))
             {
-                RoomDictionary.Add(room.roomName, room);
+                RoomDictionary.Add(room.roomID, room);
             }
             else
             {
-                Debug.LogError($"Duplicate room name detected: {room.roomName}");
+                Debug.LogError($"Duplicate RoomID detected: {room.roomID}");
             }
         }
+
         Debug.Log($"RoomManager initialized with {RoomDictionary.Count} rooms.");
+    }
+
+    public static RoomData GetRoom(RoomData.RoomID id)
+    {
+        if (RoomDictionary == null)
+        {
+            Debug.LogError("RoomManager not initialized! Call Initialize() first.");
+            return null;
+        }
+
+        if (RoomDictionary.TryGetValue(id, out var room))
+        {
+            return room;
+        }
+
+        Debug.LogError($"RoomID {id} not found in RoomManager.");
+        return null;
     }
 }

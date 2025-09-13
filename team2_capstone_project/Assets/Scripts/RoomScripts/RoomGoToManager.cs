@@ -6,146 +6,120 @@ using Grimoire;
 
 public class RoomGoToManager : MonoBehaviour
 {
-    public static RoomGoToManager instance; 
+    public static RoomGoToManager instance;
     private ScreenFade blackScreenFade;
-    private PlayerController player;
 
     private void Awake()
     {
-        // Manager needs to persist btwn scenes
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); 
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
     }
-    
-    public void GoToRoom(RoomData currentRoom, string exitingTo)
+
+    // e.g. RoomGoToManager.instance.GoToRoom(RoomData.RoomID.Restaurant, RoomData.RoomID.CookingMinigame);
+    public void GoToRoom(RoomData.RoomID currentRoomID, RoomData.RoomID exitingTo)
     {
-        Debug.Log("Entering loop");
+        RoomData currentRoom = RoomManager.GetRoom(currentRoomID);
         RoomExitOptions exit = Exit(currentRoom, exitingTo);
 
-        if (exit != null && exit.targetRoom != null) 
+        if (exit != null && exit.targetRoom != null)
         {
-            Debug.Log("Found exit to " + exit.targetRoom.roomName);
-            StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointName));
+            StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
         }
-        else 
+        else
         {
-            Debug.LogError("Exit not found or target room is null.");
+            Debug.LogError($"Exit not found from {currentRoomID} to {exitingTo}");
         }
     }
 
-    private RoomExitOptions Exit(RoomData room, string exitingTo)
+    private RoomExitOptions Exit(RoomData room, RoomData.RoomID exitingTo)
     {
         foreach (var exit in room.exits)
         {
             if (exit.exitingTo == exitingTo)
-            {
                 return exit;
-            }
         }
         return null;
     }
 
-    private IEnumerator HandleRoomTransition(RoomData targetRoom, string spawnPointName)
+    private IEnumerator HandleRoomTransition(RoomData targetRoom, RoomData.SpawnPointID spawnPointID)
     {
-        Debug.Log("Starting room transition to: " + targetRoom.roomName);
-        
         blackScreenFade = FindObjectOfType<ScreenFade>();
         if (blackScreenFade == null)
         {
-            Debug.LogWarning("blackScreenFade = " + blackScreenFade);
+            Debug.LogWarning("blackScreenFade missing.");
             yield break;
         }
-        
-        // Check if the music and ambient sound need to be faded out
+
+        // Fade out music/ambient
         MusicPersistence.instance.PreTransitionCheckMusic(targetRoom.music);
         MusicPersistence.instance.PreTransitionCheckAmbient(targetRoom.ambientSound);
 
-        // Black screen fade in
+        // Fade screen to black
         blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeIn());
         yield return new WaitForSeconds(blackScreenFade.fadeDuration);
 
         // Load new room
-        StartCoroutine(ChangeRoom(targetRoom, spawnPointName));
+        yield return StartCoroutine(ChangeRoom(targetRoom, spawnPointID));
     }
 
-    private IEnumerator ChangeRoom(RoomData targetRoom, string spawnPointName)
+    private IEnumerator ChangeRoom(RoomData targetRoom, RoomData.SpawnPointID spawnPointID)
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetRoom.roomName);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetRoom.roomID.ToString());
         while (!asyncLoad.isDone)
-        {
             yield return null;
-        }
 
-        // Fade out black screen
+        // Fade out black
         blackScreenFade = FindObjectOfType<ScreenFade>();
         if (blackScreenFade != null)
         {
             yield return StartCoroutine(HandleNewRoomTransition(targetRoom));
         }
 
-        // Check for player in new room
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player == null)
+        // Place player at spawn point if overworld scene
+        if (targetRoom.isOverworldScene)
         {
-            yield break; 
+            GameObject player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                SpawnPoint[] spawnPoints = FindObjectsOfType<SpawnPoint>();
+                foreach (var sp in spawnPoints)
+                {
+                    if (sp.spawnPointID == spawnPointID)
+                    {
+                        player.transform.position = sp.transform.position;
+                        break;
+                    }
+                }
+            }
         }
 
-        // Check for registered spawn point
-        GameObject spawnPoint = GameObject.Find(spawnPointName);
-        if (spawnPoint != null)
-        {
-            player.transform.position = spawnPoint.transform.position;
-        }
-
-        // Check for music
-        if (targetRoom.music != null && MusicPersistence.instance != null)
-        {
+        // Handle music
+        if (targetRoom.music != null)
             MusicPersistence.instance.CheckMusic(targetRoom.music);
-        }
         else
-        {
             MusicPersistence.instance.StopMusic();
-        }
 
-        // Check for ambient sound
-        if (targetRoom.ambientSound != null && MusicPersistence.instance != null)
-        {
+        // Handle ambient
+        if (targetRoom.ambientSound != null)
             MusicPersistence.instance.CheckAmbient(targetRoom.ambientSound);
-        }
         else
-        {
             MusicPersistence.instance.StopAmbient();
-        }
     }
 
     private IEnumerator HandleNewRoomTransition(RoomData targetRoom)
     {
         if (blackScreenFade == null)
-        {
             yield break;
-        }
+
         blackScreenFade.fadeCanvasGroup.alpha = 1;
 
-        // playerOverworld = FindObjectOfType<ShipPlayerController>();
-        // if (playerOverworld != null)
-        // {
-        //     playerOverworld.EnablePlayerController();
-        // }
-        
-        // if (targetRoom.roomName == "ShipVillage")
-        // {
-        //     yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOutVillage());
-        // }
-        // else
-        // {
-        //     blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOut());
-        // }
+        yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOut());
     }
 }
