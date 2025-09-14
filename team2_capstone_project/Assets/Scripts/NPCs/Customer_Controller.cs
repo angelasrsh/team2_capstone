@@ -102,15 +102,20 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
-        if (!playerInventory.HasDish(requestedDish))
+        if (!playerInventory.HasItem(requestedDish))
         {
             Debug.Log($"Player does not have {requestedDish.Image} to serve.");
             return false;
         }
 
         // Remove the dish from inventory
-        playerInventory.RemoveDish(requestedDish);
-
+        //playerInventory.RemoveDish(requestedDish);
+        if (Dish_Inventory.Instance.RemoveResources(requestedDish, 1) <= 0)
+        {
+            Debug.Log($"[Cstmr_Cntr] Error: no {requestedDish} served!");
+            return false;
+        }
+        
         Debug.Log($"{data.customerName} has been served {requestedDish.Image}!");
         thoughtBubble.SetActive(false);
         requestedDish = null;

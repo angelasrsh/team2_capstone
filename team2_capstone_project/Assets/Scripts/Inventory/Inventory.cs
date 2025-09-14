@@ -148,33 +148,33 @@ public class Inventory : MonoBehaviour
         PrintInventory();  
     }
 
-    public int AddDish(Dish_Data dish, int count = 1)
-    {
-        //     if (inventoryCurrentCount >= InventorySizeLimit)
-        //     {
-        //         Debug.Log("[Invtry] Inventory full (cannot add dish)");
-        //         return 0;
-        //     }
+    // public int AddDish(Dish_Data dish, int count = 1)
+    // {
+    //     //     if (inventoryCurrentCount >= InventorySizeLimit)
+    //     //     {
+    //     //         Debug.Log("[Invtry] Inventory full (cannot add dish)");
+    //     //         return 0;
+    //     //     }
 
-        //     int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
+    //     //     int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
 
-        //     if (dishDict.ContainsKey(dish))
-        //     {
-        //         dishDict[dish] += numToAdd;
-        //     }
-        //     else
-        //     {
-        //         dishDict.Add(dish, numToAdd);
-        //     }
+    //     //     if (dishDict.ContainsKey(dish))
+    //     //     {
+    //     //         dishDict[dish] += numToAdd;
+    //     //     }
+    //     //     else
+    //     //     {
+    //     //         dishDict.Add(dish, numToAdd);
+    //     //     }
 
-        //     inventoryCurrentCount += numToAdd;
-        //     Debug.Log($"[Invtry] Added {numToAdd} {dish.Name}");
-        // return numToAdd;
-        return 1;
-    }
+    //     //     inventoryCurrentCount += numToAdd;
+    //     //     Debug.Log($"[Invtry] Added {numToAdd} {dish.Name}");
+    //     // return numToAdd;
+    //     return 1;
+    // }
 
-    public bool RemoveDish(Dish_Data dish)
-    {
+    // public bool RemoveDish(Dish_Data dish)
+    // {
         //     if (dishDict.ContainsKey(dish) && dishDict[dish] > 0)
         //     {
         //         dishDict[dish]--;
@@ -191,13 +191,17 @@ public class Inventory : MonoBehaviour
 
         //     Debug.Log($"[Invtry] Tried to remove {dish.Name}, but none in inventory");
         //     return false;
-        return true;
-    }
+    //     return true;
+    // }
 
-    public bool HasDish(Dish_Data dish)
+    public bool HasItem(Item_Data item)
     {
-        //return dishDict.ContainsKey(dish) && dishDict[dish] > 0;
-        return true;
+        foreach (Item_Stack i in InventoryStacks)
+        {
+            if (i.resource == item)
+                return true;
+        }
+        return false;
     }
 
 
