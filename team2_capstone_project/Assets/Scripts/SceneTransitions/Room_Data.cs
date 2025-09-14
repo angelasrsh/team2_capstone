@@ -7,10 +7,12 @@ public class Room_Data : ScriptableObject
 {
     public enum RoomID
     {
+        // room ID names must match scene names exactly
         MainMenu,
-        FirstResourceArea,
+        World_Map,
         Restaurant,
-        CookingMinigame
+        Cooking_Minigame,
+        Chopping_Minigame
     }
 
     public enum SpawnPointID
@@ -32,12 +34,6 @@ public class Room_Data : ScriptableObject
 
     [Header("Room Exits")]
     public RoomExitOptions[] exits;
-}
-
-[CreateAssetMenu(menuName = "Rooms/RoomCollection", fileName = "NewRoomCollection")]
-public class RoomCollectionData : ScriptableObject
-{
-    public List<Room_Data> rooms;
 }
 
 [System.Serializable]

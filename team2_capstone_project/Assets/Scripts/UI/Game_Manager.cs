@@ -5,7 +5,7 @@ using UnityEngine;
 public class Game_Manager : MonoBehaviour
 {
     [Header("Room Setup")]
-    [SerializeField] private RoomCollectionData roomCollection;
+    [SerializeField] private Room_Collection_Data roomCollection;
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public static class Room_Manager
 {
     public static Dictionary<Room_Data.RoomID, Room_Data> RoomDictionary;
 
-    public static void Initialize(RoomCollectionData collection)
+    public static void Initialize(Room_Collection_Data collection)
     {
         RoomDictionary = new Dictionary<Room_Data.RoomID, Room_Data>();
 

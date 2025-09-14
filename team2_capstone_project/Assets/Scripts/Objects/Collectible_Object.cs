@@ -32,6 +32,8 @@ public class Collectible_Object : Interactable_Object
     public override void PerformInteract()
     {
         Debug.Log($"[Col_Obj] player interacted with " + gameObject.ToString());
+        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.pickupSFX);
+        Audio_Manager.instance.SetSFXVolume(0.5f);
 
         // Add to inventory
         Destroy(gameObject);
