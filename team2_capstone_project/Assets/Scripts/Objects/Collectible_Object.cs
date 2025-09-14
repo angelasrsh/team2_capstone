@@ -34,6 +34,7 @@ public class Collectible_Object : Interactable_Object
         Debug.Log($"[Col_Obj] player interacted with " + gameObject.ToString());
 
         // Add to inventory
+        Ingredient_Inventory.Instance.AddResources(data, 1);
         Destroy(gameObject);
     }
 }

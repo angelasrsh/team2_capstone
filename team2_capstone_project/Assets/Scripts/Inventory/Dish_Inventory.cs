@@ -9,7 +9,7 @@ using UnityEngine;
 public class Dish_Inventory : Inventory
 {
     public static Dish_Inventory Instance { get; private set; }
-    private void Awake()
+    new private void Awake()
     {
         if (Instance != null && Instance != this)
             Destroy(gameObject);
@@ -18,5 +18,8 @@ public class Dish_Inventory : Inventory
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        base.Awake();
     }
+    
 }

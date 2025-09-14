@@ -37,7 +37,7 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// Initialize Inventory to be size InventorySizeLimit
     /// </summary>
-    private void Awake()
+    protected void Awake()
     {
         InventoryStacks = new Item_Stack[InventorySizeLimit];
         PrintInventory();
@@ -73,7 +73,7 @@ public class Inventory : MonoBehaviour
         // These are two separate loops because we don't assume slots will be filled in order
         for (int i = 0; i < InventorySizeLimit; i++)
         {
-            if (InventoryStacks[i] == null)
+            if (InventoryStacks[i] == null && amtLeftToAdd > 0)
             {
                 InventoryStacks[i] = new Item_Stack();
                 int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
@@ -83,6 +83,7 @@ public class Inventory : MonoBehaviour
             }
         }
         updateInventory();
+        Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {type.Name}");
         return count - amtLeftToAdd; // Return how many items were actually added
     }
 
@@ -115,6 +116,7 @@ public class Inventory : MonoBehaviour
         }
 
         updateInventory(); // Remove empty elements
+        Debug.Log($"[Invtory] Removed {count - amtLeftToRemove} {type.Name}");
         // Return however much was added
         return count - amtLeftToRemove;
     }
@@ -129,8 +131,8 @@ public class Inventory : MonoBehaviour
             if (InventoryStacks[i] != null && InventoryStacks[i].amount <= 0)
                 InventoryStacks[i] = null;
             // Display inventory update code here maybe (real not fake, UI stuff)  
-            PrintInventory();  
         }
+        PrintInventory();  
     }
 
     public int AddDish(Dish_Data dish, int count = 1)
