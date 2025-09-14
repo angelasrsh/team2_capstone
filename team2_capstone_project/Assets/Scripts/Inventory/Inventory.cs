@@ -30,80 +30,49 @@ public class Item_Stack
 public class Inventory : MonoBehaviour
 {
     public int InventorySizeLimit = 12;
-    //private int inventoryCurrentCount = 0;
-
-    //[SerializeField] private List<Item_Stack> resourceListInspector = new List<Resource_Stack>();
-    //[SerializeField] private List<Dish_Stack> dishListInspector = new List<Dish_Stack>();
-
-    // Runtime dictionaries for efficient lookups
-    // private Dictionary<Item_Data, int> resourceDict = new Dictionary<Item_Data, int>();
-    // private Dictionary<Dish_Data, int> dishDict = new Dictionary<Dish_Data, int>();
-
+    
     [field: SerializeField]
     private Item_Stack[] InventoryStacks;
-    public Item_Data TestItem;
-    public Item_Data TestItem2;
 
-
+    /// <summary>
+    /// Initialize Inventory to be size InventorySizeLimit
+    /// </summary>
     private void Awake()
     {
         InventoryStacks = new Item_Stack[InventorySizeLimit];
-        Item_Data milk = TestItem;
-        Item_Data cheese = TestItem2;
-        Debug.Log($"Milk {milk} .");
-        Debug.Log($"Add {AddResources(milk, 30)} milk");
-        Debug.Log($"Removed {RemoveResources(cheese, 10)} cheese");
-        Debug.Log($"Removed {RemoveResources(milk, 40)} milk");
-        Debug.Log($"Add {AddResources(cheese, 230)} cheese");
-        Debug.Log($"Add {AddResources(cheese, 50)} cheese");
-        Debug.Log($"Removed {RemoveResources(cheese, 100)} cheese");
-        Debug.Log($"Removed {RemoveResources(cheese, 10)} cheese");
-
-
-        // // Convert inspector lists into runtime dictionaries
-        // foreach (var stack in resourceListInspector)
-        // {
-        //     if (stack.resource != null && stack.amount > 0)
-        //     {
-        //         resourceDict[stack.resource] = stack.amount;
-        //         inventoryCurrentCount += stack.amount;
-        //     }
-        // }
-
-        // foreach (var stack in dishListInspector)
-        // {
-        //     if (stack.dish != null && stack.amount > 0)
-        //     {
-        //         dishDict[stack.dish] = stack.amount;
-        //         inventoryCurrentCount += stack.amount;
-        //     }
-        // }
+        PrintInventory();
     }
-
+    
+    /// <summary>
+    /// Add resources and update inventory.
+    /// </summary>
+    /// <param name="type"> The type of item to add </param> 
+    /// <param name="count"> How many of the item to add</param> 
+    /// <returns> The number of items actually added </returns>
     public int AddResources(Item_Data type, int count)
     {
+         // Error-checking
+        if (count < 0)
+            Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
+
         // Track the amount of resources we still need to add
         int amtLeftToAdd = count;
 
         // Check if there is a slot with the same type and add if not full
         foreach (Item_Stack istack in InventoryStacks)
         {
-            // Check if a slot exists with the same type
-            if (istack != null && istack.resource == type)
+            // Add as much as we can to existing stacks
+            if (istack != null && istack.resource == type && istack.amount < istack.stackLimit)
             {
-                if (istack.amount < istack.stackLimit)
-                {
-                    // Add as much as we can to this stack
-                    int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
-                    istack.amount += amtToAdd;
-                    amtLeftToAdd -= amtToAdd;
-                }
+                int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
+                istack.amount += amtToAdd;
+                amtLeftToAdd -= amtToAdd;
             }
         }
-
         // We were not able to add all items to existing slots, so check if we can start a new stack
         // These are two separate loops because we don't assume slots will be filled in order
-        for (int i = 0; i < InventorySizeLimit; i++) {
+        for (int i = 0; i < InventorySizeLimit; i++)
+        {
             if (InventoryStacks[i] == null)
             {
                 InventoryStacks[i] = new Item_Stack();
@@ -113,67 +82,22 @@ public class Inventory : MonoBehaviour
                 amtLeftToAdd -= amtToAdd;
             }
         }
-
         updateInventory();
         return count - amtLeftToAdd; // Return how many items were actually added
     }
 
-
-
-    // // Create a new slot if there is one
-
-    //         // Return 0 and fail if not
-    //         if (inventoryCurrentCount >= InventorySizeLimit)
-    //         {
-    //             Debug.Log("[Invtry] Inventory full");
-    //             return 0;
-    //         }
-
-    // int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
-    // if (resourceDict.ContainsKey(type))
-    // {
-    //     resourceDict[type] += numToAdd;
-    // }
-    // else
-    // {
-    //     resourceDict.Add(type, numToAdd);
-    // }
-
-    // inventoryCurrentCount += numToAdd;
-    // Debug.Log("[Invtry] Added " + numToAdd + " " + type.name);
-    // return numToAdd;
-
-
-    // Remove count number of a specific resource or as much of it that exists
-    // Return the number removed
-    // public int RemoveResources(Item_Data type, int count)
-    // {
-    //     int numToRemove = 0;
-    //     if (resourceDict.ContainsKey(type))
-    //     {
-    //         numToRemove = Math.Min(resourceDict[type], count);
-    //         resourceDict[type] -= numToRemove;
-
-    //         // Clean up list if none of an item exists
-    //         if (resourceDict[type] == 0)
-    //         {
-    //             resourceDict.Remove(type);
-    //         }
-    //     }
-
-    //     inventoryCurrentCount -= numToRemove;
-    //     Debug.Log($"[Invtry] Removed {numToRemove} {type.Name}");
-    //     return numToRemove;
-    // }
-
     /// <summary>
     /// Take away resources and update inventory
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="count">Myst be non-negative</param>
+    /// <param name="type"> The type or resource to remove</param>
+    /// <param name="count"> Amount to remove </param>
     /// <returns></returns>
     public int RemoveResources(Item_Data type, int count)
     {
+        // Error-checking
+        if (count < 0)
+            Debug.LogError("[Invtry] Cannot remove negative amount"); // not tested
+            
         // Track the amount of resources we still need to add
         int amtLeftToRemove = count;
 
@@ -193,24 +117,6 @@ public class Inventory : MonoBehaviour
         updateInventory(); // Remove empty elements
         // Return however much was added
         return count - amtLeftToRemove;
-
-        // We were not able to add all items to existing slots, so check if we can start a new stack
-        // These are two separate loops because we don't assume slots will be filled in order
-        // for (int i = 0; i < InventorySizeLimit; i++) {
-        //     if (InventoryStacks[i] == null)
-        //     {
-        //         InventoryStacks[i] = new Item_Stack { resource = type };
-        //         int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
-        //         InventoryStacks[i].amount = amtToAdd;
-        //         amtLeftToAdd -= amtToAdd;
-        //     }
-
-        //     // Finish if we've added everything
-        //     if (amtLeftToAdd == 0)
-        //         return count;
-        // }
-
-        // return amtLeftToAdd; // Unable to add everything
     }
 
     /// <summary>
@@ -222,10 +128,8 @@ public class Inventory : MonoBehaviour
         {
             if (InventoryStacks[i] != null && InventoryStacks[i].amount <= 0)
                 InventoryStacks[i] = null;
-            // Display inventory update code here maybe (real not fake, UI stuff)
-
-            DisplayInventory();
-            
+            // Display inventory update code here maybe (real not fake, UI stuff)  
+            PrintInventory();  
         }
     }
 
@@ -282,26 +186,17 @@ public class Inventory : MonoBehaviour
     }
 
 
-    // TODO: Need to recreate the displayInventory for player input code, maybe as input event
-    public void DisplayInventory()
+    /// <summary>
+    /// Print inventory contents
+    /// </summary>
+    public void PrintInventory() // Not really tested
     {
-        Debug.Log(InventoryStacks);
-        // if (resourceDict.Count == 0 && dishDict.Count == 0)
-        // {
-        //     Debug.Log("[Invtry] Inventory is empty");
-        //     return;
-        // }
-
-        // Debug.Log($"[Invtry] Limit: {InventorySizeLimit} Count: {inventoryCurrentCount}");
-
-        // foreach (KeyValuePair<Item_Data, int> kvp in resourceDict)
-        // {
-        //     Debug.Log($"[Invtry] Resource = {kvp}, Amount = {kvp.Value}");
-        // }
-
-        // foreach (KeyValuePair<Dish_Data, int> kvp in dishDict)
-        // {
-        //     Debug.Log($"[Invtry] Dish = {kvp}, Amount = {kvp.Value}");
-        // }
+        foreach (Item_Stack i in InventoryStacks)
+        {
+            if (i == null)
+                Debug.Log($"[Invtry] {i} null");
+            else
+                Debug.Log($"[Invtry] {i.resource.Name} {i.amount}");           
+        }
     }
 }
