@@ -112,7 +112,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
       if (playerInventory != null && DishData != null)
       {
         playerInventory.AddDish(DishData);
-        Debug.Log($"[Overlap] Added {DishData.dishName} to inventory");
+        Debug.Log($"[Overlap] Added {DishData.Name} to inventory");
       }
       else
         Debug.Log("[Overlap] Missing Inventory or Dish_Data reference!");

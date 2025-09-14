@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cafe/Dish", fileName = "NewDish")]
 public class Dish_Data : Item_Data
 {
-    public Resource_Data[] ingredients;
+    public Ingredient_Data[] ingredients;
     public bool isGoodDish;
     public float price;
 

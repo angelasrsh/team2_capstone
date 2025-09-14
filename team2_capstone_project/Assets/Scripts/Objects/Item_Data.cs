@@ -9,9 +9,9 @@ using UnityEngine;
 /// </summary>
 public class Item_Data : ScriptableObject
 {
-    public string ItemName;
-    public int ItemAmount;
-    public Sprite ItemSprite;
+    public string Name;
+    public int Amount;
+    public Sprite Image;
 
 
 }

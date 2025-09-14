@@ -21,6 +21,15 @@ namespace Grimoire
 
         }
 
+        // void OnTriggerStay(Collider other)
+        // {
+        //     if (other.gameObject.CompareTag("Player"))
+        //     {
+        //         InteractIcon.SetActive(true);
+        //     }
+            
+        // }
+
         void OnTriggerExit(Collider other)
         {
             // hide interact option
