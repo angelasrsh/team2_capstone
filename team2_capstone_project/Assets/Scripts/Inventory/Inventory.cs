@@ -10,62 +10,116 @@ using System.Runtime.CompilerServices;
 using UnityEngine.InputSystem;
 
 [System.Serializable]
-public class Resource_Stack
+public class Item_Stack
 {
     public Item_Data resource;
     public int amount;
+    public int stackLimit = 20;
 }
 
-[System.Serializable]
-public class Dish_Stack
-{
-    public Dish_Data dish;
-    public int amount;
-}
+// [System.Serializable]
+// public class Dish_Stack
+// {
+//     public Dish_Data dish;
+//     public int amount;
+// }
 
 
 // Gives the player a collection of items of a fixed size
 public class Inventory : MonoBehaviour
 {
     public int InventorySizeLimit = 12;
-    private int inventoryCurrentCount = 0;
+    //private int inventoryCurrentCount = 0;
 
-    [SerializeField] private List<Resource_Stack> resourceListInspector = new List<Resource_Stack>();
-    [SerializeField] private List<Dish_Stack> dishListInspector = new List<Dish_Stack>();
+    //[SerializeField] private List<Item_Stack> resourceListInspector = new List<Resource_Stack>();
+    //[SerializeField] private List<Dish_Stack> dishListInspector = new List<Dish_Stack>();
 
     // Runtime dictionaries for efficient lookups
-    private Dictionary<Item_Data, int> resourceDict = new Dictionary<Item_Data, int>();
-    private Dictionary<Dish_Data, int> dishDict = new Dictionary<Dish_Data, int>();
+    // private Dictionary<Item_Data, int> resourceDict = new Dictionary<Item_Data, int>();
+    // private Dictionary<Dish_Data, int> dishDict = new Dictionary<Dish_Data, int>();
+
+    [field: SerializeField]
+    private Item_Stack[] InventoryStacks;
 
     private void Awake()
     {
-        // Convert inspector lists into runtime dictionaries
-        foreach (var stack in resourceListInspector)
-        {
-            if (stack.resource != null && stack.amount > 0)
-            {
-                resourceDict[stack.resource] = stack.amount;
-                inventoryCurrentCount += stack.amount;
-            }
-        }
+        InventoryStacks = new Item_Stack[InventorySizeLimit];
 
-        foreach (var stack in dishListInspector)
-        {
-            if (stack.dish != null && stack.amount > 0)
-            {
-                dishDict[stack.dish] = stack.amount;
-                inventoryCurrentCount += stack.amount;
-            }
-        }
+        // // Convert inspector lists into runtime dictionaries
+        // foreach (var stack in resourceListInspector)
+        // {
+        //     if (stack.resource != null && stack.amount > 0)
+        //     {
+        //         resourceDict[stack.resource] = stack.amount;
+        //         inventoryCurrentCount += stack.amount;
+        //     }
+        // }
+
+        // foreach (var stack in dishListInspector)
+        // {
+        //     if (stack.dish != null && stack.amount > 0)
+        //     {
+        //         dishDict[stack.dish] = stack.amount;
+        //         inventoryCurrentCount += stack.amount;
+        //     }
+        // }
     }
 
     public int AddResources(Item_Data type, int count)
     {
-        if (inventoryCurrentCount >= InventorySizeLimit)
-        {
-            Debug.Log("[Invtry] Inventory full");
-            return 0;
+        // Track the amount of resources we still need to add
+        int amtLeftToAdd = count;
+
+       
+
+            // Check if there is a slot with the same type and add if not full
+            foreach (Item_Stack istack in InventoryStacks)
+            {
+                // Check if a slot exists with the same type
+                if (istack != null && istack.resource == type)
+                {
+                    if (istack.amount < istack.stackLimit)
+                    {
+                        // Add as much as we can to this stack
+                        int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
+
+                        istack.amount += amtToAdd;
+                        amtLeftToAdd -= amtToAdd;
+
+                    }
+
+
+                }
+
+                // If we added everything to existing slots, we deposited everything and our job is done
+                if (amtLeftToAdd == 0)
+                {
+                    return count;
+                }
+            }
+
+        // We were not able to add all items to existing slots, so check if we can start a new stack
+        // These are two separate loops because we don't assume slots will be filled in order
+        foreach (Item_Stack istack in InventoryStacks) {
+            if (istack == null)
+            {
+                istack = new Item_Stack{ resource = type, amount =}
+            }
         }
+
+
+    }
+        
+
+
+        // Create a new slot if there is one
+
+                // Return 0 and fail if not
+                if (inventoryCurrentCount >= InventorySizeLimit)
+                {
+                    Debug.Log("[Invtry] Inventory full");
+                    return 0;
+                }
 
         int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
         if (resourceDict.ContainsKey(type))
