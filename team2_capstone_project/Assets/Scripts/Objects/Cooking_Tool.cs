@@ -18,9 +18,9 @@ public class Cooking_Tool : Interactable_Object
         //GetComponentInChildren<SpriteRenderer>().sprite = ResourceType.Image;
     }
 
-    public override void PerformInteract(GameObject interactor)
+    public override void PerformInteract()
     {
-        Debug.Log($"[CookEqpt] {interactor} interacted on " + gameObject.ToString() + " performed");
+        Debug.Log($"[CookEqpt] player interacted with " + gameObject.ToString());
 
 
         SceneManager.LoadScene("Cooking_Minigame");

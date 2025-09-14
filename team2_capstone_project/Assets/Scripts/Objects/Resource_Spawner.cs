@@ -58,10 +58,10 @@ namespace Grimoire
 
                GameObject obj = Instantiate(interactablePrefab, spawnPos, Quaternion.identity);
 
-                var pickup = obj.GetComponent<Resource_Pickup>();
+                var pickup = obj.GetComponent<Collectible_Object>();
                 if (pickup == null)
                 {
-                    pickup = obj.AddComponent<Resource_Pickup>();
+                    pickup = obj.AddComponent<Collectible_Object>();
                 }
                 pickup.Initialize(chosen);
             }
