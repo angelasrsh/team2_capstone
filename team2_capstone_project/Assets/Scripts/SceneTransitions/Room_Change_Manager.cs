@@ -1,0 +1,125 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Grimoire;
+
+public class Room_Change_Manager : MonoBehaviour
+{
+    public static Room_Change_Manager instance;
+    private Screen_Fade blackScreenFade;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // e.g. Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Restaurant, Room_Data.RoomID.CookingMinigame);
+    public void GoToRoom(Room_Data.RoomID currentRoomID, Room_Data.RoomID exitingTo)
+    {
+        Room_Data currentRoom = Room_Manager.GetRoom(currentRoomID);
+        RoomExitOptions exit = Exit(currentRoom, exitingTo);
+
+        if (exit != null && exit.targetRoom != null)
+        {
+            StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
+        }
+        else
+        {
+            Debug.LogError($"Exit not found from {currentRoomID} to {exitingTo}");
+        }
+    }
+
+    private RoomExitOptions Exit(Room_Data room, Room_Data.RoomID exitingTo)
+    {
+        foreach (var exit in room.exits)
+        {
+            if (exit.exitingTo == exitingTo)
+                return exit;
+        }
+        return null;
+    }
+
+    private IEnumerator HandleRoomTransition(Room_Data targetRoom, Room_Data.SpawnPointID spawnPointID)
+    {
+        blackScreenFade = FindObjectOfType<Screen_Fade>();
+        if (blackScreenFade == null)
+        {
+            Debug.LogWarning("blackScreenFade missing.");
+            yield break;
+        }
+
+        // Fade out music/ambient
+        Music_Persistence.instance.PreTransitionCheckMusic(targetRoom.music);
+        Music_Persistence.instance.PreTransitionCheckAmbient(targetRoom.ambientSound);
+
+        // Fade screen to black
+        blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeIn());
+        yield return new WaitForSeconds(blackScreenFade.fadeDuration);
+
+        // Load new room
+        yield return StartCoroutine(ChangeRoom(targetRoom, spawnPointID));
+    }
+
+    private IEnumerator ChangeRoom(Room_Data targetRoom, Room_Data.SpawnPointID spawnPointID)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetRoom.roomID.ToString());
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        // Fade out black
+        blackScreenFade = FindObjectOfType<Screen_Fade>();
+        if (blackScreenFade != null)
+        {
+            yield return StartCoroutine(HandleNewRoomTransition(targetRoom));
+        }
+
+        // Place player at spawn point if overworld scene
+        if (targetRoom.isOverworldScene)
+        {
+            GameObject player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                Spawn_Point[] spawnPoints = FindObjectsOfType<Spawn_Point>();
+                foreach (var sp in spawnPoints)
+                {
+                    if (sp.spawnPointID == spawnPointID)
+                    {
+                        player.transform.position = sp.transform.position;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Handle music
+        if (targetRoom.music != null)
+            Music_Persistence.instance.CheckMusic(targetRoom.music);
+        else
+            Music_Persistence.instance.StopMusic();
+
+        // Handle ambient
+        if (targetRoom.ambientSound != null)
+            Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound);
+        else
+            Music_Persistence.instance.StopAmbient();
+    }
+
+    private IEnumerator HandleNewRoomTransition(Room_Data targetRoom)
+    {
+        if (blackScreenFade == null)
+            yield break;
+
+        blackScreenFade.fadeCanvasGroup.alpha = 1;
+
+        yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOut());
+    }
+}
