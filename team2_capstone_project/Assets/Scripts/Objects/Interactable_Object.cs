@@ -8,6 +8,11 @@ namespace Grimoire
 {
     public class Interactable_Object : MonoBehaviour
     {
+
+        void Start()
+        {
+            gameObject.tag="InteractableObject"; // Not tested
+        }
         public GameObject InteractIcon; // Not sure if this is really needed
 
         void OnTriggerEnter(Collider other)

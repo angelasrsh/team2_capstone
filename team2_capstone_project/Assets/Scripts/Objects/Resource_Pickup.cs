@@ -9,9 +9,14 @@ public class Resource_Pickup : MonoBehaviour
     [field: SerializeField] public Ingredient_Data data { get; private set; }
     private bool playerInside = false;
 
+    void Start() // Should maybe go in initialize, but haven't figured out when to initialize yet
+    {
+        gameObject.tag="Ingredient";
+    }
+
     public void Initialize(Ingredient_Data newData)
     {
-       
+
         data = newData;
 
         // var renderer = GetComponent<SpriteRenderer>(); Change this to affect child sprite object
