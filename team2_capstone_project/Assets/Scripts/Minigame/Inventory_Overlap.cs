@@ -22,7 +22,6 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     private Inventory playerInventory;
     public Dish_Data DishData;
     private Vector3 originalPosition;
- 
     // Start is called before the first frame update
     void Start()
     {
@@ -54,7 +53,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
           RemoveFromPot();
         else {
           Debug.Log("Not in RED, snapping back");
-        rectTransform.position = originalPosition;
+          rectTransform.position = originalPosition;
         }
       }
     }
