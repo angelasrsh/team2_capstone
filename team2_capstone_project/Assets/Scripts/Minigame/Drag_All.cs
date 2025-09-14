@@ -19,9 +19,12 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     [Header("Target Transform")]
     private RectTransform rectTransform;
 
-    [SerializeField] private Vector3 targetScale = Vector3.one;
 
     [SerializeField] private RectTransform cuttingBoardRect;
+    [SerializeField] private Transform targetCanvas; // Canvas to become child of AND center within
+
+    [SerializeField] private Vector3 targetScale = Vector3.one;
+
 
     
     private Canvas canvas;
@@ -74,14 +77,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
             transform.SetParent(parentAfterDrag);
-            rectTransform.position = Input.mousePosition;
-            
             if (IsOverlapping(rectTransform, cuttingBoardRect))
             {
-                Debug.Log("Item is overlapping cutting board");
-                //snap into place
-                // Center it within the parent canvas element
-                transform.localPosition = Vector3.zero;
+                //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
+
+                //make the ingredient from the inventory Bigger:
+                if (targetCanvas != null)
+                {
+                    transform.SetParent(targetCanvas);
+                    transform.localPosition = Vector3.zero; // Center within the target canvas
+                }
                 transform.localScale = targetScale;
             }
 
@@ -95,6 +100,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     void Start()
     {
         // onDrag = GetComponent<ICustomDrag>();
+        rectTransform = GetComponent<RectTransform>();
+
         Debug.Log("Components on " + gameObject.name + ":");
         foreach (Component comp in GetComponents<Component>())
         {
