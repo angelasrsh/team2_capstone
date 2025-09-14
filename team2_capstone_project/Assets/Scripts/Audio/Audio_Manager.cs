@@ -13,33 +13,36 @@ public class Audio_Manager : MonoBehaviour
     [SerializeField] private AudioClip defaultMusic;
     [SerializeField] private AudioClip defaultAmbient;
 
+    [Header("SFX Clips")]
+    public AudioClip pickupSFX;
+
     private void Awake()
         {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
 
-        // Get AudioSources in order: 0 = music, 1 = sfx, 2 = ambient
-        AudioSource[] sources = GetComponents<AudioSource>();
-        if (sources.Length >= 3)
-        {
-            // Assign only SFX here; others are used by MusicPersistance
-            sfxSource = sources[1];
-        }
-        else
-        {
-            Debug.LogError("AudioManager: You must have at least 3 AudioSources (music, sfx, ambient)");
-        }
+            // Get AudioSources in order: 0 = music, 1 = sfx, 2 = ambient
+            AudioSource[] sources = GetComponents<AudioSource>();
+            if (sources.Length >= 3)
+            {
+                // Assign only SFX here; others are used by MusicPersistance
+                sfxSource = sources[1];
+            }
+            else
+            {
+                Debug.LogError("AudioManager: You must have at least 3 AudioSources (music, sfx, ambient)");
+            }
 
-        StartCoroutine(PlayDefaultAudioDelayed());
-    }
+            StartCoroutine(PlayDefaultAudioDelayed());
+        }
 
     private IEnumerator PlayDefaultAudioDelayed()
     {
