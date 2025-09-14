@@ -41,6 +41,17 @@ public class Inventory : MonoBehaviour
     {
         if (InventoryStacks == null)
             InventoryStacks = new Item_Stack[InventorySizeLimit];
+        else if (InventoryStacks.Length != InventorySizeLimit)
+        {
+            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
+            InventoryStacks = new Item_Stack[InventorySizeLimit];
+
+            for (int i = 0; i < temp.Length; i++) // copy over elements
+            {
+                InventoryStacks[i] = temp[i];
+            }
+        }
+
         
         updateInventory();
     }
@@ -75,7 +86,7 @@ public class Inventory : MonoBehaviour
         // These are two separate loops because we don't assume slots will be filled in order
         for (int i = 0; i < InventorySizeLimit; i++)
         {
-            if (InventoryStacks[i] == null && amtLeftToAdd > 0)
+            if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
             {
                 InventoryStacks[i] = new Item_Stack();
                 int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
