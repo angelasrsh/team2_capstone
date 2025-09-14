@@ -28,11 +28,13 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
         if (Drag_All.IsOverlapping(rectTransform, redZone))
         {
           Debug.Log("In RED");
+
           if (!isOnPot)
             AddToPot();
         }
         else
         {
+          
           if (isOnPot)
             RemoveFromPot();
         }
