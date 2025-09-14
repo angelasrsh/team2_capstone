@@ -42,16 +42,22 @@ public class Inventory : MonoBehaviour
     [field: SerializeField]
     private Item_Stack[] InventoryStacks;
     public Item_Data TestItem;
+    public Item_Data TestItem2;
 
 
     private void Awake()
     {
         InventoryStacks = new Item_Stack[InventorySizeLimit];
         Item_Data milk = TestItem;
+        Item_Data cheese = TestItem2;
         Debug.Log($"Milk {milk} .");
-        Debug.Log(AddResources(milk, 30));
-        Debug.Log(RemoveResources(milk, 10));
-        Debug.Log(RemoveResources(milk, 40));
+        Debug.Log($"Add {AddResources(milk, 30)} milk");
+        Debug.Log($"Removed {RemoveResources(cheese, 10)} cheese");
+        Debug.Log($"Removed {RemoveResources(milk, 40)} milk");
+        Debug.Log($"Add {AddResources(cheese, 230)} cheese");
+        Debug.Log($"Add {AddResources(cheese, 50)} cheese");
+        Debug.Log($"Removed {RemoveResources(cheese, 100)} cheese");
+        Debug.Log($"Removed {RemoveResources(cheese, 10)} cheese");
 
 
         // // Convert inspector lists into runtime dictionaries
@@ -100,9 +106,10 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < InventorySizeLimit; i++) {
             if (InventoryStacks[i] == null)
             {
-                InventoryStacks[i] = new Item_Stack { resource = type };
+                InventoryStacks[i] = new Item_Stack();
                 int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
                 InventoryStacks[i].amount = amtToAdd;
+                InventoryStacks[i].resource = type;
                 amtLeftToAdd -= amtToAdd;
             }
         }
