@@ -29,10 +29,10 @@ public class Inventory_Grid : MonoBehaviour
         switch (InventoryType)
         {
             case Inventory_Type.Dish:
-                inventory = GameObject.Find("Ingredient_Inventory").GetComponent<Ingredient_Inventory>();
+                inventory = GameObject.Find("Dish_Inventory").GetComponent<Dish_Inventory>();
                 break;
             case Inventory_Type.Ingredient:
-                inventory = GameObject.Find("Dish_Inventory").GetComponent<Dish_Inventory>();
+                inventory = GameObject.Find("Ingredient_Inventory").GetComponent<Ingredient_Inventory>();
                 break;
             default:
                 break;

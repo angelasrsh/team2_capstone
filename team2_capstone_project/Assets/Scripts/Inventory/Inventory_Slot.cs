@@ -31,7 +31,7 @@ public class Inventory_Slot : MonoBehaviour
             Debug.LogError($"[Invtry_Slts] Error: Slot missing a required component");
 
         // Populate values or fill with nothing if null
-        if (stack != null)
+        if (stack != null && stack.resource != null)
         {
             itemImage.sprite = stack.resource.Image;
             name.text = stack.resource.Name;
