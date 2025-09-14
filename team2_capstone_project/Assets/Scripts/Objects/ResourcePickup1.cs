@@ -27,6 +27,7 @@ namespace Grimoire
         {
             if (playerInside && Input.GetKeyDown(KeyCode.E))
             {
+                // Add checking for inventory status
                 Debug.Log($"Picked up {data.resourceName} (Tier {data.tier}, Price {data.price})");
                 Destroy(gameObject);
             }
