@@ -50,10 +50,10 @@ public class Player_Controller : MonoBehaviour
 
         // Keep a list of interactable objects within range
         // (i.e. this code won't work if the collider and script are on the same base object)
-        if (other.gameObject.CompareTag("InteractableObject") == false)
-        {
-            return;
-        }
+        // if (other.gameObject.CompareTag("InteractableObject") == false) // Need to fix this
+        // {
+        //     return;
+        // }
 
         // Sense colliders for interactable objects are children of the Interactable Object with the script
         GameObject parentObj = other.transform.parent.gameObject;
@@ -74,10 +74,10 @@ public class Player_Controller : MonoBehaviour
 
 
         // Update list of interactable objects by removing ones now out of range
-        if (other.gameObject.CompareTag("InteractableObject") == false)
-        {
-            return;
-        }
+        // if (other.gameObject.CompareTag("InteractableObject") == false) This will break for now but we'll fix it
+        // {
+        //     return;
+        // }
         // Sense colliders for interactable objects are children of the Interactable Object with the script
         GameObject parentObj = other.transform.parent.gameObject;
 
