@@ -5,7 +5,9 @@ using UnityEngine.EventSystems;
 
 public interface ICustomDrag
 {
-    void OnCurrentDrag();
+  void OnCurrentDrag();
+  void EndDrag();
+  void startDrag();
 }
 
 
@@ -36,6 +38,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Debug.Log("started drag");
+        onDrag.startDrag();
         parentAfterDrag = transform.parent;
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
@@ -51,6 +54,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnEndDrag(PointerEventData eventData)
     {
         // Debug.Log("ended drag");
+        onDrag.EndDrag();
         transform.SetParent(parentAfterDrag);
 
     }
