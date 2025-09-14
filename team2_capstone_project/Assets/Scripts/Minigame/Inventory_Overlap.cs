@@ -33,6 +33,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
         }
         else
         {
+          
           if (isOnPot)
             RemoveFromPot();
         }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public interface ICustomDrag
 {
@@ -15,8 +16,20 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     Transform parentAfterDrag; //original parent of the drag
     Transform originalPos;
 
+    [Header("Target Transform")]
+    private RectTransform rectTransform;
+
+    [SerializeField] private Vector3 targetScale = Vector3.one;
+
+    [SerializeField] private RectTransform cuttingBoardRect;
+
+    
+    private Canvas canvas;
+
+
     public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
     {
+        //checks if the rectangles are overlapping
         if (rectA == null || rectB == null) //if one of the objects doesnt exist
         {
             return false;
@@ -44,32 +57,59 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnDrag(PointerEventData eventData)
     {
         // Debug.Log("dragging");
-        onDrag.OnCurrentDrag();
+        if (onDrag != null)
+        {
+            onDrag.OnCurrentDrag();
+        }
         transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         // Debug.Log("ended drag");
-        transform.SetParent(parentAfterDrag);
+        if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+        {
+            transform.SetParent(parentAfterDrag);
+        }
+        else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
+        {
+            transform.SetParent(parentAfterDrag);
+            rectTransform.position = Input.mousePosition;
+            
+            if (IsOverlapping(rectTransform, cuttingBoardRect))
+            {
+                Debug.Log("Item is overlapping cutting board");
+                //snap into place
+                // Center it within the parent canvas element
+                transform.localPosition = Vector3.zero;
+                transform.localScale = targetScale;
+            }
+
+        }
 
     }
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
         // onDrag = GetComponent<ICustomDrag>();
         Debug.Log("Components on " + gameObject.name + ":");
-        foreach(Component comp in GetComponents<Component>())
+        foreach (Component comp in GetComponents<Component>())
         {
             Debug.Log("- " + comp.GetType().Name);
         }
-        
+
         onDrag = GetComponent<ICustomDrag>();
         // Optional: Add a safety check
         if (onDrag == null)
         {
             Debug.LogError("No ICustomDrag component found on " + gameObject.name);
         }
+    }
+    void Update()
+    {
+       
     }
 }
