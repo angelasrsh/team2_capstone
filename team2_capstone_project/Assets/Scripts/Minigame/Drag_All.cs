@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public interface ICustomDrag
 {
-    void OnCurrentDrag();
+  void OnCurrentDrag();
+  void EndDrag();
+  void startDrag();
 }
 
 
@@ -15,8 +18,23 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     Transform parentAfterDrag; //original parent of the drag
     Transform originalPos;
 
+    [Header("Target Transform")]
+    private RectTransform rectTransform;
+
+
+    [SerializeField] private RectTransform cuttingBoardRect;
+    [SerializeField] private Transform targetCanvas; // Canvas to become child of AND center within
+
+    [SerializeField] private Vector3 targetScale = Vector3.one;
+
+
+    
+    private Canvas canvas;
+
+
     public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
     {
+        //checks if the rectangles are overlapping
         if (rectA == null || rectB == null) //if one of the objects doesnt exist
         {
             return false;
@@ -36,6 +54,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Debug.Log("started drag");
+        onDrag.startDrag();
         parentAfterDrag = transform.parent;
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
@@ -44,32 +63,65 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnDrag(PointerEventData eventData)
     {
         // Debug.Log("dragging");
-        onDrag.OnCurrentDrag();
+        if (onDrag != null)
+        {
+            onDrag.OnCurrentDrag();
+        }
         transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         // Debug.Log("ended drag");
-        transform.SetParent(parentAfterDrag);
+
+        if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+        {
+            onDrag.EndDrag();
+            transform.SetParent(parentAfterDrag);
+        }
+        else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
+        {
+            transform.SetParent(parentAfterDrag);
+            if (IsOverlapping(rectTransform, cuttingBoardRect))
+            {
+                //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
+
+                //make the ingredient from the inventory Bigger:
+                if (targetCanvas != null)
+                {
+                    transform.SetParent(targetCanvas);
+                    transform.localPosition = Vector3.zero; // Center within the target canvas
+                }
+                transform.localScale = targetScale;
+            }
+
+        }
 
     }
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
         // onDrag = GetComponent<ICustomDrag>();
+        rectTransform = GetComponent<RectTransform>();
+
         Debug.Log("Components on " + gameObject.name + ":");
-        foreach(Component comp in GetComponents<Component>())
+        foreach (Component comp in GetComponents<Component>())
         {
             Debug.Log("- " + comp.GetType().Name);
         }
-        
+
         onDrag = GetComponent<ICustomDrag>();
         // Optional: Add a safety check
         if (onDrag == null)
         {
             Debug.LogError("No ICustomDrag component found on " + gameObject.name);
         }
+    }
+    void Update()
+    {
+       
     }
 }

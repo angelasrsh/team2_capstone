@@ -21,38 +21,52 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     private bool isOnPot = false;
     private Inventory playerInventory;
     public Dish_Data DishData;
-
-    public void OnCurrentDrag()
-    {
-        rectTransform.position = Input.mousePosition;
-        if (Drag_All.IsOverlapping(rectTransform, redZone))
-        {
-          Debug.Log("In RED");
-          if (!isOnPot)
-            AddToPot();
-        }
-        else
-        {
-          if (isOnPot)
-            RemoveFromPot();
-        }
-    }
+    private Vector3 originalPosition;
     // Start is called before the first frame update
     void Start()
     {
       rectTransform = GetComponent<RectTransform>();
       playerInventory = FindObjectOfType<Inventory>()?.GetComponent<Inventory>();
     }
+    
+    public void startDrag() {
+      // save starting position of rectTransform
+      originalPosition = rectTransform.position;
+    }
+    
+    public void OnCurrentDrag()
+    {
+      rectTransform.position = Input.mousePosition;
+    }
+
+    public void EndDrag()
+    {
+      if (Drag_All.IsOverlapping(rectTransform, redZone))
+      {
+        Debug.Log("In RED");
+        if (!isOnPot)
+          AddToPot();
+      }
+      else
+      {
+        if (isOnPot)
+          RemoveFromPot();
+        else {
+          Debug.Log("Not in RED, snapping back");
+          rectTransform.position = originalPosition;
+        }
+      }
+    }
 
     private void AddToPot()
-    {
-      isOnPot = true;
-      ingredientOnPot.Add(this);
-      Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
+  {
+    isOnPot = true;
+    ingredientOnPot.Add(this);
+    Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
 
-      if (ingredientOnPot.Count >= 2)
-        CheckRecipeAndCreateDish(); //only gets the position if the second egg is placed
-    }
+    if (ingredientOnPot.Count >= 2)
+      CheckRecipeAndCreateDish(); //only gets the position if the second egg is placed
+  }
 
     private void CheckRecipeAndCreateDish()
     {
