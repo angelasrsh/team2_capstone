@@ -32,15 +32,17 @@ public class Inventory : MonoBehaviour
     public int InventorySizeLimit = 12;
     
     [field: SerializeField]
-    private Item_Stack[] InventoryStacks;
+    public Item_Stack[] InventoryStacks { get; private set; }
 
     /// <summary>
     /// Initialize Inventory to be size InventorySizeLimit
     /// </summary>
     protected void Awake()
     {
-        InventoryStacks = new Item_Stack[InventorySizeLimit];
-        PrintInventory();
+        if (InventoryStacks == null)
+            InventoryStacks = new Item_Stack[InventorySizeLimit];
+        
+        updateInventory();
     }
     
     /// <summary>

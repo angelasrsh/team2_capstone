@@ -14,27 +14,40 @@ public class Inventory_Slot : MonoBehaviour
 {
     public Item_Stack stk;
 
-    void Start()
-    {
-        PopulateSlot(stk);
-    }
     /// <summary>
     /// Fill the item slot with the given number of items
     /// </summary>
     /// <param name="stack"></param>
     public void PopulateSlot(Item_Stack stack)
-    {
-        UnityEngine.UI.Image itemImage = GetComponentInChildren<UnityEngine.UI.Image>();
+    {          
+
+        GameObject image_slot = transform.Find("Image_Slot").gameObject;
+        UnityEngine.UI.Image itemImage = image_slot.GetComponent<UnityEngine.UI.Image>();
+
         TextMeshProUGUI name = transform.Find("Name").gameObject.GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI amount = transform.Find("Amount").gameObject.GetComponent<TextMeshProUGUI>();
 
         if (itemImage == null || name == null || amount == null)
             Debug.LogError($"[Invtry_Slts] Error: Slot missing a required component");
 
-        // Populate values
-        itemImage.sprite = stack.resource.Image;
-        name.text = stack.resource.Name;
-        amount.text = stack.amount.ToString();
+        // Populate values or fill with nothing if null
+        if (stack != null)
+        {
+            itemImage.sprite = stack.resource.Image;
+            name.text = stack.resource.Name;
+            amount.text = stack.amount.ToString();
+            image_slot.SetActive(true);
+        }
+        else
+        {
+            itemImage.sprite = null;
+            name.text = null;
+            amount.text = null;
+            image_slot.SetActive(false);
+        }
+
+
+       
 
 
 
