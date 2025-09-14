@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(SpriteRenderer), typeof(Collider))]
+//[RequireComponent(typeof(SpriteRenderer), typeof(Collider))]  // should put this back in
 public class Resource_Pickup : MonoBehaviour
 {
-    public Ingredient_Data data { get; private set; }
+    [field: SerializeField] public Ingredient_Data data { get; private set; }
     private bool playerInside = false;
 
     public void Initialize(Ingredient_Data newData)
     {
+       
         data = newData;
 
-        var renderer = GetComponent<SpriteRenderer>();
-        if (renderer != null && data.Image != null)
-        {
-            renderer.sprite = data.Image;
-        }
+        // var renderer = GetComponent<SpriteRenderer>(); Change this to affect child sprite object
+        // if (renderer != null && data.Image != null)
+        // {
+        //     renderer.sprite = data.Image;
+        // }
 
         gameObject.name = $"Pickup_{data.Name}";
     }
@@ -27,15 +28,22 @@ public class Resource_Pickup : MonoBehaviour
         if (playerInside && Input.GetKeyDown(KeyCode.E))
         {
             // Add checking for inventory status
-            Debug.Log($"Picked up {data.Name} (Tier {data.tier}, Price {data.price})");
+            Debug.Log($"[Rscr_Pckp] Data is null? {data == null}");
+            //Debug.Log($"Picked up {data.Name} (Tier {data.tier}, Price {data.price})");
             Destroy(gameObject);
         }
+        Debug.Log($"Player inside? {playerInside}");
+        
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             playerInside = true;
+            Debug.Log($"[Rsc_Pck] Player entered range of {this}");
+        }
+            
     }
 
     private void OnTriggerExit(Collider other)

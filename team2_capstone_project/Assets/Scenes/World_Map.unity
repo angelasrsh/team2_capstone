@@ -1800,6 +1800,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ing_Milk
       objectReference: {fileID: 0}
+    - target: {fileID: 1261016068160193056, guid: 6f309eed73d255f44992d167333c9054, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1261016068160193061, guid: 6f309eed73d255f44992d167333c9054, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -2735,7 +2739,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd5cdae8cc734d34da7def9052d85600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 1688143480}
+  defaultMusic: {fileID: 0}
+  defaultAmbient: {fileID: 0}
 --- !u!1 &1523708984
 GameObject:
   m_ObjectHideFlags: 0
@@ -3625,7 +3630,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183375478004933129, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
       propertyPath: m_Name
-      value: Ing_Egg (1)
+      value: Egg
       objectReference: {fileID: 0}
     - target: {fileID: 183375478004933132, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
       propertyPath: m_RootOrder
@@ -3637,7 +3642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 183375478004933132, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.65
+      value: 0.63
       objectReference: {fileID: 0}
     - target: {fileID: 183375478004933132, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3673,9 +3678,58 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 183375478004933133, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 183375478004933133, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 183375478314912656, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 183375478314912668, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 183375478681143415, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.8025062
+      objectReference: {fileID: 0}
+    - target: {fileID: 183375478681143415, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.62974
+      objectReference: {fileID: 0}
+    - target: {fileID: 183375478681143415, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3609040593476368692, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_Size.x
+      value: 3.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 3609040593476368692, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_Size.y
+      value: 6.58
+      objectReference: {fileID: 0}
+    - target: {fileID: 3609040593476368692, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8004d10b29e2f324dadccbb5d3738d26, type: 3}
+    - target: {fileID: 3609040593476368692, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4500660780169606589, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: <data>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: 0b5c3423296686d41b88b11d0cacbad6, type: 2}
+    - target: {fileID: 8874194259310862748, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 183375478004933134, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
 --- !u!1 &2008636869
 GameObject:
@@ -4027,6 +4081,10 @@ PrefabInstance:
     - target: {fileID: 183375478004933129, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
       propertyPath: m_Name
       value: Ing_Egg
+      objectReference: {fileID: 0}
+    - target: {fileID: 183375478004933129, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 183375478004933132, guid: 9efcd5e98a1fd65439e38d8f6a5524b7, type: 3}
       propertyPath: m_RootOrder

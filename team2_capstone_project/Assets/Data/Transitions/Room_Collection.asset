@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
   m_Name: Room_Collection
   m_EditorClassIdentifier: Assembly-CSharp::RoomCollectionData
-  rooms:
-  - {fileID: 11400000, guid: 9196e552c6124a94696f1bdc553b82ec, type: 2}
-  - {fileID: 11400000, guid: 22bcfa82d78048d4097dcedce66fb4df, type: 2}
-  - {fileID: 11400000, guid: fefb8eb7638a8904aa2544370338bda9, type: 2}
-  - {fileID: 11400000, guid: a159dab37fcf1d147bf5c9048279229f, type: 2}
+  roomID: 0
+  isOverworldScene: 0
+  music: {fileID: 0}
+  ambientSound: {fileID: 0}
+  musicVolume: 1
+  ambientVolume: 1
+  exits: []

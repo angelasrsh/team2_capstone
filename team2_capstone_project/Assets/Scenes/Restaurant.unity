@@ -1170,6 +1170,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &424304816 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9083165254151032947, guid: a528dae7b7a186148851741358f9be21, type: 3}
+  m_PrefabInstance: {fileID: 1347476370}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fa00365e881b7a4ba74a075e1d5364d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &578867404
 GameObject:
   m_ObjectHideFlags: 0
@@ -2546,8 +2557,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebffc0e3c46dc4d4787af0e8eb73cb21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultMusic: {fileID: 8300000, guid: 80eb8acaf53a78542a2136c1112118bf, type: 3}
-  defaultAmbient: {fileID: 0}
 --- !u!4 &1123040771
 Transform:
   m_ObjectHideFlags: 0
@@ -2767,6 +2776,22 @@ PrefabInstance:
     - target: {fileID: 9083165254151032945, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 9083165254151032946, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 424304816}
+    - target: {fileID: 9083165254151032946, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Move
+      objectReference: {fileID: 0}
+    - target: {fileID: 9083165254151032946, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Player_Controller, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 9083165254151032946, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: m_ActionEvents.Array.data[11].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Player_Controller, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 9083165254151032959, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_RootOrder
@@ -4526,6 +4551,10 @@ PrefabInstance:
     - target: {fileID: 6958590387895689390, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_Name
       value: Game_Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6958590387895689390, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12c02fefef9590848804314437e70191, type: 3}
