@@ -11,7 +11,7 @@ public class CustomerData : ScriptableObject
     public bool datable = true;
 
     [Header("Preferences")]
-    public DishData[] favoriteDishes;
-    public DishData[] neutralDishes;
-    public DishData[] dislikedDishes;
+    public Dish_Data[] favoriteDishes;
+    public Dish_Data[] neutralDishes;
+    public Dish_Data[] dislikedDishes;
 }
