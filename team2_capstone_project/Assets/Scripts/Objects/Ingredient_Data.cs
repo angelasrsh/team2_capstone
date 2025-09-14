@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Foraging/Resource", fileName = "NewResource")]
-public class Resource_Data : ScriptableObject
+[CreateAssetMenu(menuName = "Foraging/Ingredient", fileName = "NewIngredient")]
+public class Ingredient_Data : Item_Data
 {
-    public string resourceName;
-    public Sprite resourceSprite;
     [Range(1.0f, 3.0f)] public int tier;
     public float price;
 

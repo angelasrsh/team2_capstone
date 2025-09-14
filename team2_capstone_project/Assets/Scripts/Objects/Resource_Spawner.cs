@@ -7,7 +7,7 @@ namespace Grimoire
     public class Resource_Spawner : MonoBehaviour
     {
         [Header("Spawner Settings")]
-        public Resource_Data[] possibleResources;
+        public Ingredient_Data[] possibleResources;
         public GameObject interactablePrefab;
         public int totalToSpawn = 10;
         public Vector3 spawnAreaSize = new Vector3(10, 0, 10);
@@ -20,7 +20,7 @@ namespace Grimoire
         private void SpawnResources()
         {
             // Step 1: Create weighted spawn pool
-            List<Resource_Data> spawnPool = new List<Resource_Data>();
+            List<Ingredient_Data> spawnPool = new List<Ingredient_Data>();
 
             foreach (var resource in possibleResources)
             {
@@ -44,7 +44,7 @@ namespace Grimoire
 
                 // Pick a random resource from pool
                 int index = Random.Range(0, spawnPool.Count);
-                Resource_Data chosen = spawnPool[index];
+                Ingredient_Data chosen = spawnPool[index];
 
                 // Remove to not overspawn
                 spawnPool.RemoveAt(index);
@@ -58,10 +58,10 @@ namespace Grimoire
 
                GameObject obj = Instantiate(interactablePrefab, spawnPos, Quaternion.identity);
 
-                var pickup = obj.GetComponent<Resource_Pickup>();
+                var pickup = obj.GetComponent<Collectible_Object>();
                 if (pickup == null)
                 {
-                    pickup = obj.AddComponent<Resource_Pickup>();
+                    pickup = obj.AddComponent<Collectible_Object>();
                 }
                 pickup.Initialize(chosen);
             }

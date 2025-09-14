@@ -85,9 +85,9 @@ public class Customer_Controller : MonoBehaviour
       requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
 
       thoughtBubble.SetActive(true);
-      bubbleDishImage.sprite = requestedDish.dishSprite;
+      bubbleDishImage.sprite = requestedDish.Image;
 
-      Debug.Log($"{data.customerName} wants {requestedDish.dishName}!");
+      Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
     }
 
     seat = null; // Prevent repeating
@@ -104,14 +104,14 @@ public class Customer_Controller : MonoBehaviour
 
         if (!playerInventory.HasDish(requestedDish))
         {
-            Debug.Log($"Player does not have {requestedDish.dishName} to serve.");
+            Debug.Log($"Player does not have {requestedDish.Image} to serve.");
             return false;
         }
 
         // Remove the dish from inventory
         playerInventory.RemoveDish(requestedDish);
 
-        Debug.Log($"{data.customerName} has been served {requestedDish.dishName}!");
+        Debug.Log($"{data.customerName} has been served {requestedDish.Image}!");
         thoughtBubble.SetActive(false);
         requestedDish = null;
 

@@ -12,7 +12,7 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class Resource_Stack
 {
-    public Resource_Info resource;
+    public Item_Data resource;
     public int amount;
 }
 
@@ -34,7 +34,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private List<Dish_Stack> dishListInspector = new List<Dish_Stack>();
 
     // Runtime dictionaries for efficient lookups
-    private Dictionary<Resource_Info, int> resourceDict = new Dictionary<Resource_Info, int>();
+    private Dictionary<Item_Data, int> resourceDict = new Dictionary<Item_Data, int>();
     private Dictionary<Dish_Data, int> dishDict = new Dictionary<Dish_Data, int>();
 
     private void Awake()
@@ -59,7 +59,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public int AddResources(Resource_Info type, int count)
+    public int AddResources(Item_Data type, int count)
     {
         if (inventoryCurrentCount >= InventorySizeLimit)
         {
@@ -84,7 +84,7 @@ public class Inventory : MonoBehaviour
 
     // Remove count number of a specific resource or as much of it that exists
     // Return the number removed
-    public int RemoveResources(Resource_Info type, int count)
+    public int RemoveResources(Item_Data type, int count)
     {
         int numToRemove = 0;
         if (resourceDict.ContainsKey(type))
@@ -124,7 +124,7 @@ public class Inventory : MonoBehaviour
         }
 
         inventoryCurrentCount += numToAdd;
-        Debug.Log($"[Invtry] Added {numToAdd} {dish.dishName}");
+        Debug.Log($"[Invtry] Added {numToAdd} {dish.Name}");
         return numToAdd;
     }
 
@@ -140,11 +140,11 @@ public class Inventory : MonoBehaviour
             }
 
             inventoryCurrentCount--;
-            Debug.Log($"[Invtry] Removed 1 {dish.dishName}");
+            Debug.Log($"[Invtry] Removed 1 {dish.Name}");
             return true;
         }
 
-        Debug.Log($"[Invtry] Tried to remove {dish.dishName}, but none in inventory");
+        Debug.Log($"[Invtry] Tried to remove {dish.Name}, but none in inventory");
         return false;
     }
 
@@ -164,14 +164,14 @@ public class Inventory : MonoBehaviour
 
         Debug.Log($"[Invtry] Limit: {InventorySizeLimit} Count: {inventoryCurrentCount}");
 
-        foreach (KeyValuePair<Resource_Info, int> kvp in resourceDict)
+        foreach (KeyValuePair<Item_Data, int> kvp in resourceDict)
         {
-            Debug.Log($"[Invtry] Resource = {kvp.Key.Name}, Amount = {kvp.Value}");
+            Debug.Log($"[Invtry] Resource = {kvp}, Amount = {kvp.Value}");
         }
 
         foreach (KeyValuePair<Dish_Data, int> kvp in dishDict)
         {
-            Debug.Log($"[Invtry] Dish = {kvp.Key.dishName}, Amount = {kvp.Value}");
+            Debug.Log($"[Invtry] Dish = {kvp}, Amount = {kvp.Value}");
         }
     }
 }

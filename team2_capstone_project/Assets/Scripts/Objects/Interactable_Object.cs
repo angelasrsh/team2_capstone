@@ -8,7 +8,20 @@ namespace Grimoire
 {
     public class Interactable_Object : MonoBehaviour
     {
+
+    
         public GameObject InteractIcon; // Not sure if this is really needed
+        private bool playerInside = false;
+
+
+        void Awake()
+        {
+            if (InteractIcon == null)
+            {
+                InteractIcon = transform.Find("Interact_Icon").gameObject;
+            }
+            
+        } 
 
         void OnTriggerEnter(Collider other)
         {
@@ -16,9 +29,18 @@ namespace Grimoire
             if (other.gameObject.CompareTag("Player"))
             {
                 InteractIcon.SetActive(true);
+                playerInside = true;
             }
-            //Debug.Log("[" + gameObject + "] Called OnTriggerEnter");
 
+        }
+
+        void Update()
+        {
+            if (playerInside && Input.GetKeyDown(KeyCode.E))
+            {
+                PerformInteract();
+            }
+            
         }
 
         void OnTriggerExit(Collider other)
@@ -27,15 +49,17 @@ namespace Grimoire
             if (other.gameObject.CompareTag("Player"))
             {
                 InteractIcon.SetActive(false);
+                playerInside = false;
             }
-            //Debug.Log("[" + gameObject + "] Called OnTriggerExit");
 
         }
 
-        // Action that happens when player presses 'E' to interact while nearby.
-        public virtual void PerformInteract(GameObject interactor)
+        /// <summary>
+        /// Action that happens when player presses 'E' to interact while nearby.
+        /// </summary>
+        public virtual void PerformInteract()
         {
-            Debug.Log($"[IntObj] {interactor} interacted on " + gameObject.ToString() + " performed");
+            Debug.Log($"[IntObj] Player interacted with " + gameObject.ToString());
         }
     }
 

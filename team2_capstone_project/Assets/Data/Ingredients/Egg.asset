@@ -9,13 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1aa3813297365d4793ef6c5227ba8a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
   m_Name: Egg
   m_EditorClassIdentifier: 
-  resourceName: Egg
-  resourceSprite: {fileID: 21300000, guid: b48fbbec2e0168149a15543e7ab29287, type: 3}
-  tier: 1
-  price: 50
-  rarityWeight: 0.85
-  minSpawn: 1
+  Name: Egg
+  Amount: 1
+  Image: {fileID: 21300000, guid: b48fbbec2e0168149a15543e7ab29287, type: 3}
+  tier: 0
+  price: 0
+  rarityWeight: 1
+  minSpawn: 0
   maxSpawn: 5

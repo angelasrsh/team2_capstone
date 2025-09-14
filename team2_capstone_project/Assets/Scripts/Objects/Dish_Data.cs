@@ -4,11 +4,9 @@ using UnityEditor.EditorTools;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Cafe/Dish", fileName = "NewDish")]
-public class Dish_Data : ScriptableObject
+public class Dish_Data : Item_Data
 {
-    public string dishName;
-    public Sprite dishSprite;
-    public Resource_Data[] ingredients;
+    public Ingredient_Data[] ingredients;
     public bool isGoodDish;
     public float price;
 
