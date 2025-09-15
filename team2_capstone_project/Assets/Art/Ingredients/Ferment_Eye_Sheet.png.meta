@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0bc07084128222645887207139a40350
+guid: a75d8b7a04c21ef43a9458ac230e89b4
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -33,7 +33,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -114,6 +114,18 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
     buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -129,127 +141,127 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RawSlimeSpriteSheet_0
+      name: Ferment_Eye_Uncut
       rect:
         serializedVersion: 2
-        x: 50
-        y: 205
-        width: 905
-        height: 592
+        x: 81
+        y: 44
+        width: 781
+        height: 897
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0dd029f4b01a5f64b814234ee6870fe8
-      internalID: 1184491434
+      spriteID: f8ff79c7841df334a8f27eb236f01257
+      internalID: 17095074
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RawSlimeSpriteSheet_1
+      name: Ferment_Eye_Cut
       rect:
         serializedVersion: 2
-        x: 1232
-        y: 255
-        width: 608
-        height: 542
+        x: 1067
+        y: 29
+        width: 819
+        height: 906
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fc567740d7fbdbc46a751214843efac2
-      internalID: 874888072
+      spriteID: 3007f8a1728ea6d4a8a83e18f6f3fa48
+      internalID: 3512557
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RawSlimeSpriteSheet_2
+      name: Ferment_Eye_Cut_1
       rect:
         serializedVersion: 2
-        x: 2225
-        y: 260
-        width: 302
-        height: 537
+        x: 2276
+        y: 410
+        width: 494
+        height: 530
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 09dd43ff596a44545bfee12855d1c828
-      internalID: 546551281
+      spriteID: 0c187429cbc7e094f9319de4113d38ad
+      internalID: -42076378
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RawSlimeSpriteSheet_3
+      name: Ferment_Eye_Cut_2
       rect:
         serializedVersion: 2
-        x: 3582
-        y: 260
-        width: 325
-        height: 534
+        x: 3380
+        y: 329
+        width: 554
+        height: 546
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 38b5de875cfbbcc4e94f88579d1d48b2
-      internalID: 1779945805
+      spriteID: 8e6bc76653f349843a7db1b3bb6271eb
+      internalID: 1730087433
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RawSlimeSpriteSheet_4
+      name: Ferment_Eye_Cut_4
       rect:
         serializedVersion: 2
-        x: 4275
-        y: 260
-        width: 300
-        height: 537
+        x: 5162
+        y: 29
+        width: 632
+        height: 414
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 48f29c4d24e673d4cbb9d757ead33b5e
-      internalID: 2094658676
+      spriteID: d73d10aaf728e8c48bf30a41b8cd1538
+      internalID: 923941717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RawSlimeSpriteSheet_5
+      name: Ferment_Eye_Cut_3
       rect:
         serializedVersion: 2
-        x: 4605
-        y: 260
-        width: 325
-        height: 534
+        x: 4298
+        y: 108
+        width: 425
+        height: 281
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 197b9c81d85702d4ea64ec9f1de787c3
-      internalID: -1793809289
+      spriteID: 78365c19ab411cc4ea96651d5657f438
+      internalID: -1591840382
       vertices: []
       indices: 
       edges: []
@@ -257,7 +269,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: f6d6d3b3fd9cae04e883a7b54bd374f4
+    spriteID: d824f59b38b82ee489a1aa5368998ad8
     internalID: 0
     vertices: []
     indices: 
@@ -265,12 +277,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      RawSlimeSpriteSheet_0: 1184491434
-      RawSlimeSpriteSheet_1: 874888072
-      RawSlimeSpriteSheet_2: 546551281
-      RawSlimeSpriteSheet_3: 1779945805
-      RawSlimeSpriteSheet_4: 2094658676
-      RawSlimeSpriteSheet_5: -1793809289
+      Ferment_Eye_Cut: 3512557
+      Ferment_Eye_Cut_1: -42076378
+      Ferment_Eye_Cut_2: 1730087433
+      Ferment_Eye_Cut_3: -1591840382
+      Ferment_Eye_Cut_4: 923941717
+      Ferment_Eye_Sheet_10: -1469735816
+      Ferment_Eye_Sheet_11: -357432762
+      Ferment_Eye_Sheet_2: 738923696
+      Ferment_Eye_Sheet_3: 308277916
+      Ferment_Eye_Sheet_7: -171177033
+      Ferment_Eye_Sheet_9: -40588520
+      Ferment_Eye_Uncut: 17095074
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

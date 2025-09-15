@@ -10,5 +10,4 @@ namespace Grimoire
         NotEnoughItems,
         Success
     }
-    
 }
