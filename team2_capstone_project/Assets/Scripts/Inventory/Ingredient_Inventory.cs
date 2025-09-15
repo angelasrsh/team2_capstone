@@ -33,16 +33,16 @@ public class Ingredient_Inventory : Inventory
         AddResources(IngredientType.Egg, 10);
         AddResources(IngredientType.Cheese, 10);
         AddResources(IngredientType.Morel, 10);
-        AddResources(IngredientType.Milk, 10);  
-        RemoveResources(IngredientType.Milk, 5);            
+        AddResources(IngredientType.Milk, 10);
+        RemoveResources(IngredientType.Milk, 5);
     }
 
-/// <summary>
-/// Overload AddResources to allow for using the IngredientType enum
-/// </summary>
-/// <param name="type"></param>
-/// <param name="count"></param>
-/// <returns></returns>
+    /// <summary>
+    /// Overload AddResources to allow for using the IngredientType enum
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
     public int AddResources(IngredientType type, int count)
     {
         // Error-checking
@@ -81,19 +81,19 @@ public class Ingredient_Inventory : Inventory
         return count - amtLeftToAdd; // Return how many items were actually added
 
     }
-    
-/// <summary>
-/// Overload base inventory RemoveResources function to allow removing ingredients using type enum
-/// </summary>
-/// <param name="type"></param>
-/// <param name="count"></param>
-/// <returns></returns>
-      public int RemoveResources(IngredientType type, int count)
+
+    /// <summary>
+    /// Overload base inventory RemoveResources function to allow removing ingredients using type enum
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public int RemoveResources(IngredientType type, int count)
     {
         // Error-checking
         if (count < 0)
             Debug.LogError("[Invtry] Cannot remove negative amount"); // not tested
-            
+
         // Track the amount of resources we still need to add
         int amtLeftToRemove = count;
 
@@ -116,7 +116,7 @@ public class Ingredient_Inventory : Inventory
         return count - amtLeftToRemove;
     }
 
-/// <summary>
+    /// <summary>
     /// Convert enum IngredientType to a name string.
     /// String here must match Item_Data Name!
     /// </summary>
@@ -137,8 +137,37 @@ public class Ingredient_Inventory : Inventory
             case IngredientType.Melon:
                 return "Melon";
             default:
-                return "Melon";
+                return "";
         }
+    }
+
+/// <summary>
+/// For use by Inventory_Overlap
+/// Converts Ingredient_Data to IngredientType
+/// </summary>
+/// <param name="d"></param>
+/// <returns></returns>
+    public IngredientType IngrDataToEnum(Ingredient_Data d)
+    {
+        if (d == null)
+            return IngredientType.Null;
+            
+        switch (d.Name)
+        {
+            case "Egg":
+                return IngredientType.Egg;
+            case "Morel":
+                return IngredientType.Morel;
+            case "Milk":
+                return IngredientType.Milk;
+            case "Cheese":
+                return IngredientType.Cheese;
+            case "Melon":
+                return IngredientType.Melon;
+            default:
+                return IngredientType.Melon;
+        }
+
     }
 
     /// <summary>
@@ -155,6 +184,7 @@ public class Ingredient_Inventory : Inventory
             Debug.LogError($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
         return null;
     }
+
 
 
 }

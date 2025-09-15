@@ -3,19 +3,11 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum IngredientType // should delete after putting in maddie's code
-{
-    Egg,
-    Melon,
-    Morel,
-    Milk,
-    Cheese
-}
 public class Inventory_Overlap : MonoBehaviour, ICustomDrag
 {
     private RectTransform rectTransform;
     [SerializeField] RectTransform redZone;
-    [SerializeField] IngredientType ingredientType; // Set this in Inspector for each ingredient
+    [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
     [SerializeField] GameObject goodDishPrefab; // For egg + egg
     [SerializeField] GameObject badDishPrefab;  // For egg + melon
 
@@ -44,15 +36,16 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
         if (goodDishMade == null)
             Debug.Log("[Intry_Ovlrp] Could not find MadeGoodDish!");
     }
-    
-    public void startDrag() {
-      // save starting position of rectTransform
-      originalPosition = rectTransform.position;
+
+    public void startDrag()
+    {
+        // save starting position of rectTransform
+        originalPosition = rectTransform.position;
     }
-    
+
     public void OnCurrentDrag()
     {
-      rectTransform.position = Input.mousePosition;
+        rectTransform.position = Input.mousePosition;
     }
 
     public void EndDrag()
@@ -71,8 +64,8 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
 
                 Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             }
-                
-      }
+
+        }
         else
         {
             if (isOnPot)
@@ -86,72 +79,72 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     }
 
     private void AddToPot()
-  {
-    isOnPot = true;
-    ingredientOnPot.Add(this);
-    Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
+    {
+        isOnPot = true;
+        ingredientOnPot.Add(this);
+        Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
 
-    if (ingredientOnPot.Count >= 2)
-      CheckRecipeAndCreateDish(); //only gets the position if the second egg is placed
-  }
+        if (ingredientOnPot.Count >= 2)
+            CheckRecipeAndCreateDish(); //only gets the position if the second egg is placed
+    }
 
     private void CheckRecipeAndCreateDish()
     {
-      if (ingredientOnPot.Count < 2) return;
-      IngredientType firstType = ingredientOnPot[0].ingredientType;
-      IngredientType secondType = ingredientOnPot[1].ingredientType;
-      Debug.Log("Creating Dish");
+        if (ingredientOnPot.Count < 2) return;
+        IngredientType firstType = ingredientOnPot[0].ingredientType;
+        IngredientType secondType = ingredientOnPot[1].ingredientType;
+        Debug.Log("Creating Dish");
 
-      Vector3 dishPosition = redZone.transform.position;
-      Transform parentTransform = this.rectTransform.parent;
-      GameObject dishToCreate = null;
-
-
-      // Recipe logic
-      if (firstType == IngredientType.Egg && secondType == IngredientType.Egg)
-      {
-        dishToCreate = goodDishPrefab;
-        Debug.Log("Creating good dish: Egg + Egg!");
+        Vector3 dishPosition = redZone.transform.position;
+        Transform parentTransform = this.rectTransform.parent;
+        GameObject dishToCreate = null;
 
 
-        goodDishMade.PlayOneShot(goodDishMade.clip);
-      }
-      else if ((firstType == IngredientType.Egg && secondType == IngredientType.Melon) ||
-               (firstType == IngredientType.Melon && secondType == IngredientType.Egg))
-      {
-        dishToCreate = badDishPrefab;
-        Debug.Log("Creating bad dish: Egg + Melon!");
-      }
-      else
-      {
-        Debug.Log("Unknown recipe combination!");
-        dishToCreate = badDishPrefab; // Default to bad dish
-      }
+        // Recipe logic
+        if (firstType == IngredientType.Egg && secondType == IngredientType.Egg)
+        {
+            dishToCreate = goodDishPrefab;
+            Debug.Log("Creating good dish: Egg + Egg!");
 
-      // Destroy both ingredient objects
-      List<Inventory_Overlap> ingredientToDestroy = new List<Inventory_Overlap>(ingredientOnPot);
-      ingredientOnPot.Clear();
 
-      foreach (var ingredient in ingredientToDestroy)
-      {
-        if (ingredient != null)
-          Destroy(ingredient.gameObject);
-      }
+            goodDishMade.PlayOneShot(goodDishMade.clip);
+        }
+        else if ((firstType == IngredientType.Egg && secondType == IngredientType.Melon) ||
+                 (firstType == IngredientType.Melon && secondType == IngredientType.Egg))
+        {
+            dishToCreate = badDishPrefab;
+            Debug.Log("Creating bad dish: Egg + Melon!");
+        }
+        else
+        {
+            Debug.Log("Unknown recipe combination!");
+            dishToCreate = badDishPrefab; // Default to bad dish
+        }
 
-      // Create the new dish at the second egg's position
-      if (dishToCreate != null)
-      {
-        GameObject newDish = Instantiate(dishToCreate, dishPosition, Quaternion.identity);
-        // Make sure it's a child of the same parent as the egg
-        newDish.transform.SetParent(parentTransform, false);
+        // Destroy both ingredient objects
+        List<Inventory_Overlap> ingredientToDestroy = new List<Inventory_Overlap>(ingredientOnPot);
+        ingredientOnPot.Clear();
 
-        // Since we're using world position, we need to set it after parenting
-        newDish.transform.position = dishPosition;
-        newDish.transform.SetAsLastSibling(); // This will put it on top
-      }
+        foreach (var ingredient in ingredientToDestroy)
+        {
+            if (ingredient != null)
+                Destroy(ingredient.gameObject);
+        }
 
-      if (playerInventory != null && DishData != null)
-      {
+        // Create the new dish at the second egg's position
+        if (dishToCreate != null)
+        {
+            GameObject newDish = Instantiate(dishToCreate, dishPosition, Quaternion.identity);
+            // Make sure it's a child of the same parent as the egg
+            newDish.transform.SetParent(parentTransform, false);
+
+            // Since we're using world position, we need to set it after parenting
+            newDish.transform.position = dishPosition;
+            newDish.transform.SetAsLastSibling(); // This will put it on top
+        }
+
+        if (playerInventory != null && DishData != null)
+        {
             //playerInventory.AddDish(DishData);
             if (Dish_Inventory.Instance.AddResources(DishData, 1) < 1)
             {
@@ -159,23 +152,32 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
                 return;
             }
 
-        Debug.Log($"[Overlap] Added {DishData.Name} to inventory");
-      }
-      else
-        Debug.Log("[Overlap] Missing Inventory or Dish_Data reference!");
+            Debug.Log($"[Overlap] Added {DishData.Name} to inventory");
+        }
+        else
+            Debug.Log("[Overlap] Missing Inventory or Dish_Data reference!");
     }
 
     // Clean up when object is destroyed
     void OnDestroy()
     {
-      if (isOnPot)
-        ingredientOnPot.Remove(this);
+        if (isOnPot)
+            ingredientOnPot.Remove(this);
     }
 
     private void RemoveFromPot()
     {
-      isOnPot = false;
-      ingredientOnPot.Remove(this);
-      Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
+        isOnPot = false;
+        ingredientOnPot.Remove(this);
+        Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
+    }
+
+    /// <summary>
+    /// For another object to set this image_slot's ingredient type (used in inventory UI)
+    /// </summary>
+    /// <param name="iData"></param>
+    public void SetIngredientType(Ingredient_Data iData)
+    {
+        ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
     }
 }

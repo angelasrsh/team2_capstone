@@ -19,7 +19,7 @@ public class Inventory_Slot : MonoBehaviour
     /// </summary>
     /// <param name="stack"></param>
     public void PopulateSlot(Item_Stack stack)
-    {          
+    {
 
         GameObject image_slot = transform.Find("Image_Slot").gameObject;
         UnityEngine.UI.Image itemImage = image_slot.GetComponent<UnityEngine.UI.Image>();
@@ -37,6 +37,7 @@ public class Inventory_Slot : MonoBehaviour
             itemImage.sprite = stack.resource.Image;
             name.text = stack.resource.Name;
             amount.text = stack.amount.ToString();
+            
         }
         else
         {
@@ -46,8 +47,18 @@ public class Inventory_Slot : MonoBehaviour
             itemImage.enabled = false;
         }
 
+ 
+        // If it has an Inventory_Overlap script and the resource is not null, assign the type
+        Inventory_Overlap script = image_slot.GetComponent<Inventory_Overlap>();
+        if (script != null)
+        {
+            if (stack != null && stack.resource != null)
+                script.SetIngredientType((Ingredient_Data)stack.resource);
+            else
+                script.SetIngredientType(null);
+        }
+               
 
-       
 
 
 
