@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class UI_Buttons : MonoBehaviour
 {
+  private bool otherDishDetailsOpen = false;
   // Start the game from the main menu
   public void StartGame()
   {
@@ -36,5 +37,23 @@ public class UI_Buttons : MonoBehaviour
   {
     Debug.Log("Quitting game...");
     Application.Quit();
+  }
+
+  // Display dish details
+  public void ShowDishDetails(string dishName)
+  {
+    if (otherDishDetailsOpen)
+    {
+      Debug.Log("Another dish details panel is open. Replacing with new dish details.");
+      // Replace old dish details with new one
+      //
+    }
+    else
+    {
+      otherDishDetailsOpen = true;
+      Debug.Log("Showing details for dish: " + dishName);
+      // Display dish details
+      //
+    }
   }
 }
