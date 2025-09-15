@@ -24,7 +24,11 @@ public class Pause_Menu : MonoBehaviour
   public void PauseGame()
   {
     Debug.Log("Pausing game...");
+    if(menuBox == null)
+      Debug.Log("Menubox is null?");
     menuBox.SetActive(true);
+    if(darkOverlay == null)
+      Debug.Log("Dark Overlay is null?");
     darkOverlay.SetActive(true);
     isPaused = true;
   }

@@ -12,7 +12,10 @@ public class Game_Manager : MonoBehaviour
   private void Awake()
   {
     if (roomCollection != null)
+    {
       Room_Manager.Initialize(roomCollection);
+      Debug.Log("GameManager: Room_Manager initalized!");
+    }
     else
       Debug.LogError("GameManager: No RoomCollectionData assigned!");
 
