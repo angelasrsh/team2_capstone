@@ -26,17 +26,31 @@ public class Room_Change_Manager : MonoBehaviour
     public void GoToRoom(Room_Data.RoomID currentRoomID, Room_Data.RoomID exitingTo)
     {
         Room_Data currentRoom = Room_Manager.GetRoom(currentRoomID);
-        RoomExitOptions exit = Exit(currentRoom, exitingTo);
+        if (currentRoom == null)
+        {
+            Debug.LogError($"[Room_Change_Manager] Could not find current room: {currentRoomID}. " +
+                        $"Check that Game_Manager is in the scene and RoomCollectionData includes this room.");
+            return; 
+        }
 
-        if (exit != null && exit.targetRoom != null)
+        // Try to get the exit
+        RoomExitOptions exit = Exit(currentRoom, exitingTo);
+        if (exit == null)
         {
-            StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
+            Debug.LogError($"[Room_Change_Manager] No exit defined from {currentRoomID} to {exitingTo}. " +
+                        $"Make sure {currentRoomID} has an exit in its Room_Data asset.");
+            return;
         }
-        else
+
+        // Verify target room is valid
+        if (exit.targetRoom == null)
         {
-            Debug.LogError($"Exit not found from {currentRoomID} to {exitingTo}");
+            Debug.LogError($"[Room_Change_Manager] Exit from {currentRoomID} to {exitingTo} has no target room assigned!");
+            return;
         }
+        StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
     }
+
 
     private RoomExitOptions Exit(Room_Data room, Room_Data.RoomID exitingTo)
     {

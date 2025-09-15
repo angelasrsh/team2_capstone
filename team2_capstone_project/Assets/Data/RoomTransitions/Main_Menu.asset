@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
   m_Name: Main_Menu
   m_EditorClassIdentifier: 
-  roomName: MainMenu
+  roomID: 0
+  isOverworldScene: 0
   music: {fileID: 0}
-  ambientSound: {fileID: 0}
+  ambientSound: {fileID: 8300000, guid: f3f4445f1373f9c4ca71452facc20792, type: 3}
   musicVolume: 1
-  ambientVolume: 1
-  spawnPointName: 
-  exits: []
+  ambientVolume: 0.25
+  exits:
+  - exitingTo: 1
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 22bcfa82d78048d4097dcedce66fb4df, type: 2}

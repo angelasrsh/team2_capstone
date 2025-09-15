@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6958590387895689388}
+  - component: {fileID: 7322542354820229773}
+  - component: {fileID: 2041556558690807774}
+  - component: {fileID: 3461038497445604444}
   - component: {fileID: 6958590387895689391}
   - component: {fileID: 6627970882426570286}
-  - component: {fileID: 7322542354820229773}
   - component: {fileID: 6334754212822245513}
-  - component: {fileID: 2041556558690807774}
   m_Layer: 0
   m_Name: Game_Manager
   m_TagString: Untagged
@@ -36,6 +37,43 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7322542354820229773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b62b3275ceb3e349ae84693ae596bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
+--- !u!114 &2041556558690807774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3461038497445604444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad32d86200f0294fa69c866f4c349dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6958590387895689391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,19 +100,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuBox: {fileID: 0}
   darkOverlay: {fileID: 0}
---- !u!114 &7322542354820229773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b62b3275ceb3e349ae84693ae596bd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roomCollection: {fileID: 0}
 --- !u!114 &6334754212822245513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,15 +113,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Logbook: {fileID: 0}
---- !u!114 &2041556558690807774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
