@@ -2089,6 +2089,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1175005016}
   m_CullTransparentMesh: 1
+--- !u!1 &1247939657 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8468482571086790678, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
+  m_PrefabInstance: {fileID: 1455350873}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1342454986
 GameObject:
   m_ObjectHideFlags: 0
@@ -2176,6 +2181,18 @@ PrefabInstance:
       propertyPath: Logbook
       value: 
       objectReference: {fileID: 1455350874}
+    - target: {fileID: 6334754212822245513, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: journal
+      value: 
+      objectReference: {fileID: 1455350874}
+    - target: {fileID: 6334754212822245513, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: Dishes_Grid
+      value: 
+      objectReference: {fileID: 1247939657}
+    - target: {fileID: 6334754212822245513, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: Dish_Slot_Prefab
+      value: 
+      objectReference: {fileID: 3321292381105191652, guid: c97acdb6e7ddc6b43a4ff2c84a446341, type: 3}
     - target: {fileID: 6627970882426570286, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: menuBox
       value: 
@@ -2329,7 +2346,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6282747232672213625, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6282747232672213629, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
       propertyPath: m_Pivot.x

@@ -12,6 +12,4 @@ public class Item_Data : ScriptableObject
     public string Name;
     public int Amount;
     public Sprite Image;
-
-
 }

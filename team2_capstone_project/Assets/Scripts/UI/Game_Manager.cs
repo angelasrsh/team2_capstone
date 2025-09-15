@@ -4,20 +4,33 @@ using UnityEngine;
 
 public class Game_Manager : MonoBehaviour
 {
-    [Header("Room Setup")]
-    [SerializeField] private Room_Collection_Data roomCollection;
+  [Header("Room Setup")]
+  [SerializeField] private Room_Collection_Data roomCollection;
+  public static Game_Manager Instance;
+  [SerializeField] public Dish_Database dishDatabase;
 
-    private void Awake()
+  private void Awake()
+  {
+    if (roomCollection != null)
+      Room_Manager.Initialize(roomCollection);
+    else
+      Debug.LogError("GameManager: No RoomCollectionData assigned!");
+
+    if (Instance == null)
     {
-        if (roomCollection != null)
-        {
-            Room_Manager.Initialize(roomCollection);
-        }
-        else
-        {
-            Debug.LogError("GameManager: No RoomCollectionData assigned!");
-        }
+      Instance = this;
+      DontDestroyOnLoad(gameObject);
+      if (dishDatabase == null)
+        Debug.LogError("GameManager: DishDatabase not set in inspector!");
+      else
+      {
+        dishDatabase.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
+        Debug.Log("GameManager: DishDatabase initialized and Blinding Stew unlocked.");
+      }
     }
+    else
+      Destroy(gameObject);
+  }
 }
 
 [System.Serializable]
