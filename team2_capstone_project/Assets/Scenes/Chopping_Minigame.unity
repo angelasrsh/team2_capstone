@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1123,8 +1123,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 265.62634, y: 13.890137}
-  m_SizeDelta: {x: -259.0273, y: -46.70996}
+  m_AnchoredPosition: {x: 223, y: -34}
+  m_SizeDelta: {x: -343.7991, y: -46.71}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &377759470
 CanvasRenderer:
@@ -1515,7 +1515,7 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
@@ -1992,7 +1992,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -79, y: 0}
+  m_AnchoredPosition: {x: -0.000061035156, y: -0.000061035156}
   m_SizeDelta: {x: -414.075, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &899072942
@@ -2762,7 +2762,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1473278762}
   - component: {fileID: 1473278763}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DottedLineSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2948,7 +2948,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1558309859}
   - component: {fileID: 1558309860}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: StartMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3161,8 +3161,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -126.87, y: 12.482}
+  m_SizeDelta: {x: 355.9355, y: 24.965}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1577040910
 MonoBehaviour:
@@ -3184,7 +3184,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 43fa6522c279ad842a7aad720732800c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 69fc3b63485ff7649b25e4b12a03d971, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3421,9 +3421,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7360a4653af51ec49bb01c8a28983dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cuttingBoardRect: {fileID: 0}
-  targetCanvas: {fileID: 0}
-  targetScale: {x: 1, y: 1, z: 1}
+  cuttingBoardRect: {fileID: 1897777148}
+  targetCanvas: {fileID: 899072941}
+  targetScale: {x: 10, y: 10, z: 1}
 --- !u!114 &1590176931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3742,22 +3742,23 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1854681038}
-  m_Layer: 0
+  - component: {fileID: 1854681039}
+  m_Layer: 5
   m_Name: Chop1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1854681038
-Transform:
+--- !u!224 &1854681038
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1854681037}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.1473336, y: -1.1078041, z: 0.02905941}
+  m_LocalPosition: {x: 0, y: 0, z: 0.02905941}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3767,6 +3768,32 @@ Transform:
   m_Father: {fileID: 1594182716}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1.1473336, y: -1.1078041}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!223 &1854681039
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854681037}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 2
+  m_TargetDisplay: 0
 --- !u!1 &1891115308
 GameObject:
   m_ObjectHideFlags: 0
@@ -3784,7 +3811,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1891115309
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3878,7 +3905,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -5.8559, y: -0.0000371933}
+  m_AnchoredPosition: {x: 0.00010681, y: -0.000045776}
   m_SizeDelta: {x: 1649.261, y: 1033.29}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1897777149
@@ -3988,7 +4015,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2107166781}
   - component: {fileID: 2107166782}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: EndMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
