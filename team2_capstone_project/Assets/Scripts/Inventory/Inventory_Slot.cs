@@ -33,17 +33,17 @@ public class Inventory_Slot : MonoBehaviour
         // Populate values or fill with nothing if null
         if (stack != null && stack.resource != null)
         {
+            itemImage.enabled = true;
             itemImage.sprite = stack.resource.Image;
             name.text = stack.resource.Name;
             amount.text = stack.amount.ToString();
-            image_slot.SetActive(true);
         }
         else
         {
             itemImage.sprite = null;
             name.text = null;
             amount.text = null;
-            image_slot.SetActive(false);
+            itemImage.enabled = false;
         }
 
 
