@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Unity.VisualStudio.Editor;
+// using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
-using UnityEditor.iOS;
+// using UnityEditor.iOS;
 using UnityEngine;
 using UnityEngine.UI;
 
