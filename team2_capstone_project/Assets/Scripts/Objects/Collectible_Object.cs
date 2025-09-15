@@ -36,6 +36,7 @@ public class Collectible_Object : Interactable_Object
         Audio_Manager.instance.SetSFXVolume(0.5f);
 
         // Add to inventory
+        Ingredient_Inventory.Instance.AddResources(data, 1);
         Destroy(gameObject);
     }
 }

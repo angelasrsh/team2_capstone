@@ -8,170 +8,218 @@ using UnityEngine;
 using Grimoire;
 using System.Runtime.CompilerServices;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 [System.Serializable]
-public class Resource_Stack
+public class Item_Stack
 {
     public Item_Data resource;
     public int amount;
+    public int stackLimit = 20;
 }
 
-[System.Serializable]
-public class Dish_Stack
-{
-    public Dish_Data dish;
-    public int amount;
-}
+// [System.Serializable]
+// public class Dish_Stack
+// {
+//     public Dish_Data dish;
+//     public int amount;
+// }
 
 
 // Gives the player a collection of items of a fixed size
 public class Inventory : MonoBehaviour
 {
     public int InventorySizeLimit = 12;
-    private int inventoryCurrentCount = 0;
+    
+    [field: SerializeField]
+    public Item_Stack[] InventoryStacks { get; private set; }
 
-    [SerializeField] private List<Resource_Stack> resourceListInspector = new List<Resource_Stack>();
-    [SerializeField] private List<Dish_Stack> dishListInspector = new List<Dish_Stack>();
+    public Inventory_Grid InventoryGrid;
 
-    // Runtime dictionaries for efficient lookups
-    private Dictionary<Item_Data, int> resourceDict = new Dictionary<Item_Data, int>();
-    private Dictionary<Dish_Data, int> dishDict = new Dictionary<Dish_Data, int>();
-
-    private void Awake()
+    /// <summary>
+    /// Initialize Inventory to be size InventorySizeLimit
+    /// </summary>
+    protected void Awake()
     {
-        // Convert inspector lists into runtime dictionaries
-        foreach (var stack in resourceListInspector)
+        if (InventoryStacks == null)
+            InventoryStacks = new Item_Stack[InventorySizeLimit];
+        else if (InventoryStacks.Length != InventorySizeLimit)
         {
-            if (stack.resource != null && stack.amount > 0)
+            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
+            InventoryStacks = new Item_Stack[InventorySizeLimit];
+
+            for (int i = 0; i < temp.Length; i++) // copy over elements
             {
-                resourceDict[stack.resource] = stack.amount;
-                inventoryCurrentCount += stack.amount;
+                InventoryStacks[i] = temp[i];
             }
         }
 
-        foreach (var stack in dishListInspector)
-        {
-            if (stack.dish != null && stack.amount > 0)
-            {
-                dishDict[stack.dish] = stack.amount;
-                inventoryCurrentCount += stack.amount;
-            }
-        }
+
+        updateInventory();
     }
-
+    
+    /// <summary>
+    /// Add resources and update inventory.
+    /// </summary>
+    /// <param name="type"> The type of item to add </param> 
+    /// <param name="count"> How many of the item to add</param> 
+    /// <returns> The number of items actually added </returns>
     public int AddResources(Item_Data type, int count)
     {
-        if (inventoryCurrentCount >= InventorySizeLimit)
-        {
-            Debug.Log("[Invtry] Inventory full");
-            return 0;
-        }
+         // Error-checking
+        if (count < 0)
+            Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
 
-        int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
-        if (resourceDict.ContainsKey(type))
-        {
-            resourceDict[type] += numToAdd;
-        }
-        else
-        {
-            resourceDict.Add(type, numToAdd);
-        }
+        // Track the amount of resources we still need to add
+        int amtLeftToAdd = count;
 
-        inventoryCurrentCount += numToAdd;
-        Debug.Log("[Invtry] Added " + numToAdd + " " + type.name);
-        return numToAdd;
+        // Check if there is a slot with the same type and add if not full
+        foreach (Item_Stack istack in InventoryStacks)
+        {
+            // Add as much as we can to existing stacks
+            if (istack != null && istack.resource == type && istack.amount < istack.stackLimit)
+            {
+                int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
+                istack.amount += amtToAdd;
+                amtLeftToAdd -= amtToAdd;
+            }
+        }
+        // We were not able to add all items to existing slots, so check if we can start a new stack
+        // These are two separate loops because we don't assume slots will be filled in order
+        for (int i = 0; i < InventorySizeLimit; i++)
+        {
+            if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
+            {
+                InventoryStacks[i] = new Item_Stack();
+                int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
+                InventoryStacks[i].amount = amtToAdd;
+                InventoryStacks[i].resource = type;
+                amtLeftToAdd -= amtToAdd;
+            }
+        }
+        updateInventory();
+        Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {type.Name}");
+        return count - amtLeftToAdd; // Return how many items were actually added
     }
 
-    // Remove count number of a specific resource or as much of it that exists
-    // Return the number removed
+    /// <summary>
+    /// Take away resources and update inventory
+    /// </summary>
+    /// <param name="type"> The type or resource to remove</param>
+    /// <param name="count"> Amount to remove </param>
+    /// <returns></returns>
     public int RemoveResources(Item_Data type, int count)
     {
-        int numToRemove = 0;
-        if (resourceDict.ContainsKey(type))
-        {
-            numToRemove = Math.Min(resourceDict[type], count);
-            resourceDict[type] -= numToRemove;
+        // Error-checking
+        if (count < 0)
+            Debug.LogError("[Invtry] Cannot remove negative amount"); // not tested
+            
+        // Track the amount of resources we still need to add
+        int amtLeftToRemove = count;
 
-            // Clean up list if none of an item exists
-            if (resourceDict[type] == 0)
+        // Check if there is a slot with the same type and remove if possible
+        foreach (Item_Stack istack in InventoryStacks.Reverse())
+        {
+            // Check if a slot exists with the same type
+            if (istack != null && istack.resource == type)
             {
-                resourceDict.Remove(type);
+                // Remove as much as we can from this stack
+                int amtToRemove = Math.Min(istack.amount, amtLeftToRemove);
+                istack.amount -= amtToRemove;
+                amtLeftToRemove -= amtToRemove;
             }
         }
 
-        inventoryCurrentCount -= numToRemove;
-        Debug.Log($"[Invtry] Removed {numToRemove} {type.Name}");
-        return numToRemove;
+        updateInventory(); // Remove empty elements
+        Debug.Log($"[Invtory] Removed {count - amtLeftToRemove} {type.Name}");
+        // Return however much was added
+        return count - amtLeftToRemove;
     }
 
-    public int AddDish(Dish_Data dish, int count = 1)
+    /// <summary>
+    /// Remove empty items from inventory and populate the InventoryGrid display (if it exists)
+    /// </summary>
+    protected void updateInventory()
     {
-        if (inventoryCurrentCount >= InventorySizeLimit)
+        for (int i = 0; i < InventoryStacks.Length; i++)
         {
-            Debug.Log("[Invtry] Inventory full (cannot add dish)");
-            return 0;
+            if (InventoryStacks[i] != null && InventoryStacks[i].amount <= 0)
+                InventoryStacks[i] = null;
+            // Display inventory update code here maybe (real not fake, UI stuff)  
         }
-
-        int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
-
-        if (dishDict.ContainsKey(dish))
-        {
-            dishDict[dish] += numToAdd;
-        }
-        else
-        {
-            dishDict.Add(dish, numToAdd);
-        }
-
-        inventoryCurrentCount += numToAdd;
-        Debug.Log($"[Invtry] Added {numToAdd} {dish.Name}");
-        return numToAdd;
+        //PrintInventory();  
+        if (InventoryGrid != null)
+            InventoryGrid.PopulateInventory();
     }
 
-    public bool RemoveDish(Dish_Data dish)
+    // public int AddDish(Dish_Data dish, int count = 1)
+    // {
+    //     //     if (inventoryCurrentCount >= InventorySizeLimit)
+    //     //     {
+    //     //         Debug.Log("[Invtry] Inventory full (cannot add dish)");
+    //     //         return 0;
+    //     //     }
+
+    //     //     int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
+
+    //     //     if (dishDict.ContainsKey(dish))
+    //     //     {
+    //     //         dishDict[dish] += numToAdd;
+    //     //     }
+    //     //     else
+    //     //     {
+    //     //         dishDict.Add(dish, numToAdd);
+    //     //     }
+
+    //     //     inventoryCurrentCount += numToAdd;
+    //     //     Debug.Log($"[Invtry] Added {numToAdd} {dish.Name}");
+    //     // return numToAdd;
+    //     return 1;
+    // }
+
+    // public bool RemoveDish(Dish_Data dish)
+    // {
+        //     if (dishDict.ContainsKey(dish) && dishDict[dish] > 0)
+        //     {
+        //         dishDict[dish]--;
+
+        //         if (dishDict[dish] == 0)
+        //         {
+        //             dishDict.Remove(dish);
+        //         }
+
+        //         inventoryCurrentCount--;
+        //         Debug.Log($"[Invtry] Removed 1 {dish.Name}");
+        //         return true;
+        //     }
+
+        //     Debug.Log($"[Invtry] Tried to remove {dish.Name}, but none in inventory");
+        //     return false;
+    //     return true;
+    // }
+
+    public bool HasItem(Item_Data item)
     {
-        if (dishDict.ContainsKey(dish) && dishDict[dish] > 0)
+        foreach (Item_Stack i in InventoryStacks)
         {
-            dishDict[dish]--;
-
-            if (dishDict[dish] == 0)
-            {
-                dishDict.Remove(dish);
-            }
-
-            inventoryCurrentCount--;
-            Debug.Log($"[Invtry] Removed 1 {dish.Name}");
-            return true;
+            if (i != null && i.resource == item)
+                return true;
         }
-
-        Debug.Log($"[Invtry] Tried to remove {dish.Name}, but none in inventory");
         return false;
     }
 
-    public bool HasDish(Dish_Data dish)
+
+    /// <summary>
+    /// Print inventory contents
+    /// </summary>
+    public void PrintInventory() // Not really tested
     {
-        return dishDict.ContainsKey(dish) && dishDict[dish] > 0;
-    }
-
-
-    public void DisplayInventory(InputAction.CallbackContext context)
-    {
-        if (resourceDict.Count == 0 && dishDict.Count == 0)
+        foreach (Item_Stack i in InventoryStacks)
         {
-            Debug.Log("[Invtry] Inventory is empty");
-            return;
-        }
-
-        Debug.Log($"[Invtry] Limit: {InventorySizeLimit} Count: {inventoryCurrentCount}");
-
-        foreach (KeyValuePair<Item_Data, int> kvp in resourceDict)
-        {
-            Debug.Log($"[Invtry] Resource = {kvp}, Amount = {kvp.Value}");
-        }
-
-        foreach (KeyValuePair<Dish_Data, int> kvp in dishDict)
-        {
-            Debug.Log($"[Invtry] Dish = {kvp}, Amount = {kvp.Value}");
+            if (i == null)
+                Debug.Log($"[Invtry] {i} null");
+            else
+                Debug.Log($"[Invtry] {i.resource.Name} {i.amount}");           
         }
     }
 }
