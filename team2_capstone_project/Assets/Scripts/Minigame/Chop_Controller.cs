@@ -32,6 +32,10 @@ public class Chop_Controller : MonoBehaviour
     private float startTime;
     private bool isDragging;
 
+    private void showCuttingLines()
+    {
+        
+    }
     void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
