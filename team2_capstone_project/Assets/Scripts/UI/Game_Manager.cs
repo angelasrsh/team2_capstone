@@ -7,7 +7,7 @@ public class Game_Manager : MonoBehaviour
   [Header("Room Setup")]
   [SerializeField] private Room_Collection_Data roomCollection;
   public static Game_Manager Instance;
-  private Dish_Database_SO dishDatabase;
+  [SerializeField] public Dish_Database dishDatabase;
 
   private void Awake()
   {
@@ -20,9 +20,13 @@ public class Game_Manager : MonoBehaviour
     {
       Instance = this;
       DontDestroyOnLoad(gameObject);
-      dishDatabase = Resources.Load<Dish_Database_SO>("DishDatabase");
       if (dishDatabase == null)
-        Debug.LogError("GameManager: DishDatabase not found in Resources!");
+        Debug.LogError("GameManager: DishDatabase not set in inspector!");
+      else
+      {
+        dishDatabase.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
+        Debug.Log("GameManager: DishDatabase initialized and Blinding Stew unlocked.");
+      }
     }
     else
       Destroy(gameObject);
