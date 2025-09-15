@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public interface ICustomDrag
 {
@@ -28,8 +30,12 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     [SerializeField] private Vector3 targetScale = Vector3.one;
 
 
-    
+
     private Canvas canvas;
+    private bool canDrag = true;
+    private Image currentImage;
+    public GameObject newImagePrefab; // Complete prefab to replace with
+
 
 
     public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
@@ -54,6 +60,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Debug.Log("started drag");
+        if (!canDrag) //not supposed to be dragging but you cant
+        {
+            changePrefab();
+            return;
+        }
         onDrag.startDrag();
         parentAfterDrag = transform.parent;
         transform.SetParent(transform.root);
@@ -85,7 +96,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             if (IsOverlapping(rectTransform, cuttingBoardRect))
             {
                 //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
-                
+
                 //make the ingredient from the inventory Bigger:
                 if (targetCanvas != null)
                 {
@@ -93,13 +104,15 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                     transform.localPosition = Vector3.zero; // Center within the target canvas
                 }
                 transform.localScale = targetScale;
+                canDrag = false;
+
             }
 
         }
 
     }
 
-    
+
 
     // Start is called before the first frame update
     void Start()
@@ -122,6 +135,28 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
     void Update()
     {
-       
+        
+
+    }
+
+    private void changePrefab()
+    {
+        if (currentImage != null)
+        {
+            Debug.Log("changing not sliced to sliced image");
+            // Store original position and parent
+            Transform originalParent = transform.parent;
+            Vector3 originalPosition = transform.localPosition;
+            Vector3 originalScale = transform.localScale;
+
+            // Create new object
+            GameObject newObject = Instantiate(newImagePrefab, originalParent);
+            newObject.transform.localPosition = originalPosition;
+            newObject.transform.localScale = originalScale;
+
+            // Destroy old object
+            Destroy(gameObject);
+            return;
+        }
     }
 }

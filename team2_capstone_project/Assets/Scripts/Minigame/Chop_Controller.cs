@@ -31,28 +31,63 @@ public class Chop_Controller : MonoBehaviour
     private Vector2 startDragPos;
     private float startTime;
     private bool isDragging;
-
+    public bool isActive = false;
     private void showCuttingLines()
+    {
+        //function to make the lines appear
+        // then start the game
+
+
+    }
+    void Start()
+    {
+            // Start with script disabled
+        DeactivateChopController();
+    }
+
+    public void DeactivateChopController()
     {
         
     }
+    private Vector2 swipeStart;
     void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             isDragging = true;
+            swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             startDragPos = Mouse.current.position.ReadValue();
             startTime = Time.time;
         }
-
-        if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
+        else if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
         {
             isDragging = false;
             Vector2 endDragPos = Mouse.current.position.ReadValue();
+
             float duration = Time.time - startTime;
 
             EvaluateChop(startDragPos, endDragPos, duration);
+            SpawnCut();
         }
+    }
+    [Header("Cut Settings")]
+    public GameObject cutPrefab;
+    public GameObject cutImagePrefab; // Prefab for the cut versions of the image
+
+    private void SpawnCut()
+    {
+        Vector2 swipeEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition); //where the swipe ended
+        GameObject cutInstance = Instantiate(cutPrefab, swipeStart, Quaternion.identity); //create the cut object
+        cutInstance.GetComponent<LineRenderer>().SetPosition(0, swipeStart); //create the line
+        cutInstance.GetComponent<LineRenderer>().SetPosition(1, swipeEnd);
+
+
+        Vector2[] colliderPoints = new Vector2[2];
+        colliderPoints[0] = Vector2.zero;
+        colliderPoints[1] = swipeEnd - swipeStart;
+
+
+        Destroy(cutInstance);
     }
 
     private void EvaluateChop(Vector2 startScreen, Vector2 endScreen, float duration)
