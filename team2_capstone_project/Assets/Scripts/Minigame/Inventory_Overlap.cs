@@ -6,7 +6,10 @@ using UnityEngine;
 public enum IngredientType // should delete after putting in maddie's code
 {
     Egg,
-    Melon
+    Melon,
+    Morel,
+    Milk,
+    Cheese
 }
 public class Inventory_Overlap : MonoBehaviour, ICustomDrag
 {
@@ -25,8 +28,19 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     // Start is called before the first frame update
     void Start()
     {
-      rectTransform = GetComponent<RectTransform>();
-      playerInventory = FindObjectOfType<Inventory>()?.GetComponent<Inventory>();
+        rectTransform = GetComponent<RectTransform>();
+        playerInventory = FindObjectOfType<Inventory>()?.GetComponent<Inventory>();
+
+        // Set red zone if in cauldron scene
+        GameObject zonedefine = GameObject.Find("Image-Pot");
+        if (zonedefine != null)
+            redZone = zonedefine.GetComponent<RectTransform>();
+        else
+            Debug.Log("[Invty_Ovlrp] Could not find Image-Pot for redZone!");
+
+        goodDishMade = GameObject.Find("MadeGoodDish").GetComponent<AudioSource>();
+        if (goodDishMade == null)
+            Debug.Log("[Intry_Ovlrp] Could not find MadeGoodDish!");
     }
     
     public void startDrag() {
@@ -41,21 +55,26 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
 
     public void EndDrag()
     {
-      if (Drag_All.IsOverlapping(rectTransform, redZone))
-      {
-        Debug.Log("In RED");
-        if (!isOnPot)
-          AddToPot();
+        if (Drag_All.IsOverlapping(rectTransform, redZone))
+        {
+            Debug.Log("In RED");
+            if (!isOnPot)
+            {
+                AddToPot();
+                Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+            }
+                
       }
-      else
-      {
-        if (isOnPot)
-          RemoveFromPot();
-        else {
-          Debug.Log("Not in RED, snapping back");
-          rectTransform.position = originalPosition;
+        else
+        {
+            if (isOnPot)
+                RemoveFromPot();
+            else
+            {
+                Debug.Log("Not in RED, snapping back");
+                rectTransform.position = originalPosition;
+            }
         }
-      }
     }
 
     private void AddToPot()

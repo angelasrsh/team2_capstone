@@ -34,6 +34,8 @@ public class Inventory : MonoBehaviour
     [field: SerializeField]
     public Item_Stack[] InventoryStacks { get; private set; }
 
+    public Inventory_Grid InventoryGrid;
+
     /// <summary>
     /// Initialize Inventory to be size InventorySizeLimit
     /// </summary>
@@ -52,7 +54,7 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        
+
         updateInventory();
     }
     
@@ -135,9 +137,9 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// Remove empty items from inventory
+    /// Remove empty items from inventory and populate the InventoryGrid display (if it exists)
     /// </summary>
-    private void updateInventory()
+    protected void updateInventory()
     {
         for (int i = 0; i < InventoryStacks.Length; i++)
         {
@@ -145,7 +147,9 @@ public class Inventory : MonoBehaviour
                 InventoryStacks[i] = null;
             // Display inventory update code here maybe (real not fake, UI stuff)  
         }
-        PrintInventory();  
+        //PrintInventory();  
+        if (InventoryGrid != null)
+            InventoryGrid.PopulateInventory();
     }
 
     // public int AddDish(Dish_Data dish, int count = 1)

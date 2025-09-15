@@ -25,14 +25,16 @@ public class Inventory_Grid : MonoBehaviour
    /// </summary>
     private void SetInventory()
     {
-        // Set inventory
+        // Based on InventoryType, find the right manager and attach to it
         switch (InventoryType)
         {
             case Inventory_Type.Dish:
-                inventory = GameObject.Find("Dish_Inventory").GetComponent<Dish_Inventory>();
+                inventory = Dish_Inventory.Instance;
+                Dish_Inventory.Instance.InventoryGrid = this;
                 break;
             case Inventory_Type.Ingredient:
-                inventory = GameObject.Find("Ingredient_Inventory").GetComponent<Ingredient_Inventory>();
+                inventory = Ingredient_Inventory.Instance;
+                Ingredient_Inventory.Instance.InventoryGrid = this;
                 break;
             default:
                 break;
@@ -45,7 +47,7 @@ public class Inventory_Grid : MonoBehaviour
     /// <summary>
     /// Fill inventory grid from inventory
     /// </summary>
-    private void PopulateInventory()
+    public void PopulateInventory()
     {
         // Variables to count how many UIslots/stacks we've seen/used
         int countGridSlots = 0;
