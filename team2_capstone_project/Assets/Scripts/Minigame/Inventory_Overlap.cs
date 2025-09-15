@@ -25,6 +25,8 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
     private Inventory playerInventory;
     public Dish_Data DishData;
     private Vector3 originalPosition;
+
+    public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
     // Start is called before the first frame update
     void Start()
     {
@@ -61,6 +63,12 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
             if (!isOnPot)
             {
                 AddToPot();
+                // The Inventory UI requires an image slot, so duplicate and replace self
+                GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
+                this.name = "Image_Slot_Old";
+                newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
+                newImageSlot.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+
                 Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             }
                 
