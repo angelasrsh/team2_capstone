@@ -4,20 +4,29 @@ using UnityEngine;
 
 public class Game_Manager : MonoBehaviour
 {
-    [Header("Room Setup")]
-    [SerializeField] private Room_Collection_Data roomCollection;
+  [Header("Room Setup")]
+  [SerializeField] private Room_Collection_Data roomCollection;
+  public static Game_Manager Instance;
+  private Dish_Database_SO dishDatabase;
 
-    private void Awake()
+  private void Awake()
+  {
+    if (roomCollection != null)
+      Room_Manager.Initialize(roomCollection);
+    else
+      Debug.LogError("GameManager: No RoomCollectionData assigned!");
+
+    if (Instance == null)
     {
-        if (roomCollection != null)
-        {
-            Room_Manager.Initialize(roomCollection);
-        }
-        else
-        {
-            Debug.LogError("GameManager: No RoomCollectionData assigned!");
-        }
+      Instance = this;
+      DontDestroyOnLoad(gameObject);
+      dishDatabase = Resources.Load<Dish_Database_SO>("DishDatabase");
+      if (dishDatabase == null)
+        Debug.LogError("GameManager: DishDatabase not found in Resources!");
     }
+    else
+      Destroy(gameObject);
+  }
 }
 
 [System.Serializable]
