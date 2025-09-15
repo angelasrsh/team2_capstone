@@ -29,12 +29,6 @@ public class Ingredient_Inventory : Inventory
         {
             IngredientDict.Add(idata.Name, idata);
         }
-
-        AddResources(IngredientType.Egg, 10);
-        AddResources(IngredientType.Cheese, 10);
-        AddResources(IngredientType.Morel, 10);
-        AddResources(IngredientType.Milk, 10);
-        RemoveResources(IngredientType.Milk, 5);
     }
 
     /// <summary>

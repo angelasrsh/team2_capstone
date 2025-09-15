@@ -32,9 +32,11 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
         else
             Debug.Log("[Invty_Ovlrp] Could not find Image-Pot for redZone!");
 
-        goodDishMade = GameObject.Find("MadeGoodDish").GetComponent<AudioSource>();
-        if (goodDishMade == null)
+        GameObject goodDishGameObject = GameObject.Find("MadeGoodDish");
+        if (goodDishGameObject == null)
             Debug.Log("[Intry_Ovlrp] Could not find MadeGoodDish!");
+        else
+            goodDishMade = goodDishGameObject.GetComponent<AudioSource>();
     }
 
     public void startDrag()
