@@ -202,7 +202,7 @@ public class Inventory : MonoBehaviour
     {
         foreach (Item_Stack i in InventoryStacks)
         {
-            if (i.resource == item)
+            if (i != null && i.resource == item)
                 return true;
         }
         return false;
