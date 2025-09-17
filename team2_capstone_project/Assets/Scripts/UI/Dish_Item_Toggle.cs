@@ -1,3 +1,4 @@
+using Grimoire;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,10 +41,12 @@ public class Dish_Item_Toggle : MonoBehaviour
       if (isOn)
       {
         menu.AddDish(dishName);
+        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX);
       }
       else
       {
         menu.RemoveDish(dishName);
+        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX);
       }
     }
     else
