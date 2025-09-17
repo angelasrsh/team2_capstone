@@ -2,11 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Inventory_Type {
+
+/// <summary>
+/// For setting the type of the grid in the inspector. May not be necessary since there are only two inventory types.
+/// </summary>
+public enum Inventory_Type
+{
     Dish,
     Ingredient
 }
 
+/// <summary>
+/// For populating an Inventory UI. 
+/// To use this class, add an Inventory_Grid prefab into a scene and set its inventory type (dish or ingredient)
+/// Make sure the Dish_Inventory and/or Ingredient_Inventory manager exists in the scene.
+/// 
+/// On Start, the grid will find and connect itself to an inventory instance.
+/// Adding or removing resources from the instance will call PopulateInventory to refresh its visuals in the grid UI.
+/// </summary>
 public class Inventory_Grid : MonoBehaviour
 {
     // Populate all cells in the grid
@@ -20,9 +33,9 @@ public class Inventory_Grid : MonoBehaviour
         PopulateInventory();
     }
 
-   /// <summary>
-   /// Find the inventory instance we want. Dish inventory not tested.
-   /// </summary>
+    /// <summary>
+    /// Find the inventory instance we want. Dish inventory not tested.
+    /// </summary>
     private void SetInventory()
     {
         // Based on InventoryType, find the right manager and attach to it
@@ -45,7 +58,7 @@ public class Inventory_Grid : MonoBehaviour
     }
 
     /// <summary>
-    /// Fill inventory grid from inventory
+    /// Fill inventory grid from connected inventory data
     /// </summary>
     public void PopulateInventory()
     {

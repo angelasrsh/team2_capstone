@@ -7,17 +7,21 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
+/// Code for one inventory slot in an inventory grid.
+/// 
+/// To use this class, add an Inventory_Grid prefab (which contains inventory_slots with this code).
+///
 /// Required to be on an Inventory Slot with children gameObjects for Name, Amount, and Image
-/// Would like to improve this so that it's not an issue, but I don't know how yet
+/// Would like to improve this so that it's not an issue, but I don't know how yet.
 /// </summary>
 public class Inventory_Slot : MonoBehaviour
 {
     public Item_Stack stk;
 
     /// <summary>
-    /// Fill the item slot with the given number of items
+    /// Fill the item slot with the given number of items. Called by Inventory_Grid.
     /// </summary>
-    /// <param name="stack"></param>
+    /// <param name="stack"> An Item_Stack given by inventory with which to fill this slot </param>
     public void PopulateSlot(Item_Stack stack)
     {
 
