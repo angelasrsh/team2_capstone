@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
   m_Name: Bone_Broth
   m_EditorClassIdentifier: 
-  Name: 
+  Name: Bone Broth
   Amount: 0
-  Image: {fileID: 0}
-  tier: 0
+  Image: {fileID: 21300000, guid: 2486043357544594cbca0be9c54ea385, type: 3}
+  tier: 1
   price: 0
   rarityWeight: 1
   minSpawn: 0
   maxSpawn: 5
-  countsAs: []
+  countsAs:
+  - {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
