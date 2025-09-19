@@ -8,6 +8,7 @@ public class Game_Manager : MonoBehaviour
   [SerializeField] private Room_Collection_Data roomCollection;
   public static Game_Manager Instance;
   [SerializeField] public Dish_Database dishDatabase;
+  [SerializeField] public Foraging_Database foragingDatabase;
 
   private void Awake()
   {
@@ -29,6 +30,14 @@ public class Game_Manager : MonoBehaviour
       {
         dishDatabase.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
         Debug.Log("GameManager: DishDatabase initialized and Blinding Stew unlocked.");
+      }
+
+      if (foragingDatabase == null)
+        Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
+      else
+      {
+        foragingDatabase.UnlockItem("Mushroom");
+        Debug.Log("GameManager: ForagingDatabase initialized and Mushroom unlocked.");
       }
     }
     else

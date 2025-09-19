@@ -9,8 +9,10 @@ public class Choose_Menu_Items : MonoBehaviour
   public GameObject darkOverlay;
   public GameObject dayCanvas;
   private bool selectedDishes;
-  private List<string> dishesSelected = new List<string>();
   private GameObject errorText;
+  
+  private List<Dish_Data.Dishes> dishesSelected = new List<Dish_Data.Dishes>();
+  public static event System.Action<List<Dish_Data.Dishes>> OnDailyMenuSelected;
 
   public void Start()
   {
@@ -32,6 +34,7 @@ public class Choose_Menu_Items : MonoBehaviour
       menuBox.SetActive(false);
       darkOverlay.SetActive(false);
       selectedDishes = true;
+      OnDailyMenuSelected?.Invoke(dishesSelected);
 
       // Activate Day Canvas
       if (dayCanvas != null)
@@ -59,37 +62,36 @@ public class Choose_Menu_Items : MonoBehaviour
   }
 
   // Add a dish to the selected list
-  public void AddDish(string dishName)
+  public void AddDish(Dish_Data.Dishes dishType)
   {
-    if (!dishesSelected.Contains(dishName))
-    {
-      dishesSelected.Add(dishName);
-      Debug.Log(dishName + " added. Total dishes: " + dishesSelected.Count);
-    }
-    else
-    {
-      Debug.Log(dishName + " is already selected.");
-    }
+      if (!dishesSelected.Contains(dishType))
+      {
+          dishesSelected.Add(dishType);
+          Debug.Log(dishType + " added. Total dishes: " + dishesSelected.Count);
+      }
+      else
+      {
+          Debug.Log(dishType + " is already selected.");
+      }
   }
 
-  // Remove a dish from the selected list
-  public void RemoveDish(string dishName)
+  public void RemoveDish(Dish_Data.Dishes dishType)
   {
-    if (dishesSelected.Contains(dishName))
-    {
-      dishesSelected.Remove(dishName);
-      Debug.Log(dishName + " removed. Total dishes: " + dishesSelected.Count);
-    }
-    else
-    {
-      Debug.Log(dishName + " is not in the selected list.");
-    }
+      if (dishesSelected.Contains(dishType))
+      {
+          dishesSelected.Remove(dishType);
+          Debug.Log(dishType + " removed. Total dishes: " + dishesSelected.Count);
+      }
+      else
+      {
+          Debug.Log(dishType + " is not in the selected list.");
+      }
   }
 
   // Get the list of selected dishes
-  public List<string> GetSelectedDishes()
+  public List<Dish_Data.Dishes> GetSelectedDishes()
   {
-    return dishesSelected;
+      return dishesSelected;
   }
 
   // Check if any dishes have been selected

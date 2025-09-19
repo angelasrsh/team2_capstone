@@ -179,6 +179,22 @@ public class Ingredient_Inventory : Inventory
         return null;
     }
 
-
-
+    /// <summary>
+    /// get the total count of a specific ingredient in the inventory by name
+    /// used for checking if we have enough ingredients to make a dish in Journal_Menu
+    /// </summary>
+    /// <param name="ingredientName"></param>
+    /// <returns></returns>
+    public int GetItemCount(string ingredientName)
+    {
+        int total = 0;
+        foreach (Item_Stack stack in InventoryStacks)
+        {
+            if (stack != null && stack.resource != null && stack.resource.Name == ingredientName)
+            {
+                total += stack.amount;
+            }
+        }
+        return total;
+    }
 }

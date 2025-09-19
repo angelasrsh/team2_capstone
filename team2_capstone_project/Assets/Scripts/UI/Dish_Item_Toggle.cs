@@ -34,24 +34,30 @@ public class Dish_Item_Toggle : MonoBehaviour
   // Add or remove dish from the selected list in Choose_Menu_Items
   private void addOrRemoveDish(bool isOn)
   {
-    Choose_Menu_Items menu = FindObjectOfType<Choose_Menu_Items>();
-    if (menu != null)
-    {
-      string dishName = gameObject.name; // Assuming the GameObject's name is the dish name
-      if (isOn)
+      Choose_Menu_Items menu = FindObjectOfType<Choose_Menu_Items>();
+      if (menu != null)
       {
-        menu.AddDish(dishName);
-        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX);
+          if (System.Enum.TryParse(gameObject.name, out Dish_Data.Dishes dishEnum))
+          {
+              if (isOn)
+              {
+                  menu.AddDish(dishEnum);
+                  Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX);
+              }
+              else
+              {
+                  menu.RemoveDish(dishEnum);
+                  Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX);
+              }
+          }
+          else
+          {
+              Debug.LogWarning($"GameObject name {gameObject.name} did not match Dish_Data.Dishes enum.");
+          }
       }
       else
       {
-        menu.RemoveDish(dishName);
-        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX);
+          Debug.LogWarning("Choose_Menu_Items script not found in the scene.");
       }
-    }
-    else
-    {
-      Debug.LogWarning("Choose_Menu_Items script not found in the scene.");
-    }
   }
 }
