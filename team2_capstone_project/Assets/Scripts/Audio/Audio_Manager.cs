@@ -15,6 +15,7 @@ public class Audio_Manager : MonoBehaviour
 
     [Header("SFX Clips")]
     public AudioClip pickupSFX;
+    public AudioClip clickSFX;
 
     private void Awake()
         {

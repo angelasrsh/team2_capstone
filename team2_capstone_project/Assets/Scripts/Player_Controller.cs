@@ -8,31 +8,48 @@ using UnityEngine.InputSystem;
 
 public class Player_Controller : MonoBehaviour
 {
-    public Rigidbody rb;
-
-    // Movement
+    [Header("Movement")]
     public float moveSpeed = 5f;
-    float horizontalMovement;
-    float verticalMovement;
+    [HideInInspector] public Vector2 movement;
+
+    // Input System
+    private PlayerInput playerInput;
+    private InputAction moveAction, interactAction, openInventoryAction, openJournalAction;
 
     // Room tracking
     [HideInInspector] public Room_Data currentRoom;
 
-    // Update is called once per frame
-    void Update()
+    // References
+    private Rigidbody rb;
+
+    private void Awake()
     {
-        // velocity is updated by Input system callbacks
         rb = GetComponent<Rigidbody>();
-        rb.velocity = new Vector3(horizontalMovement * moveSpeed, rb.velocity.y, verticalMovement * moveSpeed);
+        PlayerInput playerInput = FindObjectOfType<PlayerInput>();
 
+        moveAction = playerInput.actions["Move"];
+        interactAction = playerInput.actions["Interact"];
+        openInventoryAction = playerInput.actions["OpenInventory"];
+        openJournalAction = playerInput.actions["OpenJournal"];
     }
 
-    // Called by Unity Input system
-    public void Move(InputAction.CallbackContext context)
+    private void FixedUpdate()
     {
-        horizontalMovement = context.ReadValue<Vector2>().x;
-        verticalMovement = context.ReadValue<Vector2>().y;
+        movement = moveAction.ReadValue<Vector2>();
+        rb.velocity = new Vector3(movement.x * moveSpeed, rb.velocity.y, movement.y * moveSpeed);
     }
+
+    public void DisablePlayerController()
+    {
+        Player_Input_Controller.instance.DisablePlayerInput();
+        rb.velocity = Vector3.zero;
+    }
+
+    public void EnablePlayerController()
+    {
+        Player_Input_Controller.instance.EnablePlayerInput();
+    }
+
     public void UpdatePlayerRoom(Room_Data.RoomID newRoomID)
     {
         Room_Data newRoom = Room_Manager.GetRoom(newRoomID);

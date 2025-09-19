@@ -71,6 +71,9 @@ public class Room_Change_Manager : MonoBehaviour
             yield break;
         }
 
+        // Disable player controls
+        Player_Input_Controller.instance.DisablePlayerInput();
+
         // Fade out music/ambient
         Music_Persistence.instance.PreTransitionCheckMusic(targetRoom.music);
         Music_Persistence.instance.PreTransitionCheckAmbient(targetRoom.ambientSound);
@@ -102,6 +105,7 @@ public class Room_Change_Manager : MonoBehaviour
             GameObject player = GameObject.FindWithTag("Player");
             if (player != null)
             {
+                Player_Input_Controller.instance.EnablePlayerInput();
                 Spawn_Point[] spawnPoints = FindObjectsOfType<Spawn_Point>();
                 foreach (var sp in spawnPoints)
                 {
