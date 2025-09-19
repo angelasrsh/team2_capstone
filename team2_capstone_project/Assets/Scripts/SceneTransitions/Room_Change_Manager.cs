@@ -102,6 +102,7 @@ public class Room_Change_Manager : MonoBehaviour
             GameObject player = GameObject.FindWithTag("Player");
             if (player != null)
             {
+                player.GetComponent<Player_Controller>().DisablePlayerController();
                 Spawn_Point[] spawnPoints = FindObjectsOfType<Spawn_Point>();
                 foreach (var sp in spawnPoints)
                 {
@@ -135,5 +136,11 @@ public class Room_Change_Manager : MonoBehaviour
         blackScreenFade.fadeCanvasGroup.alpha = 1;
 
         yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOut());
+        if (targetRoom.isOverworldScene)
+        {
+            GameObject player = GameObject.FindWithTag("Player");
+            if (player != null)
+                player.GetComponent<Player_Controller>().EnablePlayerController();
+        }
     }
 }

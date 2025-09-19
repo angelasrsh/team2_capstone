@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.InputSystem;
 
 public class Journal_Menu : MonoBehaviour
 {
   public GameObject journal;
   private bool isPaused = false; // Currently will overlap pause menu, I think
+  private PlayerInput playerInput;
+  private InputAction openJournalAction;
 
   [Header("Recipe Menu References")]
   [SerializeField] private GameObject Dish_Slot_Prefab;
@@ -32,6 +35,14 @@ public class Journal_Menu : MonoBehaviour
 
   private void Start()
   {
+    PlayerInput playerInput = FindObjectOfType<PlayerInput>();
+    if (playerInput == null)
+      Debug.LogError("Journal_Menu: No PlayerInput found in scene!");
+      
+    openJournalAction = playerInput.actions["OpenJournal"];
+    if (openJournalAction == null)  
+      Debug.LogError("Journal_Menu: 'OpenJournal' action not found in PlayerInput actions!");
+
     if (journal == null)
       Debug.LogError("Journal_Menu: Journal GameObject not assigned in inspector!");
     else
@@ -64,7 +75,7 @@ public class Journal_Menu : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    if (Input.GetKeyDown(KeyCode.J))
+    if (openJournalAction.WasPerformedThisFrame())
     {
       if (isPaused)
         ResumeGame();

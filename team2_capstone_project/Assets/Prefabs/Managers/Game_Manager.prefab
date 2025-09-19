@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6958590387895689388}
   - component: {fileID: 7322542354820229773}
-  - component: {fileID: 2041556558690807774}
   - component: {fileID: 3461038497445604444}
   - component: {fileID: 6958590387895689391}
+  - component: {fileID: 2041556558690807774}
   m_Layer: 0
   m_Name: Game_Manager
   m_TagString: Untagged
@@ -50,18 +50,6 @@ MonoBehaviour:
   roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
   dishDatabase: {fileID: 11400000, guid: 88a1998f93d89d64c9f529370030ca97, type: 2}
   foragingDatabase: {fileID: 11400000, guid: 294545c759b90a54b9625ea8dd5cb588, type: 2}
---- !u!114 &2041556558690807774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3461038497445604444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,5 +72,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9225e40e04ded924ca684807d1084283, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2041556558690807774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
