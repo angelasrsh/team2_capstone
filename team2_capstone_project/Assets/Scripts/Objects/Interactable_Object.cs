@@ -6,10 +6,15 @@ using UnityEngine;
 
 namespace Grimoire
 {
+    /// <summary>
+    /// Base class for any objects that need to do something when the player is in range.
+    /// Must be on an object with a trigger collider.
+    /// Derived classes can override the PerformInteract() function to add their own reponses.
+    /// </summary>
     public class Interactable_Object : MonoBehaviour
     {
 
-    
+
         public GameObject InteractIcon; // Not sure if this is really needed
         private bool playerInside = false;
 
@@ -20,8 +25,8 @@ namespace Grimoire
             {
                 InteractIcon = transform.Find("Interact_Icon").gameObject;
             }
-            
-        } 
+
+        }
 
         void OnTriggerEnter(Collider other)
         {
@@ -40,7 +45,7 @@ namespace Grimoire
             {
                 PerformInteract();
             }
-            
+
         }
 
         void OnTriggerExit(Collider other)

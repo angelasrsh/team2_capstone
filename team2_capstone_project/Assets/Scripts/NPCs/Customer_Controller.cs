@@ -29,7 +29,7 @@ public class Customer_Controller : MonoBehaviour
         seat = targetSeat;
         playerInventory = inventory;
         agent.SetDestination(seat.position);
-    agent.speed = 10f;
+        agent.speed = 10f;
 
         Debug.Log($"Customer spawned at {transform.position}, isOnNavMesh = {agent.isOnNavMesh}");
     }
@@ -77,21 +77,21 @@ public class Customer_Controller : MonoBehaviour
     }
 
     private void SitDown()
-  {
-    agent.isStopped = true;
-
-    if (data.favoriteDishes.Length > 0)
     {
-      requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
+        agent.isStopped = true;
 
-      thoughtBubble.SetActive(true);
-      bubbleDishImage.sprite = requestedDish.Image;
+        if (data.favoriteDishes.Length > 0)
+        {
+            requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
 
-      Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
+            thoughtBubble.SetActive(true);
+            bubbleDishImage.sprite = requestedDish.Image;
+
+            Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
+        }
+
+        seat = null; // Prevent repeating
     }
-
-    seat = null; // Prevent repeating
-  }
     
     public bool TryServeDish(Inventory playerInventory)
     {

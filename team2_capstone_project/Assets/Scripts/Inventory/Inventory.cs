@@ -10,6 +10,11 @@ using System.Runtime.CompilerServices;
 using UnityEngine.InputSystem;
 using System.Linq;
 
+
+
+/// <summary>
+/// One inventory slot = 1 item stack. Item_Data can be filled with Dish_Data or Ingredient_Data
+/// </summary>
 [System.Serializable]
 public class Item_Stack
 {
@@ -18,22 +23,25 @@ public class Item_Stack
     public int stackLimit = 20;
 }
 
-// [System.Serializable]
-// public class Dish_Stack
-// {
-//     public Dish_Data dish;
-//     public int amount;
-// }
-
+/// <summary>
+/// Inventory base class for the dish_inventory and ingredient_inventory classes.
+/// It provides functions general functions for Item_Data types that are used by dish and ingredient inventories)
+/// This inventory is not called directly. Instead, call functions using the instances of the child inventories.
+/// 
+/// To add inventory items, call AddResources and RemoveResources on an inventory instance.
+/// </summary>
 
 // Gives the player a collection of items of a fixed size
 public class Inventory : MonoBehaviour
 {
     public int InventorySizeLimit = 12;
-    
+
     [field: SerializeField]
     public Item_Stack[] InventoryStacks { get; private set; }
 
+    /// <summary>
+    /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
+    /// </summary>
     public Inventory_Grid InventoryGrid;
 
     /// <summary>
@@ -57,7 +65,7 @@ public class Inventory : MonoBehaviour
 
         updateInventory();
     }
-    
+
     /// <summary>
     /// Add resources and update inventory.
     /// </summary>
@@ -66,7 +74,7 @@ public class Inventory : MonoBehaviour
     /// <returns> The number of items actually added </returns>
     public int AddResources(Item_Data type, int count)
     {
-         // Error-checking
+        // Error-checking
         if (count < 0)
             Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
 
@@ -107,13 +115,13 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="type"> The type or resource to remove</param>
     /// <param name="count"> Amount to remove </param>
-    /// <returns></returns>
+    /// <returns> The amount of resources actually removed </returns>
     public int RemoveResources(Item_Data type, int count)
     {
         // Error-checking
         if (count < 0)
             Debug.LogError("[Invtry] Cannot remove negative amount"); // not tested
-            
+
         // Track the amount of resources we still need to add
         int amtLeftToRemove = count;
 
@@ -137,7 +145,7 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// Remove empty items from inventory and populate the InventoryGrid display (if it exists)
+    /// Remove empty items from inventory and populate the InventoryGrid display (if one is connected).
     /// </summary>
     protected void updateInventory()
     {
@@ -152,52 +160,11 @@ public class Inventory : MonoBehaviour
             InventoryGrid.PopulateInventory();
     }
 
-    // public int AddDish(Dish_Data dish, int count = 1)
-    // {
-    //     //     if (inventoryCurrentCount >= InventorySizeLimit)
-    //     //     {
-    //     //         Debug.Log("[Invtry] Inventory full (cannot add dish)");
-    //     //         return 0;
-    //     //     }
-
-    //     //     int numToAdd = Math.Min(InventorySizeLimit - inventoryCurrentCount, count);
-
-    //     //     if (dishDict.ContainsKey(dish))
-    //     //     {
-    //     //         dishDict[dish] += numToAdd;
-    //     //     }
-    //     //     else
-    //     //     {
-    //     //         dishDict.Add(dish, numToAdd);
-    //     //     }
-
-    //     //     inventoryCurrentCount += numToAdd;
-    //     //     Debug.Log($"[Invtry] Added {numToAdd} {dish.Name}");
-    //     // return numToAdd;
-    //     return 1;
-    // }
-
-    // public bool RemoveDish(Dish_Data dish)
-    // {
-        //     if (dishDict.ContainsKey(dish) && dishDict[dish] > 0)
-        //     {
-        //         dishDict[dish]--;
-
-        //         if (dishDict[dish] == 0)
-        //         {
-        //             dishDict.Remove(dish);
-        //         }
-
-        //         inventoryCurrentCount--;
-        //         Debug.Log($"[Invtry] Removed 1 {dish.Name}");
-        //         return true;
-        //     }
-
-        //     Debug.Log($"[Invtry] Tried to remove {dish.Name}, but none in inventory");
-        //     return false;
-    //     return true;
-    // }
-
+    /// <summary>
+    /// Check if the inventory contains the requested item
+    /// </summary>
+    /// <param name="item"> Item to search for </param>
+    /// <returns> True if the item is in inventory, false otherwise. </returns>
     public bool HasItem(Item_Data item)
     {
         foreach (Item_Stack i in InventoryStacks)
@@ -219,7 +186,7 @@ public class Inventory : MonoBehaviour
             if (i == null)
                 Debug.Log($"[Invtry] {i} null");
             else
-                Debug.Log($"[Invtry] {i.resource.Name} {i.amount}");           
+                Debug.Log($"[Invtry] {i.resource.Name} {i.amount}");
         }
     }
 }

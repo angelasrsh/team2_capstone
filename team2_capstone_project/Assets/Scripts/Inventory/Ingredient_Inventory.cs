@@ -4,6 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Derived class of Inventory specifically for ingredients.
+/// Uses the singleton pattern. Call functions using Ingredient_Inventory.Instance.<...>
+/// 
+/// Also contains ingredient specific methods, including add/remove resources for the IngredientType enum
+/// and converting an Ingredient_Data to the enum.
+/// This requires an updated list of all ingredients that need to be converted! This is annoying
+/// </summary>
 public class Ingredient_Inventory : Inventory
 {
     public static Ingredient_Inventory Instance { get; private set; }
@@ -34,9 +42,9 @@ public class Ingredient_Inventory : Inventory
     /// <summary>
     /// Overload AddResources to allow for using the IngredientType enum
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="count"></param>
-    /// <returns></returns>
+    /// <param name="type"> IngredientType enum for ingredients </param>
+    /// <param name="count"> Amount to add </param>
+    /// <returns> Amount actually added </returns>
     public int AddResources(IngredientType type, int count)
     {
         // Error-checking
@@ -79,9 +87,9 @@ public class Ingredient_Inventory : Inventory
     /// <summary>
     /// Overload base inventory RemoveResources function to allow removing ingredients using type enum
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="count"></param>
-    /// <returns></returns>
+    /// <param name="type"> type to remove </param>
+    /// <param name="count"> amount to remove </param>
+    /// <returns> Amount of type actually removed </returns>
     public int RemoveResources(IngredientType type, int count)
     {
         // Error-checking
@@ -114,9 +122,9 @@ public class Ingredient_Inventory : Inventory
     /// Convert enum IngredientType to a name string.
     /// String here must match Item_Data Name!
     /// </summary>
-    /// <param name="t"></param>
+    /// <param name="t"> type to convert to a string </param>
     /// <returns></returns>
-    private String IngrEnumToName(IngredientType t)
+    public String IngrEnumToName(IngredientType t)
     {
         switch (t)
         {
@@ -135,17 +143,17 @@ public class Ingredient_Inventory : Inventory
         }
     }
 
-/// <summary>
-/// For use by Inventory_Overlap
-/// Converts Ingredient_Data to IngredientType
-/// </summary>
-/// <param name="d"></param>
-/// <returns></returns>
+    /// <summary>
+    /// For use by Inventory_Overlap
+    /// Converts Ingredient_Data to IngredientType
+    /// </summary>
+    /// <param name="d"> Ingredient_Data to convert to an enum </param>
+    /// <returns> The corresponding IngredientType enum </returns>
     public IngredientType IngrDataToEnum(Ingredient_Data d)
     {
         if (d == null)
             return IngredientType.Null;
-            
+
         switch (d.Name)
         {
             case "Egg":
@@ -165,11 +173,15 @@ public class Ingredient_Inventory : Inventory
     }
 
     /// <summary>
+    /// Get the corresponding Ingredient_Data scriptable object for a given IngredientType enum.
+    /// 
+    /// Requires that the Ingredient_Inventory AllIngredientsList is up to date!
+    /// 
     /// Must be better ways to do this but for now, this is the best I've got.
     /// </summary>
-    /// <param name="t"></param>
-    /// <returns></returns>
-    private Ingredient_Data IngrEnumToData(IngredientType t)
+    /// <param name="t"> Ingredient enum </param>
+    /// <returns> Reference to a corresponding Ingredient_Data scriptable object </returns>
+    public Ingredient_Data IngrEnumToData(IngredientType t)
     {
         String name = IngrEnumToName(t);
         if (IngredientDict.ContainsKey(name))
