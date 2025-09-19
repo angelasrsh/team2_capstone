@@ -36,8 +36,8 @@ public class Game_Manager : MonoBehaviour
         Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
       else
       {
-        foragingDatabase.UnlockItem("Mushroom");
-        Debug.Log("GameManager: ForagingDatabase initialized and Mushroom unlocked.");
+        foragingDatabase.UnlockItem("Bone");
+        Debug.Log("GameManager: ForagingDatabase initialized and Bone unlocked.");
       }
     }
     else

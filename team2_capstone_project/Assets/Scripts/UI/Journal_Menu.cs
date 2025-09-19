@@ -38,17 +38,16 @@ public class Journal_Menu : MonoBehaviour
     PlayerInput playerInput = FindObjectOfType<PlayerInput>();
     if (playerInput == null)
       Debug.LogError("Journal_Menu: No PlayerInput found in scene!");
-      
+
     openJournalAction = playerInput.actions["OpenJournal"];
-    if (openJournalAction == null)  
+    if (openJournalAction == null)
       Debug.LogError("Journal_Menu: 'OpenJournal' action not found in PlayerInput actions!");
 
     if (journal == null)
       Debug.LogError("Journal_Menu: Journal GameObject not assigned in inspector!");
     else
     {
-      journal.transform.GetChild(0).gameObject.SetActive(false);
-      journal.transform.GetChild(1).gameObject.SetActive(false);
+      HideEverything();
     }
 
     if (Dish_Slot_Prefab == null)
@@ -109,10 +108,10 @@ public class Journal_Menu : MonoBehaviour
     ShowGroup(recipeMenuGroup, false);
     ShowGroup(foragingMenuGroup, false);
   }
-  
+
   private void OnEnable()
   {
-      Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
+    Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
   }
 
   private void OnDisable()
@@ -123,144 +122,147 @@ public class Journal_Menu : MonoBehaviour
     Choose_Menu_Items.OnDailyMenuSelected -= PopulateForaging;
   }
 
-  private void PopulateDishes() 
-  { 
-      Debug.Log("Populating dishes in journal..."); 
+  #region Recipe Menu Methods
+  private void PopulateDishes()
+  {
+    Debug.Log("Populating dishes in journal...");
 
-      // Clear existing dish slots
-      foreach (Transform child in Dishes_Grid.transform) 
-      { 
-          DestroyImmediate(child.gameObject, true); 
-      } 
+    // Clear existing dish slots
+    foreach (Transform child in Dishes_Grid.transform)
+    {
+      DestroyImmediate(child.gameObject, true);
+    }
 
-      // Populate with unlocked dishes
-      Debug.Log($"Unlocked dishes count: {dishDatabase.GetUnlockedDishes().Count}"); 
-      foreach (var unlockedDishType in dishDatabase.GetUnlockedDishes()) 
-      { 
-          Dish_Data dishData = dishDatabase.GetDish(unlockedDishType); 
-          if (dishData == null) continue; // safety check 
+    // Populate with unlocked dishes
+    Debug.Log($"Unlocked dishes count: {dishDatabase.GetUnlockedDishes().Count}");
+    foreach (var unlockedDishType in dishDatabase.GetUnlockedDishes())
+    {
+      Dish_Data dishData = dishDatabase.GetDish(unlockedDishType);
+      if (dishData == null) continue; // safety check 
 
-          // Instantiate a dish slot prefab as a child of the grid
-          GameObject slot = Instantiate(Dish_Slot_Prefab, Dishes_Grid.transform); 
+      // Instantiate a dish slot prefab as a child of the grid
+      GameObject slot = Instantiate(Dish_Slot_Prefab, Dishes_Grid.transform);
 
-          // Find and set the UI elements within the slot
-          Transform dishBG = slot.transform.Find("Dish_BG"); 
-          Transform button = dishBG.Find("Button"); 
-          Transform dishName = button.Find("Dish_Name"); 
-          var textComp = dishName.GetComponent<TextMeshProUGUI>(); 
-          textComp.text = dishData.Name; 
+      // Find and set the UI elements within the slot
+      Transform dishBG = slot.transform.Find("Dish_BG");
+      Transform button = dishBG.Find("Button");
+      Transform dishName = button.Find("Dish_Name");
+      var textComp = dishName.GetComponent<TextMeshProUGUI>();
+      textComp.text = dishData.Name;
 
-          Transform iconPanel = dishBG.Find("Dish_Icon_Panel"); 
-          Transform icon = iconPanel.Find("Dish_Icon"); 
-          var imageComp = icon.GetComponent<UnityEngine.UI.Image>(); 
-          imageComp.sprite = dishData.dishSprite; 
+      Transform iconPanel = dishBG.Find("Dish_Icon_Panel");
+      Transform icon = iconPanel.Find("Dish_Icon");
+      var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
+      imageComp.sprite = dishData.dishSprite;
 
-          // Add button listener to show details on click
-          var buttonComp = button.GetComponent<UnityEngine.UI.Button>(); 
-          buttonComp.onClick.AddListener(() => DisplayDishDetails(dishData)); 
-      } 
-  } 
+      // Add button listener to show details on click
+      var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
+      buttonComp.onClick.AddListener(() => DisplayDishDetails(dishData));
+    }
+  }
 
-  private void DisplayDishDetails(Dish_Data dishData) 
-  { 
-      Left_Page.SetActive(true); 
+  private void DisplayDishDetails(Dish_Data dishData)
+  {
+    Left_Page.SetActive(true);
 
-      // Find left page UI elements
-      Transform pagePanel = Left_Page.transform.Find("Page_Panel"); 
+    // Find left page UI elements
+    Transform pagePanel = Left_Page.transform.Find("Page_Panel");
 
-      Transform nameObj = pagePanel.Find("Dish_Name"); 
-      var nameText = nameObj.GetComponent<TextMeshProUGUI>(); 
-      nameText.text = dishData.Name; 
+    Transform nameObj = pagePanel.Find("Dish_Name");
+    var nameText = nameObj.GetComponent<TextMeshProUGUI>();
+    nameText.text = dishData.Name;
 
-      // Find and set the recipe text
-      Transform detailsObj = pagePanel.Find("Dish_Details"); 
-      var detailsText = detailsObj.GetComponent<TextMeshProUGUI>(); 
-      detailsText.text = dishData.recipeInstructions; 
+    // Find and set the recipe text
+    Transform detailsObj = pagePanel.Find("Dish_Details");
+    var detailsText = detailsObj.GetComponent<TextMeshProUGUI>();
+    detailsText.text = dishData.recipeInstructions;
 
-      // Find and set the dish icon
-      Transform iconPanel = pagePanel.Find("Icon_Panel"); 
-      Transform iconObj = iconPanel.Find("Icon_Image"); 
-      var iconImage = iconObj.GetComponent<UnityEngine.UI.Image>(); 
-      iconImage.sprite = dishData.dishSprite; 
-  } 
+    // Find and set the dish icon
+    Transform iconPanel = pagePanel.Find("Icon_Panel");
+    Transform iconObj = iconPanel.Find("Icon_Image");
+    var iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
+    iconImage.sprite = dishData.dishSprite;
+  }
+  #endregion
 
-
+  #region Daily Menu Methods
   private void PopulateForaging(List<Dish_Data.Dishes> selectedDishes)
   {
-      Debug.Log("Populating foraging menu...");
+    Debug.Log("Populating foraging menu...");
 
-      // Clear existing slots
-      foreach (Transform child in Foraging_Grid.transform)
-      {
-          DestroyImmediate(child.gameObject, true);
-      }
+    // Clear existing slots
+    foreach (Transform child in Foraging_Grid.transform)
+    {
+      DestroyImmediate(child.gameObject, true);
+    }
 
-      // For each selected dish
-      foreach (var dishType in selectedDishes)
-      {
-          Dish_Data dishData = dishDatabase.GetDish(dishType);
-          if (dishData == null) continue;
+    // For each selected dish
+    foreach (var dishType in selectedDishes)
+    {
+      Dish_Data dishData = dishDatabase.GetDish(dishType);
+      if (dishData == null) continue;
 
-          GameObject dishSlot = Instantiate(Foraging_Slot_Prefab, Foraging_Grid.transform);
+      GameObject dishSlot = Instantiate(Foraging_Slot_Prefab, Foraging_Grid.transform);
 
-          Transform bg = dishSlot.transform.Find("Item_BG");
-          Transform button = bg.Find("Item_Button");
-          Transform itemName = button.Find("Item_Name");
-          var nameText = itemName.GetComponent<TextMeshProUGUI>();
-          nameText.text = dishData.Name;
+      Transform bg = dishSlot.transform.Find("Item_BG");
+      Transform button = bg.Find("Item_Button");
+      Transform itemName = button.Find("Item_Name");
+      var nameText = itemName.GetComponent<TextMeshProUGUI>();
+      nameText.text = dishData.Name;
 
-          Transform iconPanel = bg.Find("Item_Icon_Panel");
-          Transform icon = iconPanel.Find("Item_Icon");
-          var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
-          imageComp.sprite = dishData.dishSprite;
+      Transform iconPanel = bg.Find("Item_Icon_Panel");
+      Transform icon = iconPanel.Find("Item_Icon");
+      var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
+      imageComp.sprite = dishData.dishSprite;
 
-          var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
-          buttonComp.onClick.AddListener(() => DisplayDishForagingDetails(dishData));
-      }
+      var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
+      buttonComp.onClick.AddListener(() => DisplayDishForagingDetails(dishData));
+    }
   }
 
   private void DisplayDishForagingDetails(Dish_Data dishData)
   {
-      Foraging_Left_Page.SetActive(true);
+    Foraging_Left_Page.SetActive(true);
 
-      Transform pagePanel = Foraging_Left_Page.transform.Find("Left_Page_Item_Panel");
+    Transform pagePanel = Foraging_Left_Page.transform.Find("Left_Page_Item_Panel");
 
-      // Dish Info
-      pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
-      pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.dishSprite;
+    // Dish Info
+    pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
+    pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.dishSprite;
 
-      // Collect ingredient lines
-      string ingredientText = "";
-      foreach (var req in dishData.ingredientQuantities)
+    // Collect ingredient lines
+    string ingredientText = "";
+    foreach (var req in dishData.ingredientQuantities)
+    {
+      Ingredient_Data ingredient = req.ingredient;
+      int required = req.amountRequired;
+
+      // Pick the display ingredient
+      Ingredient_Data displayIngredient = ingredient;
+
+      // If this ingredient has equivalencies, pick the first one as the base
+      if (ingredient.countsAs != null && ingredient.countsAs.Count > 0)
       {
-          Ingredient_Data ingredient = req.ingredient;
-          int required = req.amountRequired;
-          
-          // Pick the display ingredient
-          Ingredient_Data displayIngredient = ingredient;
-
-          // If this ingredient has equivalencies, pick the first one as the base
-          if (ingredient.countsAs != null && ingredient.countsAs.Count > 0)
-          {
-              displayIngredient = ingredient.countsAs[0];
-          }
-
-          // Now display the base ingredient instead of the processed one
-          ingredientText += $"{displayIngredient.Name} x{required}\n";
-
+        displayIngredient = ingredient.countsAs[0];
       }
 
-      // Assign once
-      var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
-      detailsText.text = ingredientText.TrimEnd(); // trim last newline
+      // Now display the base ingredient instead of the processed one
+      ingredientText += $"{displayIngredient.Name} x{required}\n";
+
+    }
+
+    // Assign once
+    var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
+    detailsText.text = ingredientText.TrimEnd(); // trim last newline
   }
+  #endregion
 
-
+  #region Show/Hide UI Helper Methods
   private void ShowGroup(CanvasGroup group, bool show)
   {
-    group.alpha = show ? 1 : 0;             
-    group.interactable = show;         
-    group.blocksRaycasts = show;            
+    group.alpha = show ? 1 : 0;
+    group.interactable = show;
+    group.blocksRaycasts = show;
   }
 
   public void ShowRecipeMenu()
@@ -274,4 +276,14 @@ public class Journal_Menu : MonoBehaviour
     ShowGroup(recipeMenuGroup, false);
     ShowGroup(foragingMenuGroup, true);
   }
+
+  public void HideEverything()
+  {
+    journal.transform.GetChild(0).gameObject.SetActive(false);
+    journal.transform.GetChild(1).gameObject.SetActive(false);
+    journal.transform.GetChild(2).gameObject.SetActive(false);
+    ShowGroup(recipeMenuGroup, false);
+    ShowGroup(foragingMenuGroup, false);
+  }
+  #endregion
 }

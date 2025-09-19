@@ -34,30 +34,30 @@ public class Foraging_Database : ScriptableObject
         }
     }
 
-    public Ingredient_Data GetItem(string itemName)
+    public Ingredient_Data GetItem(string Name)
     {
-        if (foragingLookup.TryGetValue(itemName, out var data))
+        if (foragingLookup.TryGetValue(Name, out var data))
             return data;
 
-        Debug.LogWarning($"Foraging item {itemName} not found in database!");
+        Debug.LogWarning($"Foraging item {Name} not found in database!");
         return null;
     }
 
-    public void UnlockItem(string itemName)
+    public void UnlockItem(string Name)
     {
-        if (foragingLookup.ContainsKey(itemName) && unlockedItems.Add(itemName))
+        if (foragingLookup.ContainsKey(Name) && unlockedItems.Add(Name))
         {
             OnForagingItemUnlocked?.Invoke(); // notify listeners
         }
         else
         {
-            Debug.LogWarning($"Item {itemName} does not exist in the foraging database.");
+            Debug.LogWarning($"Item {Name} does not exist in the foraging database.");
         }
     }
 
-    public bool IsItemUnlocked(string itemName)
+    public bool IsItemUnlocked(string Name)
     {
-        return unlockedItems.Contains(itemName);
+        return unlockedItems.Contains(Name);
     }
 
     public HashSet<string> GetUnlockedItems()

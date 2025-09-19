@@ -13,7 +13,7 @@ public class Player_Controller : MonoBehaviour
     [HideInInspector] public Vector2 movement;
 
     // Input System
-    [HideInInspector] public PlayerInput playerInput;
+    private PlayerInput playerInput;
     private InputAction moveAction, interactAction, openInventoryAction, openJournalAction;
 
     // Room tracking
@@ -41,13 +41,13 @@ public class Player_Controller : MonoBehaviour
 
     public void DisablePlayerController()
     {
-        this.enabled = false;
+        Player_Input_Controller.instance.DisablePlayerInput();
         rb.velocity = Vector3.zero;
     }
 
     public void EnablePlayerController()
     {
-        this.enabled = true;
+        Player_Input_Controller.instance.EnablePlayerInput();
     }
 
     public void UpdatePlayerRoom(Room_Data.RoomID newRoomID)
