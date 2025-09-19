@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cafe/Dish", fileName = "NewDish")]
 public class Dish_Data : Item_Data
 {
-    public Ingredient_Data[] ingredients;
     public bool isGoodDish;
     public float price;
     public Sprite dishSprite;
