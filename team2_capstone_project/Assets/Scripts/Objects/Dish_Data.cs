@@ -8,7 +8,8 @@ public class Dish_Data : Item_Data
     public bool isGoodDish;
     public float price;
     public Sprite dishSprite;
-    [TextArea] public string recipeInstructions;
+    // [TextArea] public string recipeInstructions;
+    public Sprite recipeImage;
     public Dishes dishType;
 
     public enum Recipe

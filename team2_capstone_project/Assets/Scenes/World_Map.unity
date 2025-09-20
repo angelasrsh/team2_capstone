@@ -3696,6 +3696,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Audio_Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 1011794667199306289, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
+      propertyPath: m_Volume
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225331865409757011, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
+      propertyPath: m_Volume
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6771285035365284673, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
+      propertyPath: m_Volume
+      value: 0.3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
 --- !u!1 &1420731451
@@ -3853,8 +3865,16 @@ PrefabInstance:
       value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
       propertyPath: m_LocalScale.z
-      value: 11.1447315
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3862,7 +3882,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.432501
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12419,6 +12439,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2213217753760477588, guid: 201697268f2863047877950e268d6199, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3383254445356395498, guid: 201697268f2863047877950e268d6199, type: 3}
       propertyPath: m_RootOrder
       value: 24

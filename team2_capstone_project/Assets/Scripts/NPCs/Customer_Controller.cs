@@ -18,7 +18,7 @@ public class Customer_Controller : MonoBehaviour
     private Inventory playerInventory;
     private bool playerInRange = false;
 
-    void Awake()
+  void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
     }
@@ -30,6 +30,8 @@ public class Customer_Controller : MonoBehaviour
         playerInventory = inventory;
         agent.SetDestination(seat.position);
         agent.speed = 10f;
+        Transform npc_sprite = transform.Find("Sprite");
+        npc_sprite.GetComponent<SpriteRenderer>().sprite = data.overworldSprite;
 
         Debug.Log($"Customer spawned at {transform.position}, isOnNavMesh = {agent.isOnNavMesh}");
     }

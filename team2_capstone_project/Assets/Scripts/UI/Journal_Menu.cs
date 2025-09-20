@@ -5,13 +5,14 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Journal_Menu : MonoBehaviour
 {
   public GameObject journal;
   private bool isPaused = false; // Currently will overlap pause menu, I think
   private PlayerInput playerInput;
-  private InputAction openJournalAction;
+  // private InputAction openJournalAction;
 
   [Header("Recipe Menu References")]
   [SerializeField] private GameObject Dish_Slot_Prefab;
@@ -33,21 +34,24 @@ public class Journal_Menu : MonoBehaviour
   private Dish_Database dishDatabase;
   private Foraging_Database foragingDatabase;
 
-  private void Awake()
-  {
-      dishDatabase = Game_Manager.Instance.dishDatabase;
-      foragingDatabase = Game_Manager.Instance.foragingDatabase;
-  }
+  // private void Awake()
+  // {
+  //     dishDatabase = Game_Manager.Instance.dishDatabase;
+  //     foragingDatabase = Game_Manager.Instance.foragingDatabase;
+  // }
 
   private void Start()
   {
+    dishDatabase = Game_Manager.Instance.dishDatabase;
+    foragingDatabase = Game_Manager.Instance.foragingDatabase;
     PlayerInput playerInput = FindObjectOfType<PlayerInput>();
-    if (playerInput == null)
-      Debug.LogError("Journal_Menu: No PlayerInput found in scene!");
+    // playerInput check is not necessary to show as warning or error since journal can be opened in minigames too
+    // if (playerInput == null)
+    //   Debug.LogWarning("Journal_Menu: No PlayerInput found in scene!");
 
-    openJournalAction = playerInput.actions["OpenJournal"];
-    if (openJournalAction == null)
-      Debug.LogError("Journal_Menu: 'OpenJournal' action not found in PlayerInput actions!");
+    // openJournalAction = playerInput.actions["OpenJournal"];
+    // if (openJournalAction == null)
+    //   Debug.LogError("Journal_Menu: 'OpenJournal' action not found in PlayerInput actions!");
 
     if (journal == null)
       Debug.LogError("Journal_Menu: Journal GameObject not assigned in inspector!");
@@ -69,7 +73,7 @@ public class Journal_Menu : MonoBehaviour
       Debug.LogError("Journal_Menu: Foraging_Grid not assigned in inspector!");
 
     if (Choose_Menu_Items.instance == null)
-      Debug.LogError("Choose_Menu_Items instance is NULL in this scene!");
+      Debug.LogWarning("Choose_Menu_Items instance is NULL in this scene!");
     else
       Debug.Log("Choose_Menu_Items still alive. Dishes count: " + Choose_Menu_Items.instance.GetSelectedDishes().Count);
 
@@ -83,7 +87,8 @@ public class Journal_Menu : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    if (openJournalAction.WasPerformedThisFrame())
+    // if (openJournalAction.WasPerformedThisFrame())
+    if(Input.GetKeyDown(KeyCode.J))
     {
       if (isPaused)
         ResumeGame();
@@ -175,7 +180,7 @@ public class Journal_Menu : MonoBehaviour
       Transform icon = iconPanel.Find("Dish_Icon");
       var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
       imageComp.sprite = dishData.dishSprite;
-
+      Debug.Log($"Added dish slot for: {dishData.Name}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       // Add button listener to show details on click
       var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
       buttonComp.onClick.AddListener(() => DisplayDishDetails(dishData));
@@ -194,14 +199,15 @@ public class Journal_Menu : MonoBehaviour
     nameText.text = dishData.Name;
 
     // Find and set the recipe text
-    Transform detailsObj = pagePanel.Find("Dish_Details");
-    var detailsText = detailsObj.GetComponent<TextMeshProUGUI>();
-    detailsText.text = dishData.recipeInstructions;
+    Transform recipeObj = pagePanel.Find("Recipe_Image");
+    Image recipeImage = recipeObj.GetComponent<Image>();
+    recipeImage.sprite = dishData.recipeImage;
+    recipeImage.preserveAspect = true;
 
     // Find and set the dish icon
     Transform iconPanel = pagePanel.Find("Icon_Panel");
     Transform iconObj = iconPanel.Find("Icon_Image");
-    var iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
+    Image iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
     iconImage.sprite = dishData.dishSprite;
   }
   #endregion

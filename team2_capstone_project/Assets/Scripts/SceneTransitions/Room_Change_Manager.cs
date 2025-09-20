@@ -72,11 +72,15 @@ public class Room_Change_Manager : MonoBehaviour
         }
 
         // Disable player controls
-        Player_Input_Controller.instance.DisablePlayerInput();
+        if(Player_Input_Controller.instance != null)
+          Player_Input_Controller.instance.DisablePlayerInput();
 
         // Fade out music/ambient
-        Music_Persistence.instance.PreTransitionCheckMusic(targetRoom.music);
-        Music_Persistence.instance.PreTransitionCheckAmbient(targetRoom.ambientSound);
+        if(Music_Persistence.instance != null)
+        {
+            Music_Persistence.instance.PreTransitionCheckMusic(targetRoom.music);
+            Music_Persistence.instance.PreTransitionCheckAmbient(targetRoom.ambientSound);
+        }
 
         // Fade screen to black
         blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeIn());
