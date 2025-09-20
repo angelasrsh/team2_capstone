@@ -1,102 +1,59 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Choose_Menu_Items : MonoBehaviour
 {
-  public GameObject menuBox;
-  public GameObject darkOverlay;
-  public GameObject dayCanvas;
-  private bool selectedDishes;
-  private GameObject errorText;
-  
-  private List<Dish_Data.Dishes> dishesSelected = new List<Dish_Data.Dishes>();
-  public static event System.Action<List<Dish_Data.Dishes>> OnDailyMenuSelected;
+    public static Choose_Menu_Items instance;
+    private List<Dish_Data.Dishes> dishesSelected = new List<Dish_Data.Dishes>();
 
-  public void Start()
-  {
-    // Initially show the menu
-    menuBox.SetActive(true);
-    darkOverlay.SetActive(true);
-    selectedDishes = false;
-    errorText = menuBox.transform.Find("Error_Text").gameObject;
-    errorText.SetActive(false);
-    dayCanvas.SetActive(false);
-  }
+    public static event System.Action<List<Dish_Data.Dishes>> OnDailyMenuSelected;
 
-  // Resume the game from the pause menu
-  public void ContinueGame()
-  {
-    if (dishesSelected.Count > 0)
+    private void Awake()
     {
-      Debug.Log("Continuing to resource gathering...");
-      menuBox.SetActive(false);
-      darkOverlay.SetActive(false);
-      selectedDishes = true;
-      OnDailyMenuSelected?.Invoke(dishesSelected);
-
-      // Activate Day Canvas
-      if (dayCanvas != null)
-      {
-        dayCanvas.SetActive(true);
-      }
-      else
-      {
-        Debug.LogWarning("DayCanvas not found in the scene.");
-      }
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
-    else
+
+    public void AddDish(Dish_Data.Dishes dishType)
     {
-      Debug.Log("Please select at least one dish to continue.");
-      errorText.SetActive(true);
-      StartCoroutine(HideMessageAfterDelay(2f));
+        if (!dishesSelected.Contains(dishType))
+        {
+            dishesSelected.Add(dishType);
+            Debug.Log(dishType + " added. Total dishes: " + dishesSelected.Count);
+        }
+        else
+        {
+            Debug.Log(dishType + " is already selected.");
+        }
     }
-  }
 
-  // Coroutine to hide the error message after a delay
-  private IEnumerator HideMessageAfterDelay(float delay)
-  {
-    yield return new WaitForSeconds(delay);
-    errorText.SetActive(false);
-  }
+    public void RemoveDish(Dish_Data.Dishes dishType)
+    {
+        if (dishesSelected.Contains(dishType))
+        {
+            dishesSelected.Remove(dishType);
+            Debug.Log(dishType + " removed. Total dishes: " + dishesSelected.Count);
+        }
+        else
+        {
+            Debug.Log(dishType + " is not in the selected list.");
+        }
+    }
 
-  // Add a dish to the selected list
-  public void AddDish(Dish_Data.Dishes dishType)
-  {
-      if (!dishesSelected.Contains(dishType))
-      {
-          dishesSelected.Add(dishType);
-          Debug.Log(dishType + " added. Total dishes: " + dishesSelected.Count);
-      }
-      else
-      {
-          Debug.Log(dishType + " is already selected.");
-      }
-  }
+    public List<Dish_Data.Dishes> GetSelectedDishes() => dishesSelected;
 
-  public void RemoveDish(Dish_Data.Dishes dishType)
-  {
-      if (dishesSelected.Contains(dishType))
-      {
-          dishesSelected.Remove(dishType);
-          Debug.Log(dishType + " removed. Total dishes: " + dishesSelected.Count);
-      }
-      else
-      {
-          Debug.Log(dishType + " is not in the selected list.");
-      }
-  }
+    public bool HasSelectedDishes() => dishesSelected.Count > 0;
 
-  // Get the list of selected dishes
-  public List<Dish_Data.Dishes> GetSelectedDishes()
-  {
-      return dishesSelected;
-  }
-
-  // Check if any dishes have been selected
-  public bool HasSelectedDishes()
-  {
-    return selectedDishes;
-  }
+    // Call this when player confirms their menu
+    public void NotifyMenuConfirmed()
+    {
+        OnDailyMenuSelected?.Invoke(new List<Dish_Data.Dishes>(dishesSelected));
+    }
 }
