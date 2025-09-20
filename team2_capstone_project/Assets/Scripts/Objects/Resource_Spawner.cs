@@ -1,16 +1,24 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Grimoire
 {
+    [System.Serializable]
+    public struct SpawnArea
+    {
+        public Vector3 centerOffset; 
+        public Vector3 size;        
+    }
+
     public class Resource_Spawner : MonoBehaviour
     {
         [Header("Spawner Settings")]
         public Ingredient_Data[] possibleResources;
         public GameObject interactablePrefab;
         public int totalToSpawn = 10;
-        public Vector3 spawnAreaSize = new Vector3(10, 0, 10);
+
+        [Header("Spawn Areas")]
+        public List<SpawnArea> spawnAreas = new List<SpawnArea>();
 
         private void Start()
         {
@@ -28,7 +36,6 @@ namespace Grimoire
 
                 for (int i = 0; i < amount; i++)
                 {
-                    // Add to pool multiple times depending on weight
                     int weight = Mathf.RoundToInt(resource.rarityWeight * 100);
                     for (int w = 0; w < weight; w++)
                     {
@@ -42,27 +49,24 @@ namespace Grimoire
             {
                 if (spawnPool.Count == 0) break;
 
-                // Pick a random resource from pool
+                // Pick a random resource
                 int index = Random.Range(0, spawnPool.Count);
                 Ingredient_Data chosen = spawnPool[index];
-
-                // Remove to not overspawn
                 spawnPool.RemoveAt(index);
 
-                // Spawn prefab in random position within area
-                Vector3 spawnPos = transform.position + new Vector3(
-                    Random.Range(-spawnAreaSize.x / 2, spawnAreaSize.x / 2),
+                // Pick a random spawn area
+                SpawnArea area = spawnAreas[Random.Range(0, spawnAreas.Count)];
+
+                // Pick a random position inside that area
+                Vector3 spawnPos = transform.position + area.centerOffset + new Vector3(
+                    Random.Range(-area.size.x / 2, area.size.x / 2),
                     0,
-                    Random.Range(-spawnAreaSize.z / 2, spawnAreaSize.z / 2)
+                    Random.Range(-area.size.z / 2, area.size.z / 2)
                 );
 
-               GameObject obj = Instantiate(interactablePrefab, spawnPos, Quaternion.identity);
-
-                var pickup = obj.GetComponent<Collectible_Object>();
-                if (pickup == null)
-                {
-                    pickup = obj.AddComponent<Collectible_Object>();
-                }
+                // Spawn
+                GameObject obj = Instantiate(interactablePrefab, spawnPos, Quaternion.identity);
+                var pickup = obj.GetComponent<Collectible_Object>() ?? obj.AddComponent<Collectible_Object>();
                 pickup.Initialize(chosen);
             }
         }
@@ -70,7 +74,10 @@ namespace Grimoire
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(transform.position, spawnAreaSize);
+            foreach (var area in spawnAreas)
+            {
+                Gizmos.DrawWireCube(transform.position + area.centerOffset, area.size);
+            }
         }
     }
 }
