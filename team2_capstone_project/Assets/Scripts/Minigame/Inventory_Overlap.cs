@@ -62,7 +62,8 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
                 GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
                 this.name = "Image_Slot_Old";
                 newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
-                newImageSlot.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0); 
+                newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0); 
 
                 Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             }
