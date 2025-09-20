@@ -33,6 +33,12 @@ public class Journal_Menu : MonoBehaviour
   private Dish_Database dishDatabase;
   private Foraging_Database foragingDatabase;
 
+  private void Awake()
+  {
+      dishDatabase = Game_Manager.Instance.dishDatabase;
+      foragingDatabase = Game_Manager.Instance.foragingDatabase;
+  }
+
   private void Start()
   {
     PlayerInput playerInput = FindObjectOfType<PlayerInput>();
@@ -62,8 +68,11 @@ public class Journal_Menu : MonoBehaviour
     if (Foraging_Grid == null)
       Debug.LogError("Journal_Menu: Foraging_Grid not assigned in inspector!");
 
-    dishDatabase = Game_Manager.Instance.dishDatabase;
-    foragingDatabase = Game_Manager.Instance.foragingDatabase;
+    if (Choose_Menu_Items.instance == null)
+      Debug.LogError("Choose_Menu_Items instance is NULL in this scene!");
+    else
+      Debug.Log("Choose_Menu_Items still alive. Dishes count: " + Choose_Menu_Items.instance.GetSelectedDishes().Count);
+
     if (dishDatabase != null && foragingDatabase != null)
     {
       dishDatabase.OnDishUnlocked += PopulateDishes; // subscribe to the event
@@ -111,7 +120,19 @@ public class Journal_Menu : MonoBehaviour
 
   private void OnEnable()
   {
-    Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
+      Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
+      Debug.Log("Subscribed to OnDailyMenuSelected event.");
+
+      if (dishDatabase == null)
+      {
+          dishDatabase = Game_Manager.Instance?.dishDatabase;
+      }
+
+      if (dishDatabase != null && Choose_Menu_Items.instance != null && Choose_Menu_Items.instance.HasSelectedDishes())
+      {
+          PopulateForaging(Choose_Menu_Items.instance.GetSelectedDishes());
+          Debug.Log("Populated foraging menu from existing daily menu selection.");
+      }
   }
 
   private void OnDisable()
@@ -197,11 +218,19 @@ public class Journal_Menu : MonoBehaviour
     }
 
     // For each selected dish
+   Debug.Log("PopulateForaging called. DishDatabase: " + (dishDatabase != null) +
+          ", ForagingPrefab: " + (Foraging_Slot_Prefab != null) +
+          ", ContentParent: " + (Foraging_Grid != null));
+
     foreach (var dishType in selectedDishes)
     {
-      Dish_Data dishData = dishDatabase.GetDish(dishType);
-      if (dishData == null) continue;
-
+      Debug.Log("Trying to fetch dish: " + dishType);
+      var dishData = dishDatabase.GetDish(dishType); // line 215?
+      if (dishData == null)
+      {
+          Debug.LogError("Dish not found in database: " + dishType);
+          continue;
+      }
       GameObject dishSlot = Instantiate(Foraging_Slot_Prefab, Foraging_Grid.transform);
 
       Transform bg = dishSlot.transform.Find("Item_BG");
