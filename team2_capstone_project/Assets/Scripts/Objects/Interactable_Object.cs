@@ -33,7 +33,8 @@ namespace Grimoire
             // show interact option
             if (other.gameObject.CompareTag("Player"))
             {
-                InteractIcon.SetActive(true);
+                if (InteractIcon != null)
+                    InteractIcon.SetActive(true);
                 playerInside = true;
             }
 
@@ -53,7 +54,8 @@ namespace Grimoire
             // hide interact option
             if (other.gameObject.CompareTag("Player"))
             {
-                InteractIcon.SetActive(false);
+                if (InteractIcon != null)
+                    InteractIcon.SetActive(false);
                 playerInside = false;
             }
 
