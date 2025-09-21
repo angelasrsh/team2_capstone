@@ -19,10 +19,6 @@ public class Dish_Tool_Inventory : Inventory
 {
     public static Dish_Tool_Inventory Instance { get; protected set; }
 
-    // Testing
-    public Dish_Data dish;
-
-    // End Testing
     new private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,28 +29,23 @@ public class Dish_Tool_Inventory : Inventory
             DontDestroyOnLoad(gameObject);
         }
 
-        // Do this instead of calling the base.awake() so that we can 
-        if (InventoryStacks == null)
-            InventoryStacks = new Dish_Tool_Stack[InventorySizeLimit];
-        else if (InventoryStacks.Length != InventorySizeLimit)
-        {
-            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
-            InventoryStacks = new Item_Stack[InventorySizeLimit];
-
-            for (int i = 0; i < temp.Length; i++) // copy over elements
-            {
-                InventoryStacks[i] = temp[i];
-            }
-        }
-
-
+        // Create inventory stack structure to hold Dish_Tool_Stacks
+        InitializeInventoryStacks<Dish_Tool_Stack>();
         updateInventory();
+    }
 
+    /// <summary>
+    /// Overrides the base inventory AddResources function to use the Dish_Tool_Stack type instead.
+    /// This is necessary to use the new StackLimit of 1 instead of the default of 20
+    /// Also allows for other type differences later on.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+     public override int AddResources(Item_Data type, int count)
+    {
+        return addResourcesOfType<Dish_Tool_Stack>(type, count);
 
-        // Testing
-        AddResources(dish, 2);
-        AddResources(dish, 1);
-        // End testing
     }
 
 }
