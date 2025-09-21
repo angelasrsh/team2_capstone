@@ -89,8 +89,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7360a4653af51ec49bb01c8a28983dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetScale: {x: 1, y: 1, z: 1}
+  canDrag: 1
   newImagePrefab: {fileID: 0}
+  chopScript: {fileID: 0}
   ParentSlot: {fileID: 0}
   ingredientType: 0
 --- !u!1 &3414188564792562491
@@ -152,14 +153,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9150943, g: 0.79401696, b: 0.6949537, a: 0.85490197}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 1278484958, guid: 46afe8aa59810e24ea93acddf7c07638, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
