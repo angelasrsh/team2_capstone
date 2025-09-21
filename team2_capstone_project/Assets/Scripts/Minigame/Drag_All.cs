@@ -23,9 +23,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     [Header("Target Transform")]
     private RectTransform rectTransform;
 
-
-    [SerializeField] private RectTransform cuttingBoardRect;
-    [SerializeField] private Transform targetCanvas; // Canvas to become child of AND center within
+    private RectTransform redZone;
+    
+    
+    private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
 
     [SerializeField] private Vector3 targetScale = Vector3.one;
 
@@ -34,9 +35,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     private Canvas canvas;
     private bool canDrag = true;
     private Image currentImage;
-    public GameObject newImagePrefab; // Complete prefab to replace with
+    public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
 
-
+    
 
     public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
     {
@@ -60,7 +61,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Debug.Log("started drag");
-        if (!canDrag) //not supposed to be dragging but you cant
+        if (!canDrag) 
         {
             changePrefab();
             return;
@@ -93,14 +94,15 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
             transform.SetParent(parentAfterDrag);
-            if (IsOverlapping(rectTransform, cuttingBoardRect))
+            //set cutting board rect
+            if (IsOverlapping(rectTransform, redZone))
             {
                 //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
 
                 //make the ingredient from the inventory Bigger:
-                if (targetCanvas != null)
+                if (resizeCanvas != null)
                 {
-                    transform.SetParent(targetCanvas);
+                    transform.SetParent(resizeCanvas);
                     transform.localPosition = Vector3.zero; // Center within the target canvas
                 }
                 transform.localScale = targetScale;
@@ -117,6 +119,22 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     // Start is called before the first frame update
     void Start()
     {
+        GameObject red_zone_found = GameObject.Find("RedZone");
+        if (red_zone_found != null)
+            redZone = red_zone_found.GetComponent<RectTransform>();
+        else
+        {
+            Debug.Log("[Invty_Ovlrp] Could not find redZone!");
+        }
+        GameObject resizeCanvas_object = GameObject.Find("IngredientResizeCanvas");
+        if (resizeCanvas_object != null)
+            redZone = resizeCanvas_object.GetComponent<RectTransform>();
+        else
+        {
+            Debug.Log("[Invty_Ovlrp] Could not find Ingredient Resize Canvas!");
+        }
+            
+
         // onDrag = GetComponent<ICustomDrag>();
         rectTransform = GetComponent<RectTransform>();
 
@@ -125,6 +143,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
             Debug.Log("- " + comp.GetType().Name);
         }
+
+
 
         onDrag = GetComponent<ICustomDrag>();
         // Optional: Add a safety check
@@ -139,7 +159,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     }
 
-    private void changePrefab()
+    private void changePrefab() //function to change the scale and szie when you place an item on the cutting board
     {
         if (currentImage != null)
         {

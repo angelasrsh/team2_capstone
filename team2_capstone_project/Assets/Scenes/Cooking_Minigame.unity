@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -521,7 +521,7 @@ GameObject:
   - component: {fileID: 341864800}
   - component: {fileID: 341864799}
   m_Layer: 5
-  m_Name: Image-Pot
+  m_Name: RedZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1557,6 +1557,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6809417295548205093, guid: 9baeeea6fe031b34db1595f11d79da99, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 16.400055
+      objectReference: {fileID: 0}
     - target: {fileID: 7174819845281938421, guid: 9baeeea6fe031b34db1595f11d79da99, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2015,7 +2019,7 @@ GameObject:
   - component: {fileID: 1480369783}
   - component: {fileID: 1480369782}
   m_Layer: 5
-  m_Name: Canvas-Pot
+  m_Name: Canvas-Pot-RedZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
