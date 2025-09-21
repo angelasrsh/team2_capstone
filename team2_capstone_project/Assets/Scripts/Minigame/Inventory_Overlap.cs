@@ -25,7 +25,7 @@ public class Inventory_Overlap : MonoBehaviour
         // playerInventory = FindObjectOfType<Inventory>()?.GetComponent<Inventory>();
 
         // Set red zone if in cauldron scene
-        GameObject zonedefine = GameObject.Find("Image-Pot");
+        GameObject zonedefine = GameObject.Find("RedZone");
         if (zonedefine != null)
             redZone = zonedefine.GetComponent<RectTransform>();
         else

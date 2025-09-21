@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Foraging/Ingredient", fileName = "NewIngredient")]
@@ -17,6 +18,8 @@ public class Ingredient_Data : Item_Data
     // mainly used to count processed variants (e.g. chopped) as their base ingredient
     // used to tracking ingredient requirements for dishes in Journal_Menu
     public List<Ingredient_Data> countsAs;
+
+    public Sprite[] CutIngredientImages;
 }
 
 // public class CutLine
