@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Inventory_Overlap : MonoBehaviour, ICustomDrag
+public class Inventory_Overlap : MonoBehaviour
 {
     private RectTransform rectTransform;
     [SerializeField] RectTransform redZone;
@@ -13,12 +13,11 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
 
     public AudioSource goodDishMade;
     private static List<Inventory_Overlap> ingredientOnPot = new List<Inventory_Overlap>();
-    // private bool isOnPot = false;
+    private bool isOnPot = false;
     //private Inventory playerInventory;
     public Dish_Data DishData;
     private Vector3 originalPosition;
 
-    public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
     // Start is called before the first frame update
     void Start()
     {
@@ -37,37 +36,6 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
             Debug.Log("[Intry_Ovlrp] Could not find MadeGoodDish!");
         else
             goodDishMade = goodDishGameObject.GetComponent<AudioSource>();
-    }
-
-    public void EndDrag()
-    {
-        if (Drag_All.IsOverlapping(rectTransform, redZone))
-        {
-            Debug.Log("In RED");
-            if (!isOnPot)
-            {
-                AddToPot();
-                // The Inventory UI requires an image slot, so duplicate and replace self
-                GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
-                this.name = "Image_Slot_Old";
-                newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
-                newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0); 
-                newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0); 
-
-                Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-            }
-
-        }
-        else
-        {
-            if (isOnPot)
-                RemoveFromPot();
-            else
-            {
-                Debug.Log("Not in RED, snapping back");
-                rectTransform.position = originalPosition;
-            }
-        }
     }
 
     private void AddToPot()
@@ -162,14 +130,5 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
         isOnPot = false;
         ingredientOnPot.Remove(this);
         Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
-    }
-
-    /// <summary>
-    /// For another object to set this image_slot's ingredient type (used in inventory UI)
-    /// </summary>
-    /// <param name="iData"></param>
-    public void SetIngredientType(Ingredient_Data iData)
-    {
-        ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
     }
 }

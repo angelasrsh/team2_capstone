@@ -53,7 +53,8 @@ public class Inventory_Slot : MonoBehaviour
 
  
         // If it has an Inventory_Overlap script and the resource is not null, assign the type
-        Inventory_Overlap script = image_slot.GetComponent<Inventory_Overlap>();
+        // Inventory_Overlap script = image_slot.GetComponent<Inventory_Overlap>();
+        Drag_All script = image_slot.GetComponent<Drag_All>();
         if (script != null)
         {
             if (stack != null && stack.resource != null)
@@ -61,10 +62,6 @@ public class Inventory_Slot : MonoBehaviour
             else
                 script.SetIngredientType(null);
         }
-               
-
-
-
 
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class Mixing_Script : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private ICustomDrag onDrag;
+    // private ICustomDrag onDrag;
     Transform parentAfterDrag; //original parent of the drag
     Transform originalPos;
     // int is_spoon_rotated = 0;

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6231103885154374001}
   - component: {fileID: 2059792833162963379}
   - component: {fileID: 4569069678029857647}
-  - component: {fileID: 2486908227968379302}
   - component: {fileID: 8595123953973656733}
   m_Layer: 5
   m_Name: Image_Slot
@@ -78,25 +77,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2486908227968379302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3192547575395522690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ccc2543b878b11408d298525781740c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  redZone: {fileID: 0}
-  ingredientType: 0
-  goodDishPrefab: {fileID: 5202203660879682417, guid: e6456429a6166e342b52a07d0792bb94, type: 3}
-  badDishPrefab: {fileID: 9189824014571966941, guid: 681579ae6ea0e9744bc2c21e088ee131, type: 3}
-  goodDishMade: {fileID: 0}
-  DishData: {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
-  ParentSlot: {fileID: 5235986743551570738}
 --- !u!114 &8595123953973656733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,9 +89,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7360a4653af51ec49bb01c8a28983dfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resizeCanvas: {fileID: 0}
   targetScale: {x: 1, y: 1, z: 1}
   newImagePrefab: {fileID: 0}
+  ParentSlot: {fileID: 0}
+  ingredientType: 0
 --- !u!1 &3414188564792562491
 GameObject:
   m_ObjectHideFlags: 0
