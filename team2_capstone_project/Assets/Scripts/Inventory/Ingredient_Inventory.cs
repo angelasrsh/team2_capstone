@@ -138,6 +138,20 @@ public class Ingredient_Inventory : Inventory
                 return "Cheese";
             case IngredientType.Melon:
                 return "Melon";
+            case IngredientType.Uncut_Fogshroom:
+                return "Uncut Fogshroom";
+            case IngredientType.Uncut_Fermented_Eye:
+                return "Uncut Fermented Eye";
+            case IngredientType.Slime:
+                return "Slime";
+            case IngredientType.Bone_Broth:
+                return "Bone Broth";
+            case IngredientType.Bone:
+                return "Bone";
+            case IngredientType.Cut_Fermented_Eye:
+                return "Cut Fermented Eye";
+            case IngredientType.Cut_Fogshroom:
+                return "Cut Fogshroom";
             default:
                 return "";
         }
@@ -166,8 +180,22 @@ public class Ingredient_Inventory : Inventory
                 return IngredientType.Cheese;
             case "Melon":
                 return IngredientType.Melon;
+            case "Uncut Fogshroom":
+                return IngredientType.Uncut_Fogshroom;
+            case "Uncut Fermented Eye":
+                return IngredientType.Uncut_Fermented_Eye;
+            case "Slime":
+                return IngredientType.Slime;
+            case "Bone Broth":
+                return IngredientType.Bone_Broth;
+            case "Bone":
+                return IngredientType.Bone;
+            case "Cut Fermented Eye":
+                return IngredientType.Cut_Fermented_Eye;
+            case "Cut Fogshroom":
+                return IngredientType.Cut_Fogshroom;
             default:
-                return IngredientType.Melon;
+                return IngredientType.Null;
         }
 
     }

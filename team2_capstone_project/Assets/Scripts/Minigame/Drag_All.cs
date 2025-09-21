@@ -5,119 +5,150 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
-public interface ICustomDrag
-{
-  void OnCurrentDrag();
-  void EndDrag();
-  void startDrag();
-}
-
-
 public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private ICustomDrag onDrag;
-    Transform parentAfterDrag; //original parent of the drag
-    Transform originalPos;
+    // private ICustomDrag onDrag;
+    private Transform parentAfterDrag; //original parent of the drag
+    private Vector3 ingrOriginalPos;
 
     [Header("Target Transform")]
     private RectTransform rectTransform;
 
+    private RectTransform redZone;
+    
+    
+    private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
 
-    [SerializeField] private RectTransform cuttingBoardRect;
-    [SerializeField] private Transform targetCanvas; // Canvas to become child of AND center within
+    private Vector3 targetScale = new Vector3(5f, 5f, 5f);
 
-    [SerializeField] private Vector3 targetScale = Vector3.one;
+    [Header("Cooking Minigame")]
+    private bool isOnPot = false;
+    private static Cauldron cauldron; // Static reference to Cauldron script in scene
 
-
-
+    [Header("Chopping Minigame")]
     private Canvas canvas;
-    private bool canDrag = true;
+    public bool canDrag = true;
     private Image currentImage;
-    public GameObject newImagePrefab; // Complete prefab to replace with
+    public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
+    public Chop_Controller chopScript;
+    private static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
 
+    [Header("Inventory Slot Info")]
+    public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
+    [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
 
 
     public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
+  {
+    //checks if the rectangles are overlapping
+    if (rectA == null || rectB == null) //if one of the objects doesnt exist
     {
-        //checks if the rectangles are overlapping
-        if (rectA == null || rectB == null) //if one of the objects doesnt exist
-        {
-            return false;
-        }
-        Vector3[] cornersA = new Vector3[4];
-        Vector3[] cornersB = new Vector3[4];
-
-        rectA.GetWorldCorners(cornersA); //fil rectA UI local positions into world postions
-        rectB.GetWorldCorners(cornersB);
-
-        Rect rect1 = new Rect(cornersA[0], cornersA[2] - cornersA[0]); //find the width and height in the world corner
-        Rect rect2 = new Rect(cornersB[0], cornersB[2] - cornersB[0]);
-
-        return rect1.Overlaps(rect2);
-
+      return false;
     }
+    Vector3[] cornersA = new Vector3[4];
+    Vector3[] cornersB = new Vector3[4];
+
+    rectA.GetWorldCorners(cornersA); //fil rectA UI local positions into world postions
+    rectB.GetWorldCorners(cornersB);
+
+    Rect rect1 = new Rect(cornersA[0], cornersA[2] - cornersA[0]); //find the width and height in the world corner
+    Rect rect2 = new Rect(cornersB[0], cornersB[2] - cornersB[0]);
+
+    return rect1.Overlaps(rect2);
+
+  }
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Debug.Log("started drag");
-        if (!canDrag) //not supposed to be dragging but you cant
-        {
-            changePrefab();
-            return;
-        }
-        onDrag.startDrag();
+
         parentAfterDrag = transform.parent;
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
+        ingrOriginalPos = rectTransform.position;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // Debug.Log("dragging");
-        if (onDrag != null)
-        {
-            onDrag.OnCurrentDrag();
-        }
         transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         // Debug.Log("ended drag");
-
-        if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+        transform.SetParent(parentAfterDrag);
+        if (IsOverlapping(rectTransform, redZone))
         {
-            onDrag.EndDrag();
-            transform.SetParent(parentAfterDrag);
-        }
-        else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
-        {
-            transform.SetParent(parentAfterDrag);
-            if (IsOverlapping(rectTransform, cuttingBoardRect))
+            // The Inventory UI requires an image slot, so duplicate and replace self
+            GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
+            this.name = "Image_Slot_Old";
+            newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
+            newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0); 
+            newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0); 
+            if (!cuttingBoardActive)
+              Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+            if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+            {
+                  // Debug.Log("In RED");
+                  if (!isOnPot)
+                  {
+                      cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
+                      isOnPot = true;
+                  }
+            }
+            else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
             {
                 //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
-
                 //make the ingredient from the inventory Bigger:
-                if (targetCanvas != null)
+                if (!cuttingBoardActive) 
                 {
-                    transform.SetParent(targetCanvas);
-                    transform.localPosition = Vector3.zero; // Center within the target canvas
+                    if (resizeCanvas != null)
+                    {
+                        transform.SetParent(resizeCanvas);
+                        transform.localPosition = Vector3.zero; // Center within the target canvas
+                        transform.localScale = targetScale;
+                    }
+                    canDrag = false;
+                    cuttingBoardActive = true;
                 }
-                transform.localScale = targetScale;
-                canDrag = false;
-
             }
-
         }
-
+        else
+        {
+            if (SceneManager.GetActiveScene().name == "Cooking_Minigame") 
+            {
+                if (isOnPot)
+                {
+                    cauldron.RemoveFromPot((Ingredient_Data)(ParentSlot.stk.resource));
+                    isOnPot = false;
+                }
+            }
+            // Debug.Log("Not in RED, snapping back");
+            rectTransform.position = ingrOriginalPos;
+        }
     }
-
-
 
     // Start is called before the first frame update
     void Start()
     {
-        // onDrag = GetComponent<ICustomDrag>();
+        if(cauldron == null)
+            cauldron = FindObjectOfType<Cauldron>();
+        ParentSlot = GetComponentInParent<Inventory_Slot>();
+
+        GameObject red_zone_found = GameObject.Find("RedZone");
+        if (red_zone_found != null)
+            redZone = red_zone_found.GetComponent<RectTransform>();
+        else
+        {
+            Debug.Log("[Drag_All] Could not find redZone!");
+        }
+        GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
+        if (resizeCanvas_object != null)
+            resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
+        else
+        {
+            Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
+        }
+
         rectTransform = GetComponent<RectTransform>();
 
         Debug.Log("Components on " + gameObject.name + ":");
@@ -125,38 +156,19 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
             Debug.Log("- " + comp.GetType().Name);
         }
-
-        onDrag = GetComponent<ICustomDrag>();
-        // Optional: Add a safety check
-        if (onDrag == null)
-        {
-            Debug.LogError("No ICustomDrag component found on " + gameObject.name);
-        }
     }
-    void Update()
+    
+    /// <summary>
+    /// For another object to set this image_slot's ingredient type (used in inventory UI)
+    /// </summary>
+    /// <param name="iData"></param>
+    public void SetIngredientType(Ingredient_Data iData)
     {
-        
-
+        ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
     }
-
-    private void changePrefab()
+    
+    public void SetCuttingBoardInactive()
     {
-        if (currentImage != null)
-        {
-            Debug.Log("changing not sliced to sliced image");
-            // Store original position and parent
-            Transform originalParent = transform.parent;
-            Vector3 originalPosition = transform.localPosition;
-            Vector3 originalScale = transform.localScale;
-
-            // Create new object
-            GameObject newObject = Instantiate(newImagePrefab, originalParent);
-            newObject.transform.localPosition = originalPosition;
-            newObject.transform.localScale = originalScale;
-
-            // Destroy old object
-            Destroy(gameObject);
-            return;
-        }
+        cuttingBoardActive = false;
     }
 }
