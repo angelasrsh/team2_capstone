@@ -20,6 +20,7 @@ public class Ingredient_Data : Item_Data
     public List<Ingredient_Data> countsAs;
 
     public Sprite[] CutIngredientImages;
+    public List<Dish_Data> usedInDishes;
 }
 
 // public class CutLine

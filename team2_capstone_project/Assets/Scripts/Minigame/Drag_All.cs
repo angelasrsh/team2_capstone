@@ -30,11 +30,13 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public bool canDrag = true;
     private Image currentImage;
     public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
+    public Chop_Controller chopScript;
+    private static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
 
     [Header("Inventory Slot Info")]
     public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
     [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
-    public Chop_Controller chopScript;
+
 
     public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
   {
@@ -76,6 +78,14 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         transform.SetParent(parentAfterDrag);
         if (IsOverlapping(rectTransform, redZone))
         {
+            // The Inventory UI requires an image slot, so duplicate and replace self
+            GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
+            this.name = "Image_Slot_Old";
+            newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
+            newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0); 
+            newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0); 
+            if (!cuttingBoardActive)
+              Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
             {
                   // Debug.Log("In RED");
@@ -83,27 +93,23 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                   {
                       cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
                       isOnPot = true;
-                      // The Inventory UI requires an image slot, so duplicate and replace self
-                      GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
-                      this.name = "Image_Slot_Old";
-                      newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
-                      newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0); 
-                      newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0); 
-
-                      Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
                   }
             }
             else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
             {
                 //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
                 //make the ingredient from the inventory Bigger:
-                if (resizeCanvas != null)
+                if (!cuttingBoardActive) 
                 {
-                    transform.SetParent(resizeCanvas);
-                    transform.localPosition = Vector3.zero; // Center within the target canvas
-                    transform.localScale = targetScale;
+                    if (resizeCanvas != null)
+                    {
+                        transform.SetParent(resizeCanvas);
+                        transform.localPosition = Vector3.zero; // Center within the target canvas
+                        transform.localScale = targetScale;
+                    }
+                    canDrag = false;
+                    cuttingBoardActive = true;
                 }
-                canDrag = false;
             }
         }
         else
@@ -115,12 +121,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                     cauldron.RemoveFromPot((Ingredient_Data)(ParentSlot.stk.resource));
                     isOnPot = false;
                 }
-                else
-                {
-                    // Debug.Log("Not in RED, snapping back");
-                    rectTransform.position = ingrOriginalPos;
-                }
             }
+            // Debug.Log("Not in RED, snapping back");
+            rectTransform.position = ingrOriginalPos;
         }
     }
 
@@ -136,18 +139,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             redZone = red_zone_found.GetComponent<RectTransform>();
         else
         {
-            Debug.Log("[Invty_Ovlrp] Could not find redZone!");
+            Debug.Log("[Drag_All] Could not find redZone!");
         }
         GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
         if (resizeCanvas_object != null)
             resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
         else
         {
-            Debug.Log("[Invty_Ovlrp] Could not find Ingredient Resize Canvas!");
+            Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
         }
-            
 
-        // onDrag = GetComponent<ICustomDrag>();
         rectTransform = GetComponent<RectTransform>();
 
         Debug.Log("Components on " + gameObject.name + ":");
@@ -155,15 +156,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
             Debug.Log("- " + comp.GetType().Name);
         }
-
-
-
-        // onDrag = GetComponent<ICustomDrag>();
-        // Optional: Add a safety check
-        // if (onDrag == null)
-        // {
-        //     Debug.LogError("No ICustomDrag component found on " + gameObject.name);
-        // }
     }
     
     /// <summary>
@@ -173,5 +165,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void SetIngredientType(Ingredient_Data iData)
     {
         ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
+    }
+    
+    public void SetCuttingBoardInactive()
+    {
+        cuttingBoardActive = false;
     }
 }

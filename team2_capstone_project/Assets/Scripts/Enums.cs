@@ -18,6 +18,13 @@ using UnityEngine;
     Melon,
     Morel,
     Milk,
-    Cheese
+    Cheese,
+    Uncut_Fogshroom,
+    Uncut_Fermented_Eye,
+    Slime,
+    Bone_Broth,
+    Bone,
+    Cut_Fermented_Eye,
+    Cut_Fogshroom
 }
     

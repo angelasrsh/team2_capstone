@@ -12,7 +12,7 @@ public class Cauldron : MonoBehaviour
         Debug.Log("Ingredients on pot: " + ingredientOnPot.Count);
     }
     
-    public void stir()
+    public void Stir()
     {
         // if (ingredientOnPot.Count >= 2)
         //     CheckRecipeAndCreateDish(); //only gets the position if the second egg is placed
