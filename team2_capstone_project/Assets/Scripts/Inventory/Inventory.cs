@@ -20,7 +20,7 @@ public class Item_Stack
 {
     public Item_Data resource;
     public int amount;
-    public int stackLimit = 20;
+    public virtual int stackLimit { get; set; } = 20;
 }
 
 /// <summary>
@@ -37,7 +37,7 @@ public class Inventory : MonoBehaviour
     public int InventorySizeLimit = 12;
 
     [field: SerializeField]
-    public Item_Stack[] InventoryStacks { get; private set; }
+    public Item_Stack[] InventoryStacks { get; protected set; }
 
     /// <summary>
     /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
@@ -49,18 +49,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     protected void Awake()
     {
-        if (InventoryStacks == null)
-            InventoryStacks = new Item_Stack[InventorySizeLimit];
-        else if (InventoryStacks.Length != InventorySizeLimit)
-        {
-            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
-            InventoryStacks = new Item_Stack[InventorySizeLimit];
-
-            for (int i = 0; i < temp.Length; i++) // copy over elements
-            {
-                InventoryStacks[i] = temp[i];
-            }
-        }
+        InitializeInventoryStacks();
 
 
         updateInventory();
@@ -189,4 +178,26 @@ public class Inventory : MonoBehaviour
                 Debug.Log($"[Invtry] {i.resource.Name} {i.amount}");
         }
     }
+
+/// <summary>
+/// Generic functions to initialize the inventory with some sort of Inventory stack
+/// </summary>
+/// <typeparam name="T"></typeparam>
+    protected void InitializeInventoryStacks<T>()
+    {
+        if (InventoryStacks == null)
+            InventoryStacks = new Item_Stack[InventorySizeLimit];
+        else if (InventoryStacks.Length != InventorySizeLimit)
+        {
+            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
+            InventoryStacks = new Item_Stack[InventorySizeLimit];
+
+            for (int i = 0; i < temp.Length; i++) // copy over elements
+            {
+                InventoryStacks[i] = temp[i];
+            }
+        }
+    }
+
 }
+
