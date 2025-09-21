@@ -13,7 +13,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
 
     public AudioSource goodDishMade;
     private static List<Inventory_Overlap> ingredientOnPot = new List<Inventory_Overlap>();
-    // private bool isOnPot = false;
+    private bool isOnPot = false;
     //private Inventory playerInventory;
     public Dish_Data DishData;
     private Vector3 originalPosition;
@@ -26,7 +26,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
         // playerInventory = FindObjectOfType<Inventory>()?.GetComponent<Inventory>();
 
         // Set red zone if in cauldron scene
-        GameObject zonedefine = GameObject.Find("Image-Pot");
+        GameObject zonedefine = GameObject.Find("RedZone");
         if (zonedefine != null)
             redZone = zonedefine.GetComponent<RectTransform>();
         else

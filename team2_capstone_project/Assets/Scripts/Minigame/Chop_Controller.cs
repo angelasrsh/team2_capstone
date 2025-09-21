@@ -32,6 +32,12 @@ public class Chop_Controller : MonoBehaviour
     private float startTime;
     private bool isDragging;
     public bool isActive = false;
+
+    public Drag_All drag_all_script;
+    [Header("Cut Settings")]
+    public GameObject cutPrefab;
+    public GameObject cutImagePrefab; // Prefab for the cut versions of the image
+
     private void showCuttingLines()
     {
         //function to make the lines appear
@@ -41,8 +47,9 @@ public class Chop_Controller : MonoBehaviour
     }
     void Start()
     {
-            // Start with script disabled
+        // Start with script disabled
         DeactivateChopController();
+        
     }
 
     public void DeactivateChopController()
@@ -52,27 +59,29 @@ public class Chop_Controller : MonoBehaviour
     private Vector2 swipeStart;
     void Update()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        if (drag_all_script.canDrag == false)
         {
-            isDragging = true;
-            swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            startDragPos = Mouse.current.position.ReadValue();
-            startTime = Time.time;
-        }
-        else if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
-        {
-            isDragging = false;
-            Vector2 endDragPos = Mouse.current.position.ReadValue();
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                isDragging = true;
+                swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                startDragPos = Mouse.current.position.ReadValue();
+                startTime = Time.time;
+            }
+            else if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                isDragging = false;
+                Vector2 endDragPos = Mouse.current.position.ReadValue();
 
-            float duration = Time.time - startTime;
+                float duration = Time.time - startTime;
 
-            EvaluateChop(startDragPos, endDragPos, duration);
-            SpawnCut();
+                EvaluateChop(startDragPos, endDragPos, duration);
+                // SpawnCut();
+            }
         }
+        
     }
-    [Header("Cut Settings")]
-    public GameObject cutPrefab;
-    public GameObject cutImagePrefab; // Prefab for the cut versions of the image
+
 
     private void SpawnCut()
     {

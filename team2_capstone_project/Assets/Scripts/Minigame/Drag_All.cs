@@ -26,18 +26,18 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     
     private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
 
-    [SerializeField] private Vector3 targetScale = Vector3.one;
+    private Vector3 targetScale = new Vector3(5f, 5f, 5f);
 
     [Header("Cooking Minigame")]
     private bool isOnPot = false;
 
     [Header("Chopping Minigame")]
     private Canvas canvas;
-    private bool canDrag = true;
+    public bool canDrag = true;
     private Image currentImage;
     public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
 
-    
+    public Chop_Controller chopScript;
 
     public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
     {
@@ -61,11 +61,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnBeginDrag(PointerEventData eventData)
     {
         // Debug.Log("started drag");
-        if (!canDrag) 
-        {
-            changePrefab();
-            return;
-        }
 
         parentAfterDrag = transform.parent;
         transform.SetParent(transform.root);
@@ -94,14 +89,13 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             if (IsOverlapping(rectTransform, redZone))
             {
                 //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
-
                 //make the ingredient from the inventory Bigger:
                 if (resizeCanvas != null)
                 {
                     transform.SetParent(resizeCanvas);
                     transform.localPosition = Vector3.zero; // Center within the target canvas
+                    transform.localScale = targetScale;
                 }
-                transform.localScale = targetScale;
                 canDrag = false;
 
             }
@@ -122,9 +116,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
             Debug.Log("[Invty_Ovlrp] Could not find redZone!");
         }
-        GameObject resizeCanvas_object = GameObject.Find("IngredientResizeCanvas");
+        GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
         if (resizeCanvas_object != null)
-            redZone = resizeCanvas_object.GetComponent<RectTransform>();
+            resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
         else
         {
             Debug.Log("[Invty_Ovlrp] Could not find Ingredient Resize Canvas!");
@@ -150,24 +144,5 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
     }
 
-    private void changePrefab() //function to change the scale and szie when you place an item on the cutting board
-    {
-        if (currentImage != null)
-        {
-            Debug.Log("changing not sliced to sliced image");
-            // Store original position and parent
-            Transform originalParent = transform.parent;
-            Vector3 originalPosition = transform.localPosition;
-            Vector3 originalScale = transform.localScale;
 
-            // Create new object
-            GameObject newObject = Instantiate(newImagePrefab, originalParent);
-            newObject.transform.localPosition = originalPosition;
-            newObject.transform.localScale = originalScale;
-
-            // Destroy old object
-            Destroy(gameObject);
-            return;
-        }
-    }
 }
