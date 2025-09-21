@@ -111,8 +111,7 @@ public class Customer_Controller : MonoBehaviour
         }
 
         // Remove the dish from inventory
-        //playerInventory.RemoveDish(requestedDish);
-        if (Dish_Inventory.Instance.RemoveResources(requestedDish, 1) <= 0)
+        if (playerInventory.RemoveResources(requestedDish, 1) <= 0)
         {
             Debug.Log($"[Cstmr_Cntr] Error: no {requestedDish} served!");
             return false;

@@ -2901,6 +2901,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1200240518947448918, guid: ed754a8a7c630974c88e38ec2feb13cf, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1200240518947448918, guid: ed754a8a7c630974c88e38ec2feb13cf, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[0].amount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1200240518947448918, guid: ed754a8a7c630974c88e38ec2feb13cf, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[0].resource
+      value: 
+      objectReference: {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
+    - target: {fileID: 1200240518947448918, guid: ed754a8a7c630974c88e38ec2feb13cf, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[0].stackLimit
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ed754a8a7c630974c88e38ec2feb13cf, type: 3}
 --- !u!1001 &1315594270
@@ -3582,7 +3598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1486390533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5347,7 +5363,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2018126737
 Transform:
   m_ObjectHideFlags: 0

@@ -53,6 +53,6 @@ public class Customer_Spawner : MonoBehaviour
 
         // Spawn customer prefab
         Customer_Controller customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
-        customer.Init(data, seat, inventoryManager.GetComponent<Inventory>());
+        customer.Init(data, seat, Dish_Inventory.Instance);
     }
 }
