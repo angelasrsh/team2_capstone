@@ -13,7 +13,7 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
 
     public AudioSource goodDishMade;
     private static List<Inventory_Overlap> ingredientOnPot = new List<Inventory_Overlap>();
-    private bool isOnPot = false;
+    // private bool isOnPot = false;
     //private Inventory playerInventory;
     public Dish_Data DishData;
     private Vector3 originalPosition;
@@ -37,17 +37,6 @@ public class Inventory_Overlap : MonoBehaviour, ICustomDrag
             Debug.Log("[Intry_Ovlrp] Could not find MadeGoodDish!");
         else
             goodDishMade = goodDishGameObject.GetComponent<AudioSource>();
-    }
-
-    public void startDrag()
-    {
-        // save starting position of rectTransform
-        originalPosition = rectTransform.position;
-    }
-
-    public void OnCurrentDrag()
-    {
-        rectTransform.position = Input.mousePosition;
     }
 
     public void EndDrag()
