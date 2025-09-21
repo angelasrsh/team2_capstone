@@ -8,17 +8,15 @@ using UnityEngine.UI;
 
 public interface ICustomDrag
 {
-  void OnCurrentDrag();
-  void EndDrag();
-  void startDrag();
+  // void EndDrag();
 }
 
 
 public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     private ICustomDrag onDrag;
-    Transform parentAfterDrag; //original parent of the drag
-    Transform originalPos;
+    private Transform parentAfterDrag; //original parent of the drag
+    private Vector3 ingrOriginalPos;
 
     [Header("Target Transform")]
     private RectTransform rectTransform;
@@ -29,8 +27,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     [SerializeField] private Vector3 targetScale = Vector3.one;
 
+    [Header("Cooking Minigame")]
+    private bool isOnPot = false;
 
-
+    [Header("Chopping Minigame")]
     private Canvas canvas;
     private bool canDrag = true;
     private Image currentImage;
@@ -65,19 +65,15 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             changePrefab();
             return;
         }
-        onDrag.startDrag();
+
         parentAfterDrag = transform.parent;
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
+        ingrOriginalPos = rectTransform.position;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // Debug.Log("dragging");
-        if (onDrag != null)
-        {
-            onDrag.OnCurrentDrag();
-        }
         transform.position = Input.mousePosition;
     }
 
@@ -87,7 +83,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
         if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
         {
-            onDrag.EndDrag();
+            // onDrag.EndDrag();
             transform.SetParent(parentAfterDrag);
         }
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
@@ -132,11 +128,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
             Debug.LogError("No ICustomDrag component found on " + gameObject.name);
         }
-    }
-    void Update()
-    {
-        
-
     }
 
     private void changePrefab()

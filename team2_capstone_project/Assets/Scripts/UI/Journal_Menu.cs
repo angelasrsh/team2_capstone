@@ -180,7 +180,7 @@ public class Journal_Menu : MonoBehaviour
       Transform icon = iconPanel.Find("Dish_Icon");
       var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
       imageComp.sprite = dishData.dishSprite;
-      Debug.Log($"Added dish slot for: {dishData.Name}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      
       // Add button listener to show details on click
       var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
       buttonComp.onClick.AddListener(() => DisplayDishDetails(dishData));
