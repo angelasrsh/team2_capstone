@@ -24,6 +24,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   [Header("Cooking Minigame")]
   private bool isOnPot = false;
   private static Cauldron cauldron; // Static reference to Cauldron script in scene
+  private static bool waterAdded = false;
+  private static Image regularBG;
+  private static Sprite originalBGSprite;
 
   [Header("Chopping Minigame")]
   private Canvas canvas;
@@ -172,16 +175,42 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     cuttingBoardActive = false;
   }
 
-  public void AddWaterToPot()
+  /// <summary>
+  /// Adds water to pot as ingredient_data and changes cauldron background to fill with water.
+  /// Should be called only by the onClick action of the add water button.
+  /// </summary>
+  public static void AddWaterToPot()
   {
+    if (waterAdded)
+      return;
+
     Ingredient_Data water = Ingredient_Inventory.Instance.getWaterData();
     Debug.Log("[Drag_All]: Added water to cauldron");
     cauldron.AddToPot(water);
 
-    // Find Background image and change it to the one with water in cauldron
-    Transform backgroundCanvas = GameObject.Find("BackgroundCanvas").transform;
-    Transform regularBGTransform = backgroundCanvas.Find("Regular_BG");
-    Image regularBG = regularBGTransform.GetComponent<Image>();
+    if (regularBG == null)
+    {
+      // Find Background image and change it to the one with water in cauldron
+      Transform backgroundCanvas = GameObject.Find("BackgroundCanvas").transform;
+      Transform regularBGTransform = backgroundCanvas.Find("Regular_BG");
+      regularBG = regularBGTransform.GetComponent<Image>();
+      originalBGSprite = regularBG.sprite;
+    }
     regularBG.sprite = water.Image;
+    waterAdded = true;
+  }
+
+  /// <summary>
+  /// Once recipe is made, should call this method to reset water status and change
+  /// background image to empty cauldron. TEST THIS OUT LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  /// </summary>
+  public static void resetWaterStatus()
+  {
+    // if (regularBG == null)
+    //   Debug.Log("regularBG is null");
+    // if (originalBGSprite == null)
+    //   Debug.Log("originalBGSprite is null");
+    regularBG.sprite = originalBGSprite;
+    waterAdded = false;
   }
 }
