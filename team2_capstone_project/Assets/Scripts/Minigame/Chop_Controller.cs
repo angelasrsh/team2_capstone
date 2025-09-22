@@ -72,13 +72,12 @@ public class Chop_Controller : MonoBehaviour
             {
                 isDragging = false;
                 Vector2 endDragPos = Mouse.current.position.ReadValue();
+        //         float duration = Time.time - startTime;
 
-                float duration = Time.time - startTime;
-
-                EvaluateChop(startDragPos, endDragPos, duration);
-                // SpawnCut();
-            }
-        }
+        //         EvaluateChop(startDragPos, endDragPos, duration);
+        //         // SpawnCut();
+        //     }
+        // }
         
     }
 

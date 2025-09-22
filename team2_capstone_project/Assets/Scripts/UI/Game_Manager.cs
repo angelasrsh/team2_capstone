@@ -1,48 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game_Manager : MonoBehaviour
 {
-  [Header("Room Setup")]
-  [SerializeField] private Room_Collection_Data roomCollection;
-  public static Game_Manager Instance;
-  [SerializeField] public Dish_Database dishDatabase;
-  [SerializeField] public Foraging_Database foragingDatabase;
+    [Header("Room Setup")]
+    [SerializeField] private Room_Collection_Data roomCollection;
+    public static Game_Manager Instance;
 
-  private void Awake()
-  {
-    if (roomCollection != null)
+    [SerializeField] public Dish_Database dishDatabase;
+    [SerializeField] public Foraging_Database foragingDatabase;
+
+    private void Awake()
     {
-      Room_Manager.Initialize(roomCollection);
-      Debug.Log("GameManager: Room_Manager initalized!");
-    }
-    else
-      Debug.LogError("GameManager: No RoomCollectionData assigned!");
+        if (roomCollection != null)
+        {
+            Room_Manager.Initialize(roomCollection);
+            Debug.Log("GameManager: Room_Manager initialized!");
+        }
+        else
+        {
+            Debug.LogError("GameManager: No RoomCollectionData assigned!");
+        }
 
-    if (Instance == null)
-    {
-      Instance = this;
-      DontDestroyOnLoad(gameObject);
-      if (dishDatabase == null)
-        Debug.LogError("GameManager: DishDatabase not set in inspector!");
-      else
-      {
-        dishDatabase.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-        Debug.Log("GameManager: DishDatabase initialized and Blinding Stew unlocked.");
-      }
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
 
-      if (foragingDatabase == null)
-        Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
-      else
-      {
-        foragingDatabase.UnlockItem("Bone");
-        Debug.Log("GameManager: ForagingDatabase initialized and Bone unlocked.");
-      }
+            if (dishDatabase == null)
+                Debug.LogError("GameManager: DishDatabase not set in inspector!");
+            else
+            {
+                dishDatabase.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
+                Debug.Log("GameManager: DishDatabase initialized and Blinding Stew unlocked.");
+            }
+
+            if (foragingDatabase == null)
+                Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
+            else
+            {
+                foragingDatabase.UnlockItem("Bone");
+                Debug.Log("GameManager: ForagingDatabase initialized and Bone unlocked.");
+            }
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
-    else
-      Destroy(gameObject);
-  }
 }
 
 [System.Serializable]
@@ -83,6 +90,29 @@ public static class Room_Manager
         }
 
         Debug.LogError($"RoomID {id} not found in RoomManager.");
+        return null;
+    }
+
+    /// <summary>
+    /// Finds the Room_Data for the currently active scene
+    /// Scene name must match a RoomID enum value exactly
+    /// </summary>
+    public static Room_Data GetRoomFromActiveScene()
+    {
+        if (RoomDictionary == null)
+        {
+            Debug.LogError("RoomManager not initialized! Call Initialize() first.");
+            return null;
+        }
+
+        string activeSceneName = SceneManager.GetActiveScene().name;
+
+        if (System.Enum.TryParse(activeSceneName, out Room_Data.RoomID roomID))
+        {
+            return GetRoom(roomID);
+        }
+
+        Debug.LogError($"RoomManager: Active scene '{activeSceneName}' does not match any RoomID.");
         return null;
     }
 }

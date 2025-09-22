@@ -8,7 +8,7 @@ public class Room_Data : ScriptableObject
     public enum RoomID
     {
         // room ID names must match scene names exactly
-        MainMenu,
+        Main_Menu,
         World_Map,
         Restaurant,
         Cooking_Minigame,

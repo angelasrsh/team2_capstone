@@ -21,6 +21,23 @@ public class Room_Change_Manager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    
+    private void Start()
+    {
+        Room_Data startingRoom = Room_Manager.GetRoomFromActiveScene();
+        if (startingRoom != null)
+        {
+            if (startingRoom.music != null)
+                Music_Persistence.instance.CheckMusic(startingRoom.music, startingRoom.musicVolume);
+            else
+                Music_Persistence.instance.StopMusic();
+
+            if (startingRoom.ambientSound != null)
+                Music_Persistence.instance.CheckAmbient(startingRoom.ambientSound, startingRoom.ambientVolume);
+            else
+                Music_Persistence.instance.StopAmbient();
+        }
+    }
 
     // e.g. Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Restaurant, Room_Data.RoomID.CookingMinigame);
     public void GoToRoom(Room_Data.RoomID currentRoomID, Room_Data.RoomID exitingTo)
@@ -30,7 +47,7 @@ public class Room_Change_Manager : MonoBehaviour
         {
             Debug.LogError($"[Room_Change_Manager] Could not find current room: {currentRoomID}. " +
                         $"Check that Game_Manager is in the scene and RoomCollectionData includes this room.");
-            return; 
+            return;
         }
 
         // Try to get the exit
@@ -124,13 +141,13 @@ public class Room_Change_Manager : MonoBehaviour
 
         // Handle music
         if (targetRoom.music != null)
-            Music_Persistence.instance.CheckMusic(targetRoom.music);
+            Music_Persistence.instance.CheckMusic(targetRoom.music, targetRoom.musicVolume);
         else
             Music_Persistence.instance.StopMusic();
 
         // Handle ambient
         if (targetRoom.ambientSound != null)
-            Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound);
+            Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound, targetRoom.ambientVolume);
         else
             Music_Persistence.instance.StopAmbient();
     }

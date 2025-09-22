@@ -16,8 +16,13 @@ MonoBehaviour:
   Amount: 0
   Image: {fileID: 21300000, guid: 483874fe60bd22e4a8e6750ba26300e3, type: 3}
   tier: 1
-  price: 0
-  rarityWeight: 1
+  price: 50
+  rarityWeight: 0.065
   minSpawn: 0
-  maxSpawn: 5
+  maxSpawn: 2
   countsAs: []
+  CutIngredientImages: []
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: 55ef2e90d6ee21745bcc07d91b3435a2, type: 2}
+    amountRequired: 1

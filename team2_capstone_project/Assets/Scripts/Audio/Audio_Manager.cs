@@ -53,7 +53,7 @@ public class Audio_Manager : MonoBehaviour
     }
 
     // Music
-    public void PlayMusic(AudioClip clip) => Music_Persistence.instance?.CheckMusic(clip);
+    public void PlayMusic(AudioClip clip) => Music_Persistence.instance?.CheckMusic(clip, 1f);
     public void StopMusic() => Music_Persistence.instance?.StopMusic();
     public void SetMusicVolume(float volume)
     {
@@ -62,7 +62,7 @@ public class Audio_Manager : MonoBehaviour
     }
 
     // Ambient
-    public void PlayAmbientLoop(AudioClip clip) => Music_Persistence.instance?.CheckAmbient(clip);
+    public void PlayAmbientLoop(AudioClip clip) => Music_Persistence.instance?.CheckAmbient(clip, 1f);
     public void StopAmbient() => Music_Persistence.instance?.StopAmbient();
     public void SetAmbientVolume(float volume)
     {

@@ -5,34 +5,35 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Cafe/Dish", fileName = "NewDish")]
 public class Dish_Data : Item_Data
 {
-    public bool isGoodDish;
-    public float price;
-    public Sprite dishSprite;
-    // [TextArea] public string recipeInstructions;
-    public Sprite recipeImage;
-    public Dishes dishType;
+  public bool isGoodDish;
+  public float price;
+  // [TextArea] public string recipeInstructions;
+  public Sprite recipeImage;
+  public Dishes dishType;
 
-    public enum Recipe
-    {
-        Stir,
-        Chop,
-        Toss
-    }
-    public Recipe recipe;
+  public enum Recipe
+  {
+    None,
+    Stir,
+    Chop,
+    Toss
+  }
+  public Recipe recipe;
 
-    public enum Dishes
-    {
-        Blinding_Stew
-    }
+  public enum Dishes
+  {
+    Failed_Dish, // Generic failed dish if no recipe matches
+    Blinding_Stew
+  }
 
-    public List<Ingredient_Requirement> ingredientQuantities;
+  public List<Ingredient_Requirement> ingredientQuantities;
 }
 
 [System.Serializable]
 public class Ingredient_Requirement
 {
-    public Ingredient_Data ingredient; 
-    public int amountRequired;      
+  public Ingredient_Data ingredient; 
+  public int amountRequired;      
 }
 
 // Alternative for tracking isGoodDish bool and other runtime stuff
