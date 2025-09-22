@@ -36,7 +36,7 @@ public class Item_Stack
 // Gives the player a collection of items of a fixed size
 public class Inventory : MonoBehaviour
 {
-    public virtual int InventorySizeLimit { get; set; } = 12;
+    [field: System.NonSerialized] public virtual int InventorySizeLimit { get; set; } = 12;
 
     [field: SerializeField]
     public Item_Stack[] InventoryStacks { get; protected set; }

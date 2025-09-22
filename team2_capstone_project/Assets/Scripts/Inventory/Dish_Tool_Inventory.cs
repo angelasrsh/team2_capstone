@@ -20,7 +20,7 @@ public class Dish_Tool_Inventory : Inventory
     public static Dish_Tool_Inventory Instance { get; protected set; }
 
     // How many stacks this inventory can have
-    public override int InventorySizeLimit { get; set; } = 2;
+    [field: System.NonSerialized] public override int InventorySizeLimit { get; set; } = 2;
 
     // Testing
     public Dish_Data TEST_DISH;
