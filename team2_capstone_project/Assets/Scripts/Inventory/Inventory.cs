@@ -67,7 +67,6 @@ public class Inventory : MonoBehaviour
     public virtual int AddResources(Item_Data type, int count)
     {
         return addResourcesOfType<Item_Stack>(type, count);
-        
     }
 
     /// <summary>
@@ -76,7 +75,7 @@ public class Inventory : MonoBehaviour
     /// <typeparam name="Stack_Type"></typeparam>
     /// <param name="type"></param>
     /// <param name="count"></param>
-    /// <returns></returns>
+    /// <returns>How many items were added</returns>
     protected int addResourcesOfType<Stack_Type>(Item_Data type, int count) where Stack_Type : Item_Stack, new()
     {
         // Error-checking
@@ -113,8 +112,6 @@ public class Inventory : MonoBehaviour
         updateInventory();
         Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {type.Name}");
         return count - amtLeftToAdd; // Return how many items were actually added
-        
-
     }
 
     /// <summary>

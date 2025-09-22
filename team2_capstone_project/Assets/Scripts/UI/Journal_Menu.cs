@@ -179,7 +179,7 @@ public class Journal_Menu : MonoBehaviour
       Transform iconPanel = dishBG.Find("Dish_Icon_Panel");
       Transform icon = iconPanel.Find("Dish_Icon");
       var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
-      imageComp.sprite = dishData.dishSprite;
+      imageComp.sprite = dishData.Image;
       
       // Add button listener to show details on click
       var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
@@ -208,7 +208,7 @@ public class Journal_Menu : MonoBehaviour
     Transform iconPanel = pagePanel.Find("Icon_Panel");
     Transform iconObj = iconPanel.Find("Icon_Image");
     Image iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
-    iconImage.sprite = dishData.dishSprite;
+    iconImage.sprite = dishData.Image;
   }
   #endregion
 
@@ -248,7 +248,7 @@ public class Journal_Menu : MonoBehaviour
       Transform iconPanel = bg.Find("Item_Icon_Panel");
       Transform icon = iconPanel.Find("Item_Icon");
       var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
-      imageComp.sprite = dishData.dishSprite;
+      imageComp.sprite = dishData.Image;
 
       var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
       buttonComp.onClick.AddListener(() => DisplayDishForagingDetails(dishData));
@@ -263,7 +263,7 @@ public class Journal_Menu : MonoBehaviour
 
     // Dish Info
     pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
-    pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.dishSprite;
+    pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.Image;
 
     // Collect ingredient lines
     string ingredientText = "";

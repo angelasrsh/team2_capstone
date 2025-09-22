@@ -50,11 +50,9 @@ public class Dish_Tool_Inventory : Inventory
     /// </summary>
     /// <param name="type"></param>
     /// <param name="count"></param>
-    /// <returns></returns>
+    /// <returns>How many items were added</returns>
      public override int AddResources(Item_Data type, int count)
     {
         return addResourcesOfType<Dish_Tool_Stack>(type, count);
-
     }
-
 }

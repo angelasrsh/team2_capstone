@@ -7,38 +7,38 @@ using UnityEngine.UI;
 
 public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    // private ICustomDrag onDrag;
-    private Transform parentAfterDrag; //original parent of the drag
-    private Vector3 ingrOriginalPos;
+  // private ICustomDrag onDrag;
+  private Transform parentAfterDrag; //original parent of the drag
+  private Vector3 ingrOriginalPos;
 
-    [Header("Target Transform")]
-    private RectTransform rectTransform;
+  [Header("Target Transform")]
+  private RectTransform rectTransform;
 
-    private RectTransform redZone;
-    
-    
-    private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
-
-    private Vector3 targetScale = new Vector3(5f, 5f, 5f);
-
-    [Header("Cooking Minigame")]
-    private bool isOnPot = false;
-    private static Cauldron cauldron; // Static reference to Cauldron script in scene
-
-    [Header("Chopping Minigame")]
-    private Canvas canvas;
-    public bool canDrag = true;
-    private Image currentImage;
-    public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
-    public Chop_Controller chopScript;
-    private static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
-
-    [Header("Inventory Slot Info")]
-    public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
-    [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
+  private RectTransform redZone;
 
 
-    public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
+  private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
+
+  private Vector3 targetScale = new Vector3(5f, 5f, 5f);
+
+  [Header("Cooking Minigame")]
+  private bool isOnPot = false;
+  private static Cauldron cauldron; // Static reference to Cauldron script in scene
+
+  [Header("Chopping Minigame")]
+  private Canvas canvas;
+  public bool canDrag = true;
+  private Image currentImage;
+  public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
+  public Chop_Controller chopScript;
+  private static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
+
+  [Header("Inventory Slot Info")]
+  public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
+  [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
+
+
+  public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
   {
     //checks if the rectangles are overlapping
     if (rectA == null || rectB == null) //if one of the objects doesnt exist
@@ -57,118 +57,131 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     return rect1.Overlaps(rect2);
 
   }
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        // Debug.Log("started drag");
+  public void OnBeginDrag(PointerEventData eventData)
+  {
+    // Debug.Log("started drag");
 
-        parentAfterDrag = transform.parent;
-        transform.SetParent(transform.root);
-        transform.SetAsLastSibling();
-        ingrOriginalPos = rectTransform.position;
-    }
+    parentAfterDrag = transform.parent;
+    transform.SetParent(transform.root);
+    transform.SetAsLastSibling();
+    ingrOriginalPos = rectTransform.position;
+  }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        transform.position = Input.mousePosition;
-    }
+  public void OnDrag(PointerEventData eventData)
+  {
+    transform.position = Input.mousePosition;
+  }
 
-    public void OnEndDrag(PointerEventData eventData)
+  public void OnEndDrag(PointerEventData eventData)
+  {
+    // Debug.Log("ended drag");
+    transform.SetParent(parentAfterDrag);
+    if (IsOverlapping(rectTransform, redZone))
     {
-        // Debug.Log("ended drag");
-        transform.SetParent(parentAfterDrag);
-        if (IsOverlapping(rectTransform, redZone))
+      // The Inventory UI requires an image slot, so duplicate and replace self
+      GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
+      this.name = "Image_Slot_Old";
+      newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
+      newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
+      newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
+      if (!cuttingBoardActive)
+        Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+      if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+      {
+        // Debug.Log("In RED");
+        if (!isOnPot)
         {
-            // The Inventory UI requires an image slot, so duplicate and replace self
-            GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
-            this.name = "Image_Slot_Old";
-            newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
-            newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0); 
-            newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0); 
-            if (!cuttingBoardActive)
-              Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-            if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
-            {
-                  // Debug.Log("In RED");
-                  if (!isOnPot)
-                  {
-                      cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
-                      isOnPot = true;
-                  }
-            }
-            else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
-            {
-                //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
-                //make the ingredient from the inventory Bigger:
-                if (!cuttingBoardActive) 
-                {
-                    if (resizeCanvas != null)
-                    {
-                        transform.SetParent(resizeCanvas);
-                        transform.localPosition = Vector3.zero; // Center within the target canvas
-                        transform.localScale = targetScale;
-                    }
-                    canDrag = false;
-                    cuttingBoardActive = true;
-                }
-            }
+          cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
+          isOnPot = true;
         }
-        else
+      }
+      else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
+      {
+        //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
+        //make the ingredient from the inventory Bigger:
+        if (!cuttingBoardActive)
         {
-            if (SceneManager.GetActiveScene().name == "Cooking_Minigame") 
-            {
-                if (isOnPot)
-                {
-                    cauldron.RemoveFromPot((Ingredient_Data)(ParentSlot.stk.resource));
-                    isOnPot = false;
-                }
-            }
-            // Debug.Log("Not in RED, snapping back");
-            rectTransform.position = ingrOriginalPos;
+          if (resizeCanvas != null)
+          {
+            transform.SetParent(resizeCanvas);
+            transform.localPosition = Vector3.zero; // Center within the target canvas
+            transform.localScale = targetScale;
+          }
+          canDrag = false;
+          cuttingBoardActive = true;
         }
+      }
     }
-
-    // Start is called before the first frame update
-    void Start()
+    else
     {
-        if(cauldron == null)
-            cauldron = FindObjectOfType<Cauldron>();
-        ParentSlot = GetComponentInParent<Inventory_Slot>();
-
-        GameObject red_zone_found = GameObject.Find("RedZone");
-        if (red_zone_found != null)
-            redZone = red_zone_found.GetComponent<RectTransform>();
-        else
+      if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+      {
+        if (isOnPot)
         {
-            Debug.Log("[Drag_All] Could not find redZone!");
+          cauldron.RemoveFromPot((Ingredient_Data)(ParentSlot.stk.resource));
+          isOnPot = false;
         }
-        GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
-        if (resizeCanvas_object != null)
-            resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
-        else
-        {
-            Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
-        }
-
-        rectTransform = GetComponent<RectTransform>();
-
-        Debug.Log("Components on " + gameObject.name + ":");
-        foreach (Component comp in GetComponents<Component>())
-        {
-            Debug.Log("- " + comp.GetType().Name);
-        }
+      }
+      // Debug.Log("Not in RED, snapping back");
+      rectTransform.position = ingrOriginalPos;
     }
-    
-    /// <summary>
-    /// For another object to set this image_slot's ingredient type (used in inventory UI)
-    /// </summary>
-    /// <param name="iData"></param>
-    public void SetIngredientType(Ingredient_Data iData)
+  }
+
+  // Start is called before the first frame update
+  void Start()
+  {
+    if (cauldron == null)
+      cauldron = FindObjectOfType<Cauldron>();
+    ParentSlot = GetComponentInParent<Inventory_Slot>();
+
+    GameObject red_zone_found = GameObject.Find("RedZone");
+    if (red_zone_found != null)
+      redZone = red_zone_found.GetComponent<RectTransform>();
+    else
     {
-        ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
+      Debug.Log("[Drag_All] Could not find redZone!");
     }
-    
-    public void SetCuttingBoardInactive()
+    GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
+    if (resizeCanvas_object != null)
+      resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
+    else
     {
-        cuttingBoardActive = false;
+      Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
     }
+
+    rectTransform = GetComponent<RectTransform>();
+
+    Debug.Log("Components on " + gameObject.name + ":");
+    foreach (Component comp in GetComponents<Component>())
+    {
+      Debug.Log("- " + comp.GetType().Name);
+    }
+  }
+
+  /// <summary>
+  /// For another object to set this image_slot's ingredient type (used in inventory UI)
+  /// </summary>
+  /// <param name="iData"></param>
+  public void SetIngredientType(Ingredient_Data iData)
+  {
+    ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
+  }
+
+  public void SetCuttingBoardInactive()
+  {
+    cuttingBoardActive = false;
+  }
+
+  public void AddWaterToPot()
+  {
+    Ingredient_Data water = Ingredient_Inventory.Instance.getWaterData();
+    Debug.Log("[Drag_All]: Added water to cauldron");
+    cauldron.AddToPot(water);
+
+    // Find Background image and change it to the one with water in cauldron
+    Transform backgroundCanvas = GameObject.Find("BackgroundCanvas").transform;
+    Transform regularBGTransform = backgroundCanvas.Find("Regular_BG");
+    Image regularBG = regularBGTransform.GetComponent<Image>();
+    regularBG.sprite = water.Image;
+  }
 }
