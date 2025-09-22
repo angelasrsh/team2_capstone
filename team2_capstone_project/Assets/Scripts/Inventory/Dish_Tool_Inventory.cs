@@ -19,6 +19,12 @@ public class Dish_Tool_Inventory : Inventory
 {
     public static Dish_Tool_Inventory Instance { get; protected set; }
 
+    // How many stacks this inventory can have
+    public override int InventorySizeLimit { get; set; } = 2;
+
+    // Testing
+    public Dish_Data TEST_DISH;
+
     new private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -32,6 +38,9 @@ public class Dish_Tool_Inventory : Inventory
         // Create inventory stack structure to hold Dish_Tool_Stacks
         InitializeInventoryStacks<Dish_Tool_Stack>();
         updateInventory();
+
+        AddResources(TEST_DISH, 1);
+        AddResources(TEST_DISH, 3);
     }
 
     /// <summary>
