@@ -42,8 +42,8 @@ public class Inventory_Grid : MonoBehaviour
         switch (InventoryType)
         {
             case Inventory_Type.Dish:
-                inventory = Dish_Inventory.Instance;
-                Dish_Inventory.Instance.InventoryGrid = this;
+                inventory = Dish_Tool_Inventory.Instance;
+                Dish_Tool_Inventory.Instance.InventoryGrid = this;
                 break;
             case Inventory_Type.Ingredient:
                 inventory = Ingredient_Inventory.Instance;

@@ -20,7 +20,7 @@ public class Item_Stack
 {
     public Item_Data resource;
     public int amount;
-    public int stackLimit = 20;
+    public virtual int stackLimit { get; set; } = 20;
 }
 
 /// <summary>
@@ -29,15 +29,17 @@ public class Item_Stack
 /// This inventory is not called directly. Instead, call functions using the instances of the child inventories.
 /// 
 /// To add inventory items, call AddResources and RemoveResources on an inventory instance.
+/// 
+/// Edit this script to make changes that will affect the Dish_Tool_Inventory and Ingredient_Inventory
 /// </summary>
 
 // Gives the player a collection of items of a fixed size
 public class Inventory : MonoBehaviour
 {
-    public int InventorySizeLimit = 12;
+    [field: System.NonSerialized] public virtual int InventorySizeLimit { get; set; } = 12;
 
     [field: SerializeField]
-    public Item_Stack[] InventoryStacks { get; private set; }
+    public Item_Stack[] InventoryStacks { get; protected set; }
 
     /// <summary>
     /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
@@ -49,30 +51,32 @@ public class Inventory : MonoBehaviour
     /// </summary>
     protected void Awake()
     {
-        if (InventoryStacks == null)
-            InventoryStacks = new Item_Stack[InventorySizeLimit];
-        else if (InventoryStacks.Length != InventorySizeLimit)
-        {
-            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
-            InventoryStacks = new Item_Stack[InventorySizeLimit];
-
-            for (int i = 0; i < temp.Length; i++) // copy over elements
-            {
-                InventoryStacks[i] = temp[i];
-            }
-        }
-
-
+        InitializeInventoryStacks<Item_Stack>();
         updateInventory();
     }
 
+
+
     /// <summary>
-    /// Add resources and update inventory.
+    /// Add resources and update inventory. This can be (currently is) overriden in child classes
+    /// to allow for adding resouces of Dish_Tool_Stack type instead of Ingredient_Inventory type
     /// </summary>
     /// <param name="type"> The type of item to add </param> 
     /// <param name="count"> How many of the item to add</param> 
     /// <returns> The number of items actually added </returns>
-    public int AddResources(Item_Data type, int count)
+    public virtual int AddResources(Item_Data type, int count)
+    {
+        return addResourcesOfType<Item_Stack>(type, count);
+    }
+
+    /// <summary>
+    /// Internal implementation of AddResources that allows for adding resources of a different type by overriding this method
+    /// </summary>
+    /// <typeparam name="Stack_Type"></typeparam>
+    /// <param name="type"></param>
+    /// <param name="count"></param>
+    /// <returns>How many items were added</returns>
+    protected int addResourcesOfType<Stack_Type>(Item_Data type, int count) where Stack_Type : Item_Stack, new()
     {
         // Error-checking
         if (count < 0)
@@ -98,7 +102,7 @@ public class Inventory : MonoBehaviour
         {
             if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
             {
-                InventoryStacks[i] = new Item_Stack();
+                InventoryStacks[i] = new Stack_Type();
                 int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
                 InventoryStacks[i].amount = amtToAdd;
                 InventoryStacks[i].resource = type;
@@ -189,4 +193,26 @@ public class Inventory : MonoBehaviour
                 Debug.Log($"[Invtry] {i.resource.Name} {i.amount}");
         }
     }
+
+/// <summary>
+/// Generic functions to initialize the inventory with some sort of Inventory stack
+/// </summary>
+/// <typeparam name="T"> must be of or child of Item_Stack type</typeparam>
+    protected void InitializeInventoryStacks<T>() where T : Item_Stack
+    {
+        if (InventoryStacks == null)
+            InventoryStacks = new T[InventorySizeLimit];
+        else if (InventoryStacks.Length != InventorySizeLimit)
+        {
+            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
+            InventoryStacks = new T[InventorySizeLimit];
+
+            for (int i = 0; i < temp.Length; i++) // copy over elements
+            {
+                InventoryStacks[i] = temp[i];
+            }
+        }
+    }
+
 }
+
