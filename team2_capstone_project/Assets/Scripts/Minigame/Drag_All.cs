@@ -182,7 +182,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   public static void AddWaterToPot()
   {
     if (waterAdded)
+    {
+      Debug.Log("[Drag_All]: Water already added. Cannot add more.");
       return;
+    }
 
     Ingredient_Data water = Ingredient_Inventory.Instance.getWaterData();
     Debug.Log("[Drag_All]: Added water to cauldron");
