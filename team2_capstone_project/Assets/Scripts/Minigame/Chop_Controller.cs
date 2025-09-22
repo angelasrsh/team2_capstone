@@ -48,7 +48,7 @@ public class Chop_Controller : MonoBehaviour
     void Start()
     {
         // Start with script disabled
-        DeactivateChopController();
+        // DeactivateChopController();
         
     }
 
@@ -59,7 +59,7 @@ public class Chop_Controller : MonoBehaviour
     private Vector2 swipeStart;
     void Update()
     {
-        if (drag_all_script.canDrag == false)
+        // if (drag_all_script.canDrag == false) //TODO check if this is set up properly in drag all
         {
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
