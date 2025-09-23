@@ -103,6 +103,10 @@ public class Cauldron : MonoBehaviour
     ingredientInPot.Clear();
     possibleDishes.Clear();
     possibleIngredients.Clear();
+    potentialDish = null;
+    potentialIngredient = null;
+    dishMade = null;
+    ingredientMade = null;
   }
 
   /// <summary>
