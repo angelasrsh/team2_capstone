@@ -57,49 +57,62 @@ public class Chop_Controller : MonoBehaviour
         
     }
     private Vector2 swipeStart;
-
- 
     void Update()
     {
-        // Debug.Log("[Chp_Cntrller] CanDrag = " + drag_all_script.canDrag);
+<<<<<<< HEAD
         // if (drag_all_script.canDrag == false) //TODO check if this is set up properly in drag all
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 isDragging = true;
                 swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 startDragPos = Mouse.current.position.ReadValue();
                 startTime = Time.time;
             }
-            else if (isDragging && Input.GetMouseButtonUp(0))
+            else if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
             {
                 isDragging = false;
                 Vector2 endDragPos = Mouse.current.position.ReadValue();
-                // float duration = Time.time - startTime;
-                SpawnCut();
+=======
+        // if (drag_all_script.canDrag == false)
+        // {
+        //     if (Mouse.current.leftButton.wasPressedThisFrame)
+        //     {
+        //         isDragging = true;
+        //         swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //         startDragPos = Mouse.current.position.ReadValue();
+        //         startTime = Time.time;
+        //     }
+        //     else if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
+        //     {
+        //         isDragging = false;
+        //         Vector2 endDragPos = Mouse.current.position.ReadValue();
+>>>>>>> origin/main
 
-                // EvaluateChop(startDragPos, endDragPos, duration);
-            }
-        }
+        //         float duration = Time.time - startTime;
+
+        //         EvaluateChop(startDragPos, endDragPos, duration);
+        //         // SpawnCut();
+        //     }
+        // }
         
     }
 
 
     private void SpawnCut()
     {
-        Debug.Log("[SpawnCut] initiated.");
         Vector2 swipeEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition); //where the swipe ended
         GameObject cutInstance = Instantiate(cutPrefab, swipeStart, Quaternion.identity); //create the cut object
         cutInstance.GetComponent<LineRenderer>().SetPosition(0, swipeStart); //create the line
         cutInstance.GetComponent<LineRenderer>().SetPosition(1, swipeEnd);
 
+
         Vector2[] colliderPoints = new Vector2[2];
         colliderPoints[0] = Vector2.zero;
         colliderPoints[1] = swipeEnd - swipeStart;
 
-        Destroy(cutInstance);
-        Debug.Log("[SpawnCut] done.");
 
+        Destroy(cutInstance);
     }
 
     private void EvaluateChop(Vector2 startScreen, Vector2 endScreen, float duration)
