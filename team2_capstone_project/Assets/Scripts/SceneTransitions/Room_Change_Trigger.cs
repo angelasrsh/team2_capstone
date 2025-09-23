@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class Room_Change_Trigger : MonoBehaviour
 {
     public Room_Data currentRoom;
