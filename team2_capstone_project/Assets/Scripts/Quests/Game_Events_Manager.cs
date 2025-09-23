@@ -41,6 +41,8 @@ public class Game_Events_Manager : MonoBehaviour
         Debug.Log("[G_E_M] Player Moved");
     }
 
+    //public event Action onP
+
     //////////// QUEST EVENTS /////////////
     public event Action<string> onStartQuest;
     /// <summary>

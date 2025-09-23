@@ -10,7 +10,7 @@ using UnityEngine;
 /// Derived quest steps get attached to a GameObject to be placed into a scene
 /// They also go into the Quest class for their particular quest
 /// </summary>
-public abstract class QuestStep : MonoBehaviour
+public abstract class Quest_Step : MonoBehaviour
 {
     private bool isFinished = false;
     private string questId;
