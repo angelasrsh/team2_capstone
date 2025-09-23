@@ -63,21 +63,41 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   public void OnBeginDrag(PointerEventData eventData)
   {
     // Debug.Log("started drag");
+    if (canDrag)
+    {
+      parentAfterDrag = transform.parent;
+      transform.SetParent(transform.root);
+      transform.SetAsLastSibling();
+      ingrOriginalPos = rectTransform.position;
+    }
+    
 
-    parentAfterDrag = transform.parent;
-    transform.SetParent(transform.root);
-    transform.SetAsLastSibling();
-    ingrOriginalPos = rectTransform.position;
   }
 
   public void OnDrag(PointerEventData eventData)
   {
-    transform.position = Input.mousePosition;
+    if (!canDrag)
+    {
+      return;
+    }
+    else
+    {
+      transform.position = Input.mousePosition;
+    }
+      
+    
+
   }
 
   public void OnEndDrag(PointerEventData eventData)
   {
-    // Debug.Log("ended drag");
+    if (!canDrag)
+    {
+      return;
+    }
+    else
+    {
+      // Debug.Log("ended drag");
     transform.SetParent(parentAfterDrag);
     if (IsOverlapping(rectTransform, redZone))
     {
@@ -109,9 +129,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             transform.SetParent(resizeCanvas);
             transform.localPosition = Vector3.zero; // Center within the target canvas
             transform.localScale = targetScale;
+            canDrag = false;
+
           }
-          canDrag = false;
-          cuttingBoardActive = true;
+          // cuttingBoardActive = true; //not used for now
         }
       }
     }
@@ -128,6 +149,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       // Debug.Log("Not in RED, snapping back");
       rectTransform.position = ingrOriginalPos;
     }
+    }
+    
   }
 
   // Start is called before the first frame update
