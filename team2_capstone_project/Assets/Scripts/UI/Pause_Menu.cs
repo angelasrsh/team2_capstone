@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Grimoire;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,6 +24,8 @@ public class Pause_Menu : MonoBehaviour
 
   public void PauseGame()
   {
+    Audio_Manager.instance.PlaySFX(Audio_Manager.instance.menuOpen);
+
     Debug.Log("Pausing game...");
     if(menuBox == null)
       Debug.Log("Menubox is null?");
@@ -36,6 +39,8 @@ public class Pause_Menu : MonoBehaviour
   // Resume the game from the pause menu
   public void ResumeGame()
   {
+    Audio_Manager.instance.PlaySFX(Audio_Manager.instance.menuClose);
+    
     Debug.Log("Resuming game...");
     menuBox.SetActive(false);
     darkOverlay.SetActive(false);

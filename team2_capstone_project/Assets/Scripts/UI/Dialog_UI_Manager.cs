@@ -10,6 +10,10 @@ public class Dialog_UI_Manager : MonoBehaviour
     [Header("Text Box")]
     public TMP_Text textBoxText;
     public CanvasGroup textBoxCanavasGroup;
+
+    [Header("Text Blip Sound Randomization Range")]
+    public float lowRandomRange = 0.9f;
+    public float highRandomRange = 1.1f;
     public float textTypingSpeed = 0.025f; 
 
     [Header("Character Portrait")]
@@ -80,7 +84,7 @@ public class Dialog_UI_Manager : MonoBehaviour
                 // Add normal characters to the text
                 textBoxText.text += aText[i];
 
-                Audio_Manager.instance?.SetSFXPitch(Random.Range(0.9f, 1.1f)); 
+                Audio_Manager.instance?.SetSFXPitch(Random.Range(lowRandomRange, highRandomRange)); 
                 Audio_Manager.instance?.PlaySFX(Audio_Manager.instance?.textSound);
                 yield return new WaitForSeconds(textTypingSpeed); // Typing delay/speed
             }

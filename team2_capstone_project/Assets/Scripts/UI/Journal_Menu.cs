@@ -6,6 +6,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Grimoire;
 
 public class Journal_Menu : MonoBehaviour
 {
@@ -113,6 +114,9 @@ public class Journal_Menu : MonoBehaviour
   public void ResumeGame()
   {
     Debug.Log("Closing journal and resuming game...");
+
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose);
+
     journal.transform.GetChild(0).gameObject.SetActive(false);
     journal.transform.GetChild(1).gameObject.SetActive(false);
     journal.transform.GetChild(2).gameObject.SetActive(false);

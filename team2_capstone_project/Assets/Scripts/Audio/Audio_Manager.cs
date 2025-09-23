@@ -13,6 +13,9 @@ public class Audio_Manager : MonoBehaviour
     public AudioClip pickupSFX;
     public AudioClip clickSFX;
     public AudioClip textSound;
+    public AudioClip menuOpen;
+    public AudioClip menuClose;
+    public AudioClip bookClose;
 
     private void Awake()
         {
@@ -31,7 +34,7 @@ public class Audio_Manager : MonoBehaviour
             AudioSource[] sources = GetComponents<AudioSource>();
             if (sources.Length >= 3)
             {
-                // Assign only SFX here; others are used by MusicPersistance
+                // Assign only SFX here; others are used by MusicPersistence
                 sfxSource = sources[1];
             }
             else
