@@ -39,8 +39,8 @@ public class Dish_Tool_Inventory : Inventory
         InitializeInventoryStacks<Dish_Tool_Stack>();
         updateInventory();
 
-        AddResources(TEST_DISH, 1);
-        AddResources(TEST_DISH, 3);
+        // AddResources(TEST_DISH, 1);
+        // AddResources(TEST_DISH, 3);
     }
 
     /// <summary>

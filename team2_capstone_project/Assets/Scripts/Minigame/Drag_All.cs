@@ -54,7 +54,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     ParentSlot = GetComponentInParent<Inventory_Slot>();
 
     // Find and set animator from animation background
-    if (backgroundAnimator == null)
+    if (backgroundAnimator == null && SceneManager.GetActiveScene().name == "Cooking_Minigame")
     {
       Transform backgroundCanvas = GameObject.Find("BackgroundCanvas").transform;
       Transform regularBGTransform = backgroundCanvas.Find("Stirring_Animation");
@@ -171,6 +171,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
           //make the ingredient from the inventory Bigger:
           if (!cuttingBoardActive)
           {
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             if (resizeCanvas != null)
             {
               transform.SetParent(resizeCanvas);
@@ -178,7 +179,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               transform.localScale = targetScale;
               canDrag = false;
             }
-            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             // cuttingBoardActive = true; //not used for now
           }
         }

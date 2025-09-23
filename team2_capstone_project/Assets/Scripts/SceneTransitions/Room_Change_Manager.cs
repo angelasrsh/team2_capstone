@@ -28,9 +28,9 @@ public class Room_Change_Manager : MonoBehaviour
         if (startingRoom != null)
         {
             if (startingRoom.music != null)
-                Music_Persistence.instance.CheckMusic(startingRoom.music, startingRoom.musicVolume);
-            else
-                Music_Persistence.instance.StopMusic();
+                    Music_Persistence.instance.CheckMusic(startingRoom.music, startingRoom.musicVolume);
+                else
+                    Music_Persistence.instance.StopMusic();
 
             if (startingRoom.ambientSound != null)
                 Music_Persistence.instance.CheckAmbient(startingRoom.ambientSound, startingRoom.ambientVolume);
