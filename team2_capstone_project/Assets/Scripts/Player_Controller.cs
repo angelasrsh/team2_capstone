@@ -31,6 +31,12 @@ public class Player_Controller : MonoBehaviour
         interactAction = playerInput.actions["Interact"];
         openInventoryAction = playerInput.actions["OpenInventory"];
         openJournalAction = playerInput.actions["OpenJournal"];
+
+        // Subscribe the event-broadcasting methods to these actions
+        moveAction.performed += onMove;
+        // interactAction.performed += OnInteract;
+        // openInventoryAction.performed += OnOpenInventory;
+        // openJournalAction.performed += OnOpenJournal;
     }
 
     private void FixedUpdate()
@@ -61,5 +67,17 @@ public class Player_Controller : MonoBehaviour
         {
             Debug.LogWarning($"Room not found: {newRoomID}");
         }
+    }
+
+    /// <summary>
+    /// Called by the input action when the player moves.
+    /// Tell the GameEventsManager that this action occurred.
+    /// GameEvents wants to know this for the sake of the tutorial.
+    /// </summary>
+    /// <param name="context"></param>
+    private void onMove(InputAction.CallbackContext context)
+    {
+        Debug.Log("[P_C] Player is moving");
+        //GameEventsManager.Instance.PlayerMoved();
     }
 }

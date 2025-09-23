@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+// Credit to https://www.youtube.com/watch?v=UyTJLDGcT64
+
+/// <summary>
+/// Holds data relevant to a Quest.
+/// Instances of this are used to make quests (ex: tutorials).
+/// </summary>
+[CreateAssetMenu(fileName = "QuestInfoSO", menuName = "Quest/QuestInfo")]
+public class QuestInfoSO : ScriptableObject
+{
+    // Unique name for identifying quest
+    [field: SerializeField] public string id { get; private set; }
+
+    // Display name
+    public string DisplayName;
+
+    // Quest step GameObjects holding the quest step info
+    public GameObject[] QuestStepPrefabs;
+
+    // Take identifier name from filename
+    private void OnValidate()
+    {
+#if UNITY_EDITOR
+        id = this.name;
+        UnityEditor.EditorUtility.SetDirty(this);
+#endif
+    }
+
+}

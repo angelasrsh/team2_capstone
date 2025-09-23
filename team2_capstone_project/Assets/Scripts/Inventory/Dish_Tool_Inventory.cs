@@ -23,7 +23,7 @@ public class Dish_Tool_Inventory : Inventory
     [field: System.NonSerialized] public override int InventorySizeLimit { get; set; } = 2;
 
     // Testing
-    public Dish_Data TEST_DISH;
+    // public Dish_Data TEST_DISH;
 
     new private void Awake()
     {
@@ -39,8 +39,8 @@ public class Dish_Tool_Inventory : Inventory
         InitializeInventoryStacks<Dish_Tool_Stack>();
         updateInventory();
 
-        AddResources(TEST_DISH, 1);
-        AddResources(TEST_DISH, 3);
+        // AddResources(TEST_DISH, 1);
+        // AddResources(TEST_DISH, 3);
     }
 
     /// <summary>
