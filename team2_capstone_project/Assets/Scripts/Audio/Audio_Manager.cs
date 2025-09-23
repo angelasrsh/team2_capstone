@@ -9,13 +9,10 @@ public class Audio_Manager : MonoBehaviour
     public static Audio_Manager instance;
     private AudioSource sfxSource;
 
-    [Header("Default Audio Clips")]
-    [SerializeField] private AudioClip defaultMusic;
-    [SerializeField] private AudioClip defaultAmbient;
-
     [Header("SFX Clips")]
     public AudioClip pickupSFX;
     public AudioClip clickSFX;
+    public AudioClip textSound;
 
     private void Awake()
         {
@@ -41,16 +38,7 @@ public class Audio_Manager : MonoBehaviour
             {
                 Debug.LogError("AudioManager: You must have at least 3 AudioSources (music, sfx, ambient)");
             }
-
-            StartCoroutine(PlayDefaultAudioDelayed());
         }
-
-    private IEnumerator PlayDefaultAudioDelayed()
-    {
-         yield return new WaitForSeconds(0.1f);
-        if (defaultMusic != null) PlayMusic(defaultMusic);
-        if (defaultAmbient != null) PlayAmbientLoop(defaultAmbient);
-    }
 
     // Music
     public void PlayMusic(AudioClip clip) => Music_Persistence.instance?.CheckMusic(clip, 1f);

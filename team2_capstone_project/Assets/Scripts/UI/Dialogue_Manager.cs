@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,81 +7,283 @@ using TMPro;
 
 public class Dialogue_Manager : MonoBehaviour
 {
+    [Header("Components (Add here)")]
+    public TextAsset dialogFile;
+    public Dialog_UI_Manager uiManager;
+    public System.Action onDialogComplete;
+    public Queue<string> dialogQueue = new Queue<string>();
 
-    [SerializeField]
-    private Image character;
-    [SerializeField]
-    private TextMeshProUGUI dialogue;
-    [SerializeField]
-    private Canvas c;
+    [Header("Auto-Advancing Dialog Settings")]
+    public bool autoAdvanceDialog = false; // Enable auto mode
+    public float autoAdvanceDelay = 2.5f;  // Time between lines
 
-    public Queue<string> dialogue_queue = new Queue<string>();
-    public Queue<AudioClip> clipq = new Queue<AudioClip>();
+    [Header("Character Portraits")]
+    public Dictionary<Character_Portrait_Data.CharacterName, Character_Portrait_Data> characterPortraits 
+        = new Dictionary<Character_Portrait_Data.CharacterName, Character_Portrait_Data>();
+    [SerializeField] private List<Character_Portrait_Data> characterPortraitList;
 
-    private double yapstart;
-    private int yapspeed = 20;
-    private string to_yap = "";
+    // Internal references
+    private Dictionary<string, string> dialogMap;
+    private HashSet<string> completedDialogKeys = new HashSet<string>();
+    private string myDialogKey;
+    [HideInInspector] public enum DialogueState { Normal, Waiting }
+    [HideInInspector] public DialogueState currentState = DialogueState.Normal;
 
-    // Start is called before the first frame update
-    void Start()
+    // Components    
+    private Player_Controller playerOverworld;
+
+    private void Awake()
     {
-        c.gameObject.SetActive(false);
-    }
+        playerOverworld = FindObjectOfType<Player_Controller>();
+        
+        dialogMap = new Dictionary<string, string>();
 
-    public void ChangeYapSpeed(int ys) {
-        yapspeed = ys;
+        foreach (var characterPortrait in characterPortraitList)
+        {
+            if (!characterPortraits.ContainsKey(characterPortrait.characterName))
+            {
+                characterPortraits.Add(characterPortrait.characterName, characterPortrait);
+            }
+        }
+        PopulateDialogMap();
     }
-
-    public void Changecharacter(Sprite i) {
-        character.overrideSprite = i;
-    }
-
-    public bool Done() {
-        return to_yap == "" && dialogue_queue.Count == 0;
-    }
-
-    // Update is called once per frame
-    void Update()
+    
+    private void Update()
     {
-        if (to_yap.Length > 0) {
-            var charsToShow = (int)((Time.timeAsDouble - this.yapstart) * (double)yapspeed);
-            charsToShow = Mathf.Min(charsToShow, to_yap.Length);
-            this.dialogue.text = this.to_yap.Substring(0, charsToShow);
-        } else if(dialogue_queue.Count > 0) {
-            StartCoroutine(ShowOneDialogue(dialogue_queue.Dequeue()));
-            FindObjectOfType<Dialgoue_SFX_Manager>().Play(clipq.Dequeue());
-        } else {
-            c.gameObject.SetActive(false);
+        if (Input.GetKeyDown(KeyCode.R) && dialogQueue.Count == 0 && !uiManager.textTyping)
+        {
+            EndDialog();
         }
     }
 
-    public void QueueDialogue(string t) {
-        dialogue_queue.Enqueue(t);
-        clipq.Enqueue(null);
-    }
+    #region Dialog Map Population
+    private void PopulateDialogMap()
+    {
+        if (dialogMap.Count > 0 || dialogFile == null)
+            return;
 
-    public void QueueDialogueWithSound(string t, AudioClip c) {
-        dialogue_queue.Enqueue(t);
-        clipq.Enqueue(c);
-    }
+        string[] lines = dialogFile.text.Split(new[] { '\n' }, StringSplitOptions.None);
 
-    public IEnumerator ShowOneDialogue(string text) {
-        c.gameObject.SetActive(true);
+        foreach (string rawLine in lines)
+        {
+            string line = rawLine.Trim();
 
-        this.yapstart = Time.timeAsDouble;
-        this.to_yap = text;
-        int charsShown;
-        yield return new WaitWhile(() => {
-            charsShown = (int)((Time.timeAsDouble - this.yapstart) * (double)yapspeed);
-            return charsShown < to_yap.Length;
-        });
-        if (dialogue_queue.Count > 0) {
-            yield return new WaitForSeconds(2f);
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            if (line.Contains("="))
+            {
+                string[] split = line.Split(new[] { '=' }, 2);
+                string key = split[0].Trim();
+                string value = split.Length > 1 ? split[1].Trim() : "";
+
+                if (!dialogMap.ContainsKey(key))
+                {
+                    dialogMap[key] = value;
+                }
+                else
+                {
+                    // allow multiple lines per key separated by \n
+                    dialogMap[key] += "\n" + value;
+                }
+            }
         }
-        else {
-            yield return new WaitForSeconds(3.5f);
-        }
-        this.to_yap = "";
+        Debug.Log($"Loaded {dialogMap.Count} dialog entries.");
     }
 
+    public string GetDialogFromKey(string aKey)
+    {
+        if (dialogMap.TryGetValue(aKey, out string value))
+        {
+            return value;
+        }
+        return aKey;
+    }
+    #endregion
+
+    #region Play Scene (Normal)
+    /// <summary>
+    /// Starts a dialog sequence from the given key.
+    /// Parses emotions from {Braces} in lines if present.
+    /// </summary>
+    public void PlayScene(string aDialogKey)
+    {
+        if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0) 
+        {
+            PlayNextDialog();
+            return;
+        }
+
+        myDialogKey = aDialogKey; 
+        string dialogText = GetDialogFromKey(aDialogKey);
+        string[] lines = dialogText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string line in lines)
+        {
+            dialogQueue.Enqueue(line);
+        }
+        completedDialogKeys.Add(aDialogKey); 
+        Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
+        PlayNextDialog();
+    }
+
+    /// <summary>
+    /// Plays the next line of dialog, parsing emotion from the text itself.
+    /// </summary>
+    public void PlayNextDialog()
+    {
+        if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
+
+        if (dialogQueue.Count > 0)
+        {
+            string dialogLine = dialogQueue.Dequeue();
+
+            // Parse dialog line -> text {Emotion}
+            string[] parts = dialogLine.Split(new[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
+            string dialogText = parts[0].Trim(); 
+            Character_Portrait_Data.EmotionPortrait.Emotion emotion = Character_Portrait_Data.EmotionPortrait.Emotion.Neutral;
+
+            if (parts.Length > 1 && Enum.TryParse(parts[1].Trim(), true, out Character_Portrait_Data.EmotionPortrait.Emotion parsedEmotion))
+            {
+                emotion = parsedEmotion;
+            }
+
+            // Character from key
+            string characterKey = myDialogKey.Split('.')[0];
+            if (Enum.TryParse(characterKey, true, out Character_Portrait_Data.CharacterName charEnum))
+            {
+                if (characterPortraits.TryGetValue(charEnum, out Character_Portrait_Data characterData))
+                {
+                    Sprite portrait = characterData.defaultPortrait;
+
+                    if (characterData.GetEmotionPortraits().TryGetValue(emotion, out Sprite emotionPortrait))
+                    {
+                        portrait = emotionPortrait;
+                    }
+
+                    uiManager.ShowOrHidePortrait(portrait);
+                }
+            }
+
+            uiManager.ShowText(dialogText);
+
+            if (autoAdvanceDialog)
+            {
+                StartCoroutine(AutoAdvanceNextLine());
+            }
+        }
+        else
+        {
+            EndDialog();
+        }
+    }
+    #endregion
+
+    #region Play Scene (Forced Emotion)
+    /// <summary>
+    /// Starts a dialog sequence from the given key, but forces the portrait to a given emotion.
+    /// Useful for reactions to liked/disliked/neutral dishes.
+    /// </summary>
+    public void PlayScene(string aDialogKey, Character_Portrait_Data.EmotionPortrait.Emotion forcedEmotion)
+    {
+        if (dialogQueue.Count > 0) 
+        {
+            PlayNextDialog(forcedEmotion);
+            return;
+        }
+
+        myDialogKey = aDialogKey;
+        string dialogText = GetDialogFromKey(aDialogKey);
+
+        string[] lines = dialogText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string line in lines)
+        {
+            dialogQueue.Enqueue(line);
+        }
+
+        Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
+        PlayNextDialog(forcedEmotion);
+    }
+
+
+    /// <summary>
+    /// Plays the next line of dialog, forcing a specific emotion (ignores {Braces} in text).
+    /// </summary>
+    public void PlayNextDialog(Character_Portrait_Data.EmotionPortrait.Emotion forcedEmotion)
+    {
+        if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
+
+        if (dialogQueue.Count > 0)
+        {
+            string dialogLine = dialogQueue.Dequeue();
+
+            // Ignore braces; use forced emotion
+            string[] parts = dialogLine.Split(new[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
+            string dialogText = parts[0].Trim();
+
+            var emotion = forcedEmotion;
+
+            // Character from key
+            string characterKey = myDialogKey.Split('.')[0];
+            if (Enum.TryParse(characterKey, true, out Character_Portrait_Data.CharacterName charEnum))
+            {
+                if (characterPortraits.TryGetValue(charEnum, out Character_Portrait_Data characterData))
+                {
+                    Sprite portrait = characterData.defaultPortrait;
+                    Debug.Log($"Forcing portrait emotion to {emotion} for character {characterKey}");
+
+                    if (characterData.GetEmotionPortraits().TryGetValue(emotion, out Sprite emotionPortrait))
+                    {
+                        portrait = emotionPortrait;
+                        Debug.Log($"Found portrait for emotion {emotion}.");
+                    }
+
+                    uiManager.ShowOrHidePortrait(portrait);
+                }
+            }
+
+            uiManager.ShowText(dialogText);
+
+            if (autoAdvanceDialog)
+            {
+                StartCoroutine(AutoAdvanceNextLine());
+            }
+        }
+        else
+        {
+            EndDialog();
+        }
+    }
+    #endregion
+
+    #region Helpers
+    public IEnumerator AutoAdvanceNextLine()
+    {
+        yield return new WaitUntil(() => uiManager.textTyping == false);
+        yield return new WaitForSeconds(autoAdvanceDelay);
+        uiManager.ClearText();
+        PlayNextDialog();
+    }
+
+    public void EndDialog()
+    {
+        Debug.Log("EndDialog called.");
+        
+        uiManager.HideTextBox();
+        uiManager.ClearText();
+        uiManager.HidePortrait();
+        ResetDialogForKey(myDialogKey);
+        playerOverworld.EnablePlayerController();
+
+        onDialogComplete?.Invoke();
+    }
+
+    public void ResetDialogForKey(string aDialogKey)
+    {
+        if (completedDialogKeys.Contains(aDialogKey))
+        {
+            completedDialogKeys.Remove(aDialogKey);
+        }
+    }
+    #endregion
 }

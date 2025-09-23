@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Cafe/Customer", fileName = "NewCustomer")]
+[CreateAssetMenu(menuName = "NPCs/NPC Data", fileName = "NewNPC")]
 public class CustomerData : ScriptableObject
 {
+    [Header("Identity")]
     public string customerName;
-    public Sprite dialoguePortrait;
     public Sprite overworldSprite;
     public bool datable = true;
+
+    [Header("Dialog Data")]
+    public Character_Portrait_Data portraitData;
 
     [Header("Preferences")]
     public Dish_Data[] favoriteDishes;
