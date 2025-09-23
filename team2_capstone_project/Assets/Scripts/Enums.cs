@@ -11,7 +11,7 @@ using UnityEngine;
         Success
     }
 
-    public enum IngredientType // should delete after putting in maddie's code
+public enum IngredientType // should delete after putting in maddie's code
 {
     Null,
     Egg,
@@ -27,4 +27,17 @@ using UnityEngine;
     Cut_Fermented_Eye,
     Cut_Fogshroom
 }
+
+/// <summary>
+/// Used to keep track of the state of quests
+/// </summary>
+public enum Quest_State
+{
+    REQUIREMENTS_NOT_MET,
+    //CAN_START,
+    IN_PROGRESS,
+    //CAN_FINISH,
+    FINISHED
+}
+
     

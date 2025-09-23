@@ -9,13 +9,15 @@ using UnityEngine;
 /// Instances of this are used to make quests (ex: tutorials).
 /// </summary>
 [CreateAssetMenu(fileName = "QuestInfoSO", menuName = "Quest/QuestInfo")]
-public class QuestInfoSO : ScriptableObject
+public class Quest_Info_SO : ScriptableObject
 {
     // Unique name for identifying quest
     [field: SerializeField] public string id { get; private set; }
 
     // Display name
     public string DisplayName;
+
+    // Could later add requirements here (ex: finishing other quests)
 
     // Quest step GameObjects holding the quest step info
     public GameObject[] QuestStepPrefabs;

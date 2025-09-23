@@ -2,14 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : QuestStep
+/// <summary>
+/// Tutorial Quest Step to make the player move using WASD or arrow key binds
+/// </summary>
+public class Move_WASD_Quest_Step : QuestStep
 {
 
-
-    // Update is called once per frame
-    void Update()
+    void OnEnable()
     {
-        
-        
+        Game_Events_Manager.Instance.onPlayerMove += PlayerMoved;
+    }
+
+    // Unsubscribe to clean up
+    void OnDisable()
+    {
+        Game_Events_Manager.Instance.onPlayerMove -= PlayerMoved;
+    }
+
+
+    private void PlayerMoved()
+    {
+        FinishQuestStep(); // Finish and destroy this object
     }
 }
