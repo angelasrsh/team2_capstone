@@ -153,16 +153,15 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
         newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
         newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
-        if (!cuttingBoardActive)
-          Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
         if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
         {
           // Debug.Log("In RED");
           if (!isOnPot)
           {
             cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
-            if (((Ingredient_Data)(ParentSlot.stk.resource)).Name == "Bone_Broth") // Maybe change this later to use enum so that we don't compare strings, but I can't be bothered rn
+            if (ParentSlot.stk.resource.Name == "Bone Broth") // Maybe change this later to use enum so that we don't compare strings, but I can't be bothered rn
               BrothAdded();
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             isOnPot = true;
           }
         }
@@ -178,8 +177,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               transform.localPosition = Vector3.zero; // Center within the target canvas
               transform.localScale = targetScale;
               canDrag = false;
-
             }
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             // cuttingBoardActive = true; //not used for now
           }
         }

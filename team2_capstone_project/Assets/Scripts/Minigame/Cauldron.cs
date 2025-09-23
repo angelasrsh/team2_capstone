@@ -86,7 +86,7 @@ public class Cauldron : MonoBehaviour
     if (ingredientMade != null)
     {
       Debug.Log("Ingredient made: " + ingredientMade.Name);
-      Ingredient_Inventory.Instance.AddResources(ingredientMade, 1);
+      Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredientMade), 1);
     }
     else if (dishMade != null)
     {
