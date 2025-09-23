@@ -33,7 +33,8 @@ public class GameEventsManager : MonoBehaviour
     public event Action onPlayerMove;
     public void PlayerMoved()
     {
-        onPlayerMove();
+        if (onPlayerMove != null) // Guessing null means no subscribers?
+            onPlayerMove();
         Debug.Log("[G_E_M] Player Moved");
     }
 }

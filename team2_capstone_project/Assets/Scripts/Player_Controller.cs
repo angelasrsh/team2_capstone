@@ -78,6 +78,6 @@ public class Player_Controller : MonoBehaviour
     private void onMove(InputAction.CallbackContext context)
     {
         Debug.Log("[P_C] Player is moving");
-        //GameEventsManager.Instance.PlayerMoved();
+        GameEventsManager.Instance.PlayerMoved();
     }
 }
