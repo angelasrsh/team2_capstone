@@ -83,16 +83,32 @@ public class Quest_Manager : MonoBehaviour
     private void StartQuest(string id)
     {
         Debug.Log($"Q_MAN started quest {id}");
+        Quest quest = GetQuestByID(id);
+        quest.InstantiateCurrentQuestStep(this.transform);
+        ChangeQuestState(quest.Info.id, Quest_State.IN_PROGRESS);
     }
 
     private void AdvanceQuest(string id)
     {
         Debug.Log($"Q_MAN advanced quest {id}");
+        Quest quest = GetQuestByID(id);
+        quest.MoveToNextStep();
+        if (quest.CurrentStepExists())
+            quest.InstantiateCurrentQuestStep(this.transform);
+        else
+            ChangeQuestState(quest.Info.id, Quest_State.FINISHED); // or add CAN_FINISHED if not auto-finishing
     }
 
+    /// <summary>
+    /// Maybe not necessary for now if quests auto-finish?
+    /// </summary>
+    /// <param name="id"></param>
     private void FinishQuest(string id)
     {
         Debug.Log($"Q_MAN finished quest {id}");
+        Quest quest = GetQuestByID(id);
+        // claim rewards if applicable
+        ChangeQuestState(quest.Info.id, Quest_State.FINISHED);
     }
 
     /// <summary>

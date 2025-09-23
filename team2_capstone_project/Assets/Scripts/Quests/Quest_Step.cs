@@ -13,6 +13,12 @@ using UnityEngine;
 public abstract class QuestStep : MonoBehaviour
 {
     private bool isFinished = false;
+    private string questId;
+
+    public void InitializeQuestStep(string questId)
+    {
+        this.questId = questId;
+    }
 
     /// <summary>
     /// Gets called when a quest is finished to clean up
@@ -22,6 +28,7 @@ public abstract class QuestStep : MonoBehaviour
         if (!isFinished)
         {
             isFinished = true;
+            Game_Events_Manager.Instance.AdvanceQuest(questId);
             Destroy(this.gameObject);
         }
     }

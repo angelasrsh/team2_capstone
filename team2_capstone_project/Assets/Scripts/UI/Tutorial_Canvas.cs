@@ -16,14 +16,16 @@ public class Tutorial_Canvas : MonoBehaviour
     }
     void OnEnable()
     {
-        Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
+        //Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
+        Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id);
         
     }
 
-    private void questStateChange(Quest q)
-    {
-        if (q.Info.id.Equals(questID))
-            currentQuestState = q.state;
-        
-    }
+    // Update the Canvas's quest state when the quest changes
+    // private void questStateChange(Quest q)
+    // {
+    //     if (q.Info.id.Equals(questID))
+    //         currentQuestState = q.state;
+
+    // }
 }
