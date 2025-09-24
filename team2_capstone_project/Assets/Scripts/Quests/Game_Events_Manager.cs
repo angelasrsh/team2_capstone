@@ -28,7 +28,8 @@ public class Game_Events_Manager : MonoBehaviour
 
     // Tell objects when a quest state changes (and which quest, by ID)
 
-    /////////// PLAYER INPUT EVENTS ////////////
+    /////////// PLAYER EVENTS ////////////
+    #region Player Events
 
     public event Action onPlayerMove;
     /// <summary>
@@ -41,9 +42,58 @@ public class Game_Events_Manager : MonoBehaviour
         Debug.Log("[G_E_M] Player Moved");
     }
 
-    //public event Action onP
+
+    public event Action<bool> onInventoryToggle;
+    /// <summary>
+    /// Broadcast the InventoryToggled event
+    /// </summary>
+    /// <param name="isOpen"> true if the inventory has just been opened; false otherwise </param>
+    public void InventoryToggled(bool isOpen)
+    {
+        if (onInventoryToggle != null)
+            onInventoryToggle(isOpen);
+    }
+
+    public event Action<bool> onJournalToggle;
+    /// <summary>
+    /// Broadcast the JournalToggled event
+    /// </summary>
+    /// <param name="isOpen"> true if the Journal has just been opened; false otherwise </param>
+    public void JournalToggled(bool isOpen)
+    {
+        if (onJournalToggle != null)
+            onJournalToggle(isOpen);
+    }
+
+
+    public event Action<bool> onRecipeClick;
+    /// <summary>
+    /// Broadcast the RecipeClick event
+    /// </summary>
+    public void RecipeClick()
+    {
+        if (onRecipeClick != null)
+            onRecipeClick();
+    }
+
+
+
+
+    public event Action onHarvest;
+    /// <summary>
+    /// Broadcast the onHarvest event
+    /// </summary>
+    public void Harvest()
+    {
+        if (onHarvest != null)
+            onHarvest();
+    }
+    #endregion
+
 
     //////////// QUEST EVENTS /////////////
+    #region Quest Events
+
     public event Action<string> onStartQuest;
     /// <summary>
     /// Broadcast the start quest event
@@ -96,5 +146,6 @@ public class Game_Events_Manager : MonoBehaviour
             onQuestStepChange(id, stepIndex);
 
     }
+    #endregion
     
 }

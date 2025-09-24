@@ -12,12 +12,6 @@ public class Move_WASD_Quest_Step : Quest_Step
     void OnEnable()
     {
         Game_Events_Manager.Instance.onPlayerMove += PlayerMoved;
-
-        // Testing!!!
-        // text = GameObject.Find("Tutorial_Canvas").GetComponent<TextMeshPro>();
-
-        // if (text != null)
-        //     text.text = "Press WASD or the arrow keys to move";
     }
 
     // Unsubscribe to clean up

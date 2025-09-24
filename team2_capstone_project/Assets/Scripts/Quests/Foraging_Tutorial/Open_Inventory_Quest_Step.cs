@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Press_I_Quest_Step : Quest_Step
+public class Open_Inventory_Quest_Step : Quest_Step
 {
     void OnEnable()
     {

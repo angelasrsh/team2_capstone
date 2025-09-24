@@ -12,6 +12,7 @@ public class Canvas_Inventory_Listener : MonoBehaviour
         InventoryCanvas = this.gameObject.GetComponent<Canvas>();
     }
 
+
     // Update is called once per frame
     void Update()
     {
