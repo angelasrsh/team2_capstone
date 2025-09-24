@@ -2,21 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Click_Journal_Recipe_Quest_Step : Quest_Step
+public class Serve_Customer_Quest_Step : Quest_Step
 {
     void OnEnable()
     {
-        Game_Events_Manager.Instance.onForageDetailsClick += RecipeClick;
+        Game_Events_Manager.Instance.onServeCustomer += ServeCustomer;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
-        Game_Events_Manager.Instance.onForageDetailsClick -= RecipeClick;
+        Game_Events_Manager.Instance.onServeCustomer -= ServeCustomer;
     }
 
 
-    private void RecipeClick()
+    private void ServeCustomer()
     {
         FinishQuestStep(); // Finish and destroy this object
     }

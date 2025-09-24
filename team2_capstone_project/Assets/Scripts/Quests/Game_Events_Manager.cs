@@ -66,14 +66,14 @@ public class Game_Events_Manager : MonoBehaviour
     }
 
 
-    public event Action onRecipeClick;
+    public event Action onForageDetailsClick;
     /// <summary>
     /// Broadcast the RecipeClick event
     /// </summary>
-    public void RecipeClick()
+    public void ForageDetailsClick()
     {
-        if (onRecipeClick != null)
-            onRecipeClick();
+        if (onForageDetailsClick != null)
+            onForageDetailsClick();
     }
 
 
@@ -160,5 +160,57 @@ public class Game_Events_Manager : MonoBehaviour
     }
 
     #endregion
+
+    /////////// CAFE INTERACTION EVENTS /////////
+    #region Cafe Interaction Events
+    public event Action onGetOrder;
+    public void GetOrder()
+    {
+        if (onGetOrder != null)
+            onGetOrder();
+    }
+
+    public event Action onServeCustomer;
+    public void ServeCustomer()
+    {
+        if (onServeCustomer != null)
+            onServeCustomer();
+    }
+    #endregion
+
+
+    /////////// INVENTORY EVENTS /////////
+    #region Inventory events
+    public event Action<Ingredient_Data> onResourceAdd;
+    public void ResourceAdd(Ingredient_Data ingredient)
+    {
+        if (onResourceAdd != null)
+            onResourceAdd(ingredient);
+    }
+
+    public event Action<Ingredient_Data> onResourceRemove;
+    public void ResourceRemove(Ingredient_Data ingredient)
+    {
+        if (onResourceRemove != null)
+            onResourceRemove(ingredient);
+    }
+
+    public event Action<Dish_Data> onDishAdd;
+    public void DishAdd(Dish_Data dish)
+    {
+        if (onDishAdd != null)
+            onDishAdd(dish);
+    }
+
+    public event Action<Dish_Data> onDishRemove;
+    public void DishRemove(Dish_Data dish)
+    {
+        if (onDishRemove != null)
+            onDishRemove(dish);
+    }
+
+    #endregion
+
     
+
 }

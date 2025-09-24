@@ -34,82 +34,85 @@ public class Cauldron : MonoBehaviour
     CheckRecipeAndCreateDish();
   }
 
-  /// <summary>
-  /// Check the current ingredients in the pot against possible recipes and create the appropriate dish.
-  /// Adds the created dish to the Dish_Tool_Inventory and clears the pot.
-  /// This is called in FinishedStir after the stirring time is completed.
-  /// </summary>
-  private void CheckRecipeAndCreateDish()
-  {
-    // Loop through possible dishes and see if any can be made with current ingredients
-    Dish_Data potentialDish = null;
-    foreach (var dish in possibleDishes)
+    /// <summary>
+    /// Check the current ingredients in the pot against possible recipes and create the appropriate dish.
+    /// Adds the created dish to the Dish_Tool_Inventory and clears the pot.
+    /// This is called in FinishedStir after the stirring time is completed.
+    /// </summary>
+    private void CheckRecipeAndCreateDish()
     {
-      if (ingredientInPot.Count != dish.ingredientQuantities.Count)
-        continue;
-
-      potentialDish = dish;
-      foreach (var req in dish.ingredientQuantities)
-      {
-        if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
+        // Loop through possible dishes and see if any can be made with current ingredients
+        Dish_Data potentialDish = null;
+        foreach (var dish in possibleDishes)
         {
-          potentialDish = null;
-          break;
-        }
-      }
+            if (ingredientInPot.Count != dish.ingredientQuantities.Count)
+                continue;
 
-      if (potentialDish != null) // Found a matching dish recipe
-      {
-        dishMade = potentialDish;
-        break;
-      }
-    }
+            potentialDish = dish;
+            foreach (var req in dish.ingredientQuantities)
+            {
+                if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
+                {
+                    potentialDish = null;
+                    break;
+                }
+            }
 
-    Ingredient_Data potentialIngredient = null;
-    if (dishMade == null)
-    {
-      // Loop through possible ingredients and see if any can be made with current ingredients
-      foreach (var ingredient in possibleIngredients)
-      {
-        if (ingredientInPot.Count != ingredient.ingredient.ingredientsNeeded.Count)
-          continue;
-
-        potentialIngredient = ingredient.ingredient;
-        foreach (var req in potentialIngredient.ingredientsNeeded)
-        {
-          if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
-          {
-            potentialIngredient = null;
-            break;
-          }
+            if (potentialDish != null) // Found a matching dish recipe
+            {
+                dishMade = potentialDish;
+                break;
+            }
         }
 
-        if (potentialIngredient != null) // Found a matching ingredient recipe
+        Ingredient_Data potentialIngredient = null;
+        if (dishMade == null)
         {
-          ingredientMade = potentialIngredient;
-          break;
+            // Loop through possible ingredients and see if any can be made with current ingredients
+            foreach (var ingredient in possibleIngredients)
+            {
+                if (ingredientInPot.Count != ingredient.ingredient.ingredientsNeeded.Count)
+                    continue;
+
+                potentialIngredient = ingredient.ingredient;
+                foreach (var req in potentialIngredient.ingredientsNeeded)
+                {
+                    if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
+                    {
+                        potentialIngredient = null;
+                        break;
+                    }
+                }
+
+                if (potentialIngredient != null) // Found a matching ingredient recipe
+                {
+                    ingredientMade = potentialIngredient;
+                    break;
+                }
+            }
         }
-      }
-    }
 
-    if (ingredientMade != null)
-    {
-      Debug.Log("Ingredient made: " + ingredientMade.Name);
-      Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredientMade), 1);
-    }
-    else if (dishMade != null)
-    {
-      Debug.Log("Dish made: " + dishMade.Name);
-      Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
-    }
-    else if (dishMade == null)
-    {
-      Debug.Log("No recipe found with ingredients provided. Made bad dish.");
-      dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
-      Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
-    }
+        if (ingredientMade != null)
+        {
+            Debug.Log("Ingredient made: " + ingredientMade.Name);
+            Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredientMade), 1);
+        }
+        else if (dishMade != null)
+        {
+            Debug.Log("Dish made: " + dishMade.Name);
+            Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+        }
+        else if (dishMade == null)
+        {
+            Debug.Log("No recipe found with ingredients provided. Made bad dish.");
+            dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
+            Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+        }
 
-    ResetAll();
+        ResetAll();
+
+        // Broadcast that a dish has been made (regardless of success)
+        //Game_Events_Manager.Instance.MakeCauldronDish();
   }
 
   /// <summary>

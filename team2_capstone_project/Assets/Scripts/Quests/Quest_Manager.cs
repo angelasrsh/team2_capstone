@@ -23,10 +23,25 @@ public class Quest_Manager : MonoBehaviour
 
     public Quest_Database QuestDatabase;
 
+    // For singleton purposes
+    public static Quest_Manager Instance { get; private set; }
+
     private void Awake()
     {
         questMap = CreateQuestMap();
+
+        // Temporarily a Singleton; probably should be data persistence later
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
     }
+
 
     private void OnEnable()
     {
@@ -80,7 +95,7 @@ public class Quest_Manager : MonoBehaviour
         foreach (Quest q in questMap.Values)
         {
             if (q.state == Quest_State.REQUIREMENTS_NOT_MET && CheckRequirementsMet(q))
-                ChangeQuestState(q.Info.id, Quest_State.IN_PROGRESS); // May later want to use CAN_START to not auto-start
+                ChangeQuestState(q.Info.id, Quest_State.CAN_START); // May later want to use CAN_START to not auto-start
         }
     }
 
@@ -100,7 +115,7 @@ public class Quest_Manager : MonoBehaviour
         if (quest.CurrentStepExists())
             quest.InstantiateCurrentQuestStep(this.transform);
         else
-            ChangeQuestState(quest.Info.id, Quest_State.FINISHED); // or add CAN_FINISHED if not auto-finishing
+            ChangeQuestState(quest.Info.id, Quest_State.CAN_FINISH); // or add CAN_FINISHED if not auto-finishing
     }
 
     /// <summary>
@@ -150,7 +165,7 @@ public class Quest_Manager : MonoBehaviour
     /// </summary>
     /// <param name="id"> The quest ID for which to search </param>
     /// <returns></returns>
-    private Quest GetQuestByID(string id)
+    public Quest GetQuestByID(string id) // Make private and decouple from Tutorial Canvas once we have data persistence
     {
         Quest quest = questMap[id];
         if (quest == null)

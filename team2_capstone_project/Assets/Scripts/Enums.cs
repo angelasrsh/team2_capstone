@@ -34,9 +34,9 @@ public enum IngredientType // should delete after putting in maddie's code
 public enum Quest_State
 {
     REQUIREMENTS_NOT_MET,
-    //CAN_START,
+    CAN_START,
     IN_PROGRESS,
-    //CAN_FINISH,
+    CAN_FINISH,
     FINISHED
 }
 

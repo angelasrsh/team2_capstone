@@ -88,13 +88,21 @@ public class Journal_Menu : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    // if (openJournalAction.WasPerformedThisFrame())
-    if(Input.GetKeyDown(KeyCode.J))
-    {
-      if (isPaused)
-        ResumeGame();
-      else
-        PauseGame();
+        // if (openJournalAction.WasPerformedThisFrame())
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            if (isPaused)
+            {
+                ResumeGame();
+                Game_Events_Manager.Instance.JournalToggled(false);
+            }
+            else
+            {
+                PauseGame();
+                Game_Events_Manager.Instance.JournalToggled(true);
+            }
+                
+        
     }
   }
 
@@ -259,40 +267,43 @@ public class Journal_Menu : MonoBehaviour
     }
   }
 
-  private void DisplayDishForagingDetails(Dish_Data dishData)
-  {
-    Foraging_Left_Page.SetActive(true);
-
-    Transform pagePanel = Foraging_Left_Page.transform.Find("Left_Page_Item_Panel");
-
-    // Dish Info
-    pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
-    pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.Image;
-
-    // Collect ingredient lines
-    string ingredientText = "";
-    foreach (var req in dishData.ingredientQuantities)
+    private void DisplayDishForagingDetails(Dish_Data dishData)
     {
-      Ingredient_Data ingredient = req.ingredient;
-      int required = req.amountRequired;
+        Foraging_Left_Page.SetActive(true);
 
-      // Pick the display ingredient
-      Ingredient_Data displayIngredient = ingredient;
+        Transform pagePanel = Foraging_Left_Page.transform.Find("Left_Page_Item_Panel");
 
-      // If this ingredient has equivalencies, pick the first one as the base
-      if (ingredient.countsAs != null && ingredient.countsAs.Count > 0)
-      {
-        displayIngredient = ingredient.countsAs[0];
-      }
+        // Dish Info
+        pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
+        pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.Image;
 
-      // Now display the base ingredient instead of the processed one
-      ingredientText += $"{displayIngredient.Name} x{required}\n";
+        // Collect ingredient lines
+        string ingredientText = "";
+        foreach (var req in dishData.ingredientQuantities)
+        {
+            Ingredient_Data ingredient = req.ingredient;
+            int required = req.amountRequired;
 
-    }
+            // Pick the display ingredient
+            Ingredient_Data displayIngredient = ingredient;
 
-    // Assign once
-    var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
-    detailsText.text = ingredientText.TrimEnd(); // trim last newline
+            // If this ingredient has equivalencies, pick the first one as the base
+            if (ingredient.countsAs != null && ingredient.countsAs.Count > 0)
+            {
+                displayIngredient = ingredient.countsAs[0];
+            }
+
+            // Now display the base ingredient instead of the processed one
+            ingredientText += $"{displayIngredient.Name} x{required}\n";
+
+        }
+
+        // Assign once
+        var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
+        detailsText.text = ingredientText.TrimEnd(); // trim last newline
+
+        // Broadcast event for tutorial
+        Game_Events_Manager.Instance.ForageDetailsClick();
   }
   #endregion
 

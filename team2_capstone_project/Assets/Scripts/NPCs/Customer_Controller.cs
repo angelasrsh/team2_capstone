@@ -70,10 +70,12 @@ public class Customer_Controller : MonoBehaviour
                 if (hasSatDown && !hasRequestedDish)
                 {
                     RequestDishAfterDialogue();
+                    Game_Events_Manager.Instance.GetOrder();
                 }
                 else if (hasRequestedDish)
                 {
                     TryServeDish(playerInventory);
+                    Game_Events_Manager.Instance.ServeCustomer();
                 }
             }
         }
