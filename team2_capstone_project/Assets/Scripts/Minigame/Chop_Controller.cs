@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+
 
 [System.Serializable]
 public class CutLine
@@ -34,10 +37,27 @@ public class Chop_Controller : MonoBehaviour
     public bool isActive = false;
 
     public Drag_All drag_all_script;
+    public Knife_Script knife_script;
+    
     [Header("Cut Settings")]
     public GameObject cutPrefab;
     public GameObject cutImagePrefab; // Prefab for the cut versions of the image
 
+    public Ingredient_Data ingredient_data_var;
+    public GameObject ingredient_object;
+    private bool hasIngredientData = true;
+
+
+    public Ingredient_Data SetIngredientData(Ingredient_Data ingredientData, GameObject ing_gameOb)
+    {
+        //this function is used to get the ingredientData from DragAll
+        ingredient_data_var = ingredientData;
+        ingredient_object = ing_gameOb;
+        hasIngredientData = true;
+
+        // Debug.Log("[Chp_ctrller] Received ingredient data: " + ingredient_data_var); //works
+        return ingredient_data_var;
+    }
     private void showCuttingLines()
     {
         //function to make the lines appear
@@ -45,11 +65,32 @@ public class Chop_Controller : MonoBehaviour
 
 
     }
+
+    public Ingredient_Data defaultIngredient; // Assign in Inspector
+
     void Start()
     {
+        drag_all_script = FindObjectOfType<Drag_All>();
+        // Debug.LogError("Drag_All found in CHop_Controller!");
+        // Set default if no ingredient is set
+    //     if (ingredient_data_var == null && defaultIngredient != null)
+    //     {
+    //         ingredient_data_var = defaultIngredient;
+    // }
+        if (drag_all_script == null)
+        {
+            Debug.LogError("Drag_All not found in CHop_Controller!");
+        }
+      
+        knife_script = FindObjectOfType<Knife_Script>();
+        if (knife_script == null)
+        {
+            Debug.LogError("knife_Script not found in CHop_Controller!");
+        }
+        // Debug.Log("[Chp_Cntrller] ingredient_data_var = " + ingredient_data_var);
         // Start with script disabled
-        DeactivateChopController();
-        
+        // DeactivateChopController();
+
     }
 
     public void DeactivateChopController()
@@ -57,46 +98,138 @@ public class Chop_Controller : MonoBehaviour
         
     }
     private Vector2 swipeStart;
+
+    private Vector3 knife_pos;
+    public bool knife_is_overlapping = false;
+    public RectTransform redZoneForKnife;
+    public bool in_inventory = false;
     void Update()
     {
-        // if (drag_all_script.canDrag == false)
-        // {
-        //     if (Mouse.current.leftButton.wasPressedThisFrame)
-        //     {
-        //         isDragging = true;
-        //         swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //         startDragPos = Mouse.current.position.ReadValue();
-        //         startTime = Time.time;
-        //     }
-        //     else if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
-        //     {
-        //         isDragging = false;
-        //         Vector2 endDragPos = Mouse.current.position.ReadValue();
+        // if (drag_all_script.canDrag == false) //TODO check if this is set up properly in drag all
+        {
 
-        //         float duration = Time.time - startTime;
+            if (hasIngredientData)
+            {
+                GameObject red_zone_found = GameObject.Find("RedZoneForKnife");
+                if (red_zone_found != null)
+                    redZoneForKnife = red_zone_found.GetComponent<RectTransform>();
+                else
+                {
+                    Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
+                }
+                knife_pos = knife_script.currKnifePosition;
 
-        //         EvaluateChop(startDragPos, endDragPos, duration);
-        //         // SpawnCut();
-        //     }
-        // }
+                if (!knife_is_overlapping && Drag_All.IsOverlapping(knife_script.knifeRectTransform, redZoneForKnife))
+                {
+                    Debug.Log("[Chp_cntrller] Knife is overlapping redZoneForKnife");
+                    // SpawnCutPrefabs();
+                    knife_is_overlapping = true;
+                }
+                else
+                {
+                    knife_is_overlapping = false;
+
+                }
+
+                if (knife_is_overlapping == true)
+                {
+                    Debug.Log("went inside the chopscript.knife_is_overlappting if statement");
+
+                    // Get the Image component from the transform, then change the sprite
+                    Image imageComponent = ingredient_object.GetComponent<Image>();
+
+                    if (imageComponent != null)
+                    {
+                        // Use a cut image if available
+                        if (ingredient_data_var.CutIngredientImages.Length > 0)
+                        {
+                            imageComponent.sprite = ingredient_data_var.CutIngredientImages[0];
+                        }
+                        //use the regular image
+                        else
+                        {
+                            imageComponent.sprite = ingredient_data_var.Image;
+                        }
+                    }
+                    if (Ingredient_Inventory.Instance.HasItem(ingredient_data_var.makesIngredient[0].ingredient) == false)
+                    {
+                        in_inventory = false;
+                    }
+                    if (!in_inventory)
+                    {
+                        Ingredient_Inventory.Instance.AddResources(ingredient_data_var.makesIngredient[0].ingredient, 1);
+
+                        StartCoroutine(DelayedActions());
+
+                        IEnumerator DelayedActions()
+                        {
+                            yield return new WaitForSeconds(0.75f); // Wait .75 seconds
+
+                            imageComponent.enabled = false;
+                            Drag_All.cuttingBoardActive = false;
+                        }
+                        in_inventory = true;
+                    }
+                }
+            }
+            // Debug.Log("[Chop_cntrller] position of knife" + position);
+            // if (Input.GetMouseButtonDown(0))
+            // {
+            //     isDragging = true;
+            //     swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //     startDragPos = Mouse.current.position.ReadValue();
+            //     startTime = Time.time;
+            // }
+            // else if (isDragging && Input.GetMouseButtonUp(0))
+            // {
+            //     isDragging = false;
+            //     Vector2 endDragPos = Mouse.current.position.ReadValue();
+            //     // float duration = Time.time - startTime;
+            //     // SpawnCut();
+
+            //     // EvaluateChop(startDragPos, endDragPos, duration);
+            // }
+        }
         
     }
 
 
-    private void SpawnCut()
+    private void SpawnCutPrefabs()
     {
-        Vector2 swipeEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition); //where the swipe ended
-        GameObject cutInstance = Instantiate(cutPrefab, swipeStart, Quaternion.identity); //create the cut object
-        cutInstance.GetComponent<LineRenderer>().SetPosition(0, swipeStart); //create the line
-        cutInstance.GetComponent<LineRenderer>().SetPosition(1, swipeEnd);
+        Debug.Log("[SpawnCut] initiated.");
+            // Check if the array exists and has elements
+        if (ingredient_data_var == null)
+        {
+            Debug.LogError("ingredient_data_var is null!");
+            return;
+        }
+        
+        if (ingredient_data_var.CutIngredientImages == null)
+        {
+            Debug.LogError("CutIngredientImages array is null!");
+            return;
+        }
+        
+        if (ingredient_data_var.CutIngredientImages.Length == 0)
+        {
+            Debug.LogError("CutIngredientImages array is empty!");
+            return;
+        }
+    
+        ingredient_data_var.Image = ingredient_data_var.CutIngredientImages[0];
+        
+        // Vector2 swipeEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition); //where the swipe ended
+        // GameObject cutInstance = Instantiate(cutPrefab, swipeStart, Quaternion.identity); //create the cut object
+        // cutInstance.GetComponent<LineRenderer>().SetPosition(0, swipeStart); //create the line
+        // cutInstance.GetComponent<LineRenderer>().SetPosition(1, swipeEnd);
 
+        // Vector2[] colliderPoints = new Vector2[2];
+        // colliderPoints[0] = Vector2.zero;
+        // colliderPoints[1] = swipeEnd - swipeStart;
 
-        Vector2[] colliderPoints = new Vector2[2];
-        colliderPoints[0] = Vector2.zero;
-        colliderPoints[1] = swipeEnd - swipeStart;
+        // Destroy(cutInstance);
+        Debug.Log("[SpawnCut] done.");
 
-
-        Destroy(cutInstance);
     }
 
     private void EvaluateChop(Vector2 startScreen, Vector2 endScreen, float duration)

@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-// using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
-// using UnityEditor.iOS;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +39,9 @@ public class Inventory_Slot : MonoBehaviour
             itemImage.sprite = stack.resource.Image;
             name.text = stack.resource.Name;
             amount.text = stack.amount.ToString();
-            
+            stk.resource = stack.resource;
+            stk.amount = stack.amount;
+
         }
         else
         {
@@ -49,6 +49,8 @@ public class Inventory_Slot : MonoBehaviour
             name.text = null;
             amount.text = null;
             itemImage.enabled = false;
+            stk.resource = null;
+            stk.amount = 0;
         }
 
 

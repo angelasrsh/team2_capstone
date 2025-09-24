@@ -23,10 +23,14 @@ public class Cauldron : MonoBehaviour
     if (dishMade != null)
     {
       Debug.Log("Bad dish made due first ingredient leading to no known recipes.");
+      dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
+      Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+      ResetAll();
       return;
     }
 
     // Shouldn't get here if already making bad dish
+    Debug.Log("Finished Stir. Checking Recipe.");
     CheckRecipeAndCreateDish();
   }
 
@@ -41,6 +45,9 @@ public class Cauldron : MonoBehaviour
     Dish_Data potentialDish = null;
     foreach (var dish in possibleDishes)
     {
+      if (ingredientInPot.Count != dish.ingredientQuantities.Count)
+        continue;
+
       potentialDish = dish;
       foreach (var req in dish.ingredientQuantities)
       {
@@ -64,8 +71,11 @@ public class Cauldron : MonoBehaviour
       // Loop through possible ingredients and see if any can be made with current ingredients
       foreach (var ingredient in possibleIngredients)
       {
+        if (ingredientInPot.Count != ingredient.ingredient.ingredientsNeeded.Count)
+          continue;
+
         potentialIngredient = ingredient.ingredient;
-        foreach (var req in ingredient.ingredient.makesIngredient)
+        foreach (var req in potentialIngredient.ingredientsNeeded)
         {
           if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
           {
@@ -85,7 +95,7 @@ public class Cauldron : MonoBehaviour
     if (ingredientMade != null)
     {
       Debug.Log("Ingredient made: " + ingredientMade.Name);
-      Ingredient_Inventory.Instance.AddResources(ingredientMade, 1);
+      Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredientMade), 1);
     }
     else if (dishMade != null)
     {
@@ -99,9 +109,19 @@ public class Cauldron : MonoBehaviour
       Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
     }
 
+    ResetAll();
+  }
+
+  /// <summary>
+  /// Resets all lists and variables to start new recipe detection.
+  /// </summary>
+  private void ResetAll()
+  {
     ingredientInPot.Clear();
     possibleDishes.Clear();
     possibleIngredients.Clear();
+    dishMade = null;
+    ingredientMade = null;
   }
 
   /// <summary>
@@ -114,7 +134,7 @@ public class Cauldron : MonoBehaviour
   {
     stirring = true;
   }
-  
+
   public bool IsStirring()
   {
     return stirring;
@@ -161,72 +181,9 @@ public class Cauldron : MonoBehaviour
     }
     Debug.Log("Ingredients on pot: " + ingredientInPot.Count);
   }
+
+  public bool IsEmpty()
+  {
+    return ingredientInPot.Count == 0;
+  }
 }
-
-// if (ingredientInPot.Count < 2) return;
-    // IngredientType firstType = ingredientInPot[0].ingredientType;
-    // IngredientType secondType = ingredientInPot[1].ingredientType;
-    // Debug.Log("Creating Dish");
-
-    // Vector3 dishPosition = redZone.transform.position;
-    // Transform parentTransform = this.rectTransform.parent;
-    // GameObject dishToCreate = null;
-
-
-    // // Recipe logic
-    // if (firstType == IngredientType.Egg && secondType == IngredientType.Egg)
-    // {
-    //     dishToCreate = goodDishPrefab;
-    //     Debug.Log("Creating good dish: Egg + Egg!");
-
-
-    //     goodDishMade.PlayOneShot(goodDishMade.clip);
-    // }
-    // else if ((firstType == IngredientType.Egg && secondType == IngredientType.Melon) ||
-    //          (firstType == IngredientType.Melon && secondType == IngredientType.Egg))
-    // {
-    //     dishToCreate = badDishPrefab;
-    //     Debug.Log("Creating bad dish: Egg + Melon!");
-    // }
-    // else
-    // {
-    //     Debug.Log("Unknown recipe combination!");
-    //     dishToCreate = badDishPrefab; // Default to bad dish
-    // }
-
-    // // Destroy both ingredient objects
-    // List<Ingredient_Data> ingredientToDestroy = new List<Ingredient_Data>(ingredientInPot);
-    // ingredientInPot.Clear();
-
-    // foreach (var ingredient in ingredientToDestroy)
-    // {
-    //     if (ingredient != null)
-    //         Destroy(ingredient.gameObject);
-    // }
-    // ingredientInPot.Clear();
-
-    // // Create the new dish at the second egg's position
-    // if (dishToCreate != null)
-    // {
-    //     GameObject newDish = Instantiate(dishToCreate, dishPosition, Quaternion.identity);
-    //     // Make sure it's a child of the same parent as the egg
-    //     newDish.transform.SetParent(parentTransform, false);
-
-    //     // Since we're using world position, we need to set it after parenting
-    //     newDish.transform.position = dishPosition;
-    //     newDish.transform.SetAsLastSibling(); // This will put it on top
-    // }
-
-    // if (DishData != null)
-    // {
-    //     //playerInventory.AddDish(DishData);
-    //     if (Dish_Inventory.Instance.AddResources(DishData, 1) < 1)
-    //     {
-    //         Debug.Log($"[Intry_Ovrlp] Error: no {DishData} added!");
-    //         return;
-    //     }
-
-    //     Debug.Log($"[Overlap] Added {DishData.Name} to inventory");
-    // }
-    // else
-    //     Debug.Log("[Overlap] Missing Inventory or Dish_Data reference!");

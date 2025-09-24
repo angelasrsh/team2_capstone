@@ -8,6 +8,7 @@ namespace Grimoire
     {
         [Header("Forage Settings")]
         [SerializeField] private Ingredient_Data ingredientData;
+        [SerializeField] private Forageable_Data forageableData;
         [SerializeField] private GameObject foragedVariant; 
         [SerializeField] private bool destroyOnForage = false;  
 
@@ -19,7 +20,12 @@ namespace Grimoire
 
             Debug.Log($"[Forageable] Player foraged {ingredientData.Name}");
 
-            Ingredient_Inventory.Instance.AddResources(ingredientData, 1);
+            // Check if we should add a specific number of resources (default is 1 otherwise)
+            int amountToAdd = 1;
+            if (forageableData != null)
+                amountToAdd = forageableData.ResourcesToGive;
+
+            Ingredient_Inventory.Instance.AddResources(ingredientData, amountToAdd);
             Audio_Manager.instance.PlaySFX(Audio_Manager.instance.pickupSFX);
             isForaged = true;
 
@@ -42,6 +48,9 @@ namespace Grimoire
                 var spriteRenderer = GetComponentInChildren<SpriteRenderer>();
                 if (spriteRenderer != null) spriteRenderer.color = Color.gray;
             }
+
+            // Broadcast message to listening scripts
+            Game_Events_Manager.Instance.Harvest();
         }
     }
 }
