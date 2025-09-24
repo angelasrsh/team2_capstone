@@ -124,7 +124,7 @@ public class Quest_Manager : MonoBehaviour
     {
         Quest quest = GetQuestByID(id);
         ChangeQuestState(id, quest.state); // Re-broadcast quest with the same state (only step has changed)
-        
+        Debug.Log($"[Q_MAN] Quest Step Change {id} {quest.state} to step {stepIndex}");
     }
 
     /// <summary>

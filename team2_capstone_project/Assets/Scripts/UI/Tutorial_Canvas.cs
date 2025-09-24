@@ -15,8 +15,7 @@ public class Tutorial_Canvas : MonoBehaviour
     private Quest_State currentQuestState;
     private TextMeshProUGUI Text;
 
-    //private String[] instructions = { "Move using WASD or the arrow keys", "Press J to open the journal and see the ingredients and recipes you know", "Press I to see your inventory", "Go to an object and press E to harvest it" };
-    private int instructionIndex = 0;
+    private int instructionIndex = -1;
 
     private void Awake()
     {
@@ -25,17 +24,32 @@ public class Tutorial_Canvas : MonoBehaviour
     }
     void OnEnable()
     {
-        //Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
-        Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id);
+        Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
         Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
 
+        Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id); // Start the quest immediately
+
+    }
+    
+       void OnDisable()
+    {
+        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
+        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
     }
 
     // Update the Canvas's quest state when the quest changes
     private void questStateChange(Quest q)
     {
         if (q.Info.id.Equals(questID))
+        {
             currentQuestState = q.state;
+        }
+
+        // Do nothing once tutorial is finished
+        if (currentQuestState == Quest_State.FINISHED)
+            this.gameObject.SetActive(false);
+        
+
     }
 
     /// <summary>
@@ -45,12 +59,10 @@ public class Tutorial_Canvas : MonoBehaviour
     /// <param name="stepIndex"> The new quest step index </param>
     private void ChangeQuestStep(String id, int stepIndex)
     {
-        if (id.Equals(questID) && currentQuestState == Quest_State.IN_PROGRESS)
+        if (id.Equals(questID))
         {
             instructionIndex = stepIndex; // Not necessary right now but may want to add a delay or embellishments later
-
-            if (instructionIndex < questInfoForCanvas.dialogueList.Length)
-                setText(questInfoForCanvas.dialogueList[instructionIndex]);
+            setText(questInfoForCanvas.dialogueList[stepIndex]);
         }
     }
 
