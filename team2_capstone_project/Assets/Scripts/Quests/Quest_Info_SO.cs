@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,9 @@ public class Quest_Info_SO : ScriptableObject
 
     // Quest step GameObjects holding the quest step info
     public GameObject[] QuestStepPrefabs;
+
+    // List of strings for instructions, dialogue, etc.
+    public String[] dialogueList;
 
     // Take identifier name from filename
     private void OnValidate()

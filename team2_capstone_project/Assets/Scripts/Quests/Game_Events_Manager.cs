@@ -87,5 +87,14 @@ public class Game_Events_Manager : MonoBehaviour
         if (onQuestStateChange != null)
             onQuestStateChange(quest);
     }
+
+
+    public event Action<string, int> onQuestStepChange;
+    public void QuestStepChange(string id, int stepIndex)
+    {
+        if (onQuestStepChange != null)
+            onQuestStepChange(id, stepIndex);
+
+    }
     
 }

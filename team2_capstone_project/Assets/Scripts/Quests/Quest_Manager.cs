@@ -34,14 +34,18 @@ public class Quest_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onStartQuest += StartQuest;
         Game_Events_Manager.Instance.onAdvanceQuest += AdvanceQuest;
         Game_Events_Manager.Instance.onFinishQuest += FinishQuest;
+
+        Game_Events_Manager.Instance.onQuestStepChange += QuestStepChange;
     }
 
-     private void OnDisable()
+    private void OnDisable()
     {
         // Unsubscribe to quest notifications
         Game_Events_Manager.Instance.onStartQuest -= StartQuest;
         Game_Events_Manager.Instance.onAdvanceQuest -= AdvanceQuest;
         Game_Events_Manager.Instance.onFinishQuest -= FinishQuest;
+        
+        Game_Events_Manager.Instance.onQuestStepChange -= QuestStepChange;
     }
 
     /// <summary>
@@ -109,6 +113,18 @@ public class Quest_Manager : MonoBehaviour
         Quest quest = GetQuestByID(id);
         // claim rewards if applicable
         ChangeQuestState(quest.Info.id, Quest_State.FINISHED);
+    }
+
+    /// <summary>
+    /// Broadcast that a quest step has changed
+    /// </summary>
+    /// <param name="id"> The id of the quest </param>
+    /// <param name="stepIndex"> The new index of the quest </param>
+    private void QuestStepChange(string id, int stepIndex)
+    {
+        Quest quest = GetQuestByID(id);
+        ChangeQuestState(id, quest.state); // Re-broadcast quest with the same state (only step has changed)
+        
     }
 
     /// <summary>
