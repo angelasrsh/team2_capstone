@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Grimoire;
+using TMPro;
 
 public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -26,9 +27,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private bool isOnPot = false;
   private static Cauldron cauldron; // Static reference to Cauldron script in scene
   private static bool waterAdded = false;
-  // private static Image regularBG;
-  // private static Sprite originalBGSprite;
   private static Animator backgroundAnimator;
+  private static GameObject errorText;
 
   [Header("Chopping Minigame")]
   private Canvas canvas;
@@ -59,6 +59,13 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       Transform backgroundCanvas = GameObject.Find("BackgroundCanvas").transform;
       Transform regularBGTransform = backgroundCanvas.Find("Stirring_Animation");
       backgroundAnimator = regularBGTransform.GetComponent<Animator>();
+    }
+
+    // Find errorText from Ladle_Canvas
+    if (errorText == null && SceneManager.GetActiveScene().name == "Cooking_Minigame")
+    {
+      Transform ladleCanvas = GameObject.Find("Ladle_Canvas").transform;
+      errorText = ladleCanvas.Find("Error_Text").gameObject;
     }
 
     GameObject red_zone_found = GameObject.Find("RedZone");
@@ -116,6 +123,14 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   public void OnBeginDrag(PointerEventData eventData)
   {
     // Debug.Log("started drag");
+    if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && cauldron.IsStirring())
+    {
+      errorText.SetActive(true);
+      errorText.GetComponent<TMP_Text>().text = "Cannot add more ingredients once you have started stirring!";
+      Invoke(nameof(HideErrorText), 3);
+      return;
+    }
+
     if (canDrag)
     {
       parentAfterDrag = transform.parent;
@@ -127,7 +142,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
   public void OnDrag(PointerEventData eventData)
   {
-    if (!canDrag)
+    if (!canDrag || (SceneManager.GetActiveScene().name == "Cooking_Minigame" && cauldron.IsStirring()))
     {
       return;
     }
@@ -139,7 +154,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
   public void OnEndDrag(PointerEventData eventData)
   {
-    if (!canDrag)
+    if (!canDrag || (SceneManager.GetActiveScene().name == "Cooking_Minigame" && cauldron.IsStirring()))
       return;
     else
     {
@@ -147,15 +162,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       transform.SetParent(parentAfterDrag);
       if (IsOverlapping(rectTransform, redZone))
       {
-        // The Inventory UI requires an image slot, so duplicate and replace self
-        GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
-        this.name = "Image_Slot_Old";
-        newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
-        newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
-        newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
         if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
         {
           // Debug.Log("In RED");
+          DuplicateInventorySlot();
           if (!isOnPot)
           {
             cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
@@ -171,6 +181,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
           //make the ingredient from the inventory Bigger:
           if (!cuttingBoardActive)
           {
+            DuplicateInventorySlot();
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             if (resizeCanvas != null)
             {
@@ -179,7 +190,12 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               transform.localScale = targetScale;
               canDrag = false;
             }
-            // cuttingBoardActive = true; //not used for now
+            cuttingBoardActive = true;
+          }
+          else
+          {
+            rectTransform.position = ingrOriginalPos;
+            Debug.Log("[Drag_All]: There is already an ingredient on the cutting board.");
           }
         }
       }
@@ -201,18 +217,24 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   }
 
   /// <summary>
+  /// The Inventory UI requires an image slot, so duplicate and replace self
+  /// </summary>
+  private void DuplicateInventorySlot()
+  {
+    GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
+    this.name = "Image_Slot_Old";
+    newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
+    newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
+    newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
+  }
+
+  /// <summary>
   /// For another object to set this image_slot's ingredient type (used in inventory UI)
   /// </summary>
   /// <param name="iData"></param>
-  public void SetIngredientType(Ingredient_Data iData)
-  {
-    ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
-  }
+  public void SetIngredientType(Ingredient_Data iData) => ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
 
-  public void SetCuttingBoardInactive()
-  {
-    cuttingBoardActive = false;
-  }
+  public void SetCuttingBoardInactive() => cuttingBoardActive = false;
 
   /// <summary>
   /// Adds water to pot as ingredient_data and changes cauldron background to fill with water.
@@ -222,7 +244,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   {
     if (waterAdded)
     {
-      Debug.Log("[Drag_All]: Water already added. Cannot add more.");
+      errorText.GetComponent<TMP_Text>().text = "Water already added. Cannot add more!";
+      errorText.SetActive(true);
       return;
     }
 
@@ -232,22 +255,19 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     if (backgroundAnimator != null)
     {
-      // regularBG = regularBGTransform.GetComponent<Animator>();
-      // originalBGSprite = regularBG.sprite;
       backgroundAnimator.SetBool("hasWater", true);
       backgroundAnimator.SetBool("empty", false);
     }
-    // regularBG.sprite = water.Image;
     waterAdded = true;
+    audio.PlayBubblingOnLoop();
   }
 
   /// <summary>
   /// Once recipe is made, should call this method to reset water status and change
-  /// background image to empty cauldron. TEST THIS OUT LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  /// background image to empty cauldron.
   /// </summary>
   public static void ResetWaterStatus()
   {
-    // regularBG.sprite = originalBGSprite;
     if (backgroundAnimator != null)
     {
       backgroundAnimator.SetBool("hasWater", false);
@@ -266,14 +286,20 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     return cauldron;
   }
 
+  /// <summary>
+  /// Changes cauldron's not stirring animation to broth colored liquid cauldron version
+  /// </summary>
   public static void BrothAdded()
   {
     if (backgroundAnimator != null)
     {
       backgroundAnimator.SetBool("hasBroth", true);
       // setting water to false just in case it wasn't correctly set before
-      backgroundAnimator.SetBool("hasWater", false); 
+      backgroundAnimator.SetBool("hasWater", false);
       backgroundAnimator.SetBool("empty", false);
     }
+    audio.PlayBubblingOnLoop();
   }
+
+  private void HideErrorText() => errorText.SetActive(false);
 }

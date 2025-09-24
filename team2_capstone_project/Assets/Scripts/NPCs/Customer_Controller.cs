@@ -6,124 +6,135 @@ using UnityEngine.UI;
 
 public class Customer_Controller : MonoBehaviour
 {
-    public CustomerData data;
+  public CustomerData data;
 
-    [SerializeField] private GameObject thoughtBubble;
-    [SerializeField] private Image bubbleDishImage;
+  [SerializeField] private GameObject thoughtBubble;
+  [SerializeField] private Image bubbleDishImage;
 
-    // Internal components
-    private NavMeshAgent agent;
-    private Transform seat;
-    private Dish_Data requestedDish;
-    private Inventory playerInventory;
-    private bool playerInRange = false;
+  // Internal components
+  private NavMeshAgent agent;
+  private Transform seat;
+  private Dish_Data requestedDish;
+  private Inventory playerInventory;
+  private bool playerInRange = false;
 
   void Awake()
+  {
+    agent = GetComponent<NavMeshAgent>();
+  }
+
+  public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory)
+  {
+    data = customerData;
+    seat = targetSeat;
+    playerInventory = inventory;
+    agent.SetDestination(seat.position);
+    agent.speed = 10f;
+    Transform npc_sprite = transform.Find("Sprite");
+    npc_sprite.GetComponent<SpriteRenderer>().sprite = data.overworldSprite;
+
+    Debug.Log($"Customer spawned at {transform.position}, isOnNavMesh = {agent.isOnNavMesh}");
+  }
+
+  void Update()
+  {
+    if (playerInRange)
     {
-        agent = GetComponent<NavMeshAgent>();
+      Debug.Log("Press R to serve dish");
+      Debug.Log($"Player inventory {playerInventory == null}");
+      if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
+      {
+        Debug.Log("R key pressed, attempting to serve dish");
+        TryServeDish(playerInventory);
+      }
     }
 
-    public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory)
+    if (seat != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
     {
-        data = customerData;
-        seat = targetSeat;
-        playerInventory = inventory;
-        agent.SetDestination(seat.position);
-        agent.speed = 10f;
-        Transform npc_sprite = transform.Find("Sprite");
-        npc_sprite.GetComponent<SpriteRenderer>().sprite = data.overworldSprite;
+      SitDown();
+    }
+  }
 
-        Debug.Log($"Customer spawned at {transform.position}, isOnNavMesh = {agent.isOnNavMesh}");
+  void LateUpdate()
+  {
+    transform.forward = Vector3.forward;
+  }
+
+  private void OnCollisionEnter(Collision other)
+  {
+    if (other.gameObject.CompareTag("Player"))
+    {
+      playerInRange = true;
+      Debug.Log("Player in range of customer");
+    }
+  }
+
+  private void OnCollisionExit(Collision other)
+  {
+    if (other.gameObject.CompareTag("Player"))
+    {
+      playerInRange = false;
+      Debug.Log("Player out of range of customer");
+    }
+  }
+
+  private void SitDown()
+  {
+    agent.isStopped = true;
+
+    if (data.favoriteDishes.Length > 0)
+    {
+      requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
+
+      thoughtBubble.SetActive(true);
+      bubbleDishImage.sprite = requestedDish.Image;
+
+      Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
     }
 
-    void Update()
+    seat = null; // Prevent repeating
+  }
+
+  public bool TryServeDish(Inventory playerInventory)
+  {
+    Debug.Log("Attempting to serve dish...");
+    if (requestedDish == null)
     {
-        if (playerInRange)
-        {
-          Debug.Log("Press R to serve dish");
-          Debug.Log($"Player inventory {playerInventory == null}");
-          if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
-          {
-            Debug.Log("R key pressed, attempting to serve dish");
-            TryServeDish(playerInventory);
-          }
-        }
-        
-        if (seat != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            SitDown();
-        }
+      Debug.Log($"{data.customerName} has not requested a dish.");
+      return false;
     }
 
-    void LateUpdate()
+    if (!playerInventory.HasItem(requestedDish))
     {
-        transform.forward = Vector3.forward;
+      Debug.Log($"Player does not have {requestedDish.Image} to serve.");
+      return false;
     }
 
-    private void OnCollisionEnter(Collision other)
+    // Remove the dish from inventory
+    if (playerInventory.RemoveResources(requestedDish, 1) <= 0)
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            playerInRange = true;
-            Debug.Log("Player in range of customer");
-        }
+      Debug.Log($"[Cstmr_Cntr] Error: no {requestedDish} served!");
+      return false;
     }
+
+    // if (Dish_Tool_Inventory.Instance.GetSelectedDishData() == null)
+    // {
+    //   Debug.Log($"Player's current selected slot has no dish to serve.");
+    //   return false;
+    // }
+    // if (!(Dish_Tool_Inventory.Instance.GetSelectedDishData() == requestedDish))
+    // {
+    //   Debug.Log($"Player is giving wrong dish to serve.");
+    //   return false;
+    // }
     
-    private void OnCollisionExit(Collision other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            playerInRange = false;
-            Debug.Log("Player out of range of customer");
-        }
-    }
+    Debug.Log($"{data.customerName} has been served {requestedDish.Image}!");
+    thoughtBubble.SetActive(false);
+    requestedDish = null;
 
-    private void SitDown()
-    {
-        agent.isStopped = true;
+    Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+    dm.QueueDialogue("That's my favorite! Thanks! (+10 affection)");
 
-        if (data.favoriteDishes.Length > 0)
-        {
-            requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
-
-            thoughtBubble.SetActive(true);
-            bubbleDishImage.sprite = requestedDish.Image;
-
-            Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
-        }
-
-        seat = null; // Prevent repeating
-    }
-    
-    public bool TryServeDish(Inventory playerInventory)
-    {
-      Debug.Log("Attempting to serve dish...");
-        if (requestedDish == null)
-        {
-            Debug.Log($"{data.customerName} has not requested a dish.");
-            return false;
-        }
-
-        if (!playerInventory.HasItem(requestedDish))
-        {
-            Debug.Log($"Player does not have {requestedDish.Image} to serve.");
-            return false;
-        }
-
-        // Remove the dish from inventory
-        if (playerInventory.RemoveResources(requestedDish, 1) <= 0)
-        {
-            Debug.Log($"[Cstmr_Cntr] Error: no {requestedDish} served!");
-            return false;
-        }
-        
-        Debug.Log($"{data.customerName} has been served {requestedDish.Image}!");
-        thoughtBubble.SetActive(false);
-        requestedDish = null;
-
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
-        dm.QueueDialogue("That's my favorite! Thanks! (+10 affection)");
-
-        return true;
-    }
+    return true;
+  }
 }

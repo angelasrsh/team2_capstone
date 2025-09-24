@@ -96,17 +96,6 @@ namespace Grimoire
     // -----------------------------------------------------------------------
     // CAULDRON SPECIFIC METHODS!!
 
-    /// <summary>
-    /// This method is meant to be used in the minigames where the restaurant music
-    /// needs to be lower in volume for other minigame sfx and ambient sounds to be heard.
-    /// In Audio_Manager, but used in Drag_All. NOT WORKING IDK WHY
-    /// </summary>
-    public void LowerRestaurantMusic()
-    {
-      // SetMusicVolume(0.05f);
-      Debug.Log("lowering music!!!!!!!!!!!!!!!");
-      Music_Persistence.instance.musicSource.volume = Mathf.Clamp01(0.1f);
-    }
     public void GoodDishMade() => PlaySFX(goodDishMade);
     public void PlayStirringOnLoop()
     {
@@ -131,6 +120,7 @@ namespace Grimoire
         return;
 
       bubblingSource.clip = bubbling;
+      bubblingSource.volume = 0.3f;
       if (!bubblingSource.isPlaying)
         bubblingSource.Play();
     }
@@ -143,6 +133,7 @@ namespace Grimoire
 
     public void StartFire()
     {
+      sfxSource.volume = 0.3f;
       PlaySFX(startFire);
       PlayAmbientFireOnLoop();
     }
@@ -153,7 +144,7 @@ namespace Grimoire
         return;
 
       fireAmbientSource.clip = ambientFire;
-      fireAmbientSource.volume = 0.2f;
+      fireAmbientSource.volume = 0.3f;
 
       if (!fireAmbientSource.isPlaying) // Play if not already playing
       {

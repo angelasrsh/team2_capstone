@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
+using Grimoire;
 
 public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -12,7 +14,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   [SerializeField] private GameObject errorText;          // Cannot stir without ingredients in cauldron
 
   [Header("Settings")]
-  [SerializeField] private float stirDuration = 5f;
+  [SerializeField] private float stirDuration;
   [SerializeField] private float pointerMoveThreshold = 0.1f;
 
   private Cauldron cauldron;
@@ -23,47 +25,75 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   private Vector3 ladleOriginalPos;
 
   private Image ladleImage; // reference to the ladle’s Image component
+  private Audio_Manager audio;
 
   private void Awake()
   {
     cauldron = FindObjectOfType<Cauldron>();
     if (cauldron == null)
-      Debug.LogError("No Cauldron found!");
+      Debug.LogError("[Stir_Controller]: No Cauldron found!");
     ladleOriginalPos = transform.position;
 
     ladleImage = GetComponent<Image>();
     if (ladleImage == null)
-      Debug.LogError("No Image component found on Ladle!");
+      Debug.LogError("[Stir_Controller]: No Image component found on Ladle!");
+
+    audio = Audio_Manager.instance;
+    if (audio == null)
+      Debug.LogError("[Stir_Controller]: No audio manager instance received from Drag_All!");
   }
+
+  private bool isMoving = false;
+  private float idleTime = 0f;
+  [SerializeField] private float idleThreshold = 0.2f; // how long the mouse must stop before stopping audio
 
   private void Update()
   {
-    if (!isStirring) return;
+    if (!isStirring || !isDragging)
+      return;
 
-    // Only accumulate stir time if pointer is moving
     Vector3 pointerDelta = Input.mousePosition - lastPointerPos;
+
     if (pointerDelta.magnitude > pointerMoveThreshold)
     {
-        accumulatedStirTime += Time.deltaTime;
+      accumulatedStirTime += Time.deltaTime;
+      idleTime = 0f; // reset idle timer
 
-        if (backgroundAnimator != null)
-            backgroundAnimator.speed = 1f; // resume animation
+      if (!isMoving)
+      {
+        // Just started moving → start audio
+        isMoving = true;
+        audio.PlayStirringOnLoop();
+      }
+
+      if (backgroundAnimator != null)
+        backgroundAnimator.speed = 1f;
     }
     else
     {
+      idleTime += Time.deltaTime;
+
+      if (idleTime > idleThreshold && isMoving)
+      {
+        // Only stop once after being idle for a while
+        isMoving = false;
+        audio.StopStirring();
+
         if (backgroundAnimator != null)
-            backgroundAnimator.speed = 0f; // freeze animation mid-frame
+          backgroundAnimator.speed = 0f;
+      }
     }
 
     if (accumulatedStirTime >= stirDuration)
-        FinishStirring();
+      FinishStirring();
 
     lastPointerPos = Input.mousePosition;
   }
-
+  
   private bool IsOverRedZone(Vector2 pointerPos)
   {
-    if (cauldronRedZone == null) return false;
+    if (cauldronRedZone == null)
+      return false;
 
     Vector3[] corners = new Vector3[4];
     cauldronRedZone.GetWorldCorners(corners);
@@ -73,10 +103,11 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   }
 
   public void OnBeginDrag(PointerEventData eventData)
-  {
+  {     
     if (cauldron.IsEmpty())
     {
       errorText.SetActive(true);
+      errorText.GetComponent<TMP_Text>().text = "Must add at least one ingredient into cauldron before stirring!";
       Invoke(nameof(HideErrorText), 3);
       return;
     }
@@ -87,42 +118,38 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
   public void OnDrag(PointerEventData eventData)
   {
-    if (!isDragging) return;
+    if (!isDragging)
+      return;
 
     transform.position = eventData.position;
 
     if (!isStirring && IsOverRedZone(eventData.position))
-    {
       StartStirring();
-    }
   }
 
   public void OnEndDrag(PointerEventData eventData)
   {
     isDragging = false;
-
-    if (!isStirring)
-      transform.position = ladleOriginalPos;
+    isStirring = false; // shouldn't stir if not dragging ladle
+    audio.StopStirring();
+    transform.position = ladleOriginalPos;
+    if (ladleImage != null)
+      ladleImage.enabled = true;
   }
 
-  private void HideErrorText()
-  {
-    errorText.SetActive(false);
-  }
+  private void HideErrorText() => errorText.SetActive(false);
   
   private void StartStirring()
   {
-    Debug.Log("Stirring started! Entered red zone.");
+    Debug.Log("[Stir_Controller]: Stirring started! Entered red zone.");
     isStirring = true;
+    audio.PlayStirringOnLoop();
 
     if (ladleImage != null)
       ladleImage.enabled = false;
 
     if (backgroundAnimator != null)
-    {
       backgroundAnimator.SetBool("isStirring", true);
-      // backgroundAnimator.speed = 1f; // start moving
-    }
 
     if (cauldron != null)
       cauldron.StartStirring();
@@ -132,12 +159,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   {
     isStirring = false;
     accumulatedStirTime = 0f;
-
-    if (backgroundAnimator != null)
-    {
-      // backgroundAnimator.speed = 0f; // freeze on last frame
-      backgroundAnimator.SetBool("isStirring", false);
-    }
+    isDragging = false;
 
     transform.position = ladleOriginalPos;
     if (ladleImage != null)
@@ -146,29 +168,11 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     if (cauldron != null)
       cauldron.FinishedStir();
 
-    Drag_All.ResetWaterStatus();
-  }
-
-  public void ResetStir()
-  {
-    isStirring = false;
-    isDragging = false;
-    accumulatedStirTime = 0f;
-
-    // if (backgroundAnimator != null)
-    //   backgroundAnimator.SetBool("isStirring", false);
-
     if (backgroundAnimator != null)
-    {
-      backgroundAnimator.speed = 0f;           // stop playback
-      backgroundAnimator.Play("Stir", 0, 0f); // reset to first frame
-    }
+      backgroundAnimator.SetBool("isStirring", false);
 
-    if (backgroundImage != null)
-      backgroundImage.sprite = emptyCauldron;
-
-    transform.position = ladleOriginalPos;
-    if (ladleImage != null)
-      ladleImage.enabled = true;
+    Drag_All.ResetWaterStatus();
+    audio.StopStirring();
+    audio.StopBubbling();
   }
 }
