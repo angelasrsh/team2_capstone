@@ -14,6 +14,10 @@ namespace Grimoire
     public AudioClip pickupSFX;
     public AudioClip clickSFX;
     [SerializeField] private AudioClip goodDishMade;
+    public AudioClip textSound;
+    public AudioClip menuOpen;
+    public AudioClip menuClose;
+    public AudioClip bookClose;
 
     [Header("Cauldron Specific")]
     private AudioSource stirringSource;

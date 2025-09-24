@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,136 +7,282 @@ using UnityEngine.UI;
 
 public class Customer_Controller : MonoBehaviour
 {
-  public CustomerData data;
+    public CustomerData data;
 
-  [SerializeField] private GameObject thoughtBubble;
-  [SerializeField] private Image bubbleDishImage;
+    [SerializeField] private GameObject thoughtBubble;
+    [SerializeField] private Image bubbleDishImage;
 
-  // Internal components
-  private NavMeshAgent agent;
-  private Transform seat;
-  private Dish_Data requestedDish;
-  private Inventory playerInventory;
-  private bool playerInRange = false;
+    // Internal components
+    private NavMeshAgent agent;
+    private Transform seat;
+    private int seatIndex = -1;
+    private Dish_Data requestedDish;
+    private Inventory playerInventory;
+    private bool playerInRange = false;
+    private bool hasSatDown = false;
+    private bool hasRequestedDish = false;
 
-  void Awake()
-  {
-    agent = GetComponent<NavMeshAgent>();
-  }
-
-  public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory)
-  {
-    data = customerData;
-    seat = targetSeat;
-    playerInventory = inventory;
-    agent.SetDestination(seat.position);
-    agent.speed = 10f;
-    Transform npc_sprite = transform.Find("Sprite");
-    npc_sprite.GetComponent<SpriteRenderer>().sprite = data.overworldSprite;
-
-    Debug.Log($"Customer spawned at {transform.position}, isOnNavMesh = {agent.isOnNavMesh}");
-  }
-
-  void Update()
-  {
-    if (playerInRange)
+    void Awake()
     {
-      Debug.Log("Press R to serve dish");
-      Debug.Log($"Player inventory {playerInventory == null}");
-      if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
-      {
-        Debug.Log("R key pressed, attempting to serve dish");
-        TryServeDish(playerInventory);
-      }
+        agent = GetComponent<NavMeshAgent>();
     }
 
-    if (seat != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+    public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory, bool spawnSeated = false)
     {
-      SitDown();
-    }
-  }
+        data = customerData;
+        seat = targetSeat;
+        seatIndex = Seat_Manager.Instance.GetSeatIndex(targetSeat);
+        playerInventory = inventory;
 
-  void LateUpdate()
-  {
-    transform.forward = Vector3.forward;
-  }
+        Transform npc_sprite = transform.Find("Sprite");
+        if (npc_sprite != null)
+            npc_sprite.GetComponent<SpriteRenderer>().sprite = data.overworldSprite;
 
-  private void OnCollisionEnter(Collision other)
-  {
-    if (other.gameObject.CompareTag("Player"))
-    {
-      playerInRange = true;
-      Debug.Log("Player in range of customer");
-    }
-  }
+        if (spawnSeated)
+        {
+            // Instantly place at seat and sit
+            if (agent.isOnNavMesh)
+                agent.Warp(seat.position);
+            else
+                transform.position = seat.position;
 
-  private void OnCollisionExit(Collision other)
-  {
-    if (other.gameObject.CompareTag("Player"))
-    {
-      playerInRange = false;
-      Debug.Log("Player out of range of customer");
-    }
-  }
+            SitDown(); // immediately mark as seated
+        }
+        else
+        {
+            // Normal "walk to seat" behavior
+            if (agent.isOnNavMesh)
+            {
+                agent.SetDestination(seat.position);
+                agent.speed = 10f;
+            }
+        }
 
-  private void SitDown()
-  {
-    agent.isStopped = true;
-
-    if (data.favoriteDishes.Length > 0)
-    {
-        requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
-
-        thoughtBubble.SetActive(true);
-        bubbleDishImage.sprite = requestedDish.Image;
-
-        Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
-        Game_Events_Manager.Instance.GetOrder(); // TODO: COMMENT THIS OUT AND MOVE TO WHERE THE PLAYER GETS THE ORDER
+        Debug.Log($"Customer {data.customerName} spawned {(spawnSeated ? "already seated" : "at entrance")}.");
     }
 
-    seat = null; // Prevent repeating
-  }
-
-  public bool TryServeDish(Inventory playerInventory)
-  {
-    Debug.Log("Attempting to serve dish...");
-    if (requestedDish == null)
+    private void Update()
     {
-      Debug.Log($"{data.customerName} has not requested a dish.");
-      return false;
+        if (playerInRange)
+        {
+            if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
+            {
+                if (hasSatDown && !hasRequestedDish)
+                {
+                    RequestDishAfterDialogue();
+                    Game_Events_Manager.Instance.GetOrder();
+                }
+                else if (hasRequestedDish)
+                {
+                    TryServeDish(playerInventory);
+                    Game_Events_Manager.Instance.ServeCustomer();
+                }
+            }
+        }
+        
+        // only try to sit if not already sat
+        if (!hasSatDown && seat != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            SitDown();
+        }
     }
 
-    if (!playerInventory.HasItem(requestedDish))
+    void LateUpdate()
     {
-      Debug.Log($"Player does not have {requestedDish.Image} to serve.");
-      return false;
+        transform.forward = Vector3.forward;
     }
 
-    // Remove the dish from inventory
-    if (playerInventory.RemoveResources(requestedDish, 1) <= 0)
+    private void SitDown()
     {
-      Debug.Log($"[Cstmr_Cntr] Error: no {requestedDish} served!");
-      return false;
+        agent.isStopped = true;
+        hasSatDown = true;
+        // don't null seat anymore, we need it for state saving
+        // seat = null; // clear reference to seat so we don't try to sit again
+        Debug.Log($"{data.customerName} sat down and is waiting for interaction.");
     }
 
-    // if (Dish_Tool_Inventory.Instance.GetSelectedDishData() == null)
-    // {
-    //   Debug.Log($"Player's current selected slot has no dish to serve.");
-    //   return false;
-    // }
-    // if (!(Dish_Tool_Inventory.Instance.GetSelectedDishData() == requestedDish))
-    // {
-    //   Debug.Log($"Player is giving wrong dish to serve.");
-    //   return false;
-    // }
-    
-    Debug.Log($"{data.customerName} has been served {requestedDish.Image}!");
-    thoughtBubble.SetActive(false);
-    requestedDish = null;
+    private void RequestDishAfterDialogue()
+    {
+        // Play filler dialogue
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm != null)
+        {
+            string fillerKey = $"{data.customerName}.Filler";
+            dm.PlayScene(fillerKey, Character_Portrait_Data.EmotionPortrait.Emotion.Neutral);
+        }
 
-    Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
-    dm.QueueDialogue("That's my favorite! Thanks! (+10 affection)");
+        // After dialogue, show dish
+        if (data.favoriteDishes != null && data.favoriteDishes.Length > 0)
+        {
+            requestedDish = data.favoriteDishes[UnityEngine.Random.Range(0, data.favoriteDishes.Length)];
+            if (thoughtBubble != null)
+            {
+                thoughtBubble.SetActive(true);
+                if (bubbleDishImage != null && requestedDish != null)
+                    bubbleDishImage.sprite = requestedDish.Image;
+            }
+            Debug.Log($"{data.customerName} now wants {requestedDish?.name ?? "Unknown"}!");
+        }
+        hasRequestedDish = true;
+    }
 
-    return true;
-  }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            playerInRange = true;
+            Debug.Log("Player in range of customer");
+        }
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            playerInRange = false;
+            Debug.Log("Player out of range of customer");
+        }
+    }
+
+    /// <summary>
+    /// Attempts to serve the customer's requested dish using the player's inventory.
+    /// Returns true if a dish was successfully served.
+    /// </summary>
+    public bool TryServeDish(Inventory playerInventory)
+    {
+        Debug.Log("Attempting to serve dish...");
+
+        if (requestedDish == null)
+        {
+            Debug.Log($"{data.customerName} has not requested a dish.");
+            return false;
+        }
+
+        // Make sure we're working with the Dish_Tool_Inventory
+        var dishInventory = Dish_Tool_Inventory.Instance;
+        if (dishInventory == null)
+        {
+            Debug.LogWarning("No Dish_Tool_Inventory instance found!");
+            return false;
+        }
+
+        // Check currently selected slot
+        Dish_Data selectedDish = dishInventory.GetSelectedDishData();
+        if (selectedDish == null)
+        {
+            Debug.Log("No dish selected to serve.");
+            return false;
+        }
+
+        if (selectedDish != requestedDish)
+        {
+            Debug.Log($"Selected dish {selectedDish.name} does not match requested {requestedDish.name}.");
+            return false;
+        }
+
+        // Remove it from inventory
+        dishInventory.RemoveSelectedSlot();
+
+        Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
+        if (thoughtBubble != null) thoughtBubble.SetActive(false);
+
+        // Play dialogue
+        (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
+        requestedDish = null; // clear after serving
+
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm != null && !string.IsNullOrEmpty(dialogueKey))
+        {
+            var emotion = MapReactionToEmotion(suffix);
+            dm.PlayScene(dialogueKey, emotion);
+        }
+
+        return true;
+    }
+
+
+    #region Dialog
+    /// <summary>
+    /// Generates a dialogue key based on the customer's identity and whether the served dish is liked/neutral/disliked.
+    /// Prefer using the portraitData.characterName enum if available, otherwise fall back to data.customerName string.
+    /// Example keys produced: "Elf.LikedDish", "Satyr.DislikedDish", "Phrog.NeutralDish"
+    /// </summary>
+    private (string key, string suffix) GenerateDialogueKey(Dish_Data servedDish)
+    {
+        if (servedDish == null || data == null)
+            return (string.Empty, string.Empty);
+
+        string baseKey = data.customerName;
+
+        string suffix = "NeutralDish";
+        if (data.favoriteDishes != null && Array.Exists(data.favoriteDishes, d => d == servedDish))
+        {
+            suffix = "LikedDish";
+        }
+        else if (data.dislikedDishes != null && Array.Exists(data.dislikedDishes, d => d == servedDish))
+        {
+            suffix = "DislikedDish";
+        }
+
+        return ($"{baseKey}.{suffix}", suffix);
+    }
+
+    /// <summary>
+    /// Maps the reaction type to a portrait emotion.
+    /// </summary>
+    private Character_Portrait_Data.EmotionPortrait.Emotion MapReactionToEmotion(string suffix)
+    {
+        switch (suffix)
+        {
+            case "LikedDish":
+                return Character_Portrait_Data.EmotionPortrait.Emotion.Happy;
+            case "DislikedDish":
+                return Character_Portrait_Data.EmotionPortrait.Emotion.Disgusted;
+            default:
+                return Character_Portrait_Data.EmotionPortrait.Emotion.Neutral;
+        }
+    }
+    #endregion
+
+    #region State Management
+    public Customer_State GetState()
+    {
+        return new Customer_State
+        {
+            customerName = data.customerName,
+            seatIndex = seatIndex, // use stored index
+            requestedDishName = requestedDish != null ? requestedDish.name : null,
+            hasRequestedDish = hasRequestedDish,
+            hasBeenServed = (requestedDish == null && hasRequestedDish)
+        };
+    }
+
+    /// <summary>
+    /// Debug method to force the customer to request a specific dish by name.
+    /// </summary>
+    public void Debug_ForceRequestDish(string dishName)
+    {
+        if (string.IsNullOrEmpty(dishName)) return;
+
+        Dish_Data found = null;
+
+        // Look in all known arrays
+        foreach (var dish in data.favoriteDishes) if (dish.name == dishName) found = dish;
+        foreach (var dish in data.neutralDishes) if (dish.name == dishName) found = dish;
+        foreach (var dish in data.dislikedDishes) if (dish.name == dishName) found = dish;
+
+        if (found != null)
+        {
+            requestedDish = found;
+            hasRequestedDish = true;
+
+            if (thoughtBubble != null)
+            {
+                thoughtBubble.SetActive(true);
+                if (bubbleDishImage != null)
+                    bubbleDishImage.sprite = requestedDish.Image;
+            }
+        }
+    }
+    #endregion
 }

@@ -42,4 +42,16 @@ public class Seat_Manager : MonoBehaviour
         if (!allSeats.Contains(newSeat))
             allSeats.Add(newSeat);
     }
+
+    public Transform GetSeatByIndex(int index)
+    {
+        if (index >= 0 && index < allSeats.Count) return allSeats[index];
+        return null;
+    }
+
+    public int GetSeatIndex(Transform seat)
+    {
+        return allSeats.IndexOf(seat);
+    }
 }
+

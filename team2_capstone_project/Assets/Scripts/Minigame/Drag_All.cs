@@ -16,7 +16,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   [Header("Target Transform")]
   private RectTransform rectTransform;
 
-  private RectTransform redZone;
+  public RectTransform redZone;
+  public RectTransform redZoneForKnife;
 
 
   private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
@@ -36,7 +37,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private Image currentImage;
   public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
   public Chop_Controller chopScript;
-  private static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
+  public static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
 
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
@@ -49,6 +50,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   // Start is called before the first frame update
   void Start()
   {
+
     if (cauldron == null)
       cauldron = FindObjectOfType<Cauldron>();
     ParentSlot = GetComponentInParent<Inventory_Slot>();
@@ -99,6 +101,18 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       // audio.LowerRestaurantMusic();
       audio.StartFire();
       audioTriggered = true;
+    }
+
+
+    if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
+    {
+      // Find the ChopController script in the scene
+      chopScript = FindObjectOfType<Chop_Controller>();
+
+      if (chopScript == null)
+      {
+        Debug.LogError("Chop_Controller not found in scene!");
+      }
     }
   }
   public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
@@ -181,14 +195,21 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
           //make the ingredient from the inventory Bigger:
           if (!cuttingBoardActive)
           {
+            Ingredient_Data ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
             DuplicateInventorySlot();
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             if (resizeCanvas != null)
             {
+              // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
+              //transform the ingredient image
               transform.SetParent(resizeCanvas);
               transform.localPosition = Vector3.zero; // Center within the target canvas
               transform.localScale = targetScale;
               canDrag = false;
+              //start chopscript experience :)
+              chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
+              
+
             }
             cuttingBoardActive = true;
           }

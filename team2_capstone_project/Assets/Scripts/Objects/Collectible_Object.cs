@@ -2,9 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Grimoire;
 using UnityEngine;
-
-// Make sure prefab always has these
-[RequireComponent(typeof(Collider))]
 public class Collectible_Object : Interactable_Object
 {
     [field: SerializeField] public Ingredient_Data data { get; private set; }

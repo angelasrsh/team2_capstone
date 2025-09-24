@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Grimoire;
 
-
 public class Room_Change_Trigger : MonoBehaviour
 {
   public Room_Data currentRoom;

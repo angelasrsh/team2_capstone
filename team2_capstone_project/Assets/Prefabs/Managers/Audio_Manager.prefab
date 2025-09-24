@@ -51,12 +51,16 @@ MonoBehaviour:
   pickupSFX: {fileID: 8300000, guid: 3e172351759f4c74798cc3e963e567b2, type: 3}
   clickSFX: {fileID: 8300000, guid: f96bac186fd5de24ab4eb5323e1059ec, type: 3}
   goodDishMade: {fileID: 8300000, guid: 4e804d91fb7399a40b1871258d99ffd8, type: 3}
+  textSound: {fileID: 8300000, guid: 5656e9bcdb4af7e408ef02d75434e3dd, type: 3}
+  menuOpen: {fileID: 8300000, guid: d2d5486a4bb46c6439d22a44b386316e, type: 3}
+  menuClose: {fileID: 8300000, guid: d2d5486a4bb46c6439d22a44b386316e, type: 3}
+  bookClose: {fileID: 8300000, guid: d96d20d566c0ad34185eee2286f93f1d, type: 3}
   stirring: {fileID: 8300000, guid: 5ab54f99b2780f64f869494f8a0d5d87, type: 3}
   bubbling: {fileID: 8300000, guid: 1245887ba6d1a6d4999fb94aaa99fa4f, type: 3}
   startFire: {fileID: 8300000, guid: 3a8b16f95c14e0e45be51e3cfbe17f67, type: 3}
   ambientFire: {fileID: 8300000, guid: cbb7d6f9e2277c943b1bc5c52e775e58, type: 3}
   addingOneIng: {fileID: 8300000, guid: 58e3d736dd4f92b408a2a57d068f6ea9, type: 3}
-  addingMultiIng: {fileID: 0}
+  addingMultiIng: {fileID: 8300000, guid: 85aeda605a31a114eb9857800a6468ef, type: 3}
 --- !u!114 &2336970576230820215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,7 +89,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -277,7 +281,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
