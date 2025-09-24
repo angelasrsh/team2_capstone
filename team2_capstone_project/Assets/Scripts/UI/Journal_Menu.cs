@@ -88,13 +88,21 @@ public class Journal_Menu : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    // if (openJournalAction.WasPerformedThisFrame())
-    if(Input.GetKeyDown(KeyCode.J))
-    {
-      if (isPaused)
-        ResumeGame();
-      else
-        PauseGame();
+        // if (openJournalAction.WasPerformedThisFrame())
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            if (isPaused)
+            {
+                ResumeGame();
+                Game_Events_Manager.Instance.JournalToggled(false);
+            }
+            else
+            {
+                PauseGame();
+                Game_Events_Manager.Instance.JournalToggled(true);
+            }
+                
+        
     }
   }
 
