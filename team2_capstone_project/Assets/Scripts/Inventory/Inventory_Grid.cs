@@ -75,13 +75,17 @@ public class Inventory_Grid : MonoBehaviour
 
             countGridSlots++;
 
+            if (inventory == null)
+                Debug.Log("inventory grid is null");
+            if (inventory.InventoryStacks == null)
+                Debug.Log("inventory stacks is null!");
             if (inventorySlotIndex < inventory.InventoryStacks.Length)
-            {
-                slot.PopulateSlot(inventory.InventoryStacks[inventorySlotIndex]);
-                inventorySlotIndex++;
-            }
-            else // If more grid slots than inventory, clear out slots
-                slot.PopulateSlot(null);
+                {
+                    slot.PopulateSlot(inventory.InventoryStacks[inventorySlotIndex]);
+                    inventorySlotIndex++;
+                }
+                else // If more grid slots than inventory, clear out slots
+                    slot.PopulateSlot(null);
 
 
         }
