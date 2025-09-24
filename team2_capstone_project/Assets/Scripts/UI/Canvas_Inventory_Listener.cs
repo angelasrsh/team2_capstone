@@ -20,11 +20,18 @@ public class Canvas_Inventory_Listener : MonoBehaviour
         {
             if (InventoryCanvas == null)
                 Debug.LogWarning("[Canv_Inv_Lis] Error: no InventoryCanvas assigned!");
-                
-            else if (InventoryCanvas.enabled == true) // If open, close the inventory
+
+            else if (InventoryCanvas.enabled == true)
+            {   // If open, close the inventory
                 InventoryCanvas.enabled = false;
+                Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
+            }
             else
+            {
                 InventoryCanvas.enabled = true; // If closed, open the inventory
+                Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
+            }
+                
                 
         }
     }

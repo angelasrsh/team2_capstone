@@ -93,7 +93,6 @@ public class Game_Events_Manager : MonoBehaviour
 
     //////////// QUEST EVENTS /////////////
     #region Quest Events
-
     public event Action<string> onStartQuest;
     /// <summary>
     /// Broadcast the start quest event
@@ -146,6 +145,18 @@ public class Game_Events_Manager : MonoBehaviour
             onQuestStepChange(id, stepIndex);
 
     }
+    #endregion
+
+    //////////// SCENE TRANSITION EVENTS ///////////////
+    #region Scene Transition Events
+
+    public event Action<Room_Data.RoomID> onRoomChange;
+    public void RoomChange(Room_Data.RoomID newRoom)
+    {
+        if (onRoomChange != null)
+            onRoomChange(newRoom);
+    }
+
     #endregion
     
 }

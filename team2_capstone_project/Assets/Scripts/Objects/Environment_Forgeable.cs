@@ -48,6 +48,9 @@ namespace Grimoire
                 var spriteRenderer = GetComponentInChildren<SpriteRenderer>();
                 if (spriteRenderer != null) spriteRenderer.color = Color.gray;
             }
+
+            // Broadcast message to listening scripts
+            Game_Events_Manager.Instance.Harvest();
         }
     }
 }

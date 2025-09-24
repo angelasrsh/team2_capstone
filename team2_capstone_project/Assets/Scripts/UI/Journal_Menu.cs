@@ -97,30 +97,36 @@ public class Journal_Menu : MonoBehaviour
     }
   }
 
-  public void PauseGame()
-  {
-    Debug.Log("Opening journal and pausing game...");
-    journal.transform.GetChild(0).gameObject.SetActive(true);
-    journal.transform.GetChild(1).gameObject.SetActive(true);
-    journal.transform.GetChild(2).gameObject.SetActive(true);
-    isPaused = true;
+    public void PauseGame()
+    {
+        Debug.Log("Opening journal and pausing game...");
+        journal.transform.GetChild(0).gameObject.SetActive(true);
+        journal.transform.GetChild(1).gameObject.SetActive(true);
+        journal.transform.GetChild(2).gameObject.SetActive(true);
+        isPaused = true;
 
-    // Default to showing recipe menu
-    ShowGroup(recipeMenuGroup, true);
+        // Default to showing recipe menu
+        ShowGroup(recipeMenuGroup, true);
+
+        // Broadcast event to listeners
+        Game_Events_Manager.Instance.JournalToggled(true);
   }
 
-  // Resume the game from the pause menu
-  public void ResumeGame()
-  {
-    Debug.Log("Closing journal and resuming game...");
-    journal.transform.GetChild(0).gameObject.SetActive(false);
-    journal.transform.GetChild(1).gameObject.SetActive(false);
-    journal.transform.GetChild(2).gameObject.SetActive(false);
-    isPaused = false;
-    Left_Page.SetActive(false);
+    // Resume the game from the pause menu
+    public void ResumeGame()
+    {
+        Debug.Log("Closing journal and resuming game...");
+        journal.transform.GetChild(0).gameObject.SetActive(false);
+        journal.transform.GetChild(1).gameObject.SetActive(false);
+        journal.transform.GetChild(2).gameObject.SetActive(false);
+        isPaused = false;
+        Left_Page.SetActive(false);
 
-    ShowGroup(recipeMenuGroup, false);
-    ShowGroup(foragingMenuGroup, false);
+        ShowGroup(recipeMenuGroup, false);
+        ShowGroup(foragingMenuGroup, false);
+    
+        // Broadcast event to listeners
+        Game_Events_Manager.Instance.JournalToggled(false);
   }
 
   private void OnEnable()
@@ -187,29 +193,32 @@ public class Journal_Menu : MonoBehaviour
     }
   }
 
-  private void DisplayDishDetails(Dish_Data dishData)
-  {
-    Left_Page.SetActive(true);
+    private void DisplayDishDetails(Dish_Data dishData)
+    {
+        Left_Page.SetActive(true);
 
-    // Find left page UI elements
-    Transform pagePanel = Left_Page.transform.Find("Page_Panel");
+        // Find left page UI elements
+        Transform pagePanel = Left_Page.transform.Find("Page_Panel");
 
-    Transform nameObj = pagePanel.Find("Dish_Name");
-    var nameText = nameObj.GetComponent<TextMeshProUGUI>();
-    nameText.text = dishData.Name;
+        Transform nameObj = pagePanel.Find("Dish_Name");
+        var nameText = nameObj.GetComponent<TextMeshProUGUI>();
+        nameText.text = dishData.Name;
 
-    // Find and set the recipe text
-    Transform recipeObj = pagePanel.Find("Recipe_Image");
-    Image recipeImage = recipeObj.GetComponent<Image>();
-    recipeImage.sprite = dishData.recipeImage;
-    recipeImage.preserveAspect = true;
+        // Find and set the recipe text
+        Transform recipeObj = pagePanel.Find("Recipe_Image");
+        Image recipeImage = recipeObj.GetComponent<Image>();
+        recipeImage.sprite = dishData.recipeImage;
+        recipeImage.preserveAspect = true;
 
-    // Find and set the dish icon
-    Transform iconPanel = pagePanel.Find("Icon_Panel");
-    Transform iconObj = iconPanel.Find("Icon_Image");
-    Image iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
-    iconImage.sprite = dishData.Image;
-  }
+        // Find and set the dish icon
+        Transform iconPanel = pagePanel.Find("Icon_Panel");
+        Transform iconObj = iconPanel.Find("Icon_Image");
+        Image iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
+        iconImage.sprite = dishData.Image;
+
+        // Broadcast event to listeners
+        Game_Events_Manager.Instance.RecipeClick();
+    }
   #endregion
 
   #region Daily Menu Methods
