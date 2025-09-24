@@ -65,9 +65,15 @@ public class Dish_Tool_Inventory : Inventory
   public void SetSlotSelected(int slot)
   {
     if (slot == 1)
+    {
       leftSlotSelected = true;
+      // Debug.Log("Selected dish inventory slot 1");
+    }
     else
+    {
       leftSlotSelected = false;
+      // Debug.Log("Selected dish inventory slot 2");
+    }
   }
 
   /// <summary>
@@ -105,20 +111,4 @@ public class Dish_Tool_Inventory : Inventory
 
     return (Dish_Data)(InventoryStacks[1].resource);
   }
-
-  // public bool SelectedSlotHasDish(Dish_Data dish)
-  // {
-  //   if (leftSlotSelected)
-  //   {
-  //     if (InventoryStacks[0] == null)
-  //       return false;
-
-  //     return (Dish_Data)(InventoryStacks[0].resource) == dish;
-  //   }
-
-  //   if (InventoryStacks[1] == null)
-  //     return false;
-
-  //   return (Dish_Data)(InventoryStacks[1].resource) == dish;
-  // }
 }
