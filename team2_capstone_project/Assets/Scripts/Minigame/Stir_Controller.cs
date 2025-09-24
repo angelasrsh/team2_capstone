@@ -14,7 +14,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   [SerializeField] private GameObject errorText;          // Cannot stir without ingredients in cauldron
 
   [Header("Settings")]
-  [SerializeField] private float stirDuration = 5f;
+  [SerializeField] private float stirDuration;
   [SerializeField] private float pointerMoveThreshold = 0.1f;
 
   private Cauldron cauldron;

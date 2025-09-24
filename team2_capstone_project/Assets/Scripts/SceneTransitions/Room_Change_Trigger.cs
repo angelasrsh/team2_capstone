@@ -1,25 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Grimoire;
 
 
 public class Room_Change_Trigger : MonoBehaviour
 {
-    public Room_Data currentRoom;
-    public Room_Data.RoomID exitingTo;
-    private Player_Controller player;
+  public Room_Data currentRoom;
+  public Room_Data.RoomID exitingTo;
+  private Player_Controller player;
 
-    private void OnTriggerEnter(Collider other)
+  private void OnTriggerEnter(Collider other)
+  {
+    if (other.CompareTag("Player"))
     {
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log("Player entered the trigger for room change: " + exitingTo);
-            Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
-        }
+      Debug.Log("Player entered the trigger for room change: " + exitingTo);
+      Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
     }
-    
-    public void OnButtonPressGoToRoom()
-    {
-        Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
-    }
+  }
+  
+  public void OnButtonPressGoToRoom()
+  {
+    Audio_Manager.instance.StopBubbling();
+    Audio_Manager.instance.StopAmbientFire();
+    Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+  }
 }

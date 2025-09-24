@@ -23,6 +23,9 @@ public class Cauldron : MonoBehaviour
     if (dishMade != null)
     {
       Debug.Log("Bad dish made due first ingredient leading to no known recipes.");
+      dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
+      Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+      ResetAll();
       return;
     }
 
@@ -106,11 +109,17 @@ public class Cauldron : MonoBehaviour
       Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
     }
 
+    ResetAll();
+  }
+
+  /// <summary>
+  /// Resets all lists and variables to start new recipe detection.
+  /// </summary>
+  private void ResetAll()
+  {
     ingredientInPot.Clear();
     possibleDishes.Clear();
     possibleIngredients.Clear();
-    potentialDish = null;
-    potentialIngredient = null;
     dishMade = null;
     ingredientMade = null;
   }
