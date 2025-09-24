@@ -23,10 +23,25 @@ public class Quest_Manager : MonoBehaviour
 
     public Quest_Database QuestDatabase;
 
+    // For singleton purposes
+    public static Quest_Manager Instance { get; private set; }
+
     private void Awake()
     {
         questMap = CreateQuestMap();
+
+        // Temporarily a Singleton; probably should be data persistence later
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
     }
+
 
     private void OnEnable()
     {
