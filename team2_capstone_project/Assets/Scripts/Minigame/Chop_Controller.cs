@@ -102,7 +102,7 @@ public class Chop_Controller : MonoBehaviour
     private Vector3 knife_pos;
     public bool knife_is_overlapping = false;
     public RectTransform redZoneForKnife;
-    public bool in_Inventory = false;
+    public bool in_inventory = false;
     void Update()
     {
         // if (drag_all_script.canDrag == false) //TODO check if this is set up properly in drag all
@@ -151,21 +151,24 @@ public class Chop_Controller : MonoBehaviour
                             imageComponent.sprite = ingredient_data_var.Image;
                         }
                     }
-                    if (!in_Inventory)
+                    if (Ingredient_Inventory.Instance.HasItem(ingredient_data_var.makesIngredient[0].ingredient) == false)
+                    {
+                        in_inventory = false;
+                    }
+                    if (!in_inventory)
                     {
                         Ingredient_Inventory.Instance.AddResources(ingredient_data_var.makesIngredient[0].ingredient, 1);
 
-                        in_Inventory = true;
                         StartCoroutine(DelayedActions());
 
                         IEnumerator DelayedActions()
                         {
                             yield return new WaitForSeconds(0.75f); // Wait .75 seconds
-                            
+
                             imageComponent.enabled = false;
                             Drag_All.cuttingBoardActive = false;
                         }
-                        
+                        in_inventory = true;
                     }
                 }
             }
