@@ -156,49 +156,48 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
-        if (playerInventory == null)
+        // Make sure we're working with the Dish_Tool_Inventory
+        var dishInventory = Dish_Tool_Inventory.Instance;
+        if (dishInventory == null)
         {
-            Debug.LogWarning("TryServeDish called with null playerInventory.");
+            Debug.LogWarning("No Dish_Tool_Inventory instance found!");
             return false;
         }
 
-        if (!playerInventory.HasItem(requestedDish))
+        // Check currently selected slot
+        Dish_Data selectedDish = dishInventory.GetSelectedDishData();
+        if (selectedDish == null)
         {
-            Debug.Log($"Player does not have {requestedDish.name} to serve.");
+            Debug.Log("No dish selected to serve.");
             return false;
         }
 
-        // Remove the dish
-        int removed = playerInventory.RemoveResources(requestedDish, 1);
-        if (removed <= 0)
+        if (selectedDish != requestedDish)
         {
-            Debug.Log($"[Customer_Controller] Error: no {requestedDish.name} served!");
+            Debug.Log($"Selected dish {selectedDish.name} does not match requested {requestedDish.name}.");
             return false;
         }
+
+        // Remove it from inventory
+        dishInventory.RemoveSelectedSlot();
 
         Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
-        // Get dialogue key + suffix
+        // Play dialogue
         (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
+        requestedDish = null; // clear after serving
 
-        requestedDish = null; // clear after generating
-
-        // Play dialog with forced emotion
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null && !string.IsNullOrEmpty(dialogueKey))
         {
             var emotion = MapReactionToEmotion(suffix);
-            Debug.Log($"Playing dialogue key: {dialogueKey} with emotion {emotion}");
             dm.PlayScene(dialogueKey, emotion);
-        }
-        else
-        {
-            Debug.LogWarning($"Dialogue_Manager missing or dialogueKey empty for {data.customerName}");
         }
 
         return true;
     }
+
 
     #region Dialog
     /// <summary>
