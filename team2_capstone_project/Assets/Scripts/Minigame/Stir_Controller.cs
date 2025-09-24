@@ -39,32 +39,34 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
   private void Update()
   {
-    if (!isStirring) return;
+    if (!isStirring || !isDragging)
+      return;
 
     // Only accumulate stir time if pointer is moving
-    Vector3 pointerDelta = Input.mousePosition - lastPointerPos;
+      Vector3 pointerDelta = Input.mousePosition - lastPointerPos;
     if (pointerDelta.magnitude > pointerMoveThreshold)
     {
-        accumulatedStirTime += Time.deltaTime;
+      accumulatedStirTime += Time.deltaTime;
 
-        if (backgroundAnimator != null)
-            backgroundAnimator.speed = 1f; // resume animation
+      if (backgroundAnimator != null)
+        backgroundAnimator.speed = 1f; // resume animation
     }
     else
     {
-        if (backgroundAnimator != null)
-            backgroundAnimator.speed = 0f; // freeze animation mid-frame
+      if (backgroundAnimator != null)
+        backgroundAnimator.speed = 0f; // freeze animation mid-frame
     }
 
     if (accumulatedStirTime >= stirDuration)
-        FinishStirring();
+      FinishStirring();
 
     lastPointerPos = Input.mousePosition;
   }
 
   private bool IsOverRedZone(Vector2 pointerPos)
   {
-    if (cauldronRedZone == null) return false;
+    if (cauldronRedZone == null)
+      return false;
 
     Vector3[] corners = new Vector3[4];
     cauldronRedZone.GetWorldCorners(corners);
@@ -74,7 +76,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   }
 
   public void OnBeginDrag(PointerEventData eventData)
-  {
+  {     
     if (cauldron.IsEmpty())
     {
       errorText.SetActive(true);
@@ -89,22 +91,22 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
   public void OnDrag(PointerEventData eventData)
   {
-    if (!isDragging) return;
+    if (!isDragging)
+      return;
 
     transform.position = eventData.position;
 
     if (!isStirring && IsOverRedZone(eventData.position))
-    {
       StartStirring();
-    }
   }
 
   public void OnEndDrag(PointerEventData eventData)
   {
     isDragging = false;
-
-    if (!isStirring)
-      transform.position = ladleOriginalPos;
+    isStirring = false; // shouldn't stir if not dragging ladle
+    transform.position = ladleOriginalPos;
+    if (ladleImage != null)
+      ladleImage.enabled = true;
   }
 
   private void HideErrorText() => errorText.SetActive(false);
@@ -118,10 +120,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       ladleImage.enabled = false;
 
     if (backgroundAnimator != null)
-    {
       backgroundAnimator.SetBool("isStirring", true);
-      // backgroundAnimator.speed = 1f; // start moving
-    }
 
     if (cauldron != null)
       cauldron.StartStirring();
@@ -131,12 +130,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   {
     isStirring = false;
     accumulatedStirTime = 0f;
-
-    if (backgroundAnimator != null)
-    {
-      // backgroundAnimator.speed = 0f; // freeze on last frame
-      backgroundAnimator.SetBool("isStirring", false);
-    }
+    isDragging = false;
 
     transform.position = ladleOriginalPos;
     if (ladleImage != null)
@@ -145,26 +139,13 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     if (cauldron != null)
       cauldron.FinishedStir();
 
-    Drag_All.ResetWaterStatus();
-  }
-
-  public void ResetStir()
-  {
-    isStirring = false;
-    isDragging = false;
-    accumulatedStirTime = 0f;
-
     if (backgroundAnimator != null)
     {
-      backgroundAnimator.speed = 0f;           // stop playback
-      backgroundAnimator.Play("Stir", 0, 0f); // reset to first frame
+      backgroundAnimator.SetBool("isStirring", false);
+      Debug.Log("is stirring should be false!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      // backgroundAnimator.SetBool("isEmpty", true);
     }
 
-    if (backgroundImage != null)
-      backgroundImage.sprite = emptyCauldron;
-
-    transform.position = ladleOriginalPos;
-    if (ladleImage != null)
-      ladleImage.enabled = true;
+    Drag_All.ResetWaterStatus();
   }
 }

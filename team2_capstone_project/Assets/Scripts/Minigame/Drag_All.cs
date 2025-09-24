@@ -250,7 +250,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   {
     if (waterAdded)
     {
-      Debug.Log("[Drag_All]: Water already added. Cannot add more.");
+      // Debug.Log("[Drag_All]: Water already added. Cannot add more.");
+      errorText.GetComponent<TMP_Text>().text = "Water already added. Cannot add more!";
+      errorText.SetActive(true);
       return;
     }
 
