@@ -160,5 +160,43 @@ public class Game_Events_Manager : MonoBehaviour
     }
 
     #endregion
-    
+
+    /////////// CAFE INTERACTION EVENTS /////////
+    #region Cafe Interaction Events
+    public event Action onGetOrder;
+    public void GetOrder()
+    {
+        if (onGetOrder != null)
+            onGetOrder();
+    }
+
+    public event Action onServeCustomer;
+    public void ServeCustomer()
+    {
+        if (onServeCustomer != null)
+            onServeCustomer();
+    }
+    #endregion
+
+
+    /////////// COOKING MINIGAME EVENTS /////////
+    #region Cooking Minigame Events
+    public event Action onMakeCauldronDish;
+    public void MakeCauldronDish()
+    {
+        if (onMakeCauldronDish != null)
+            onMakeCauldronDish();
+    }
+
+    public event Action onChopIngredients;
+    public void ChopIngredients()
+    {
+        if (onChopIngredients != null)
+            onChopIngredients();
+    }
+
+
+
+    #endregion
+
 }

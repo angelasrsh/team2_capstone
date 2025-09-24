@@ -84,12 +84,13 @@ public class Customer_Controller : MonoBehaviour
 
     if (data.favoriteDishes.Length > 0)
     {
-      requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
+        requestedDish = data.favoriteDishes[Random.Range(0, data.favoriteDishes.Length)];
 
-      thoughtBubble.SetActive(true);
-      bubbleDishImage.sprite = requestedDish.Image;
+        thoughtBubble.SetActive(true);
+        bubbleDishImage.sprite = requestedDish.Image;
 
-      Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
+        Debug.Log($"{data.customerName} wants {requestedDish.Image}!");
+        Game_Events_Manager.Instance.GetOrder(); // TODO: COMMENT THIS OUT AND MOVE TO WHERE THE PLAYER GETS THE ORDER
     }
 
     seat = null; // Prevent repeating

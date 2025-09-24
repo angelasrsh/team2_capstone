@@ -32,6 +32,7 @@ public class Room_Change_Interact : MonoBehaviour
             if (player != null)
             {
                 player.DisablePlayerController();
+                Game_Events_Manager.Instance.RoomChange(exitingTo);
                 Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
             }
         }
