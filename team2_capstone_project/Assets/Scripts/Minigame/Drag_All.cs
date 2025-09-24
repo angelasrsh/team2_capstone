@@ -259,6 +259,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       backgroundAnimator.SetBool("empty", false);
     }
     waterAdded = true;
+    audio.PlayBubblingOnLoop();
   }
 
   /// <summary>
@@ -285,6 +286,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     return cauldron;
   }
 
+  /// <summary>
+  /// Changes cauldron's not stirring animation to broth colored liquid cauldron version
+  /// </summary>
   public static void BrothAdded()
   {
     if (backgroundAnimator != null)
@@ -294,7 +298,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       backgroundAnimator.SetBool("hasWater", false);
       backgroundAnimator.SetBool("empty", false);
     }
+    audio.PlayBubblingOnLoop();
   }
-  
+
   private void HideErrorText() => errorText.SetActive(false);
 }
