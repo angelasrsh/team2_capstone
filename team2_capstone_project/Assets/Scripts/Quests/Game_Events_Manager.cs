@@ -66,7 +66,7 @@ public class Game_Events_Manager : MonoBehaviour
     }
 
 
-    public event Action<bool> onRecipeClick;
+    public event Action onRecipeClick;
     /// <summary>
     /// Broadcast the RecipeClick event
     /// </summary>

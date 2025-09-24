@@ -6,18 +6,19 @@ public class Open_Inventory_Quest_Step : Quest_Step
 {
     void OnEnable()
     {
-        Game_Events_Manager.Instance.onPlayerMove += PlayerMoved;
+        Game_Events_Manager.Instance.onInventoryToggle += InventoryOpened;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
-        Game_Events_Manager.Instance.onPlayerMove -= PlayerMoved;
+        Game_Events_Manager.Instance.onInventoryToggle -= InventoryOpened;
     }
 
 
-    private void PlayerMoved()
+    private void InventoryOpened(bool isOpen)
     {
-        FinishQuestStep(); // Finish and destroy this object
+        if (isOpen)
+            FinishQuestStep(); // Finish and destroy this object
     }
 }
