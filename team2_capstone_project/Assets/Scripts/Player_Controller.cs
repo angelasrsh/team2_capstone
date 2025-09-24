@@ -34,9 +34,6 @@ public class Player_Controller : MonoBehaviour
 
         // Subscribe the event-broadcasting methods to these actions
         moveAction.performed += onMove;
-        // interactAction.performed += OnInteract;
-        // openInventoryAction.performed += OnOpenInventory;
-        // openJournalAction.performed += OnOpenJournal;
     }
 
     private void FixedUpdate()

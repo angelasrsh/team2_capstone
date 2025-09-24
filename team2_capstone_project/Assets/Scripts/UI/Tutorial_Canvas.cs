@@ -13,14 +13,14 @@ public class Tutorial_Canvas : MonoBehaviour
 
     private string questID;
     private Quest_State currentQuestState;
-    private TextMeshProUGUI Text;
+    private TextMeshProUGUI Textbox;
 
     private int instructionIndex = -1;
 
     private void Awake()
     {
         questID = questInfoForCanvas.id;
-        Text = GetComponentInChildren<TextMeshProUGUI>();
+        Textbox = GetComponentInChildren<TextMeshProUGUI>();
     }
     void OnEnable()
     {
@@ -68,6 +68,6 @@ public class Tutorial_Canvas : MonoBehaviour
 
     private void setText(String newText)
     {
-        this.Text.text = newText;
+        this.Textbox.text = newText;
     }
 }
