@@ -140,11 +140,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       cauldron.FinishedStir();
 
     if (backgroundAnimator != null)
-    {
       backgroundAnimator.SetBool("isStirring", false);
-      Debug.Log("is stirring should be false!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      // backgroundAnimator.SetBool("isEmpty", true);
-    }
 
     Drag_All.ResetWaterStatus();
   }

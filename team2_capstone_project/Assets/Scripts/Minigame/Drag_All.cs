@@ -232,15 +232,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   /// For another object to set this image_slot's ingredient type (used in inventory UI)
   /// </summary>
   /// <param name="iData"></param>
-  public void SetIngredientType(Ingredient_Data iData)
-  {
-    ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
-  }
+  public void SetIngredientType(Ingredient_Data iData) => ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
 
-  public void SetCuttingBoardInactive()
-  {
-    cuttingBoardActive = false;
-  }
+  public void SetCuttingBoardInactive() => cuttingBoardActive = false;
 
   /// <summary>
   /// Adds water to pot as ingredient_data and changes cauldron background to fill with water.
@@ -250,7 +244,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   {
     if (waterAdded)
     {
-      // Debug.Log("[Drag_All]: Water already added. Cannot add more.");
       errorText.GetComponent<TMP_Text>().text = "Water already added. Cannot add more!";
       errorText.SetActive(true);
       return;
@@ -262,22 +255,18 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     if (backgroundAnimator != null)
     {
-      // regularBG = regularBGTransform.GetComponent<Animator>();
-      // originalBGSprite = regularBG.sprite;
       backgroundAnimator.SetBool("hasWater", true);
       backgroundAnimator.SetBool("empty", false);
     }
-    // regularBG.sprite = water.Image;
     waterAdded = true;
   }
 
   /// <summary>
   /// Once recipe is made, should call this method to reset water status and change
-  /// background image to empty cauldron. TEST THIS OUT LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  /// background image to empty cauldron.
   /// </summary>
   public static void ResetWaterStatus()
   {
-    // regularBG.sprite = originalBGSprite;
     if (backgroundAnimator != null)
     {
       backgroundAnimator.SetBool("hasWater", false);

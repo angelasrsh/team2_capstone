@@ -42,6 +42,9 @@ public class Cauldron : MonoBehaviour
     Dish_Data potentialDish = null;
     foreach (var dish in possibleDishes)
     {
+      if (ingredientInPot.Count != dish.ingredientQuantities.Count)
+        continue;
+
       potentialDish = dish;
       foreach (var req in dish.ingredientQuantities)
       {
@@ -65,6 +68,9 @@ public class Cauldron : MonoBehaviour
       // Loop through possible ingredients and see if any can be made with current ingredients
       foreach (var ingredient in possibleIngredients)
       {
+        if (ingredientInPot.Count != ingredient.ingredient.ingredientsNeeded.Count)
+          continue;
+
         potentialIngredient = ingredient.ingredient;
         foreach (var req in potentialIngredient.ingredientsNeeded)
         {
