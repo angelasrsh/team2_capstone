@@ -66,14 +66,14 @@ public class Game_Events_Manager : MonoBehaviour
     }
 
 
-    public event Action onRecipeClick;
+    public event Action onForageDetailsClick;
     /// <summary>
     /// Broadcast the RecipeClick event
     /// </summary>
-    public void RecipeClick()
+    public void ForageDetailsClick()
     {
-        if (onRecipeClick != null)
-            onRecipeClick();
+        if (onForageDetailsClick != null)
+            onForageDetailsClick();
     }
 
 
