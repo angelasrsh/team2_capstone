@@ -102,6 +102,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onStartQuest != null)
             onStartQuest(id);
+        Debug.Log($"[G_E_M] Starting quest {id}");
     }
 
     public event Action<string> onAdvanceQuest;
@@ -135,6 +136,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onQuestStateChange != null)
             onQuestStateChange(quest);
+        Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
     }
 
 

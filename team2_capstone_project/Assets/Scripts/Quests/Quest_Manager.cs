@@ -86,7 +86,7 @@ public class Quest_Manager : MonoBehaviour
 
     private void StartQuest(string id)
     {
-        Debug.Log($"Q_MAN started quest {id}");
+        Debug.Log($"[Q_MAN] started quest {id}");
         Quest quest = GetQuestByID(id);
         quest.InstantiateCurrentQuestStep(this.transform);
         ChangeQuestState(quest.Info.id, Quest_State.IN_PROGRESS);
