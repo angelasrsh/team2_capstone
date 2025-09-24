@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Go_To_Cauldron_Quest_Step : Quest_Step
+public class Press_Back_Quest_Step : Quest_Step
 {
     void OnEnable()
     {
@@ -16,9 +16,9 @@ public class Go_To_Cauldron_Quest_Step : Quest_Step
     }
 
 
-     private void RoomChange(Room_Data.RoomID newRoom)
+    private void RoomChange(Room_Data.RoomID newRoom)
     {
-        if (newRoom == Room_Data.RoomID.Cooking_Minigame)
+        if (newRoom == Room_Data.RoomID.Restaurant)
             FinishQuestStep(); // Finish and destroy this object
     }
 }

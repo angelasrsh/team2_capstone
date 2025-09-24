@@ -6,7 +6,10 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Tutorial_Canvas : MonoBehaviour
+/// <summary>
+/// Would like to delete this later when a better method is figured out
+/// </summary>
+public class Cafe_Tutorial_Canvas : MonoBehaviour
 {
     // Start is called before the first frame update
 
@@ -17,30 +20,45 @@ public class Tutorial_Canvas : MonoBehaviour
     private TextMeshProUGUI Textbox;
 
     private int instructionIndex = -1;
+    
+    // Temporary singleton- would like to get rid of this later.
+    public static Cafe_Tutorial_Canvas Instance { get; private set; }
 
     private void Awake()
     {
         questID = questInfoForCanvas.id;
         Textbox = GetComponentInChildren<TextMeshProUGUI>();
-    }
-    void OnEnable()
-    {
-        Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
-        Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
 
-        //currentQuestState = Quest_Manager.Instance.GetQuestByID(questID).state; // implement better method for getting state later
-        //Game_Events_Manager.Instance.QuestStateChange()
-
-        if (currentQuestState < Quest_State.IN_PROGRESS) // not great because it allows REQUIREMENTS_NOT_MET to start too
-            Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id); // Start the quest immediately
-
+        // Temporarily a Singleton; probably should be data persistence later
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
     }
-    
-       void OnDisable()
-    {
-        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
-        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
-    }
+
+        void OnEnable()
+        {
+            Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
+            Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
+
+            //currentQuestState = Quest_Manager.Instance.GetQuestByID(questID).state; // implement better method for getting state later
+            //Game_Events_Manager.Instance.QuestStateChange()
+
+            if (currentQuestState < Quest_State.IN_PROGRESS) // not great because it allows REQUIREMENTS_NOT_MET to start too
+                Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id); // Start the quest immediately
+
+        }
+
+        void OnDisable()
+        {
+            Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
+            Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
+        }
 
     // Update the Canvas's quest state when the quest changes
     private void questStateChange(Quest q)
@@ -53,7 +71,7 @@ public class Tutorial_Canvas : MonoBehaviour
         // Do nothing once tutorial is finished
         if (currentQuestState == Quest_State.FINISHED)
             this.gameObject.SetActive(false);
-        
+
 
     }
 

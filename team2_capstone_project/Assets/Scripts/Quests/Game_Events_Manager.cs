@@ -179,24 +179,38 @@ public class Game_Events_Manager : MonoBehaviour
     #endregion
 
 
-    /////////// COOKING MINIGAME EVENTS /////////
-    #region Cooking Minigame Events
-    public event Action onMakeCauldronDish;
-    public void MakeCauldronDish()
+    /////////// INVENTORY EVENTS /////////
+    #region Inventory events
+    public event Action<Ingredient_Data> onResourceAdd;
+    public void ResourceAdd(Ingredient_Data ingredient)
     {
-        if (onMakeCauldronDish != null)
-            onMakeCauldronDish();
+        if (onResourceAdd != null)
+            onResourceAdd(ingredient);
     }
 
-    public event Action onChopIngredients;
-    public void ChopIngredients()
+    public event Action<Ingredient_Data> onResourceRemove;
+    public void ResourceRemove(Ingredient_Data ingredient)
     {
-        if (onChopIngredients != null)
-            onChopIngredients();
+        if (onResourceRemove != null)
+            onResourceRemove(ingredient);
     }
 
+    public event Action<Dish_Data> onDishAdd;
+    public void DishAdd(Dish_Data dish)
+    {
+        if (onDishAdd != null)
+            onDishAdd(dish);
+    }
 
+    public event Action<Dish_Data> onDishRemove;
+    public void DishRemove(Dish_Data dish)
+    {
+        if (onDishRemove != null)
+            onDishRemove(dish);
+    }
 
     #endregion
+
+    
 
 }

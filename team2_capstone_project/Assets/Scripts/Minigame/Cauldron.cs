@@ -112,7 +112,7 @@ public class Cauldron : MonoBehaviour
         ResetAll();
 
         // Broadcast that a dish has been made (regardless of success)
-        Game_Events_Manager.Instance.MakeCauldronDish();
+        //Game_Events_Manager.Instance.MakeCauldronDish();
   }
 
   /// <summary>

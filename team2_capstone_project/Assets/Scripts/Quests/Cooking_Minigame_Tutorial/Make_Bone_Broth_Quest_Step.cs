@@ -6,19 +6,20 @@ public class Make_Bone_Broth_Quest_Step : Quest_Step
 {
     void OnEnable()
     {
-        Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
+        Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
-        Game_Events_Manager.Instance.onJournalToggle -= JournalToggled;
+        Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
     }
 
 
-    private void JournalToggled(bool isOpen)
+    private void ResourceAdd(Ingredient_Data ingredient)
     {
-        if (!isOpen)
+        if (ingredient.Name == Ingredient_Inventory.Instance.IngrEnumToName(IngredientType.Bone_Broth))
             FinishQuestStep(); // Finish and destroy this object
+            
     }
 }
