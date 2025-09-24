@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -77,6 +78,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     if (cauldron.IsEmpty())
     {
       errorText.SetActive(true);
+      errorText.GetComponent<TMP_Text>().text = "Must add at least one ingredient into cauldron before stirring!";
       Invoke(nameof(HideErrorText), 3);
       return;
     }
@@ -105,10 +107,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       transform.position = ladleOriginalPos;
   }
 
-  private void HideErrorText()
-  {
-    errorText.SetActive(false);
-  }
+  private void HideErrorText() => errorText.SetActive(false);
   
   private void StartStirring()
   {
@@ -154,9 +153,6 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     isStirring = false;
     isDragging = false;
     accumulatedStirTime = 0f;
-
-    // if (backgroundAnimator != null)
-    //   backgroundAnimator.SetBool("isStirring", false);
 
     if (backgroundAnimator != null)
     {
