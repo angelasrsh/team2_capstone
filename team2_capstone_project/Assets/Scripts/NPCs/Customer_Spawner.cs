@@ -80,7 +80,8 @@ public class Customer_Spawner : MonoBehaviour
             return;
         }
 
-        CustomerData data = possibleCustomers[Random.Range(0, possibleCustomers.Length)];
+        // CustomerData data = possibleCustomers[Random.Range(0, possibleCustomers.Length)];
+        CustomerData data = possibleCustomers[0];
 
         Customer_Controller customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
         customer.Init(data, seat, Dish_Tool_Inventory.Instance);

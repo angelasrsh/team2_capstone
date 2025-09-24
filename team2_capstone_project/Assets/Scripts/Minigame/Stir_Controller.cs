@@ -132,6 +132,8 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     isDragging = false;
     isStirring = false; // shouldn't stir if not dragging ladle
     audio.StopStirring();
+    if (backgroundAnimator != null)
+      backgroundAnimator.SetBool("isStirring", false);
     transform.position = ladleOriginalPos;
     if (ladleImage != null)
       ladleImage.enabled = true;
