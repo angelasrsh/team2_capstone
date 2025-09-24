@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Customer_Spawner : MonoBehaviour
 {
@@ -19,7 +20,38 @@ public class Customer_Spawner : MonoBehaviour
 
     public void Start()
     {
-        SpawnCustomers();
+        if (Restaurant_State.Instance.customers.Count > 0)
+        {
+            foreach (var cState in Restaurant_State.Instance.customers)
+            {
+                Transform seat = Seat_Manager.Instance.GetSeatByIndex(cState.seatIndex);
+                CustomerData data = FindCustomerData(cState.customerName);
+
+                // Spawn directly at seat when restoring
+                Customer_Controller customer = Instantiate(customerPrefab, seat.position, Quaternion.identity);
+                customer.Init(data, seat, Dish_Tool_Inventory.Instance, true);
+
+                if (cState.hasRequestedDish)
+                {
+                    customer.Debug_ForceRequestDish(cState.requestedDishName);
+                }
+            }
+        }
+        else
+        {
+            SpawnCustomers();
+        }
+    }
+
+    private CustomerData FindCustomerData(string name)
+    {
+        foreach (var data in possibleCustomers)
+        {
+            if (data.customerName == name)
+                return data;
+        }
+        Debug.LogWarning($"CustomerData for {name} not found in possibleCustomers!");
+        return null;
     }
 
     public void SpawnCustomers()
@@ -48,10 +80,8 @@ public class Customer_Spawner : MonoBehaviour
             return;
         }
 
-        // Pick random customer data
         CustomerData data = possibleCustomers[Random.Range(0, possibleCustomers.Length)];
 
-        // Spawn customer prefab
         Customer_Controller customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
         customer.Init(data, seat, Dish_Tool_Inventory.Instance);
     }

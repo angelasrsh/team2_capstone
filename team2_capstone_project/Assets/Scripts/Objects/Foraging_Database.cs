@@ -49,10 +49,10 @@ public class Foraging_Database : ScriptableObject
         {
             OnForagingItemUnlocked?.Invoke(); // notify listeners
         }
-        else
-        {
-            Debug.LogWarning($"Item {Name} does not exist in the foraging database.");
-        }
+        // else
+        // {
+        //     Debug.LogWarning($"Item {Name} does not exist in the foraging database.");
+        // }
     }
 
     public bool IsItemUnlocked(string Name)

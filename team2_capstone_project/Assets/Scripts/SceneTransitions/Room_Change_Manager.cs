@@ -50,6 +50,20 @@ public class Room_Change_Manager : MonoBehaviour
             return;
         }
 
+        // Save state if leaving Restaurant
+        if (currentRoomID == Room_Data.RoomID.Restaurant)
+        {
+            if (Restaurant_State.Instance != null)
+            {
+                Restaurant_State.Instance.SaveCustomers();
+                Debug.Log("Room_Change_Manager: Saved Restaurant_State before transition.");
+            }
+            else
+            {
+                Debug.LogWarning("Room_Change_Manager: Restaurant_State.Instance is null when trying to save.");
+            }
+        }
+
         // Try to get the exit
         RoomExitOptions exit = Exit(currentRoom, exitingTo);
         if (exit == null)
