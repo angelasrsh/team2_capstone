@@ -218,6 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InteractIcon: {fileID: 3315561528028832961}
   ingredientData: {fileID: 11400000, guid: 462b51631c3fbee4890a50089b51e1b5, type: 2}
+  forageableData: {fileID: 0}
   foragedVariant: {fileID: 4814337501658360740, guid: d14ef850159a191469273fc2495553f9, type: 3}
   destroyOnForage: 0
 --- !u!136 &7355524852260023636
@@ -227,13 +228,13 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7355524852260023634}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: f5e773134105b8843ace7ff2dc7996e3, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.22379155
+  m_Radius: 0.14950739
   m_Height: 1.6952525
   m_Direction: 1
-  m_Center: {x: -0.010866174, y: -0.15237363, z: 0.015846884}
+  m_Center: {x: -0.0060113347, y: -0.15237363, z: 0.01365495}
 --- !u!65 &1518617726048764857
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -245,5 +246,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.56890255, y: 1.1950197, z: 0.6233623}
-  m_Center: {x: -0.005344096, y: 0.097510405, z: 0.007664514}
+  m_Size: {x: 0.94067806, y: 1.2634813, z: 1.1584346}
+  m_Center: {x: -0.0067888405, y: 0.13174126, z: 0.11763996}
