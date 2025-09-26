@@ -124,7 +124,7 @@ namespace Grimoire
         return;
 
       bubblingSource.clip = bubbling;
-      bubblingSource.volume = 0.3f;
+      bubblingSource.volume = 0.5f;
       if (!bubblingSource.isPlaying)
         bubblingSource.Play();
     }
@@ -137,7 +137,7 @@ namespace Grimoire
 
     public void StartFire()
     {
-      sfxSource.volume = 0.3f;
+      sfxSource.volume = 0.5f;
       PlaySFX(startFire);
       PlayAmbientFireOnLoop();
     }
@@ -148,7 +148,7 @@ namespace Grimoire
         return;
 
       fireAmbientSource.clip = ambientFire;
-      fireAmbientSource.volume = 0.3f;
+      fireAmbientSource.volume = 0.5f;
 
       if (!fireAmbientSource.isPlaying) // Play if not already playing
       {
