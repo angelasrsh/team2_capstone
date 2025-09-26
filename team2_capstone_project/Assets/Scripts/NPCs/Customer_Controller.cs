@@ -21,6 +21,7 @@ public class Customer_Controller : MonoBehaviour
     private bool playerInRange = false;
     private bool hasSatDown = false;
     private bool hasRequestedDish = false;
+    public event Action<string> OnCustomerLeft;
 
     void Awake()
     {
@@ -200,6 +201,12 @@ public class Customer_Controller : MonoBehaviour
         return true;
     }
 
+    public void LeaveRestaurant()
+    {
+        // your leave logic…
+        OnCustomerLeft?.Invoke(data.customerName);
+        Destroy(gameObject);
+    }
 
     #region Dialog
     /// <summary>
