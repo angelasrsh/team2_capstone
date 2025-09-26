@@ -118,8 +118,8 @@ public class Ingredient_Inventory : Inventory
       }
     }
 
-     // Broadcast to listening events
-        Game_Events_Manager.Instance.ResourceRemove(IngrEnumToData(type));
+    // Broadcast to listening events
+    Game_Events_Manager.Instance.ResourceRemove(IngrEnumToData(type));
 
     updateInventory(); // Remove empty elements
     Debug.Log($"[Invtory] Removed {count - amtLeftToRemove} {IngrEnumToData(type).Name}");
@@ -139,8 +139,6 @@ public class Ingredient_Inventory : Inventory
     {
       case IngredientType.Egg:
         return "Egg";
-      case IngredientType.Morel:
-        return "Morel";
       case IngredientType.Milk:
         return "Milk";
       case IngredientType.Cheese:
@@ -181,8 +179,6 @@ public class Ingredient_Inventory : Inventory
     {
       case "Egg":
         return IngredientType.Egg;
-      case "Morel":
-        return IngredientType.Morel;
       case "Milk":
         return IngredientType.Milk;
       case "Cheese":
