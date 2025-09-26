@@ -18,8 +18,8 @@ public class Room_Data : ScriptableObject
     public enum SpawnPointID
     {
         Default,
-        Entrance,
-        Exit
+        Cauldron,
+        Cutting_Board,
     }
 
     [Header("Room Info")]
