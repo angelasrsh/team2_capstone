@@ -6,73 +6,50 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// The child canvas used by the Tutorial_Manager. 
+/// Provides functions to be called by the manager
+/// And a set of panels for highlighting certain parts of the screen for certain tutorial steps.
+/// 
+/// ON USING THIS CLASS:
+/// Call these functions from Tutorial_Manager if you want to display UI stuff during a tutorial.
+/// </summary>
 public class Tutorial_Canvas : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private TextMeshProUGUI Textbox; // Set in code
 
-    [SerializeField] private Quest_Info_SO questInfoForCanvas;
+    // List of panels that must be in the desired order
+    private GameObject TutorialPanels;
 
-    private string questID;
-    private Quest_State currentQuestState;
-    private TextMeshProUGUI Textbox;
-
-    private int instructionIndex = -1;
 
     private void Awake()
     {
-        questID = questInfoForCanvas.id;
+        // Set textbox and Tutorial Panels list
         Textbox = GetComponentInChildren<TextMeshProUGUI>();
-    }
-    void OnEnable()
-    {
-        Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
-        Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
-
-        //currentQuestState = Quest_Manager.Instance.GetQuestByID(questID).state; // implement better method for getting state later
-        //Game_Events_Manager.Instance.QuestStateChange()
-
-        if (currentQuestState < Quest_State.IN_PROGRESS) // not great because it allows REQUIREMENTS_NOT_MET to start too
-            Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id); // Start the quest immediately
-
-    }
-    
-       void OnDisable()
-    {
-        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
-        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
-    }
-
-    // Update the Canvas's quest state when the quest changes
-    private void questStateChange(Quest q)
-    {
-        if (q.Info.id.Equals(questID))
-        {
-            currentQuestState = q.state;
-        }
-
-        // Do nothing once tutorial is finished
-        if (currentQuestState == Quest_State.FINISHED)
-            this.gameObject.SetActive(false);
-        
-
+        // Get child components for TutorialPanels
     }
 
     /// <summary>
-    /// Update the tutorial Canvas' text when the quest step changes
+    /// Set the tutorial textbox to a new string
     /// </summary>
-    /// <param name="id"> name of the quest </param>
-    /// <param name="stepIndex"> The new quest step index </param>
-    private void ChangeQuestStep(String id, int stepIndex)
-    {
-        if (id.Equals(questID))
-        {
-            instructionIndex = stepIndex; // Not necessary right now but may want to add a delay or embellishments later
-            setText(questInfoForCanvas.dialogueList[stepIndex]);
-        }
-    }
-
+    /// <param name="newText"></param>
     private void setText(String newText)
     {
         this.Textbox.text = newText;
+    }
+
+    /// <summary>
+    /// Called by Tutorial_Manager to display a tutorial text string and its background textbox 
+    /// </summary>
+    /// <param name="newText"> Text to display</param>
+    /// <param name="delayStart"> Seconds to wait before displaying; default 0 </param>
+    /// <param name="delayHide"> Seconds to wait before hiding. Text will remain on screen if delayHide is 0 or unused </param>
+    public void DisplayText(String newText, float delayStart = 0, float delayHide = 0)
+    {
+        // Wait for delayStart, then show text and textbox
+        Debug.Log("Displaying text: " + newText);
+
+        // Hide after delayHide seconds. Leave visible if delayHide is 0
+
     }
 }

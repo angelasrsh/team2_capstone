@@ -7,6 +7,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
+/// TODO: Merge with Tutorial Canvas
+/// Per Cafe_Tutorial_Canvas:
 /// Would like to delete this later when a better method is figured out
 /// </summary>
 public class Cafe_Tutorial_Canvas : MonoBehaviour
