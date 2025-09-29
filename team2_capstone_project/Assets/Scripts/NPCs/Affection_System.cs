@@ -116,8 +116,15 @@ public class Affection_System : MonoBehaviour
     /// <param name="tryPlayEvent"> Trigger an event if one is ready </param> 
     public void AddAffection(CustomerData customer, string suffix, bool tryPlayEvent)
     {
+        // Don't care about storing non-dateable customers
+        if (!customer.datable)
+            return;
+            
         // Retrieve entry
         AffectionEntry entryToUpdate = CustomerAffectionEntries.Find(x => x.customerData == customer);
+
+        // If null, create new entry
+        entryToUpdate = new AffectionEntry { customerData = customer };
         Debug.Log($"[AFF_SYS] updating affection for {entryToUpdate.customerData.customerName}");
 
         // Would probably be better to make an enum or array
