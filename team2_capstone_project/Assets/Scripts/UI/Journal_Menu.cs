@@ -35,6 +35,7 @@ public class Journal_Menu : MonoBehaviour
   [SerializeField] private GameObject NPC_Grid;
   [SerializeField] private GameObject NPC_Left_Page;
   [SerializeField] private GameObject NPC_Right_Page;
+  [SerializeField] private Slider NPC_Slider;
 
   [Header("Journal Sections")]
   [SerializeField] private CanvasGroup recipeMenuGroup;
@@ -346,37 +347,40 @@ public class Journal_Menu : MonoBehaviour
       buttonComp.onClick.AddListener(() => DisplayNPCDetails(npcData));
     }
   }
-  private void DisplayNPCDetails(CustomerData npcData)
-  {
-    NPC_Left_Page.SetActive(true);
+    private void DisplayNPCDetails(CustomerData npcData)
+    {
+        NPC_Left_Page.SetActive(true);
 
-    Transform pagePanel = NPC_Left_Page.transform.Find("Left_Page_Panel");
+        Transform pagePanel = NPC_Left_Page.transform.Find("Left_Page_Panel");
 
-    // npc Info
-    pagePanel.Find("NPC_Name").GetComponent<TextMeshProUGUI>().text = npcData.customerName;
-    pagePanel.Find("NPC_Icon_Panel/NPC_Image").GetComponent<UnityEngine.UI.Image>().sprite = npcData.portraitData.defaultPortrait;
+        // npc Info
+        pagePanel.Find("NPC_Name").GetComponent<TextMeshProUGUI>().text = npcData.customerName;
+        pagePanel.Find("NPC_Icon_Panel/NPC_Image").GetComponent<UnityEngine.UI.Image>().sprite = npcData.portraitData.defaultPortrait;
 
-    // Build the description text
-    string npcText = "Background Info: \n" + npcData.lore + "\n\n";
+        // Build the description text
+        string npcText = "Background Info: \n" + npcData.lore + "\n\n";
 
-    npcText += "Favorite Dishes: " +
-        (npcData.favoriteDishes.Length > 0
-            ? string.Join(", ", npcData.favoriteDishes.Select(d => d.Name))
-            : "None") + "\n";
+        npcText += "Favorite Dishes: " +
+            (npcData.favoriteDishes.Length > 0
+                ? string.Join(", ", npcData.favoriteDishes.Select(d => d.Name))
+                : "None") + "\n";
 
-    npcText += "Disliked Dishes: " +
-        (npcData.dislikedDishes.Length > 0
-            ? string.Join(", ", npcData.dislikedDishes.Select(d => d.Name))
-            : "None") + "\n";
+        npcText += "Disliked Dishes: " +
+            (npcData.dislikedDishes.Length > 0
+                ? string.Join(", ", npcData.dislikedDishes.Select(d => d.Name))
+                : "None") + "\n";
 
-    npcText += "Neutral Dishes: " +
-        (npcData.neutralDishes.Length > 0
-            ? string.Join(", ", npcData.neutralDishes.Select(d => d.Name))
-            : "None");
+        npcText += "Neutral Dishes: " +
+            (npcData.neutralDishes.Length > 0
+                ? string.Join(", ", npcData.neutralDishes.Select(d => d.Name))
+                : "None");
 
-    // Assign to text component
-    var detailsText = pagePanel.Find("NPC_Details").GetComponent<TextMeshProUGUI>();
-    detailsText.text = npcText;
+        // Assign to text component
+        var detailsText = pagePanel.Find("NPC_Details").GetComponent<TextMeshProUGUI>();
+        detailsText.text = npcText;
+
+        // Assign slider value
+        NPC_Slider.value = Affection_System.Instance.GetAffectionLevel(npcData);
   }
   #endregion
 

@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Stores affection data for a single customer, including their current level
 /// and which cutscenes have been triggered
+/// TODO: Switch to using enum
 /// </summary>
 public class AffectionEntry {
     public const int MaxAffection = 100; // TODO: Probably should add this somewhere else to avoid repeated data
@@ -84,7 +85,7 @@ public class Affection_System : MonoBehaviour
 {
     // Assign this in the inspector for now. Maybe change to using a databse later
     [Header("Manually add in NPCs")]
-    [SerializeField] private List<AffectionEntry> CustomerAffectionEntries = new List<AffectionEntry>();
+    [SerializeField] private List<AffectionEntry> CustomerAffectionEntries = new List<AffectionEntry>(); // Change to using enum
 
     // Constants
     [Header("Constants")]
@@ -184,9 +185,20 @@ public class Affection_System : MonoBehaviour
             return; // Don't do anything if there is no entry for the customer
 
         // Attempt to play event, then reset
-            entryToUpdate.TryPlayEvent();
+        entryToUpdate.TryPlayEvent();
         nextCutsceneCustomer = null;
 
+    }
+
+    public int GetAffectionLevel(CustomerData customer)
+    {
+        AffectionEntry entryToUpdate = CustomerAffectionEntries.Find(x => x.customerData == customer);
+
+        // If null, create new entry
+        if (entryToUpdate == null)
+            return 0;
+        else
+            return entryToUpdate.AffectionLevel;
     }
 
 }
