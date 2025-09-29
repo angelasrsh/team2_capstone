@@ -220,7 +220,7 @@ public class Ingredient_Inventory : Inventory
     if (IngredientDict.ContainsKey(name))
       return IngredientDict[IngrEnumToName(t)];
     else
-      Debug.LogError($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
+      Debug.LogWarning($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
     return null;
   }
 
