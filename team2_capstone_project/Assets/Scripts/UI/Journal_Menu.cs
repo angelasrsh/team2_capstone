@@ -55,13 +55,6 @@ public class Journal_Menu : MonoBehaviour
     dishDatabase = Game_Manager.Instance.dishDatabase;
     foragingDatabase = Game_Manager.Instance.foragingDatabase;
     PlayerInput playerInput = FindObjectOfType<PlayerInput>();
-    // playerInput check is not necessary to show as warning or error since journal can be opened in minigames too
-    // if (playerInput == null)
-    //   Debug.LogWarning("Journal_Menu: No PlayerInput found in scene!");
-
-    // openJournalAction = playerInput.actions["OpenJournal"];
-    // if (openJournalAction == null)
-    //   Debug.LogError("Journal_Menu: 'OpenJournal' action not found in PlayerInput actions!");
 
     if (journal == null)
       Debug.LogError("Journal_Menu: Journal GameObject not assigned in inspector!");
@@ -87,13 +80,8 @@ public class Journal_Menu : MonoBehaviour
     else
       Debug.Log("Choose_Menu_Items still alive. Dishes count: " + Choose_Menu_Items.instance.GetSelectedDishes().Count);
 
-    // if (dishDatabase != null && foragingDatabase != null)
-    // if (foragingDatabase != null)
-    // {
-    //   dishDatabase.OnDishUnlocked += PopulateDishes; // subscribe to the event
     PopulateDishes();
     PopulateNPCs();
-    // }
   }
 
   // Update is called once per frame
