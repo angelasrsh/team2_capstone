@@ -177,7 +177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6503592379672473607}
-  - component: {fileID: 6503592379672473606}
+  - component: {fileID: 4625024739234323316}
   m_Layer: 9
   m_Name: SenseCollider
   m_TagString: Untagged
@@ -200,8 +200,8 @@ Transform:
   m_Father: {fileID: 6503592380340263548}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &6503592379672473606
-SphereCollider:
+--- !u!65 &4625024739234323316
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -211,8 +211,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 3.770829, y: 1.4555334, z: 5.6830554}
+  m_Center: {x: -0.039535683, y: 0.22776587, z: 0.42581725}
 --- !u!1 &6503592380340263545
 GameObject:
   m_ObjectHideFlags: 0

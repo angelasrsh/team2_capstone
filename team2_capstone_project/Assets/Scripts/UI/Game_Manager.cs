@@ -11,6 +11,8 @@ public class Game_Manager : MonoBehaviour
 
     [SerializeField] public Dish_Database dishDatabase;
     [SerializeField] public Foraging_Database foragingDatabase;
+    [SerializeField] public NPC_Database npcDatabase;
+    [SerializeField] private Player_Progress playerProgress;
 
     private void Awake()
     {
@@ -31,11 +33,13 @@ public class Game_Manager : MonoBehaviour
 
             if (dishDatabase == null)
                 Debug.LogError("GameManager: DishDatabase not set in inspector!");
-            else
-            {
-                dishDatabase.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-                Debug.Log("GameManager: DishDatabase initialized and Blinding Stew unlocked.");
-            }
+
+            if (npcDatabase == null)
+                Debug.LogError("GameManager: npcDatabase not set in inspector!");
+
+            Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
+            Player_Progress.Instance.UnlockNPC(CustomerData.NPCs.Elf);
+            Debug.Log("GameManager: Player_Progress initialized and Blinding Stew and Elf unlocked.");
 
             if (foragingDatabase == null)
                 Debug.LogError("GameManager: ForagingDatabase not set in inspector!");

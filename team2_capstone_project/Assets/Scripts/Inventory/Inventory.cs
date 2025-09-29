@@ -221,7 +221,7 @@ public class Inventory : MonoBehaviour
 
             for (int i = 0; i < temp.Length; i++) // copy over elements
             {
-                InventoryStacks[i] = temp[i];
+                InventoryStacks[i] = temp[i]; // Todo: Item_Stacks are trying to go into dish_tool_stacks and that's not great
             }
         }
     }
