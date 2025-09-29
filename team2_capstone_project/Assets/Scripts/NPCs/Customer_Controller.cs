@@ -187,10 +187,16 @@ public class Customer_Controller : MonoBehaviour
         Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
-        // Play dialogue
+        
+
+        // Prep for dialogue
         (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
         requestedDish = null; // clear after serving
 
+        // Add affection and play a cutscene (if the event has been reached)
+        Affection_System.Instance.AddAffection(data, suffix, true);
+
+        // Play dialogue
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null && !string.IsNullOrEmpty(dialogueKey))
         {
