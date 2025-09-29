@@ -268,7 +268,7 @@ public class Dialogue_Manager : MonoBehaviour
     public void EndDialog()
     {
         Debug.Log("EndDialog called.");
-        
+
         uiManager.HideTextBox();
         uiManager.ClearText();
         uiManager.HidePortrait();
@@ -276,6 +276,7 @@ public class Dialogue_Manager : MonoBehaviour
         playerOverworld.EnablePlayerController();
 
         onDialogComplete?.Invoke();
+        Game_Events_Manager.Instance.EndDialogBox(); // Could probably merge with above
     }
 
     public void ResetDialogForKey(string aDialogKey)

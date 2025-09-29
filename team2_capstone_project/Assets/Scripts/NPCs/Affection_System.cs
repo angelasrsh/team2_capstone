@@ -19,6 +19,8 @@ public class AffectionEntry {
 
     // public Scene eventScene; // Temp: Delete later
 
+   
+
 
     /// <summary>
     /// Call this function to check if there is an event that can be played
@@ -92,6 +94,9 @@ public class Affection_System : MonoBehaviour
 
     public static Affection_System Instance;
 
+    // Temp variables until a better system is made
+    private CustomerData nextCutsceneCustomer;
+
     private void Awake()
     {
         if (Instance == null)
@@ -103,6 +108,16 @@ public class Affection_System : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnEnable()
+    {
+        Game_Events_Manager.Instance.onEndDialogBox += TryPlayNextEvent;
+    }
+
+    private void OnDisable()
+    {
+        Game_Events_Manager.Instance.onEndDialogBox -= TryPlayNextEvent;
     }
 
 
@@ -122,12 +137,16 @@ public class Affection_System : MonoBehaviour
         // Don't care about storing non-dateable customers
         if (!customer.datable)
             return;
-            
+
         // Retrieve entry
         AffectionEntry entryToUpdate = CustomerAffectionEntries.Find(x => x.customerData == customer);
 
         // If null, create new entry
-        entryToUpdate = new AffectionEntry { customerData = customer };
+        if (entryToUpdate == null)
+        {
+            entryToUpdate = new AffectionEntry { customerData = customer };
+            CustomerAffectionEntries.Add(entryToUpdate);
+        }
         Debug.Log($"[AFF_SYS] updating affection for {entryToUpdate.customerData.customerName}");
 
         // Would probably be better to make an enum or array
@@ -142,8 +161,32 @@ public class Affection_System : MonoBehaviour
 
         if (tryPlayEvent)
             entryToUpdate.TryPlayEvent();
+        else // save CustomerData for later calls to TryPlayNextEvent
+            nextCutsceneCustomer = customer;
+
 
         return;
+    }
+
+    /// <summary>
+    /// If a customerdata is saved in nextCutsceneCustomer, see if you can play an event for that customer
+    /// </summary>
+    public void TryPlayNextEvent()
+    {
+        // Nothing saved
+        if (nextCutsceneCustomer == null)
+            return;
+
+        // Retrieve entry
+        AffectionEntry entryToUpdate = CustomerAffectionEntries.Find(x => x.customerData == nextCutsceneCustomer);
+
+        if (entryToUpdate == null)
+            return; // Don't do anything if there is no entry for the customer
+
+        // Attempt to play event, then reset
+            entryToUpdate.TryPlayEvent();
+        nextCutsceneCustomer = null;
+
     }
 
 }
