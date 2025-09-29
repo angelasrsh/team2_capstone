@@ -23,13 +23,11 @@ public class Player_Progress : ScriptableObject
     public void UnlockDish(Dish_Data.Dishes dish)
     {
         // HashSet.Add returns true if item was actually added
-        // Debug.Log("[Player_Progress]: unlocking dish");
         if (unlockedDishes.Add(dish))
         {
             // Fire event only if a new dish was added
             OnDishUnlocked?.Invoke();
         }
-        // Debug.Log("[Player_Progress]: dish count = " + unlockedDishes.Count);
     }
 
     /// <summary>
