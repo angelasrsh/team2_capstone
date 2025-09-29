@@ -50,6 +50,7 @@ public class AffectionEntry {
         // SceneManager.LoadScene("Dating_Events");
         // Play the scene however that happens
         Debug.Log("[Aff_Sys] Date start!");
+        SceneManager.LoadScene("Dating_Events");
 
         // Set cutscene played to true afterwards
     }
