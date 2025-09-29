@@ -208,7 +208,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               canDrag = false;
               //start chopscript experience :)
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
-              
+
 
             }
             cuttingBoardActive = true;
@@ -235,6 +235,29 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       }
     }
 
+  }
+
+  /// <summary>
+  /// This function should reset all minigame statuses (including all variables and lists used).
+  /// It is in Drag_All, but is currently called in Room_Change_Trigger for the back button in the minigames.
+  /// </summary>
+  public static void ResetMinigame()
+  {
+    if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
+    {
+      // chopScript.ResetChoppingBoard();
+      cuttingBoardActive = false;
+    }
+    else if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+    {
+      ResetWaterStatus();
+      // cauldron.ResetAll();
+      cauldron = null;
+      // backgroundAnimator = null;
+      // errorText = null;
+      // audio = null;
+      audioTriggered = false;
+    }
   }
 
   /// <summary>
@@ -285,7 +308,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
   /// <summary>
   /// Once recipe is made, should call this method to reset water status and change
-  /// background image to empty cauldron.
+  /// background image to empty cauldron. This method does NOT update the cauldron's list of ingredients.
+  /// It only handles resetting the water background animation.
   /// </summary>
   public static void ResetWaterStatus()
   {
