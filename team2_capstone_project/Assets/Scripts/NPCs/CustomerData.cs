@@ -28,4 +28,43 @@ public class CustomerData : ScriptableObject
         Elf
         // Add all NPCs here
     }
+
+    // [System.Serializable]
+    // public class EmotionPortrait
+    // {
+    //     public enum Emotion
+    //     {
+    //         Happy,
+    //         Sad,
+    //         Angry,
+    //         Disgusted,
+    //         Surprised,
+    //         Neutral,
+    //         Confused,
+    //         Excited,
+    //         Worried
+    //     }
+    //     public Emotion emotion;
+    //     public Sprite portrait;
+    // }
+
+    // public List<EmotionPortrait> emotionPortraitList = new List<EmotionPortrait>();
+
+    // private Dictionary<EmotionPortrait.Emotion, Sprite> emotionPortraits;
+
+    // public Dictionary<EmotionPortrait.Emotion, Sprite> GetEmotionPortraits()
+    // {
+    //     if (emotionPortraits == null)
+    //     {
+    //         emotionPortraits = new Dictionary<EmotionPortrait.Emotion, Sprite>();
+    //         foreach (var emotionPortrait in emotionPortraitList)
+    //         {
+    //             if (!emotionPortraits.ContainsKey(emotionPortrait.emotion))
+    //             {
+    //                 emotionPortraits.Add(emotionPortrait.emotion, emotionPortrait.portrait);
+    //             }
+    //         }
+    //     }
+    //     return emotionPortraits;
+    // }
 }

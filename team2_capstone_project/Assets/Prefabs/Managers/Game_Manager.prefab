@@ -11,12 +11,13 @@ GameObject:
   - component: {fileID: 6958590387895689388}
   - component: {fileID: 7322542354820229773}
   - component: {fileID: 3461038497445604444}
+  - component: {fileID: 4670473249970048115}
+  - component: {fileID: 1934729213419131961}
+  - component: {fileID: 6113680877637856580}
   - component: {fileID: 6958590387895689391}
   - component: {fileID: 2041556558690807774}
-  - component: {fileID: 3085461530528901281}
   - component: {fileID: 4060353126230224005}
-  - component: {fileID: 6113680877637856580}
-  - component: {fileID: 1934729213419131961}
+  - component: {fileID: 3085461530528901281}
   m_Layer: 0
   m_Name: Game_Manager
   m_TagString: Untagged
@@ -68,6 +69,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ad32d86200f0294fa69c866f4c349dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4670473249970048115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b425ab2cc5f3b644989ed7ec3145638e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1934729213419131961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a57e46d005b64a4e9fb7c9c20f52657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LikedDishAffection: 25
+  NeutralDishAffection: 5
+  DislikedDishAffection: -5
+--- !u!114 &6113680877637856580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e931fb93e6166488041f32efb5ca34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customers: []
 --- !u!114 &6958590387895689391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,6 +131,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4060353126230224005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4863f5829f01d940ad4abacf41e2985, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &3085461530528901281
@@ -178,43 +231,3 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &4060353126230224005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4863f5829f01d940ad4abacf41e2985, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6113680877637856580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8e931fb93e6166488041f32efb5ca34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  customers: []
---- !u!114 &1934729213419131961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a57e46d005b64a4e9fb7c9c20f52657, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LikedDishAffection: 25
-  NeutralDishAffection: 5
-  DislikedDishAffection: -5

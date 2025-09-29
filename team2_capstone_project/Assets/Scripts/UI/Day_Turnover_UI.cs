@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Grimoire;
 
 public class Day_Turnover_UI : MonoBehaviour
 {
     public GameObject summaryPanel;
     public TextMeshProUGUI persistentDayLabel;
 
-    // public Transform dishesListParent;
-    // public Transform customersListParent;
-    // public TextMeshProUGUI totalCurrencyLabel;
-    // public GameObject listItemPrefab;
+    [Header("Summary-Exclusive UI")]
+    public Transform dishesListParent;
+    public Transform customersListParent;
+    public TextMeshProUGUI totalCurrencyLabel;
+    public GameObject listItemPrefab;
 
     private Screen_Fade blackScreenFade;
 
@@ -42,7 +44,7 @@ public class Day_Turnover_UI : MonoBehaviour
         foreach (Transform child in dishesListParent) Destroy(child.gameObject);
         foreach (Transform child in customersListParent) Destroy(child.gameObject);
 
-        dayLabel.text = $"End of {data.currentDay}";
+        persistentDayLabel.text = $"End of {data.currentDay}";
         totalCurrencyLabel.text = $"Total Earned: {data.totalCurrencyEarned}";
 
         foreach (var kvp in data.dishesServed)
@@ -56,7 +58,7 @@ public class Day_Turnover_UI : MonoBehaviour
             var go = Instantiate(listItemPrefab, customersListParent);
             go.GetComponentInChildren<TextMeshProUGUI>().text = $"{kvp.Key} x{kvp.Value}";
         }
-        
+
         blackScreenFade = FindObjectOfType<Screen_Fade>();
         if (blackScreenFade == null)
         {
@@ -69,13 +71,13 @@ public class Day_Turnover_UI : MonoBehaviour
 
         summaryPanel.SetActive(true);
 
-        float t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime;
-            canvasGroup.alpha = t;
-            yield return null;
-        }
+        // use this to fade out stuff eventually
+        // float t = 0f;
+        // while (t < 1f)
+        // {
+        //     t += Time.deltaTime;
+        //     canvasGroup.alpha = t;
+        //     yield return null;
+        // }
     }
 }
-
