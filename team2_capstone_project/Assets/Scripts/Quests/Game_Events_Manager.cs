@@ -177,6 +177,13 @@ public class Game_Events_Manager : MonoBehaviour
             onServeCustomer();
     }
 
+    public event Action onBeginDialogBox;
+    public void BeginDialogueBox()
+    {
+        if (onBeginDialogBox != null)
+            onBeginDialogBox();
+    }
+
     public event Action onEndDialogBox;
     public void EndDialogBox()
     {

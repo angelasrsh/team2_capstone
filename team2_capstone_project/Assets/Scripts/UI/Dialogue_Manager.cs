@@ -185,7 +185,10 @@ public class Dialogue_Manager : MonoBehaviour
     /// </summary>
     public void PlayScene(string aDialogKey, Character_Portrait_Data.EmotionPortrait.Emotion forcedEmotion)
     {
-        if (dialogQueue.Count > 0) 
+        // Tell Game events manager so we don't overlap the dialogue box
+        Game_Events_Manager.Instance.BeginDialogueBox();
+
+        if (dialogQueue.Count > 0)
         {
             PlayNextDialog(forcedEmotion);
             return;
