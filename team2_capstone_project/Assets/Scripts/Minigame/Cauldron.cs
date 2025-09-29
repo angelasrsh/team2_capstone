@@ -118,7 +118,7 @@ public class Cauldron : MonoBehaviour
   /// <summary>
   /// Resets all lists and variables to start new recipe detection.
   /// </summary>
-  public void ResetAll()
+  private void ResetAll()
   {
     ingredientInPot.Clear();
     possibleDishes.Clear();
