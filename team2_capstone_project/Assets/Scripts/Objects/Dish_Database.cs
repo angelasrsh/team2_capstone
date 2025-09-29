@@ -7,9 +7,7 @@ public class Dish_Database : ScriptableObject
 {
   public List<Dish_Data> dishes;
   public Dish_Data badDish; // Reference to a predefined bad dish
-  public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked
   private Dictionary<Dish_Data.Dishes, Dish_Data> dishLookup;
-  private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
 
   // Initialize the dictionary when the scriptable object is enabled
   private void OnEnable()
@@ -35,19 +33,6 @@ public class Dish_Database : ScriptableObject
     return null;
   }
 
-  public void UnlockDish(Dish_Data.Dishes dish)
-  {
-    if (dishLookup.ContainsKey(dish) && unlockedDishes.Add(dish))
-      OnDishUnlocked?.Invoke(); // Notify subscribers
-    else
-      Debug.LogWarning($"Dish {dish} does not exist in the database.");
-  }
-
-  public bool IsDishUnlocked(Dish_Data.Dishes dish)
-  {
-    return unlockedDishes.Contains(dish);
-  }
-
   public Dish_Data GetBadDish()
   {
     if (badDish == null)
@@ -57,9 +42,5 @@ public class Dish_Database : ScriptableObject
     }
     
     return badDish;
-  }
-    public HashSet<Dish_Data.Dishes> GetUnlockedDishes()
-  {
-    return new HashSet<Dish_Data.Dishes>(unlockedDishes);
   }
 }
