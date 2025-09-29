@@ -91,7 +91,7 @@ public class Journal_Menu : MonoBehaviour
     // if (foragingDatabase != null)
     // {
     //   dishDatabase.OnDishUnlocked += PopulateDishes; // subscribe to the event
-      PopulateDishes();
+    PopulateDishes();
     PopulateNPCs();
     // }
   }
@@ -149,7 +149,7 @@ public class Journal_Menu : MonoBehaviour
     Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
     Debug.Log("Subscribed to OnDailyMenuSelected event.");
 
-    if (Choose_Menu_Items.instance != null && Choose_Menu_Items.instance.HasSelectedDishes())
+    if (Choose_Menu_Items.instance != null && Choose_Menu_Items.instance.HasSelectedDishes() && dishDatabase != null)
     {
       PopulateForaging(Choose_Menu_Items.instance.GetSelectedDishes());
       Debug.Log("Populated foraging menu from existing daily menu selection.");

@@ -12,6 +12,7 @@ public class Game_Manager : MonoBehaviour
     [SerializeField] public Dish_Database dishDatabase;
     [SerializeField] public Foraging_Database foragingDatabase;
     [SerializeField] public NPC_Database npcDatabase;
+    [SerializeField] private Player_Progress playerProgress;
 
     private void Awake()
     {
