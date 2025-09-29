@@ -11,6 +11,8 @@ public class Panel_Cutscene : MonoBehaviour
     [Header("Scene panels")]
     public Event_Data DatingCutsceneData;
 
+    //public Scene returnScene; // Temp: Delete later
+
     // For scene-fading- must be gameobjects with ImageComponents on them
     //private GameObject[] panels = new GameObject[2];
     UnityEngine.UI.Image[] panelObjects;
@@ -24,6 +26,8 @@ public class Panel_Cutscene : MonoBehaviour
 
         if (panelObjects.Length != 2)
             Debug.LogWarning($"[P_CUT] panels array contains {panelObjects.Length} panel gameObjects with image components instead of 2");
+
+        ChangePanel();
 
     }
 

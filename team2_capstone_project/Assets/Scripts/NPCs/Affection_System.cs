@@ -17,6 +17,8 @@ public class AffectionEntry {
     public int AffectionLevel;
     public bool[] EventsPlayed = new bool[NumEvents]; // default false
 
+    // public Scene eventScene; // Temp: Delete later
+
 
     /// <summary>
     /// Call this function to check if there is an event that can be played
