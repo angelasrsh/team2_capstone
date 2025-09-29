@@ -11,15 +11,17 @@ public class Room_Data : ScriptableObject
         Main_Menu,
         World_Map,
         Restaurant,
+        Bedroom,
         Cooking_Minigame,
-        Chopping_Minigame
+        Chopping_Minigame,
+        Frying_Minigame,
     }
 
     public enum SpawnPointID
     {
         Default,
-        Entrance,
-        Exit
+        Cauldron,
+        Cutting_Board,
     }
 
     [Header("Room Info")]
