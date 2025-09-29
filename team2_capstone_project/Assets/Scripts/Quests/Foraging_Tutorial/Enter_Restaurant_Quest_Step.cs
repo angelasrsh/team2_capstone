@@ -1,24 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Enter_Restaurant_Quest_Step : Quest_Step
 {
-   void OnEnable()
+    void OnEnable()
     {
-        Game_Events_Manager.Instance.onRoomChange += EnterRestaurant;
+        SceneManager.sceneLoaded += onSceneLoaded;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
-        Game_Events_Manager.Instance.onRoomChange -= EnterRestaurant;
+        SceneManager.sceneLoaded -= onSceneLoaded;
     }
 
 
-    private void EnterRestaurant(Room_Data.RoomID newRoom)
+    private void onSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (newRoom == Room_Data.RoomID.Restaurant)
-            FinishQuestStep(); // Finish and destroy this object
+        if (scene.name == "Restaurant")
+            FinishQuestStep();
+            
     }
 }

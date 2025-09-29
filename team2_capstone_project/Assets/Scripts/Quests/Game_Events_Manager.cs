@@ -39,7 +39,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onPlayerMove != null) // Guessing null means no subscribers?
             onPlayerMove();
-        Debug.Log("[G_E_M] Player Moved");
+        //Debug.Log("[G_E_M] Player Moved");
     }
 
 
@@ -101,8 +101,12 @@ public class Game_Events_Manager : MonoBehaviour
     public void StartQuest(string id)
     {
         if (onStartQuest != null)
+        {
             onStartQuest(id);
-        Debug.Log($"[G_E_M] Starting quest {id}");
+            Debug.Log($"[G_E_M] Starting quest {id}");
+        }
+            
+        
     }
 
     public event Action<string> onAdvanceQuest;
@@ -136,7 +140,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onQuestStateChange != null)
             onQuestStateChange(quest);
-        Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
+        //Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
     }
 
 
@@ -150,16 +154,9 @@ public class Game_Events_Manager : MonoBehaviour
     #endregion
 
     //////////// SCENE TRANSITION EVENTS ///////////////
-    #region Scene Transition Events
+    // #region Scene Transition Events
 
-    public event Action<Room_Data.RoomID> onRoomChange;
-    public void RoomChange(Room_Data.RoomID newRoom)
-    {
-        if (onRoomChange != null)
-            onRoomChange(newRoom);
-    }
-
-    #endregion
+    // #endregion Currently unused
 
     /////////// CAFE INTERACTION EVENTS /////////
     #region Cafe Interaction Events

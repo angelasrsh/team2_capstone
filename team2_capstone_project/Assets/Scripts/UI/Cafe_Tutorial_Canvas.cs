@@ -10,6 +10,7 @@ using UnityEngine;
 /// TODO: Merge with Tutorial Canvas
 /// Per Cafe_Tutorial_Canvas:
 /// Would like to delete this later when a better method is figured out
+/// Will probably also want to delete this prefab, or at least edit it?
 /// </summary>
 public class Cafe_Tutorial_Canvas : MonoBehaviour
 {

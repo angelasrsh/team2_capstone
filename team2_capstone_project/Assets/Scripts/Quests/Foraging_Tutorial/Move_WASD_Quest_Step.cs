@@ -25,4 +25,5 @@ public class Move_WASD_Quest_Step : Quest_Step
     {
         FinishQuestStep(); // Finish and destroy this object
     }
+
 }

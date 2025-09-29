@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Go_To_Cauldron_Quest_Step : Quest_Step
 {
     void OnEnable()
     {
-        Game_Events_Manager.Instance.onRoomChange += RoomChange;
+        SceneManager.sceneLoaded += onSceneLoaded;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
-        Game_Events_Manager.Instance.onRoomChange -= RoomChange;
+        SceneManager.sceneLoaded -= onSceneLoaded;
     }
 
-
-     private void RoomChange(Room_Data.RoomID newRoom)
+    private void onSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (newRoom == Room_Data.RoomID.Cooking_Minigame)
-            FinishQuestStep(); // Finish and destroy this object
+        if (scene.name == "Cooking_Minigame")
+            FinishQuestStep();
+            
     }
 }

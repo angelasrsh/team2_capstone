@@ -3,51 +3,67 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 ///  Tutorial Manager (Singleton)
 /// 
-/// Provides controls to start, skip, or disable a tutorial.
-/// Stores and tracks which instructions and panels need to be displayed.
-/// Controls a Canvas child object that can display tutorial text or highlight icons
+/// Provides controls to start, skip [WIP], or disable tutorials (#define above).
+/// [Tentative] Stores and tracks which instructions and panels need to be displayed.
+/// [Tentative] Controls a Canvas child object that can display tutorial text or highlight icons
 /// 
-/// ON USING THIS CLASS: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// ON USING THIS CLASS:
 /// When adding new tutorials, you must 
-///     1) Add their S.O.s to the variables in the class
-///     2) Add a switch statement case in CheckStartTutorial for the roomChange event
-///     3) Add a switch statement case for the questStateChange function
+///     1) Add their S.O.s to the TutorialList in the Inspector
+///     2) In the matching position, add the tutorial's room to the TutorialRoomIDs list in the Inspector
 /// 
 /// </summary>
 public class Tutorial_Manager : MonoBehaviour
 {
 
+    public static Tutorial_Manager Instance { get; private set; }
+
     ////// Variables that should be set in the Inspector //////
 
     // Quest S.O.s for tutorials. Update when new tutorials are added // TODO: Refactor into something better
-    [SerializeField] private Quest_Info_SO WorldMapTutorial;
-    [SerializeField] private Quest_Info_SO RestaurantTutorial;
-    [SerializeField] private Quest_Info_SO CookingMinigameTutorial;
-    [SerializeField] private Quest_Info_SO ChoppingMinigameTutorial;
-    [SerializeField] private Canvas TutorialCanvas;
-    
+    [Header("List of tutorials")]
+    [SerializeField] private Quest_Info_SO[] TutorialList;
+    [Header("Rooms corresponding to above tutorials")]
+
+    [SerializeField] private Room_Data.RoomID[] TutorialRoomIDs;
+
+   
 
     ////// Private variables //////
-    private Quest_State WorldMapTutorialQuestState; // NOTE: Are tutorials successfully independent?
-    private Quest_State RestaurantTutorialQuestState;
-    private Quest_State CookingTutorialQuestState;
-    private Quest_State ChoppingTutorialQuestState;
-
+    private Dictionary<String, Quest_Info_SO> RoomTutorialMap = new Dictionary<String, Quest_Info_SO>();
+    private Dictionary<String, Quest_State> QuestIDQuestStateMap = new Dictionary<String, Quest_State>(); // Map quest IDs to quest states
 
     private int instructionIndex = 0;
-
-
-
 
     // Set variables
     private void Awake()
     {
-        //questID = questInfoForCanvas.id;
+        // Create singleton
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        // Create a dictionary mapping Room IDs to tutorials
+        if (TutorialList.Length != TutorialRoomIDs.Length)  // The tutorial and room list must match and be the same length
+            Debug.LogWarning("[T_MAN] ERROR: Tutorial Manager tutorial list and Tutorial Room list are not the same length");
+
+        for (int i = 0; i < TutorialList.Length; i++)
+            RoomTutorialMap[TutorialRoomIDs[i].ToString()] = TutorialList[i]; // Map Tutorial S_O to RoomID key
+
 
     }
 
@@ -59,55 +75,33 @@ public class Tutorial_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
 
         // For detecting when we enter a room and need to start a tutorial
-        Game_Events_Manager.Instance.onRoomChange += CheckStartTutorial;
-
-        //currentQuestState = Quest_Manager.Instance.GetQuestByID(questID).state; // implement better method for getting state later
-        //Game_Events_Manager.Instance.QuestStateChange()
-
-        // Start the quest on the first visit to the world
-        // if (currentQuestState < Quest_State.CAN_START) // not great because it allows REQUIREMENTS_NOT_MET to start too
-        //     Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id); // Start the quest immediately
-
+        SceneManager.sceneLoaded += CheckStartTutorial;
     }
 
     /// <summary>
     /// Called on the room change event. Starts a tutorial if we haven't completed it for that room yet.
     /// Will only start the tutorial if TUTORIAL_ENABLE is #defined.
-    /// This is hard-coded to map tutorials to scenes: Add new tutorials by updating the switch statement.
+    /// Add new tutorials using the instructions in Tutorial_Manager.
     /// </summary>
     /// <param name="roomID"> room being entered </param>
-    private void CheckStartTutorial(Room_Data.RoomID roomID)
+    private void CheckStartTutorial(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
     {
         // Don't auto-start tutorials if tutorials aren't enabled
 #if !TUTORIAL_ENABLE
         return;
 #endif
+        // End search if this isn't a room that is listed to have a tutorial
+        if (!RoomTutorialMap.ContainsKey(scene.name))
+            return;
 
-        // Start a tutorial if we haven't begun the tutorial for the entered scene yet // unsure about dealing with IN_PROGRESS tutorials
-        switch (roomID)
+        String tutorialID = RoomTutorialMap[scene.name].id;
+
+        // If a tutorial exists and is ready to start, start it
+        if (QuestIDQuestStateMap.ContainsKey(tutorialID) && QuestIDQuestStateMap[tutorialID] == Quest_State.CAN_START)
         {
-            case Room_Data.RoomID.World_Map:
-                if (WorldMapTutorialQuestState == Quest_State.CAN_START)
-                    StartTutorial("Foraging_Tutorial"); // ID using the Quest Scriptable Object ID
-                break;
-            case Room_Data.RoomID.Restaurant:
-                if (RestaurantTutorialQuestState == Quest_State.CAN_START)
-                    StartTutorial("Restaurant_Tutorial");
-                break;
-            case Room_Data.RoomID.Chopping_Minigame:
-                if (ChoppingTutorialQuestState == Quest_State.CAN_START)
-                    StartTutorial("Chopping_Tutorial");
-                break;
-            case Room_Data.RoomID.Cooking_Minigame:
-                if (CookingTutorialQuestState == Quest_State.CAN_START)
-                    StartTutorial("Caudron_Tutorial");
-                break;
-            default:
-                Debug.Log($"[T_MAN] No tutorial found for roomID {roomID}");
-                break;
+            //Debug.Log($"[T_MAN] Auto-starting tutorial {tutorialID}");
+            StartTutorial(tutorialID);
         }
-
-
     }
 
     // Clean up by unsubscribing
@@ -117,9 +111,9 @@ public class Tutorial_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
     }
 
-    /// <summary> // NOTE: IS THIS FUNCTION EVEN NECESSARY?
+    /// <summary>
     /// Begin the tutorial (any quest) specified by the ID.
-    /// This function will restart a finished quest. It also ignores the ENABLE_TUTORIAL #define
+    /// [Not tested] This function will restart a finished quest. [Not tested] It also ignores the ENABLE_TUTORIAL #define 
     /// </summary>
     /// <param name="TutorialID"> ID of the quest to start </param>
     public void StartTutorial(String TutorialID)
@@ -133,39 +127,13 @@ public class Tutorial_Manager : MonoBehaviour
 
     /// <summary>
     /// Update the internal quest state variables when the questStateChange event is broadcast.
-    /// NOTE: Add an if-statement for each tutorial added
-    /// TODO: Refactor
     /// </summary>
     /// <param name="q"> ID of quest with the state change </param>
     private void questStateChange(Quest q)
     {
-
-        if (q.Info.id.Equals(WorldMapTutorial.id)) // Foraging tutorial
-        {
-            WorldMapTutorialQuestState = q.state;
-        }
-        else if (q.Info.id.Equals(RestaurantTutorial.id)) // Restaurant tutorial
-        {
-            RestaurantTutorialQuestState = q.state;
-        }
-        else if (q.Info.id.Equals(CookingMinigameTutorial.id)) // Cauldron tutorial
-        {
-            CookingTutorialQuestState = q.state;
-        }
-        else if (q.Info.id.Equals(ChoppingMinigameTutorial.id)) // Cutting board tutorial
-        {
-            ChoppingTutorialQuestState = q.state;
-        }
-        else
-        {
-            Debug.Log($"[T_MAN] No tutorial case found for quest id {q.Info.id}");
-        }
-
-        // // Do nothing once tutorial is finished
-        // if (currentQuestState == Quest_State.FINISHED)
-        //     this.gameObject.SetActive(false);
-
-
+        // If we are tracking this quest's state, update our tutorial state dictionary
+        if (RoomTutorialMap.ContainsValue(q.Info))
+            QuestIDQuestStateMap[q.Info.id] = q.state;
     }
 
     /// <summary>
