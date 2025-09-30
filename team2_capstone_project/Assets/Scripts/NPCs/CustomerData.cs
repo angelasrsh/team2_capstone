@@ -25,7 +25,7 @@ public class CustomerData : ScriptableObject
     {
         None,
         Phrog,
-        Elf
+        Asper_Agis, 
         // Add all NPCs here
     }
 

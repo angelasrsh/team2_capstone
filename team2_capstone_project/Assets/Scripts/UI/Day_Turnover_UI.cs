@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 using Grimoire;
 
 public class Day_Turnover_UI : MonoBehaviour
 {
+    [Header("Main References")]
     public GameObject summaryPanel;
     public TextMeshProUGUI persistentDayLabel;
+    public TextMeshProUGUI totalCurrencyLabel; 
+    public Transform listParent;  // Scroll content parent
 
-    [Header("Summary-Exclusive UI")]
-    public Transform dishesListParent;
-    public Transform customersListParent;
-    public TextMeshProUGUI totalCurrencyLabel;
-    public GameObject listItemPrefab;
+    [Header("Prefabs")]
+    public GameObject entryPrefab;         
+    public GameObject headerPrefab;       
 
     private Screen_Fade blackScreenFade;
 
@@ -40,44 +42,75 @@ public class Day_Turnover_UI : MonoBehaviour
 
     private IEnumerator FadeInRoutine(Day_Summary_Data data)
     {
-        // Clear old entries
-        foreach (Transform child in dishesListParent) Destroy(child.gameObject);
-        foreach (Transform child in customersListParent) Destroy(child.gameObject);
-
-        persistentDayLabel.text = $"End of {data.currentDay}";
-        totalCurrencyLabel.text = $"Total Earned: {data.totalCurrencyEarned}";
-
-        foreach (var kvp in data.dishesServed)
-        {
-            var go = Instantiate(listItemPrefab, dishesListParent);
-            go.GetComponentInChildren<TextMeshProUGUI>().text = $"{kvp.Key.name} x{kvp.Value}";
-        }
-
-        foreach (var kvp in data.customersServed)
-        {
-            var go = Instantiate(listItemPrefab, customersListParent);
-            go.GetComponentInChildren<TextMeshProUGUI>().text = $"{kvp.Key} x{kvp.Value}";
-        }
-
-        blackScreenFade = FindObjectOfType<Screen_Fade>();
         if (blackScreenFade == null)
+            blackScreenFade = FindObjectOfType<Screen_Fade>();
+        if (blackScreenFade != null)
+            yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeIn());
+
+        // Clear existing entries
+        foreach (Transform child in listParent)
+            Destroy(child.gameObject);
+
+        persistentDayLabel.text = data.nextDay.ToString();
+        totalCurrencyLabel.text = $"+{data.totalCurrencyEarned}";
+
+        // Populate in sections
+        if (data.dishesServed.Count > 0)
         {
-            Debug.LogWarning("blackScreenFade missing.");
-            yield break;
+            AddHeader("Dishes Served");
+            foreach (var kvp in data.dishesServed)
+                AddEntry(kvp.Key.Image, kvp.Key.Name, kvp.Value);
         }
 
-        blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeIn());
-        yield return new WaitForSeconds(blackScreenFade.fadeDuration);
+        if (data.customersServed.Count > 0)
+        {
+            AddHeader("Customers Served");
+            foreach (var kvp in data.customersServed)
+                AddEntry(null, kvp.Key, kvp.Value);
+        }
 
         summaryPanel.SetActive(true);
+    }
 
-        // use this to fade out stuff eventually
-        // float t = 0f;
-        // while (t < 1f)
-        // {
-        //     t += Time.deltaTime;
-        //     canvasGroup.alpha = t;
-        //     yield return null;
-        // }
+    private void AddHeader(string text)
+    {
+        if (headerPrefab == null) return;
+
+        var go = Instantiate(headerPrefab, listParent);
+        var label = go.GetComponentInChildren<TextMeshProUGUI>();
+        if (label != null) label.text = text;
+    }
+
+    private void AddEntry(Sprite icon, string labelText, int quantity)
+    {
+        if (entryPrefab == null) return;
+
+        var go = Instantiate(entryPrefab, listParent);
+        var entryUI = go.GetComponent<Day_Summary_Entry_Prefab>();
+
+        if (entryUI != null)
+        {
+            entryUI.Setup(icon, labelText, quantity);
+        }
+        else
+        {
+            Debug.LogWarning("SummaryEntryUI missing on prefab!");
+        }
+    }
+
+    public void OnContinueButtonPressed()
+    {
+        StartCoroutine(CloseSummaryRoutine());
+    }
+
+    private IEnumerator CloseSummaryRoutine()
+    {
+        summaryPanel.SetActive(false);
+
+        if (blackScreenFade == null)
+            blackScreenFade = FindObjectOfType<Screen_Fade>();
+
+        if (blackScreenFade != null)
+            yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOut());
     }
 }

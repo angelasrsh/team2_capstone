@@ -7,7 +7,7 @@ public class Character_Portrait_Data : ScriptableObject
 {
     public enum CharacterName
     {
-        Elf,
+        Asper_Agis,
         Phrog, 
         Satyr
     }

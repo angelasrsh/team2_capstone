@@ -45,9 +45,12 @@ public class Day_Turnover_Manager : MonoBehaviour
 
     public void EndDay()
     {
+        var nextDay = (WeekDay)(((int)CurrentDay + 1) % 7);
+
         var summary = new Day_Summary_Data
         {
-            currentDay = CurrentDay,
+            currentDay = CurrentDay,   // use the existing field
+            nextDay = nextDay,
             dishesServed = new Dictionary<Dish_Data, int>(dishesServed),
             customersServed = new Dictionary<string, int>(customersServed),
             totalCurrencyEarned = totalCurrencyEarned
@@ -59,9 +62,7 @@ public class Day_Turnover_Manager : MonoBehaviour
         dishesServed.Clear();
         customersServed.Clear();
         totalCurrencyEarned = 0;
-
-        // Advance day
-        CurrentDay = (WeekDay)(((int)CurrentDay + 1) % 7);
+        CurrentDay = nextDay;
     }
 }
 

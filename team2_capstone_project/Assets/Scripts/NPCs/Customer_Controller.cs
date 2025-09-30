@@ -187,6 +187,10 @@ public class Customer_Controller : MonoBehaviour
         Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
+        // Record dish served, money earned, and customer served for day summary
+        int currencyEarned = Mathf.RoundToInt(selectedDish.price);
+        Day_Turnover_Manager.Instance.RecordDishServed(selectedDish, currencyEarned, data.customerName);
+
         // Prep for dialogue
         (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
         requestedDish = null; // clear after serving
