@@ -203,18 +203,72 @@ public class Customer_Controller : MonoBehaviour
         if (dm != null && !string.IsNullOrEmpty(dialogueKey))
         {
             var emotion = MapReactionToEmotion(suffix);
-            dm.PlayScene(dialogueKey, emotion);
-        }
 
-        return true;
+            // Assign leave logic to onDialogComplete
+            dm.onDialogComplete = () =>
+            {
+                // Clear to avoid multiple invocations
+                dm.onDialogComplete = null;
+                LeaveRestaurant();
+            };
+
+            dm.PlayScene(dialogueKey, emotion);
+            return true;
+        }
+        else
+        {
+            // Fallback: leave immediately if no dialogue
+            LeaveRestaurant();
+            return true;
+        }
     }
 
     public void LeaveRestaurant()
     {
-        // your leave logic…
+        Debug.Log($"{data.customerName} is leaving the restaurant.");
+
+        if (seat != null)
+        {
+            Seat_Manager.Instance.FreeSeat(seat);
+            seat = null;
+        }
+
+        // Pick an exit
+        Transform exitPoint = Customer_Exit_Manager.Instance?.GetRandomExit();
+        if (exitPoint != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(exitPoint.position);
+
+            // Start coroutine to wait until arrival
+            StartCoroutine(LeaveAfterReachingExit(exitPoint));
+        }
+        else
+        {
+            // if no exit, destroy immediately instead
+            Debug.LogWarning("No exit points defined or agent not on NavMesh. Destroying customer immediately.");
+            OnCustomerLeft?.Invoke(data.customerName);
+            Destroy(gameObject);
+        }
+    }
+
+    private IEnumerator LeaveAfterReachingExit(Transform exitPoint)
+    {
+        // Wait until path is computed
+        while (agent.pathPending)
+            yield return null;
+
+        // Wait until close enough to exit
+        while (agent.remainingDistance > agent.stoppingDistance)
+        {
+            yield return null;
+        }
+
+        // Reached exit
         OnCustomerLeft?.Invoke(data.customerName);
         Destroy(gameObject);
     }
+
 
     #region Dialog
     /// <summary>
