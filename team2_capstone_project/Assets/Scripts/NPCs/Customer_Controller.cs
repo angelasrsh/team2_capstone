@@ -108,8 +108,8 @@ public class Customer_Controller : MonoBehaviour
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null)
         {
-            string fillerKey = $"{data.customerName}.Filler";
-            dm.PlayScene(fillerKey, Character_Portrait_Data.EmotionPortrait.Emotion.Neutral);
+            string fillerKey = $"{data.npcID}.Filler";
+            dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
         }
 
         // After dialogue, show dish
@@ -281,7 +281,7 @@ public class Customer_Controller : MonoBehaviour
         if (servedDish == null || data == null)
             return (string.Empty, string.Empty);
 
-        string baseKey = data.customerName;
+        string baseKey = data.npcID.ToString();
 
         string suffix = "NeutralDish";
         if (data.favoriteDishes != null && Array.Exists(data.favoriteDishes, d => d == servedDish))
@@ -299,16 +299,16 @@ public class Customer_Controller : MonoBehaviour
     /// <summary>
     /// Maps the reaction type to a portrait emotion.
     /// </summary>
-    private Character_Portrait_Data.EmotionPortrait.Emotion MapReactionToEmotion(string suffix)
+    private CustomerData.EmotionPortrait.Emotion MapReactionToEmotion(string suffix)
     {
         switch (suffix)
         {
             case "LikedDish":
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Happy;
+                return CustomerData.EmotionPortrait.Emotion.Happy;
             case "DislikedDish":
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Disgusted;
+                return CustomerData.EmotionPortrait.Emotion.Disgusted;
             default:
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Neutral;
+                return CustomerData.EmotionPortrait.Emotion.Neutral;
         }
     }
     #endregion

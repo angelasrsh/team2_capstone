@@ -340,7 +340,7 @@ public class Journal_Menu : MonoBehaviour
       Transform iconPanel = NPCBG.Find("Icon_Panel");
       Transform icon = iconPanel.Find("Icon");
       var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
-      imageComp.sprite = npcData.portraitData.defaultPortrait;
+      imageComp.sprite = npcData.defaultPortrait;
 
       // Add button listener to show details on click
       var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
@@ -353,9 +353,9 @@ public class Journal_Menu : MonoBehaviour
 
         Transform pagePanel = NPC_Left_Page.transform.Find("Left_Page_Panel");
 
-        // npc Info
+        // NPC Info
         pagePanel.Find("NPC_Name").GetComponent<TextMeshProUGUI>().text = npcData.customerName;
-        pagePanel.Find("NPC_Icon_Panel/NPC_Image").GetComponent<UnityEngine.UI.Image>().sprite = npcData.portraitData.defaultPortrait;
+        pagePanel.Find("NPC_Icon_Panel/NPC_Image").GetComponent<UnityEngine.UI.Image>().sprite = npcData.defaultPortrait;
 
         // Build the description text
         string npcText = "Background Info: \n" + npcData.lore + "\n\n";
