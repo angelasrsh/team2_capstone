@@ -20,6 +20,9 @@ namespace Grimoire
     public AudioClip bookClose;
 
     [Header("Cauldron Specific")]
+    public AudioClip addingOneIngredient;
+    public AudioClip addingMultiIngredients;
+    public AudioClip addingWater;
     private AudioSource stirringSource;
     private AudioSource bubblingSource;
     private AudioSource fireAmbientSource;
@@ -27,8 +30,6 @@ namespace Grimoire
     [SerializeField] private AudioClip bubbling;
     [SerializeField] private AudioClip startFire;
     [SerializeField] private AudioClip ambientFire;
-    [SerializeField] private AudioClip addingOneIng;
-    [SerializeField] private AudioClip addingMultiIng;
 
     private void Awake()
     {
@@ -95,11 +96,20 @@ namespace Grimoire
 
     public void SetSFXVolume(float volume) => sfxSource.volume = Mathf.Clamp01(volume);
     public void SetSFXPitch(float pitch) => sfxSource.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
+    public void SetSFXSpeed(float speed) => sfxSource.pitch = Mathf.Clamp(speed, 0.1f, 3f);
     public void StopSFX() => sfxSource?.Stop();
+    public IEnumerator ResetSFXAfterClip(float delay, float originalVolume, float originalPitch)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Restore defaults to AudioSource
+        sfxSource.volume = originalVolume;
+        sfxSource.pitch = originalPitch;
+    }
 
     // -----------------------------------------------------------------------
     // CAULDRON SPECIFIC METHODS!!
-
+    #region Cauldron SFX
     public void GoodDishMade() => PlaySFX(goodDishMade);
     public void PlayStirringOnLoop()
     {
@@ -162,7 +172,33 @@ namespace Grimoire
       if (fireAmbientSource != null && fireAmbientSource.isPlaying)
         fireAmbientSource.Stop();
     }
-    public void addingOneIngredient() => PlaySFX(addingOneIng);
-    public void AddingMultiIng() => PlaySFX(addingMultiIng);
+
+    public void AddOneIngredient()
+    {
+      SetSFXVolume(0.5f);
+      SetSFXPitch(Random.Range(0.8f, 1.2f));
+      PlaySFX(addingOneIngredient);
+    }
+
+    public void AddWater()
+    {
+        if (addingWater == null) return;
+
+        // Save current values
+        float originalVolume = sfxSource.volume;
+        float originalPitch = sfxSource.pitch;
+
+        // Apply water-specific overrides
+        SetSFXVolume(0.3f); 
+        SetSFXPitch(0.8f);
+        SetSFXSpeed(1.25f);
+
+        // Play SFX
+        PlaySFX(addingWater);
+
+        // Reset after SFX is done playing
+        StartCoroutine(ResetSFXAfterClip(addingWater.length, originalVolume, originalPitch));
+    }
   }  
+  #endregion
 }
