@@ -37,6 +37,9 @@ public class Day_Turnover_UI : MonoBehaviour
 
     private void ShowSummary(Day_Summary_Data data)
     {
+        Player_Input_Controller.instance?.DisablePlayerInput();
+        Pause_Menu.instance?.SetCanPause(false);
+
         StartCoroutine(FadeInRoutine(data));
     }
 
@@ -112,5 +115,8 @@ public class Day_Turnover_UI : MonoBehaviour
 
         if (blackScreenFade != null)
             yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOut());
+
+        Player_Input_Controller.instance?.EnablePlayerInput();
+        Pause_Menu.instance?.SetCanPause(true);
     }
 }

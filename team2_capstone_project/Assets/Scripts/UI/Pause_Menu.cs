@@ -6,25 +6,39 @@ using UnityEngine.SceneManagement;
 
 public class Pause_Menu : MonoBehaviour
 {
+  public static Pause_Menu instance;
+
   public GameObject menuBox;
   public GameObject darkOverlay;
-  private bool isPaused = false;
 
+  private bool isPaused = false;
+  private bool canPause = true; 
+    
   private void Awake()
   {
+    instance = this;
     HideMenu();
   }
 
-  // Update is called once per frame
   void Update()
   {
-    if (Input.GetKeyDown(KeyCode.Escape))
-    {
-      if (isPaused)
-        ResumeGame();
-      else
-        PauseGame();
-    }
+      if (!canPause) return; // ignore pause if disabled
+
+      if (Input.GetKeyDown(KeyCode.Escape))
+      {
+          if (isPaused)
+              ResumeGame();
+          else
+              PauseGame();
+      }
+  }
+
+  public void SetCanPause(bool value)
+  {
+      canPause = value;
+
+      if (!canPause && isPaused)
+          ResumeGame(); // auto-resume if pause is forcibly disabled
   }
 
   public void PauseGame()

@@ -54,6 +54,19 @@ public class Game_Manager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void QuitGame()
+    {
+        Debug.Log("QuitGame button pressed!");
+
+    #if UNITY_EDITOR
+        // Stop play mode if running in the editor
+        UnityEditor.EditorApplication.isPlaying = false;
+    #else
+        // Quit game if built
+        Application.Quit();
+    #endif
+    }
 }
 
 [System.Serializable]
