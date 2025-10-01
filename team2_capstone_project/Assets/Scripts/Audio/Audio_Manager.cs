@@ -18,6 +18,7 @@ namespace Grimoire
     public AudioClip menuOpen;
     public AudioClip menuClose;
     public AudioClip bookClose;
+    public AudioClip doorBell;
 
     [Header("Cauldron Specific")]
     public AudioClip addingOneIngredient;
@@ -98,13 +99,13 @@ namespace Grimoire
     public void SetSFXPitch(float pitch) => sfxSource.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
     public void SetSFXSpeed(float speed) => sfxSource.pitch = Mathf.Clamp(speed, 0.1f, 3f);
     public void StopSFX() => sfxSource?.Stop();
-    public IEnumerator ResetSFXAfterClip(float delay, float originalVolume, float originalPitch)
+    public IEnumerator ResetSFXAfterClip(float delay)
     {
-        yield return new WaitForSeconds(delay);
+      yield return new WaitForSeconds(delay);
 
-        // Restore defaults to AudioSource
-        sfxSource.volume = originalVolume;
-        sfxSource.pitch = originalPitch;
+      // Restore defaults to AudioSource
+      sfxSource.volume = 1f;
+      sfxSource.pitch = 1f;
     }
 
     // -----------------------------------------------------------------------
@@ -182,23 +183,32 @@ namespace Grimoire
 
     public void AddWater()
     {
-        if (addingWater == null) return;
+      if (addingWater == null) return;
 
-        // Save current values
-        float originalVolume = sfxSource.volume;
-        float originalPitch = sfxSource.pitch;
+      // Save current values
+      float originalVolume = sfxSource.volume;
+      float originalPitch = sfxSource.pitch;
 
-        // Apply water-specific overrides
-        SetSFXVolume(0.3f); 
-        SetSFXPitch(0.8f);
-        SetSFXSpeed(1.25f);
+      // Apply water-specific overrides
+      SetSFXVolume(0.3f);
+      SetSFXPitch(0.8f);
+      SetSFXSpeed(1.25f);
 
-        // Play SFX
-        PlaySFX(addingWater);
+      // Play SFX
+      PlaySFX(addingWater);
 
-        // Reset after SFX is done playing
-        StartCoroutine(ResetSFXAfterClip(addingWater.length, originalVolume, originalPitch));
+      // Reset after SFX is done playing
+      StartCoroutine(ResetSFXAfterClip(addingWater.length));
     }
-  }  
-  #endregion
+    #endregion
+
+    public void PlayDoorbell()
+    {
+      PlaySFX(doorBell);
+      SetSFXPitch(Random.Range(0.9f, 1.05f));
+      SetSFXVolume(0.4f);
+      StartCoroutine(ResetSFXAfterClip(doorBell.length));
+    }
+  }
 }
+

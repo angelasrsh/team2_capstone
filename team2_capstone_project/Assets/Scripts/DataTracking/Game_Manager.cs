@@ -5,14 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class Game_Manager : MonoBehaviour
 {
-    [Header("Room Setup")]
-    [SerializeField] private Room_Collection_Data roomCollection;
     public static Game_Manager Instance;
 
+    [Header("Databases")]
     [SerializeField] public Dish_Database dishDatabase;
     [SerializeField] public Foraging_Database foragingDatabase;
     [SerializeField] public NPC_Database npcDatabase;
     [SerializeField] private Player_Progress playerProgress;
+
+    [Header("Room Setup")]
+    [SerializeField] private Room_Collection_Data roomCollection;
 
     private void Awake()
     {

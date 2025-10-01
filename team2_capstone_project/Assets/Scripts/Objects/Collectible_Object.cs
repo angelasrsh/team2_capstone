@@ -5,7 +5,7 @@ using UnityEngine;
 public class Collectible_Object : Interactable_Object
 {
     [field: SerializeField] public Ingredient_Data data { get; private set; }
-    [SerializeField] private SpriteRenderer spriteRenderer; // Assign in prefab inspector
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     public void Initialize(Ingredient_Data newData)
     {

@@ -830,6 +830,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2512983924118658077, guid: 1dc8f690ae8eb3a4e85e6d2a9d4d00f5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -20.529175
+      objectReference: {fileID: 0}
     - target: {fileID: 2512983925030999097, guid: 1dc8f690ae8eb3a4e85e6d2a9d4d00f5, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -978,7 +982,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 578867404}
-  m_Material: {fileID: 13400000, guid: f5e773134105b8843ace7ff2dc7996e3, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1870,7 +1874,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1326336861628131578, guid: 0b7e0bca1dd585c4294a6ef221bbd35f, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1326336861628131578, guid: 0b7e0bca1dd585c4294a6ef221bbd35f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2150,7 +2154,6 @@ GameObject:
   - component: {fileID: 1115037961}
   - component: {fileID: 1115037964}
   - component: {fileID: 1115037963}
-  - component: {fileID: 1115037962}
   m_Layer: 0
   m_Name: Exit2
   m_TagString: Untagged
@@ -2173,19 +2176,6 @@ Transform:
   m_Father: {fileID: 331053079}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1115037962
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1115037960}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1115037963
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2341,7 +2331,6 @@ GameObject:
   - component: {fileID: 1195520422}
   - component: {fileID: 1195520425}
   - component: {fileID: 1195520424}
-  - component: {fileID: 1195520423}
   m_Layer: 0
   m_Name: Exit1
   m_TagString: Untagged
@@ -2364,19 +2353,6 @@ Transform:
   m_Father: {fileID: 331053079}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1195520423
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1195520421}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1195520424
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3431,7 +3407,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1505759510
 GameObject:
@@ -4310,7 +4286,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3164401476253236959, guid: 1438a51c97d175149a6d6863de6bbc58, type: 3}
       propertyPath: m_RootOrder
-      value: 25
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 3164401476253236959, guid: 1438a51c97d175149a6d6863de6bbc58, type: 3}
       propertyPath: m_AnchorMax.x
@@ -4531,7 +4507,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163356, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_RootOrder
-      value: 24
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163356, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_AnchorMax.x
@@ -5246,10 +5222,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Audio_Manager
       objectReference: {fileID: 0}
-    - target: {fileID: 2204574119547736745, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
-      propertyPath: goodDishMade
-      value: 
-      objectReference: {fileID: 8300000, guid: 4e804d91fb7399a40b1871258d99ffd8, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
 --- !u!1001 &1859607625211691314
@@ -5839,7 +5811,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8320050664616803440, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
       propertyPath: m_RootOrder
-      value: 26
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 8320050664616803440, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
       propertyPath: m_AnchorMax.x

@@ -40,7 +40,12 @@ public class Dish_Database : ScriptableObject
       Debug.LogWarning("No bad dish found in the database!");
       return null;
     }
-    
+
     return badDish;
+  }
+
+  public List<Dish_Data> GetAllDishes()
+  {
+    return new List<Dish_Data>(dishes); // return a copy to keep database safe
   }
 }

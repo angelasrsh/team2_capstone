@@ -49,7 +49,7 @@ public class Day_Turnover_Manager : MonoBehaviour
 
         var summary = new Day_Summary_Data
         {
-            currentDay = CurrentDay,   // use the existing field
+            currentDay = CurrentDay,
             nextDay = nextDay,
             dishesServed = new Dictionary<Dish_Data, int>(dishesServed),
             customersServed = new Dictionary<string, int>(customersServed),
@@ -63,6 +63,16 @@ public class Day_Turnover_Manager : MonoBehaviour
         customersServed.Clear();
         totalCurrencyEarned = 0;
         CurrentDay = nextDay;
+
+        if (Choose_Menu_Items.instance != null)
+        {
+            Choose_Menu_Items.instance.GenerateDailyPool();
+            Debug.Log($"Daily menu refreshed for {CurrentDay}.");
+        }
+        else
+        {
+            Debug.LogWarning("Choose_Menu_Items instance not found. Cannot refresh daily menu.");
+        }
     }
 }
 

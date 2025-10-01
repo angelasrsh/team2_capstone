@@ -9,5 +9,4 @@ using UnityEngine;
 public class Forageable_Data : ScriptableObject
 {
     public int ResourcesToGive;
-
 }

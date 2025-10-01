@@ -1563,10 +1563,6 @@ PrefabInstance:
       value: Audio_Manager
       objectReference: {fileID: 0}
     - target: {fileID: 2204574119547736745, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
-      propertyPath: stirring
-      value: 
-      objectReference: {fileID: 8300000, guid: 5ab54f99b2780f64f869494f8a0d5d87, type: 3}
-    - target: {fileID: 2204574119547736745, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
       propertyPath: defaultAmbient
       value: 
       objectReference: {fileID: 0}
@@ -3052,7 +3048,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1738293656}
         m_TargetAssemblyTypeName: Room_Change_Trigger, Assembly-CSharp
-        m_MethodName: OnButtonPressGoToRoom
+        m_MethodName: OnBackButtonPressedForMinigame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
