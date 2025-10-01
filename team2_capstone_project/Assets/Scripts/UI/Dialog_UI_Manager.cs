@@ -109,6 +109,7 @@ public class Dialog_UI_Manager : MonoBehaviour
         {
             characterPortraitImage.sprite = newPortrait;
             characterPortraitImage.enabled = true;
+            Debug.Log("Character portrait updated.");
         }
         else
         {

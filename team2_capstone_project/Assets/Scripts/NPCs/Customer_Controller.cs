@@ -108,8 +108,8 @@ public class Customer_Controller : MonoBehaviour
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null)
         {
-            string fillerKey = $"{data.customerName}.Filler";
-            dm.PlayScene(fillerKey, Character_Portrait_Data.EmotionPortrait.Emotion.Neutral);
+            string fillerKey = $"{data.npcID}.Filler";
+            dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
         }
 
         // After dialogue, show dish
@@ -187,6 +187,10 @@ public class Customer_Controller : MonoBehaviour
         Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
+        // Record dish served, money earned, and customer served for day summary
+        int currencyEarned = Mathf.RoundToInt(selectedDish.price);
+        Day_Turnover_Manager.Instance.RecordDishServed(selectedDish, currencyEarned, data.customerName);
+
         // Prep for dialogue
         (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
         requestedDish = null; // clear after serving
@@ -199,18 +203,72 @@ public class Customer_Controller : MonoBehaviour
         if (dm != null && !string.IsNullOrEmpty(dialogueKey))
         {
             var emotion = MapReactionToEmotion(suffix);
-            dm.PlayScene(dialogueKey, emotion);
-        }
 
-        return true;
+            // Assign leave logic to onDialogComplete
+            dm.onDialogComplete = () =>
+            {
+                // Clear to avoid multiple invocations
+                dm.onDialogComplete = null;
+                LeaveRestaurant();
+            };
+
+            dm.PlayScene(dialogueKey, emotion);
+            return true;
+        }
+        else
+        {
+            // Fallback: leave immediately if no dialogue
+            LeaveRestaurant();
+            return true;
+        }
     }
 
     public void LeaveRestaurant()
     {
-        // your leave logic…
+        Debug.Log($"{data.customerName} is leaving the restaurant.");
+
+        if (seat != null)
+        {
+            Seat_Manager.Instance.FreeSeat(seat);
+            seat = null;
+        }
+
+        // Pick an exit
+        Transform exitPoint = Customer_Exit_Manager.Instance?.GetRandomExit();
+        if (exitPoint != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(exitPoint.position);
+
+            // Start coroutine to wait until arrival
+            StartCoroutine(LeaveAfterReachingExit(exitPoint));
+        }
+        else
+        {
+            // if no exit, destroy immediately instead
+            Debug.LogWarning("No exit points defined or agent not on NavMesh. Destroying customer immediately.");
+            OnCustomerLeft?.Invoke(data.customerName);
+            Destroy(gameObject);
+        }
+    }
+
+    private IEnumerator LeaveAfterReachingExit(Transform exitPoint)
+    {
+        // Wait until path is computed
+        while (agent.pathPending)
+            yield return null;
+
+        // Wait until close enough to exit
+        while (agent.remainingDistance > agent.stoppingDistance)
+        {
+            yield return null;
+        }
+
+        // Reached exit
         OnCustomerLeft?.Invoke(data.customerName);
         Destroy(gameObject);
     }
+
 
     #region Dialog
     /// <summary>
@@ -223,7 +281,7 @@ public class Customer_Controller : MonoBehaviour
         if (servedDish == null || data == null)
             return (string.Empty, string.Empty);
 
-        string baseKey = data.customerName;
+        string baseKey = data.npcID.ToString();
 
         string suffix = "NeutralDish";
         if (data.favoriteDishes != null && Array.Exists(data.favoriteDishes, d => d == servedDish))
@@ -241,16 +299,16 @@ public class Customer_Controller : MonoBehaviour
     /// <summary>
     /// Maps the reaction type to a portrait emotion.
     /// </summary>
-    private Character_Portrait_Data.EmotionPortrait.Emotion MapReactionToEmotion(string suffix)
+    private CustomerData.EmotionPortrait.Emotion MapReactionToEmotion(string suffix)
     {
         switch (suffix)
         {
             case "LikedDish":
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Happy;
+                return CustomerData.EmotionPortrait.Emotion.Happy;
             case "DislikedDish":
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Disgusted;
+                return CustomerData.EmotionPortrait.Emotion.Disgusted;
             default:
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Neutral;
+                return CustomerData.EmotionPortrait.Emotion.Neutral;
         }
     }
     #endregion

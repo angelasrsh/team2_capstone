@@ -6,14 +6,52 @@ using UnityEngine;
 public class CustomerData : ScriptableObject
 {
     [Header("Identity")]
-    public NPCs npcID; // Unique enum identifier
-    public string customerName;
+    public NPCs npcID; // Internal enum key
+    public string customerName; // Display name (e.g. "Asper Aigis" that can include spaces)
     public Sprite overworldSprite;
     public bool datable = true;
     public string lore;
 
-    [Header("Dialog Data")]
-    public Character_Portrait_Data portraitData;
+    [Header("Portrait Data")]
+    public Sprite defaultPortrait;
+
+    [System.Serializable]
+    public class EmotionPortrait
+    {
+        public enum Emotion
+        {
+            Happy,
+            Sad,
+            Angry,
+            Disgusted,
+            Surprised,
+            Neutral,
+            Confused,
+            Excited,
+            Worried
+        }
+        public Emotion emotion;
+        public Sprite portrait;
+    }
+
+    public List<EmotionPortrait> emotionPortraitList = new List<EmotionPortrait>();
+
+    private Dictionary<EmotionPortrait.Emotion, Sprite> emotionPortraits;
+    public Dictionary<EmotionPortrait.Emotion, Sprite> GetEmotionPortraits()
+    {
+        if (emotionPortraits == null)
+        {
+            emotionPortraits = new Dictionary<EmotionPortrait.Emotion, Sprite>();
+            foreach (var ePortrait in emotionPortraitList)
+            {
+                if (!emotionPortraits.ContainsKey(ePortrait.emotion))
+                {
+                    emotionPortraits.Add(ePortrait.emotion, ePortrait.portrait);
+                }
+            }
+        }
+        return emotionPortraits;
+    }
 
     [Header("Preferences")]
     public Dish_Data[] favoriteDishes;
@@ -25,7 +63,7 @@ public class CustomerData : ScriptableObject
     {
         None,
         Phrog,
-        Elf
-        // Add all NPCs here
+        Elf,
+        Satyr
     }
 }

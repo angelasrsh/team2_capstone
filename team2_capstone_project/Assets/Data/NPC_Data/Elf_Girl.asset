@@ -17,7 +17,14 @@ MonoBehaviour:
   overworldSprite: {fileID: -269341268, guid: febe13723a3197f4c9d192a29ef04f32, type: 3}
   datable: 1
   lore: 'Asper is a High Elf, an elf noble. '
-  portraitData: {fileID: 11400000, guid: 438f27c8a032e634f8e7963d368d6d8b, type: 2}
+  defaultPortrait: {fileID: 21300000, guid: db7d876cb04ddc1488b3b3f4290f6030, type: 3}
+  emotionPortraitList:
+  - emotion: 0
+    portrait: {fileID: 21300000, guid: 91bcec56ec57d5c43807ca8a74459993, type: 3}
+  - emotion: 5
+    portrait: {fileID: 21300000, guid: db7d876cb04ddc1488b3b3f4290f6030, type: 3}
+  - emotion: 3
+    portrait: {fileID: 21300000, guid: da9c5c2ecef9b0549916da19fa9421f0, type: 3}
   favoriteDishes:
   - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
   neutralDishes: []

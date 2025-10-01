@@ -28,7 +28,16 @@ public class Restaurant_State : MonoBehaviour
 
         foreach (var customer in allCustomers)
         {
-            customers.Add(customer.GetState());
+            Customer_State state = customer.GetState();
+
+            // Skip saving customers who have been served
+            if (state.hasBeenServed)
+            {
+                Debug.Log($"Skipping {state.customerName} (already served).");
+                continue;
+            }
+
+            customers.Add(state);
         }
 
         Debug.Log($"Restaurant_State: Saved {customers.Count} customers.");

@@ -153,6 +153,7 @@ public class Chop_Controller : MonoBehaviour
                     }
                     if (Ingredient_Inventory.Instance.HasItem(ingredient_data_var.makesIngredient[0].ingredient) == false)
                     {
+                        Debug.Log("[Chop_Cntrl] Inventory has item");
                         in_inventory = false;
                     }
                     if (!in_inventory)
@@ -166,8 +167,9 @@ public class Chop_Controller : MonoBehaviour
                             yield return new WaitForSeconds(0.75f); // Wait .75 seconds
 
                             imageComponent.enabled = false;
-                            Drag_All.cuttingBoardActive = false;
                         }
+
+                        Drag_All.cuttingBoardActive = false;
                         in_inventory = true;
                     }
                 }

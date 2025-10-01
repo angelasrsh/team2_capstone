@@ -39,7 +39,7 @@ public class Game_Manager : MonoBehaviour
 
             Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
             Player_Progress.Instance.UnlockNPC(CustomerData.NPCs.Elf);
-            Debug.Log("GameManager: Player_Progress initialized and Blinding Stew and Elf unlocked.");
+            Debug.Log("GameManager: Player_Progress initialized and Blinding Stew and Asper_Agis unlocked.");
 
             if (foragingDatabase == null)
                 Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
@@ -53,6 +53,19 @@ public class Game_Manager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("QuitGame button pressed!");
+
+    #if UNITY_EDITOR
+        // Stop play mode if running in the editor
+        UnityEditor.EditorApplication.isPlaying = false;
+    #else
+        // Quit game if built
+        Application.Quit();
+    #endif
     }
 }
 
