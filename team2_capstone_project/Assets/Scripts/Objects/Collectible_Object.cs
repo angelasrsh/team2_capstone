@@ -24,8 +24,14 @@ public class Collectible_Object : Interactable_Object
     {
         Debug.Log($"[Col_Obj] player interacted with " + gameObject);
 
-        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.pickupSFX);
-        Audio_Manager.instance.SetSFXVolume(0.5f);
+        // Main pickup
+        Audio_Manager.instance.PlaySFX(
+            Audio_Manager.instance.pickupSFX,
+            0.9f,
+            1f
+        );
+        // Extra sparkle layer
+        Audio_Manager.instance.PlaySparkleSFX();
 
         Ingredient_Inventory.Instance.AddResources(data, 1);
         Destroy(gameObject);

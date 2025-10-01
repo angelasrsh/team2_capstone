@@ -42,6 +42,11 @@ public class Player_Controller : MonoBehaviour
         rb.velocity = new Vector3(movement.x * moveSpeed, rb.velocity.y, movement.y * moveSpeed);
     }
 
+    public bool IsMoving()
+    {
+        return movement != Vector2.zero;
+    }
+
     public void DisablePlayerController()
     {
         Player_Input_Controller.instance.DisablePlayerInput();
