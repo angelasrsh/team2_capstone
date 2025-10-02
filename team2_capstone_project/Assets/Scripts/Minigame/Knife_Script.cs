@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using UnityEngine.UI;
+using System; //for actions
+
 
 
 public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
@@ -16,26 +19,35 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     public RectTransform knifeRectTransform;
     private Transform parentAfterDrag; //original parent of the drag
 
-    private Image knifeImage;
+    private UnityEngine.UI.Image knifeImage;
 
-    public Vector3 currKnifePosition; 
+    public Vector3 currKnifePosition;
 
+    public bool knife_is_being_dragged = false;
+
+    public event Action OnDragStart;
+    public event Action OnDragEnd;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         knifeOrigPos = knifeRectTransform.position;
         knifeOrigPos = knifeRectTransform.anchoredPosition; // Use anchoredPosition for UI elements
-                                                       // Swap to drag sprite
+                                                            // Swap to drag sprite
         if (draggingSprite != null && knifeImage != null)
         {
             knifeImage.sprite = draggingSprite;
         }
         parentAfterDrag = transform.parent;
+        knife_is_being_dragged = true;
+        OnDragStart?.Invoke();
+        Debug.Log("[Knife_Script] OndragStart Invoked");
+
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
+        knife_is_being_dragged = true;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -47,6 +59,8 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         {
             knifeImage.sprite = originalSprite;
         }
+        knife_is_being_dragged = false;
+        OnDragEnd?.Invoke();
     }
 
     // Start is called before the first frame update
@@ -55,7 +69,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         knifeRectTransform = GetComponent<RectTransform>();
         parentAfterDrag = transform.parent;
         knifeOrigPos = knifeRectTransform.anchoredPosition;
-        knifeImage = GetComponent<Image>();
+        knifeImage = GetComponent<UnityEngine.UI.Image>();
     }
 
 
