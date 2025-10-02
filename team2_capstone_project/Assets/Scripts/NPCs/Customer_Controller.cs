@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class Customer_Controller : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class Customer_Controller : MonoBehaviour
     private Dish_Data requestedDish;
     private Inventory playerInventory;
     private bool playerInRange = false;
+    private InputAction interactAction;
     private bool hasSatDown = false;
     private bool hasRequestedDish = false;
     public event Action<string> OnCustomerLeft;
@@ -26,6 +28,12 @@ public class Customer_Controller : MonoBehaviour
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+        if (pic != null)
+        {
+            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+        }
     }
 
     public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory, bool spawnSeated = false)
@@ -66,7 +74,7 @@ public class Customer_Controller : MonoBehaviour
     {
         if (playerInRange)
         {
-            if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
+            if (interactAction.WasPerformedThisFrame() && playerInventory != null)
             {
                 if (hasSatDown && !hasRequestedDish)
                 {
