@@ -19,28 +19,28 @@ public class Journal_Menu : MonoBehaviour
 
   [Header("Recipe Menu References")]
   [SerializeField] private GameObject Dish_Slot_Prefab;
-  [SerializeField] private GameObject Dishes_Grid;
-  [SerializeField] private GameObject Left_Page;
-  [SerializeField] private GameObject Right_Page;
+  // [SerializeField] private GameObject Dishes_Grid;
+  [SerializeField] private GameObject Recipe_Left_Page;
+  [SerializeField] private GameObject Recipe_Right_Page;
 
   [Header("Foraging Menu References")]
   [SerializeField] private Choose_Menu_Items dailyMenu;
   [SerializeField] private GameObject Foraging_Slot_Prefab;
-  [SerializeField] private GameObject Foraging_Grid;
+  // [SerializeField] private GameObject Foraging_Grid;
   [SerializeField] private GameObject Foraging_Left_Page;
   [SerializeField] private GameObject Foraging_Right_Page;
 
   [Header("NPC Menu References")]
   [SerializeField] private GameObject NPC_Slot_Prefab;
-  [SerializeField] private GameObject NPC_Grid;
+  // [SerializeField] private GameObject NPC_Grid;
   [SerializeField] private GameObject NPC_Left_Page;
   [SerializeField] private GameObject NPC_Right_Page;
   [SerializeField] private Slider NPC_Slider;
 
-  [Header("Journal Sections")]
-  [SerializeField] private CanvasGroup recipeMenuGroup;
-  [SerializeField] private CanvasGroup foragingMenuGroup;
-  [SerializeField] private CanvasGroup npcMenuGroup;
+  // [Header("Journal Sections")]
+  // [SerializeField] private CanvasGroup recipeMenuGroup;
+  // [SerializeField] private CanvasGroup foragingMenuGroup;
+  // [SerializeField] private CanvasGroup npcMenuGroup;
 
   private Dish_Database dishDatabase;
   private Foraging_Database foragingDatabase;
@@ -50,6 +50,13 @@ public class Journal_Menu : MonoBehaviour
   //     dishDatabase = Game_Manager.Instance.dishDatabase;
   //     foragingDatabase = Game_Manager.Instance.foragingDatabase;
   // }
+
+  public enum Tabs
+  {
+    Recipe, // Dishes info tab
+    Foraging, // Ingredients info tab
+    NPC
+  }
 
   private void Start()
   {
@@ -67,14 +74,14 @@ public class Journal_Menu : MonoBehaviour
     if (Dish_Slot_Prefab == null)
       Debug.LogError("Journal_Menu: Dish_Slot_Prefab not assigned in inspector!");
 
-    if (Dishes_Grid == null)
-      Debug.LogError("Journal_Menu: Dishes_Grid not assigned in inspector!");
+    // if (Dishes_Grid == null)
+    //   Debug.LogError("Journal_Menu: Dishes_Grid not assigned in inspector!");
 
     if (Foraging_Slot_Prefab == null)
       Debug.LogError("Journal_Menu: Foraging_Slot_Prefab not assigned in inspector!");
 
-    if (Foraging_Grid == null)
-      Debug.LogError("Journal_Menu: Foraging_Grid not assigned in inspector!");
+    // if (Foraging_Grid == null)
+    //   Debug.LogError("Journal_Menu: Foraging_Grid not assigned in inspector!");
 
     if (Choose_Menu_Items.instance == null)
       Debug.LogWarning("Choose_Menu_Items instance is NULL in this scene!");
@@ -106,13 +113,14 @@ public class Journal_Menu : MonoBehaviour
   public void PauseGame()
   {
     Debug.Log("Opening journal and pausing game...");
-    journal.transform.GetChild(0).gameObject.SetActive(true);
-    journal.transform.GetChild(1).gameObject.SetActive(true);
-    journal.transform.GetChild(2).gameObject.SetActive(true);
+    journal.transform.GetChild(0).gameObject.SetActive(true); // Dark Overlay
+    journal.transform.GetChild(1).gameObject.SetActive(true); // Background (actual journal contents)
+    journal.transform.GetChild(2).gameObject.SetActive(true); // Tab buttons
     isPaused = true;
 
     // Default to showing recipe menu
-    ShowGroup(recipeMenuGroup, true);
+    // ShowGroup(Tabs.Recipe, true);
+    ShowRecipeMenu();
   }
 
   // Resume the game from the pause menu
@@ -128,9 +136,10 @@ public class Journal_Menu : MonoBehaviour
     isPaused = false;
     Left_Page.SetActive(false);
 
-    ShowGroup(recipeMenuGroup, false);
-    ShowGroup(foragingMenuGroup, false);
-    ShowGroup(npcMenuGroup, false);
+    // ShowGroup(Tabs.Recipe, false);
+    // ShowGroup(Tabs.Foraging, false);
+    // ShowGroup(Tabs.NPC, false);
+    HideEverything();
   }
 
   private void OnEnable()
@@ -385,42 +394,53 @@ public class Journal_Menu : MonoBehaviour
   #endregion
 
   #region Show/Hide UI Helper Methods
-  private void ShowGroup(CanvasGroup group, bool show)
+  /// <summary>
+  /// Deletes current left and right page prefabs from journal. 
+  /// </summary>
+  private void DeleteExistingPages()
   {
-    group.alpha = show ? 1 : 0;
-    group.interactable = show;
-    group.blocksRaycasts = show;
+    //
   }
 
+  /// <summary>
+  /// Add recipe left and right page prefabs into journal.
+  /// </summary>
   public void ShowRecipeMenu()
   {
-    ShowGroup(recipeMenuGroup, true);
-    ShowGroup(foragingMenuGroup, false);
-    ShowGroup(npcMenuGroup, false);
+    // ShowGroup(recipeMenuGroup, true);
+    // ShowGroup(foragingMenuGroup, false);
+    // ShowGroup(npcMenuGroup, false);
   }
 
+  /// <summary>
+  /// Add foraging left and right page prefabs into journal.
+  /// </summary>
   public void ShowForagingMenu()
   {
-    ShowGroup(recipeMenuGroup, false);
-    ShowGroup(foragingMenuGroup, true);
-    ShowGroup(npcMenuGroup, false);
+    // ShowGroup(recipeMenuGroup, false);
+    // ShowGroup(foragingMenuGroup, true);
+    // ShowGroup(npcMenuGroup, false);
   }
 
+  /// <summary>
+  /// Add NPC left and right page prefabs into journal.
+  /// </summary>
   public void ShowNPCMenu()
   {
-    ShowGroup(npcMenuGroup, true);
-    ShowGroup(foragingMenuGroup, false);
-    ShowGroup(recipeMenuGroup, false);
+    // ShowGroup(npcMenuGroup, true);
+    // ShowGroup(foragingMenuGroup, false);
+    // ShowGroup(recipeMenuGroup, false);
   }
 
+  /// <summary>
+  /// Inactivates all journal children (there should only be 3 children. If # of children changed, please update)
+  /// </summary>
   public void HideEverything()
   {
-    journal.transform.GetChild(0).gameObject.SetActive(false);
-    journal.transform.GetChild(1).gameObject.SetActive(false);
-    journal.transform.GetChild(2).gameObject.SetActive(false);
-    ShowGroup(recipeMenuGroup, false);
-    ShowGroup(foragingMenuGroup, false);
-    ShowGroup(npcMenuGroup, false);
+    journal.transform.GetChild(0).gameObject.SetActive(false); // Dark overlay
+    journal.transform.GetChild(1).gameObject.SetActive(false); // Journal contents
+    journal.transform.GetChild(2).gameObject.SetActive(false); // Tab buttons
+    // Nothing done after to allow last opened tab to still be open when reopening journal
   }
   #endregion
 }
