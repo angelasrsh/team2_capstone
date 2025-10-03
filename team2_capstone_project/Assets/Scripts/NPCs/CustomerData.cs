@@ -10,6 +10,7 @@ public class CustomerData : ScriptableObject
     public string customerName; // Display name (e.g. "Asper Aigis" that can include spaces)
     public Sprite overworldSprite;
     public bool datable = true;
+    public AudioClip dialogClipSound;
     public string lore;
 
     [Header("Portrait Data")]

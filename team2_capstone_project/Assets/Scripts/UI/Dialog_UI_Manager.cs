@@ -84,8 +84,8 @@ public class Dialog_UI_Manager : MonoBehaviour
                 // Add normal characters to the text
                 textBoxText.text += aText[i];
 
-                Audio_Manager.instance?.SetSFXPitch(Random.Range(lowRandomRange, highRandomRange)); 
-                Audio_Manager.instance?.PlaySFX(Audio_Manager.instance?.textSound);
+                Audio_Manager.instance?.PlaySFX(Audio_Manager.instance?.textSound, 1f,
+                    Random.Range(lowRandomRange, highRandomRange));
                 yield return new WaitForSeconds(textTypingSpeed); // Typing delay/speed
             }
 

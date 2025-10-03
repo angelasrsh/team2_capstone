@@ -127,6 +127,19 @@ public class Ingredient_Inventory : Inventory
     return count - amtLeftToRemove;
   }
 
+  public bool CanMakeDish(Dish_Data dish)
+  {
+      if (dish == null || dish.ingredientQuantities == null) return false;
+
+      foreach (var req in dish.ingredientQuantities)
+      {
+          if (GetItemCount(req.ingredient.Name) < req.amountRequired)
+              return false;
+      }
+      return true;
+  }
+
+  #region Ingredient enum/string conversion
   /// <summary>
   /// Convert enum IngredientType to a name string.
   /// String here must match Item_Data Name!
@@ -223,6 +236,7 @@ public class Ingredient_Inventory : Inventory
       Debug.LogWarning($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
     return null;
   }
+  #endregion
 
   /// <summary>
   /// get the total count of a specific ingredient in the inventory by name

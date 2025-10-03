@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 namespace Grimoire
@@ -13,11 +14,10 @@ namespace Grimoire
     /// </summary>
     public class Interactable_Object : MonoBehaviour
     {
-
-
         public GameObject InteractIcon; // Not sure if this is really needed
         private bool playerInside = false;
-
+        private PlayerInput playerInput;
+        private InputAction interactAction;
 
         void Awake()
         {
@@ -26,6 +26,9 @@ namespace Grimoire
                 InteractIcon = transform.Find("Interact_Icon").gameObject;
             }
 
+            // New input system (to allow for PC + mobile controls)
+            playerInput = FindObjectOfType<PlayerInput>();
+            interactAction = playerInput.actions["Interact"];
         }
 
         void OnTriggerEnter(Collider other)
@@ -42,7 +45,7 @@ namespace Grimoire
 
         void Update()
         {
-            if (playerInside && Input.GetKeyDown(KeyCode.E))
+            if (playerInside && interactAction.triggered)
             {
                 PerformInteract();
             }

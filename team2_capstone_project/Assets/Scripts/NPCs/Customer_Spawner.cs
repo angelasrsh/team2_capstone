@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Grimoire;
 
 public class Customer_Spawner : MonoBehaviour
 {
@@ -126,6 +127,7 @@ public class Customer_Spawner : MonoBehaviour
 
         // Spawn at entrance and walk to seat
         Customer_Controller customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
+        Audio_Manager.instance.PlayDoorbell();
         customer.Init(chosen, seat, Dish_Tool_Inventory.Instance);
 
         // Let spawner know when this customer leaves

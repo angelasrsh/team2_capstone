@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3461038497445604444}
   - component: {fileID: 4670473249970048115}
   - component: {fileID: 1934729213419131961}
+  - component: {fileID: 6642626054669146854}
   - component: {fileID: 6113680877637856580}
   - component: {fileID: 6958590387895689391}
   - component: {fileID: 2041556558690807774}
@@ -96,6 +97,18 @@ MonoBehaviour:
   LikedDishAffection: 25
   NeutralDishAffection: 5
   DislikedDishAffection: -5
+--- !u!114 &6642626054669146854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f8d960e5bb27348ad4b3e662100aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6113680877637856580
 MonoBehaviour:
   m_ObjectHideFlags: 0

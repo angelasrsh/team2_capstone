@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class Customer_Controller : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class Customer_Controller : MonoBehaviour
     private Dish_Data requestedDish;
     private Inventory playerInventory;
     private bool playerInRange = false;
+    private InputAction interactAction;
     private bool hasSatDown = false;
     private bool hasRequestedDish = false;
     public event Action<string> OnCustomerLeft;
@@ -26,6 +28,12 @@ public class Customer_Controller : MonoBehaviour
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+        if (pic != null)
+        {
+            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+        }
     }
 
     public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory, bool spawnSeated = false)
@@ -66,7 +74,7 @@ public class Customer_Controller : MonoBehaviour
     {
         if (playerInRange)
         {
-            if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
+            if (interactAction.WasPerformedThisFrame() && playerInventory != null)
             {
                 if (hasSatDown && !hasRequestedDish)
                 {
@@ -102,6 +110,72 @@ public class Customer_Controller : MonoBehaviour
         Debug.Log($"{data.customerName} sat down and is waiting for interaction.");
     }
 
+    #region Dish Picking
+    private Dish_Data ChooseWeightedDish()
+    {
+        var dailyMenu = Choose_Menu_Items.instance?.GetSelectedDishes();
+        List<Dish_Data> dailyMenuDishes = new List<Dish_Data>();
+
+        if (dailyMenu != null)
+        {
+            foreach (var dishEnum in dailyMenu)
+            {
+                Dish_Data dish = Game_Manager.Instance.dishDatabase.GetDish(dishEnum);
+                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                    dailyMenuDishes.Add(dish);
+            }
+        }
+
+        List<Dish_Data> favoriteDishes = new List<Dish_Data>();
+        if (data.favoriteDishes != null)
+        {
+            foreach (var dish in data.favoriteDishes)
+                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                    favoriteDishes.Add(dish);
+        }
+
+        List<Dish_Data> neutralDishes = new List<Dish_Data>();
+        if (data.neutralDishes != null)
+        {
+            foreach (var dish in data.neutralDishes)
+                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                    neutralDishes.Add(dish);
+        }
+
+        // Weighting: Menu (70%), Favorites (20%), Neutral (10%)
+        int roll = UnityEngine.Random.Range(0, 100);
+
+        if (roll < 70)
+        {
+            if (dailyMenuDishes.Count > 0)
+                return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
+            else if (dailyMenu != null && dailyMenu.Count > 0) // fallback: random from menu regardless of ingredients
+                return Game_Manager.Instance.dishDatabase.GetDish(dailyMenu[UnityEngine.Random.Range(0, dailyMenu.Count)]);
+        }
+        else if (roll < 90)
+        {
+            if (favoriteDishes.Count > 0)
+                return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
+            else if (data.favoriteDishes != null && data.favoriteDishes.Length > 0) // fallback
+                return data.favoriteDishes[UnityEngine.Random.Range(0, data.favoriteDishes.Length)];
+        }
+        else
+        {
+            if (neutralDishes.Count > 0)
+                return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
+            else if (data.neutralDishes != null && data.neutralDishes.Length > 0) // fallback
+                return data.neutralDishes[UnityEngine.Random.Range(0, data.neutralDishes.Length)];
+        }
+
+        // Global fallback (all lists empty)
+        Debug.LogWarning($"[Customer_Controller] {data.customerName} couldn't find any valid dishes. Picking completely random.");
+        var allDishes = Game_Manager.Instance.dishDatabase.GetAllDishes();
+        return allDishes.Count > 0 ? allDishes[UnityEngine.Random.Range(0, allDishes.Count)] : null;
+    }
+
+    /// <summary>
+    /// Handles the process of requesting a dish after initial dialogue.
+    /// </summary>
     private void RequestDishAfterDialogue()
     {
         // Play filler dialogue
@@ -112,20 +186,24 @@ public class Customer_Controller : MonoBehaviour
             dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
         }
 
-        // After dialogue, show dish
-        if (data.favoriteDishes != null && data.favoriteDishes.Length > 0)
+        // Pick weighted dish
+        requestedDish = ChooseWeightedDish();
+
+        // Show in bubble
+        if (requestedDish != null && thoughtBubble != null)
         {
-            requestedDish = data.favoriteDishes[UnityEngine.Random.Range(0, data.favoriteDishes.Length)];
-            if (thoughtBubble != null)
-            {
-                thoughtBubble.SetActive(true);
-                if (bubbleDishImage != null && requestedDish != null)
-                    bubbleDishImage.sprite = requestedDish.Image;
-            }
-            Debug.Log($"{data.customerName} now wants {requestedDish?.name ?? "Unknown"}!");
+            thoughtBubble.SetActive(true);
+            if (bubbleDishImage != null)
+                bubbleDishImage.sprite = requestedDish.Image;
+
+            Debug.Log($"{data.customerName} now wants {requestedDish.name}!");
         }
+        else
+            Debug.LogWarning($"{data.customerName} could not decide on a dish (no valid dishes).");
+
         hasRequestedDish = true;
     }
+    #endregion
 
     private void OnCollisionEnter(Collision other)
     {

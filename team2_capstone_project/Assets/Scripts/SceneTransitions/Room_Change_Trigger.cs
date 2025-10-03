@@ -19,8 +19,14 @@ public class Room_Change_Trigger : MonoBehaviour
             
     }
   }
+
+  public void OnPlayButtonPressed()
+  {
+    Game_Events_Manager.Instance.RoomChange(exitingTo);
+    Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+  }
   
-  public void OnButtonPressGoToRoom()
+  public void OnBackButtonPressedForMinigame()
   {
     Audio_Manager.instance.StopBubbling();
     Audio_Manager.instance.StopAmbientFire();

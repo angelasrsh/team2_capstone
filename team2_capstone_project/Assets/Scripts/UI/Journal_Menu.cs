@@ -14,8 +14,7 @@ public class Journal_Menu : MonoBehaviour
   public GameObject journal;
   private bool isPaused = false; // Currently will overlap pause menu, I think
   private Player_Progress playerProgress = Player_Progress.Instance;
-  // private PlayerInput playerInput;
-  // private InputAction openJournalAction;
+  private InputAction openJournalAction;
 
   [Header("Recipe Menu References")]
   [SerializeField] private GameObject Dish_Slot_Prefab;
@@ -62,7 +61,12 @@ public class Journal_Menu : MonoBehaviour
   {
     dishDatabase = Game_Manager.Instance.dishDatabase;
     foragingDatabase = Game_Manager.Instance.foragingDatabase;
-    PlayerInput playerInput = FindObjectOfType<PlayerInput>();
+
+    Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+    if (pic != null)
+    {
+        openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
+    }
 
     if (journal == null)
       Debug.LogError("Journal_Menu: Journal GameObject not assigned in inspector!");
@@ -95,7 +99,7 @@ public class Journal_Menu : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    if (Input.GetKeyDown(KeyCode.J))
+    if (openJournalAction.WasPerformedThisFrame())
     {
       if (isPaused)
       {
