@@ -31,6 +31,9 @@ public class Player_Controller : MonoBehaviour
     private PlayerInput playerInput;
     private InputAction moveAction, interactAction, openInventoryAction, openJournalAction;
 
+    // Room tracking 
+    [HideInInspector] public Room_Data currentRoom;
+
     // Internal
     private Rigidbody rb;
     private Vector2 rawInput = Vector2.zero;
@@ -40,16 +43,14 @@ public class Player_Controller : MonoBehaviour
     private Vector2 lastNonZeroInput = Vector2.zero;
     private Vector2 lastStableInput = Vector2.zero;
     private float zeroTimer = 0f;
+    private bool onMobile = false;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-
-        // Recommend interpolation for smoother visuals
         if (rb != null && rb.interpolation == RigidbodyInterpolation.None)
             rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        // IMPORTANT: assign to the field (don't shadow)
         playerInput = FindObjectOfType<PlayerInput>();
         if (playerInput == null)
         {
@@ -63,7 +64,10 @@ public class Player_Controller : MonoBehaviour
         openJournalAction = playerInput.actions["OpenJournal"];
 
         if (moveAction != null)
-            moveAction.performed += onMove; // keep tutorial hook behavior
+            moveAction.performed += onMove;
+
+        // Detect if platform = mobile
+        onMobile = Application.isMobilePlatform;
     }
 
     private void OnDestroy()
@@ -86,42 +90,43 @@ public class Player_Controller : MonoBehaviour
     {
         Vector2 raw = moveAction.ReadValue<Vector2>();
 
-        if (raw == Vector2.zero)
+        if (onMobile)
         {
-            // Count how long we've been at zero
-            zeroTimer += Time.deltaTime;
-
-            // If it hasn't been zero long enough, keep the last stable input
-            if (zeroTimer < zeroToleranceTime)
+            // --- MOBILE LOGIC (ignore single-frame zero drops) ---
+            if (raw == Vector2.zero)
             {
-                raw = lastStableInput;
+                zeroTimer += Time.deltaTime;
+                if (zeroTimer < zeroToleranceTime)
+                {
+                    raw = lastStableInput;
+                }
+                else
+                {
+                    lastStableInput = Vector2.zero;
+                }
             }
             else
             {
-                // It's a real zero now, reset
-                lastStableInput = Vector2.zero;
+                lastStableInput = raw;
+                zeroTimer = 0f;
             }
+
+            targetInput = raw;
         }
         else
         {
-            // Got a real non-zero input, store it
-            lastStableInput = raw;
-            zeroTimer = 0f;
+            // --- PC / CONSOLE LOGIC ---
+            targetInput = raw;
         }
-
-        // Apply your deadzone/smoothing on top of 'raw'
-        targetInput = raw;
     }
 
     private void FixedUpdate()
     {
-        // Smooth the input so sudden sign swaps don't momentarily zero velocity
+        // Smooth input for both modes
         smoothInput = Vector2.Lerp(smoothInput, targetInput, Time.fixedDeltaTime * 15f);
 
-        // Expose movement for other systems
         movement = smoothInput;
 
-        // Apply to rigidbody (preserve current Y velocity)
         if (rb != null)
         {
             Vector3 newVel = new Vector3(movement.x * moveSpeed, rb.velocity.y, movement.y * moveSpeed);
@@ -129,10 +134,7 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-    public bool IsMoving()
-    {
-        return movement != Vector2.zero;
-    }
+    public bool IsMoving() => movement != Vector2.zero;
 
     public void DisablePlayerController()
     {
@@ -150,7 +152,7 @@ public class Player_Controller : MonoBehaviour
         Room_Data newRoom = Room_Manager.GetRoom(newRoomID);
         if (newRoom != null)
         {
-            // If you also want to store currentRoom on this script, add a field and assign here
+            currentRoom = newRoom;
         }
         else
         {
@@ -158,10 +160,14 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called by the input action when the player moves.
+    /// Tell the GameEventsManager that this action occurred.
+    /// GameEvents wants to know this for the sake of the tutorial.
+    /// </summary>
     private void onMove(InputAction.CallbackContext context)
     {
-        // keep your tutorial/event behavior
-        if (context.performed)
-            Game_Events_Manager.Instance.PlayerMoved();
+        Debug.Log("[P_C] Player is moving");
+        Game_Events_Manager.Instance.PlayerMoved();
     }
 }

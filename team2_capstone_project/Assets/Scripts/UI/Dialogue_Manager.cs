@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
+using Grimoire;
 
 public class Dialogue_Manager : MonoBehaviour
 {
@@ -30,6 +32,7 @@ public class Dialogue_Manager : MonoBehaviour
     private string myDialogKey;
     [HideInInspector] public enum DialogueState { Normal, Waiting }
     [HideInInspector] public DialogueState currentState = DialogueState.Normal;
+    private InputAction interactAction;
 
     // Components    
     private Player_Controller playerOverworld;
@@ -38,6 +41,12 @@ public class Dialogue_Manager : MonoBehaviour
     {
         playerOverworld = FindObjectOfType<Player_Controller>();
         dialogMap = new Dictionary<string, string>();
+
+        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+        if (pic != null)
+        {
+            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+        }
 
         foreach (var customer in customerDataList)
         {
@@ -58,7 +67,7 @@ public class Dialogue_Manager : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R) && dialogQueue.Count == 0 && !uiManager.textTyping)
+        if (interactAction.WasPerformedThisFrame() && dialogQueue.Count == 0 && !uiManager.textTyping)
         {
             EndDialog();
         }
