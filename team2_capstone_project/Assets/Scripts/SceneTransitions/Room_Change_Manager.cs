@@ -84,9 +84,22 @@ public class Room_Change_Manager : MonoBehaviour
             Debug.LogError($"[Room_Change_Manager] Exit from {currentRoomID} to {exitingTo} has no target room assigned!");
             return;
         }
+
+        // Set time of day (and override if needed)
+        if (Day_Turnover_Manager.Instance != null)
+        {
+            if (exit.overrideTimeOfDay)
+            {
+                Day_Turnover_Manager.Instance.SetTimeOfDay(exit.overrideValue);
+            }
+            else
+            {
+                // fallback: target room could have a default if you want
+                Debug.Log($"No time override for this exit. Using whatever state already exists: {Day_Turnover_Manager.Instance.currentTimeOfDay}");
+            }
+        }
         StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
     }
-
 
     private RoomExitOptions Exit(Room_Data room, Room_Data.RoomID exitingTo)
     {

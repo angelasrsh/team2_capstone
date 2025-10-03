@@ -1,48 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class Choose_Menu_UI : MonoBehaviour
 {
+    [Header("Active UI")]
     public GameObject menuBox;
     public GameObject darkOverlay;
     public GameObject dayCanvas;
     private GameObject errorText;
 
+    [Header("Prefabs")]
+    public GameObject Dish_Slot_Prefab;
+
+    private Day_Turnover_Manager.TimeOfDay timeOfDay;
+
     private void Start()
     {
-        // Show the menu screen on day start
-        menuBox.SetActive(true);
-        darkOverlay.SetActive(true);
+        if (Day_Turnover_Manager.Instance != null && 
+            Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Morning)
+        {
+            menuBox.SetActive(true);
+            darkOverlay.SetActive(true);
 
-        errorText = menuBox.transform.Find("Error_Text").gameObject;
-        errorText.SetActive(false);
+            errorText = menuBox.transform.Find("Error_Text").gameObject;
+            errorText.SetActive(false);
 
-        if (dayCanvas != null)
-            dayCanvas.SetActive(false);
+            if (dayCanvas != null)
+                dayCanvas.SetActive(false);
 
-        // build UI from daily pool
-        PopulateMenuOptions();
+            // build UI from daily pool
+            PopulateMenuOptions();
+        }
+        else
+        {
+            // Ensure it's hidden outside morning
+            menuBox.SetActive(false);
+            darkOverlay.SetActive(false);
+        }
     }
 
     private void OnEnable()
     {
-        Day_Turnover_Manager.OnDayEnded += HandleDayEnded;
+        Day_Turnover_Manager.OnDayStarted += HandleDayStarted;
     }
 
     private void OnDisable()
     {
-        Day_Turnover_Manager.OnDayEnded -= HandleDayEnded;
+        Day_Turnover_Manager.OnDayStarted -= HandleDayStarted;
     }
 
-    private void HandleDayEnded(Day_Summary_Data summary)
+    private void HandleDayStarted()
     {
-        // For each new day, reopen menu UI and rebuild options
-        menuBox.SetActive(true);
-        darkOverlay.SetActive(true);
-        if (dayCanvas != null) dayCanvas.SetActive(false);
+        if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Morning)
+        {
+            menuBox.SetActive(true);
+            darkOverlay.SetActive(true);
+            if (dayCanvas != null) dayCanvas.SetActive(false);
 
-        PopulateMenuOptions();
+            PopulateMenuOptions();
+        }
     }
 
     private void PopulateMenuOptions()
@@ -55,10 +74,10 @@ public class Choose_Menu_UI : MonoBehaviour
         }
 
         // Find container for dish options
-        Transform dishContainer = menuBox.transform.Find("Dish_Options");
+        Transform dishContainer = menuBox.transform.Find("Dish_Container");
         if (dishContainer == null)
         {
-            Debug.LogWarning("Dish_Options container not found in UI!");
+            Debug.LogWarning("Dish_Container not found in UI!");
             return;
         }
 
@@ -72,14 +91,20 @@ public class Choose_Menu_UI : MonoBehaviour
             var dish = Game_Manager.Instance.dishDatabase.GetDish(dishType);
             if (dish == null) continue;
 
-            GameObject button = Instantiate(Resources.Load<GameObject>("DishButtonPrefab"), dishContainer);
-            button.GetComponentInChildren<UnityEngine.UI.Text>().text = dish.name;
+            GameObject button = Instantiate(Dish_Slot_Prefab, dishContainer.transform);
 
-            // Assign click listener
-            button.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
-            {
-                AddDish(dish.dishType);
-            });
+            // Set UI
+            var textComp = button.transform.Find("Content/Dish_Name").GetComponent<TextMeshProUGUI>();
+            textComp.text = dish.Name;
+
+            var imageComp = button.transform.Find("Content/Dish_Icon").GetComponent<Image>();
+            imageComp.sprite = dish.Image;
+
+
+            // Inject dish data into toggle
+            var toggleComp = button.GetComponent<Dish_Item_Toggle>();
+            if (toggleComp != null)
+                toggleComp.Initialize(dish.dishType);
         }
     }
 

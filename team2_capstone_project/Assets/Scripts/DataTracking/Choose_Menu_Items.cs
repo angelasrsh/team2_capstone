@@ -28,6 +28,14 @@ public class Choose_Menu_Items : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (dailyPool.Count == 0)
+        {
+            GenerateDailyPool();
+        }
+    }
+
     /// <summary>
     /// Builds the pool of dishes the player can choose from today (3–5).
     /// </summary>

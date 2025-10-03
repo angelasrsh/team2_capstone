@@ -14,7 +14,7 @@ public class Room_Change_Trigger : MonoBehaviour
     if (other.CompareTag("Player"))
     {
         Debug.Log("Player entered the trigger for room change: " + exitingTo);
-        // Game_Events_Manager.Instance.RoomChange(exitingTo);
+        Game_Events_Manager.Instance.RoomChange(exitingTo);
         Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
             
     }

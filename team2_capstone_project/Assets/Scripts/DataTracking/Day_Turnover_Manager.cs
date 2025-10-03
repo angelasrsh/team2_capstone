@@ -8,6 +8,8 @@ public class Day_Turnover_Manager : MonoBehaviour
 
     public enum WeekDay { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
     public WeekDay CurrentDay { get; private set; } = WeekDay.Monday;
+    public enum TimeOfDay { Morning, Evening }
+    public TimeOfDay currentTimeOfDay = TimeOfDay.Morning;
 
     // Dict for tracking dishes + customers served each day
     private Dictionary<Dish_Data, int> dishesServed = new Dictionary<Dish_Data, int>();
@@ -15,6 +17,8 @@ public class Day_Turnover_Manager : MonoBehaviour
     private int totalCurrencyEarned = 0;
 
     public static event System.Action<Day_Summary_Data> OnDayEnded;
+    public static event System.Action OnDayStarted;
+
 
     private void Awake()
     {
@@ -24,6 +28,12 @@ public class Day_Turnover_Manager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else Destroy(gameObject);
+    }
+
+    public void SetTimeOfDay(TimeOfDay newTime)
+    {
+        currentTimeOfDay = newTime;
+        Debug.Log("Time of day set to: " + newTime);
     }
 
     public void RecordDishServed(Dish_Data dish, int currencyGained, string customerName)
@@ -58,21 +68,21 @@ public class Day_Turnover_Manager : MonoBehaviour
 
         OnDayEnded?.Invoke(summary);
 
-        // Reset for next day
+        // reset tracking
         dishesServed.Clear();
         customersServed.Clear();
         totalCurrencyEarned = 0;
         CurrentDay = nextDay;
+        currentTimeOfDay = TimeOfDay.Morning;
 
         if (Choose_Menu_Items.instance != null)
         {
             Choose_Menu_Items.instance.GenerateDailyPool();
             Debug.Log($"Daily menu refreshed for {CurrentDay}.");
         }
-        else
-        {
-            Debug.LogWarning("Choose_Menu_Items instance not found. Cannot refresh daily menu.");
-        }
+
+        // fire after reset
+        OnDayStarted?.Invoke();
     }
 }
 

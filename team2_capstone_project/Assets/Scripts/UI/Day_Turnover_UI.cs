@@ -118,5 +118,6 @@ public class Day_Turnover_UI : MonoBehaviour
 
         Player_Input_Controller.instance?.EnablePlayerInput();
         Pause_Menu.instance?.SetCanPause(true);
+        // Day_Turnover_Manager.OnDayStarted?.Invoke();
     }
 }

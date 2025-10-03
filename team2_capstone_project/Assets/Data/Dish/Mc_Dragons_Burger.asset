@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 28743bbfe578ded4d95164558a203487, type: 3}
-  m_Name: McDragons_Burger
+  m_Name: Mc_Dragons_Burger
   m_EditorClassIdentifier: 
   Name: McDragons Burger
   Amount: 0
@@ -18,6 +18,8 @@ MonoBehaviour:
   isGoodDish: 1
   price: 600
   recipeImage: {fileID: 0}
-  dishType: 0
-  recipe: 0
-  ingredientQuantities: []
+  dishType: 1
+  recipe: 3
+  ingredientQuantities:
+  - ingredient: {fileID: 11400000, guid: 8f6dd2e553a0b9c418722a0cb4dab89e, type: 2}
+    amountRequired: 1

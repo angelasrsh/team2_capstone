@@ -21,10 +21,17 @@ public class End_Day : MonoBehaviour
     {
         if (other.CompareTag("Player") && interactPressed)
         {
-            interactPressed = false; // consume input to prevent spamming
-            Debug.Log("Player interacted to end day.");
+            interactPressed = false;
 
-            Day_Turnover_Manager.Instance.EndDay();
+            if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
+            {
+                Debug.Log("Player interacted to end day.");
+                Day_Turnover_Manager.Instance.EndDay();
+            }
+            else
+            {
+                Debug.Log("You can’t end the day yet – it’s still morning!");
+            }
         }
     }
 }

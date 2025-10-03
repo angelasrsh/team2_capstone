@@ -215,8 +215,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               canDrag = false;
               //start chopscript experience :)
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
-
-
             }
             cuttingBoardActive = true;
           }

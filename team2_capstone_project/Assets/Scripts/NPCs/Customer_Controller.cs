@@ -115,6 +115,8 @@ public class Customer_Controller : MonoBehaviour
     {
         var dailyMenu = Choose_Menu_Items.instance?.GetSelectedDishes();
         List<Dish_Data> dailyMenuDishes = new List<Dish_Data>();
+        List<Dish_Data> favoriteDishes = new List<Dish_Data>();
+        List<Dish_Data> neutralDishes = new List<Dish_Data>();
 
         if (dailyMenu != null)
         {
@@ -126,7 +128,6 @@ public class Customer_Controller : MonoBehaviour
             }
         }
 
-        List<Dish_Data> favoriteDishes = new List<Dish_Data>();
         if (data.favoriteDishes != null)
         {
             foreach (var dish in data.favoriteDishes)
@@ -134,7 +135,6 @@ public class Customer_Controller : MonoBehaviour
                     favoriteDishes.Add(dish);
         }
 
-        List<Dish_Data> neutralDishes = new List<Dish_Data>();
         if (data.neutralDishes != null)
         {
             foreach (var dish in data.neutralDishes)
@@ -142,36 +142,33 @@ public class Customer_Controller : MonoBehaviour
                     neutralDishes.Add(dish);
         }
 
-        // Weighting: Menu (70%), Favorites (20%), Neutral (10%)
+        // Weighted roll
         int roll = UnityEngine.Random.Range(0, 100);
 
-        if (roll < 70)
+        if (roll < 70 && dailyMenuDishes.Count > 0)
+            return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
+        else if (roll < 90 && favoriteDishes.Count > 0)
+            return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
+        else if (neutralDishes.Count > 0)
+            return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
+
+        // Final fallback: pick *any cookable dish* from the menu
+        var allCookable = new List<Dish_Data>();
+        foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes())
         {
-            if (dailyMenuDishes.Count > 0)
-                return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
-            else if (dailyMenu != null && dailyMenu.Count > 0) // fallback: random from menu regardless of ingredients
-                return Game_Manager.Instance.dishDatabase.GetDish(dailyMenu[UnityEngine.Random.Range(0, dailyMenu.Count)]);
-        }
-        else if (roll < 90)
-        {
-            if (favoriteDishes.Count > 0)
-                return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
-            else if (data.favoriteDishes != null && data.favoriteDishes.Length > 0) // fallback
-                return data.favoriteDishes[UnityEngine.Random.Range(0, data.favoriteDishes.Length)];
-        }
-        else
-        {
-            if (neutralDishes.Count > 0)
-                return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
-            else if (data.neutralDishes != null && data.neutralDishes.Length > 0) // fallback
-                return data.neutralDishes[UnityEngine.Random.Range(0, data.neutralDishes.Length)];
+            if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                allCookable.Add(dish);
         }
 
-        // Global fallback (all lists empty)
-        Debug.LogWarning($"[Customer_Controller] {data.customerName} couldn't find any valid dishes. Picking completely random.");
+        if (allCookable.Count > 0)
+            return allCookable[UnityEngine.Random.Range(0, allCookable.Count)];
+
+        // Nuclear fallback: no cookable dishes, pick random (to avoid nulls)
+        Debug.LogWarning($"[Customer_Controller] {data.customerName} found no cookable dishes. Picking truly random.");
         var allDishes = Game_Manager.Instance.dishDatabase.GetAllDishes();
         return allDishes.Count > 0 ? allDishes[UnityEngine.Random.Range(0, allDishes.Count)] : null;
     }
+
 
     /// <summary>
     /// Handles the process of requesting a dish after initial dialogue.

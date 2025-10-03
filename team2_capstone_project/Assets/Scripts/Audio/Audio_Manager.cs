@@ -108,14 +108,16 @@ namespace Grimoire
     // SFX
     public void PlaySFX(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
-      if (clip == null) return;
+        if (clip == null) return;
 
-      AudioSource src = sfxSources[nextSfxIndex];
-      nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
+        AudioSource src = sfxSources[nextSfxIndex];
+        nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
 
-      src.volume = Mathf.Clamp01(volume);
-      src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
-      src.PlayOneShot(clip);
+        src.Stop(); // prevent leftover state
+        src.clip = clip;
+        src.volume = Mathf.Clamp01(volume);
+        src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
+        src.Play();
     }
 
     public void ForestWalk()
@@ -226,22 +228,22 @@ namespace Grimoire
     // FOOTSTEPS
     public void PlayFootsteps(AudioClip clip, float speed = 1.6f)
     {
-      if (clip == null) return;
+        if (clip == null) return;
 
-      if (!footstepsSource.isPlaying)
-      {
-        footstepsSource.volume = 0.1f;
-
-        // Slightly vary pitch to avoid monotony
-        footstepsSource.pitch = Random.Range(speed - 0.1f, speed + 0.1f);
-        footstepsSource.PlayOneShot(clip);
-      }
+        if (!footstepsSource.isPlaying)
+        {
+            footstepsSource.clip = clip;
+            footstepsSource.loop = true;
+            footstepsSource.volume = 0.1f;
+            footstepsSource.pitch = Random.Range(speed - 0.1f, speed + 0.1f);
+            footstepsSource.Play();
+        }
     }
 
     public void StopFootsteps()
     {
-      if (footstepsSource.isPlaying)
-        footstepsSource.Stop();
+      footstepsSource.Stop();
+      footstepsSource.clip = null;
     }
     #endregion
 
@@ -253,7 +255,7 @@ namespace Grimoire
     
     public void PlaySparkleSFX()
     {
-        float[] allowedPitches = { 1.3f, 1.5f, 1.7f };
+        float[] allowedPitches = { 1.5f, 1.7f };
         float chosenPitch = allowedPitches[Random.Range(0, allowedPitches.Length)];
 
         PlaySFX(sparkle, 0.3f, chosenPitch);
