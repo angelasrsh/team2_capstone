@@ -67,7 +67,6 @@ public class Chop_Controller : MonoBehaviour
     private GameObject knifePoint;
     public List<Vector2> newPoints;
 
-    public float currentTime = 0f;
 
 
     public Ingredient_Data SetIngredientData(Ingredient_Data ingredientData, GameObject ing_gameOb)
@@ -88,10 +87,15 @@ public class Chop_Controller : MonoBehaviour
     /// </summary>
     private void ShowCuttingLines()
     {
+
         if (currentCuttingLines != null)
         {
             Destroy(currentCuttingLines);
         }
+
+
+
+        cuttingLinesParent = GameObject.Find("IngredientResize-Canvas").transform;
         // instantiate new cutting lines
         currentCuttingLines = Instantiate(uiLineRendererPrefab, cuttingLinesParent);
 
@@ -100,8 +104,11 @@ public class Chop_Controller : MonoBehaviour
 
         if (lineRenderer != null)
         {
-            if (ingredient_data_var.Name == "Uncut_Fermented_Eye")
+            Debug.Log("LineRendere is not null");
+            if (ingredient_data_var.Name == "Uncut Fermented Eye")
             {
+                Debug.Log("Found Uncut Fermented eye");
+
                 //first line
                 newPoints = new List<Vector2>
                 {
@@ -111,7 +118,7 @@ public class Chop_Controller : MonoBehaviour
                 lineRenderer.points = newPoints;
 
             }
-            else if (ingredient_data_var.Name == "Uncut_Fogshroom")
+            else if (ingredient_data_var.Name == "Uncut Fogshroom")
             {
                 newPoints = new List<Vector2>
                 {
@@ -121,7 +128,10 @@ public class Chop_Controller : MonoBehaviour
                 lineRenderer.points = newPoints;
 
             }
-            return;
+        }
+        else
+        {
+            Debug.LogError("LineRenderer not set");
         }
 
         //cut Fermented Eye coordinates
@@ -176,10 +186,15 @@ public class Chop_Controller : MonoBehaviour
         // Debug.Log("[Chp_Cntrller] ingredient_data_var = " + ingredient_data_var);
 
     }
-
+    public Vector2 kPoint;
+    public RectTransform knifeRect;
     void Update()
     {
         {
+            // knifeRect = knifePoint.GetComponent<RectTransform>();
+            // kPoint = knifeRect.transform.position; //or anchorPosition get knife rect position
+
+
             //Spawn the cut lines when the knife gets dragged
             if (k_script.knife_is_being_dragged == true && !wasDragging) //if the knife is being dragged from Knife Script
             {
@@ -238,6 +253,8 @@ public class Chop_Controller : MonoBehaviour
                         EvaluateChop(imageComponent);
                         
                     }
+
+                    //checks
                     if (Ingredient_Inventory.Instance.HasItem(ingredient_data_var.makesIngredient[0].ingredient) == false)
                     {
                         Debug.Log("[Chop_Cntrl] Inventory has item");
@@ -247,14 +264,14 @@ public class Chop_Controller : MonoBehaviour
                     {
                         Ingredient_Inventory.Instance.AddResources(ingredient_data_var.makesIngredient[0].ingredient, 1);
 
-                        StartCoroutine(DelayedActions());
+                        // StartCoroutine(DelayedActions());
 
-                        IEnumerator DelayedActions()
-                        {
-                            yield return new WaitForSeconds(0.75f); // Wait .75 seconds
+                        // IEnumerator DelayedActions()
+                        // {
+                        //     yield return new WaitForSeconds(0.75f); // Wait .75 seconds
 
-                            imageComponent.enabled = false;
-                        }
+                        //     imageComponent.enabled = false;
+                        // }
 
                         Drag_All.cuttingBoardActive = false;
                         in_inventory = true;
@@ -267,7 +284,7 @@ public class Chop_Controller : MonoBehaviour
     }
 
 
-    private void ChangeToCutPiece(Image imageComponent)
+    public void ChangeToCutPiece(Image imageComponent)
     {
         //null checks
         Debug.Log("[SpawnCut] initiated.");
@@ -333,22 +350,12 @@ public class Chop_Controller : MonoBehaviour
 
     private void EvaluateChop(Image imageComp)
     {
-        RectTransform knifeRect = knifePoint.GetComponent<RectTransform>();
-        Vector2 kPoint = knifeRect.position; //or anchorPosition get knife rect position
+        // float dist = DistancePointToSegment(kPoint, lineRenderer.points[0], lineRenderer.points[1]); //compare knife rect position to line1;
 
-        float dist = DistancePointToSegment(kPoint, lineRenderer.points[0], lineRenderer.points[1]); //compare knife rect position to line1;
-
-        while (dist <= 0.3f) //if knife is on the line
-        {
-            //TODO start timeer
-            currentTime += Time.deltaTime;
-            // DisplayTime(currentTime);
-        }
-
-        if (currentTime >= 1f) //after some time while dragging
+        if (k_script.currentTime >= 1f) //after some time while dragging
         {
             ChangeToCutPiece(imageComp);
-            currentTime = 0f; //reset it 
+            k_script.currentTime = 0f; //reset it 
         }
 
     }
@@ -364,7 +371,7 @@ public class Chop_Controller : MonoBehaviour
         return dist <= lineTolerancePixels;
     }
 
-    private float DistancePointToSegment(Vector2 p, Vector2 a, Vector2 b)
+    public float DistancePointToSegment(Vector2 p, Vector2 a, Vector2 b)
     {
         Vector2 ap = p - a;
         Vector2 ab = b - a;

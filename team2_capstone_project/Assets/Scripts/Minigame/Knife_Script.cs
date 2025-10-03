@@ -28,6 +28,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     public event Action OnDragStart;
     public event Action OnDragEnd;
 
+    public Chop_Controller chop_script;
     public void OnBeginDrag(PointerEventData eventData)
     {
         knifeOrigPos = knifeRectTransform.position;
@@ -39,15 +40,44 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         }
         parentAfterDrag = transform.parent;
         knife_is_being_dragged = true;
+
+
         OnDragStart?.Invoke();
         Debug.Log("[Knife_Script] OndragStart Invoked");
 
     }
-
+    public float currentTime = 0f;
+    private float dist = 0f;
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
         knife_is_being_dragged = true;
+
+        if (chop_script.lineRenderer == null)
+        {
+            Debug.LogWarning("LineRend from chop null");
+        }
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+        Vector2 p = new Vector2(mouseWorld.x, mouseWorld.y); 
+
+        // Debug.Log($"Mouse p: {p}");
+        // Debug.Log($"Point a: {chop_script.lineRenderer.points[0]}");
+        // Debug.Log($"Point b: {chop_script.lineRenderer.points[1]}");
+
+        //screen coordinates
+        dist = chop_script.DistancePointToSegment(p, Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[0]),
+        Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[1])); //compare knife rect position to line1;
+        Debug.Log("Distance:" + dist);
+        if (dist <= 30f) //if knife is on the line
+        {
+            Debug.Log("Went close to cut line, starting timer");
+            //TODO start timeer
+            currentTime += Time.deltaTime;
+            // DisplayTime(currentTime);
+        }
+
+
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -70,6 +100,13 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         parentAfterDrag = transform.parent;
         knifeOrigPos = knifeRectTransform.anchoredPosition;
         knifeImage = GetComponent<UnityEngine.UI.Image>();
+        GameObject chop_script_obj = GameObject.Find("ChopController");
+        chop_script = chop_script_obj.GetComponent<Chop_Controller>();
+
+        if (chop_script == null)
+        {
+            Debug.LogWarning("chop is null!");
+        }
     }
 
 
