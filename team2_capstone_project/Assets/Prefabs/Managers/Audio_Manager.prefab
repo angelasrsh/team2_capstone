@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd5cdae8cc734d34da7def9052d85600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sfxPoolSize: 4
   pickupSFX: {fileID: 8300000, guid: 3e172351759f4c74798cc3e963e567b2, type: 3}
   clickSFX: {fileID: 8300000, guid: f96bac186fd5de24ab4eb5323e1059ec, type: 3}
   goodDishMade: {fileID: 8300000, guid: 4e804d91fb7399a40b1871258d99ffd8, type: 3}
@@ -55,12 +56,16 @@ MonoBehaviour:
   menuOpen: {fileID: 8300000, guid: d2d5486a4bb46c6439d22a44b386316e, type: 3}
   menuClose: {fileID: 8300000, guid: d2d5486a4bb46c6439d22a44b386316e, type: 3}
   bookClose: {fileID: 8300000, guid: d96d20d566c0ad34185eee2286f93f1d, type: 3}
+  doorBell: {fileID: 8300000, guid: 710a29dd72a79a843aac3530d9140768, type: 3}
+  firstAreaWalkingSFX: {fileID: 8300000, guid: c3247558f377a4a40be58ab5452af4dc, type: 3}
+  sparkle: {fileID: 8300000, guid: 0344b26d2341c1541ad78cc12d9c721c, type: 3}
+  addingOneIngredient: {fileID: 8300000, guid: 58e3d736dd4f92b408a2a57d068f6ea9, type: 3}
+  addingMultiIngredients: {fileID: 8300000, guid: 85aeda605a31a114eb9857800a6468ef, type: 3}
+  addingWater: {fileID: 8300000, guid: a7e36785a92e19844aea872e0a68f07a, type: 3}
   stirring: {fileID: 8300000, guid: 5ab54f99b2780f64f869494f8a0d5d87, type: 3}
   bubbling: {fileID: 8300000, guid: 1245887ba6d1a6d4999fb94aaa99fa4f, type: 3}
   startFire: {fileID: 8300000, guid: 3a8b16f95c14e0e45be51e3cfbe17f67, type: 3}
   ambientFire: {fileID: 8300000, guid: cbb7d6f9e2277c943b1bc5c52e775e58, type: 3}
-  addingOneIng: {fileID: 8300000, guid: 58e3d736dd4f92b408a2a57d068f6ea9, type: 3}
-  addingMultiIng: {fileID: 8300000, guid: 85aeda605a31a114eb9857800a6468ef, type: 3}
 --- !u!114 &2336970576230820215
 MonoBehaviour:
   m_ObjectHideFlags: 0
