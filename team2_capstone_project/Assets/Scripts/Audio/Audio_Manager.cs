@@ -108,14 +108,16 @@ namespace Grimoire
     // SFX
     public void PlaySFX(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
-      if (clip == null) return;
+        if (clip == null) return;
 
-      AudioSource src = sfxSources[nextSfxIndex];
-      nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
+        AudioSource src = sfxSources[nextSfxIndex];
+        nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
 
-      src.volume = Mathf.Clamp01(volume);
-      src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
-      src.PlayOneShot(clip);
+        src.Stop(); // prevent leftover state
+        src.clip = clip;
+        src.volume = Mathf.Clamp01(volume);
+        src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
+        src.Play();
     }
 
     public void ForestWalk()
