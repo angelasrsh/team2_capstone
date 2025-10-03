@@ -262,16 +262,17 @@ public class Chop_Controller : MonoBehaviour
                     }
                     if (!in_inventory)
                     {
-                        Ingredient_Inventory.Instance.AddResources(ingredient_data_var.makesIngredient[0].ingredient, 1);
+                        Debug.Log("Ingredient adding name: " + Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient));
+                        Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient), 1);
 
-                        // StartCoroutine(DelayedActions());
+                        StartCoroutine(DelayedActions());
 
-                        // IEnumerator DelayedActions()
-                        // {
-                        //     yield return new WaitForSeconds(0.75f); // Wait .75 seconds
+                        IEnumerator DelayedActions()
+                        {
+                            yield return new WaitForSeconds(0.75f); // Wait .75 seconds
 
-                        //     imageComponent.enabled = false;
-                        // }
+                            imageComponent.enabled = false;
+                        }
 
                         Drag_All.cuttingBoardActive = false;
                         in_inventory = true;
