@@ -51,6 +51,7 @@ public class Ingredient_Inventory : Inventory
     public int AddResources(IngredientType type, int count)
     {
         // Error-checking
+        
         if (count < 0)
             Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
 
