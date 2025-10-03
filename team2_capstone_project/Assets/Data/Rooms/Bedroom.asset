@@ -15,13 +15,17 @@ MonoBehaviour:
   roomID: 3
   isOverworldScene: 1
   music: {fileID: 0}
-  ambientSound: {fileID: 8300000, guid: f3f4445f1373f9c4ca71452facc20792, type: 3}
+  ambientSound: {fileID: 8300000, guid: 13b02d73c7b95024d896f7b09842e9de, type: 3}
   musicVolume: 1
   ambientVolume: 0.09
   exits:
   - exitingTo: 1
     spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: 22bcfa82d78048d4097dcedce66fb4df, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0
   - exitingTo: 0
     spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: 9196e552c6124a94696f1bdc553b82ec, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0

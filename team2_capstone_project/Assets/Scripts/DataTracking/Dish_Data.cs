@@ -23,6 +23,7 @@ public class Dish_Data : Item_Data
   public enum Dishes
   {
     Failed_Dish, // Generic failed dish if no recipe matches
+    Mc_Dragons_Burger,
     Blinding_Stew
   }
 

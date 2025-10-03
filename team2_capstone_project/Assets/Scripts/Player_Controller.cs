@@ -134,7 +134,10 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-    public bool IsMoving() => movement != Vector2.zero;
+    public bool IsMoving()
+    {
+        return movement.magnitude > 0.1f;
+    }
 
     public void DisablePlayerController()
     {
