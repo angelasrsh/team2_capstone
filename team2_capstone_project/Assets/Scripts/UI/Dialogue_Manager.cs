@@ -212,6 +212,10 @@ public class Dialogue_Manager : MonoBehaviour
                     }
 
                     uiManager.ShowOrHidePortrait(portrait);
+
+                    uiManager.SetDialogSound(customer.dialogClipSound);
+                    uiManager.SetDialogSoundSettings(customer.pitchMin, customer.pitchMax);
+                    uiManager.SetTypingSpeed(customer.textSpeed);
                 }
                 else
                 {
@@ -297,6 +301,10 @@ public class Dialogue_Manager : MonoBehaviour
                     }
 
                     uiManager.ShowOrHidePortrait(portrait);
+
+                    uiManager.SetDialogSound(customer.dialogClipSound);
+                    uiManager.SetDialogSoundSettings(customer.pitchMin, customer.pitchMax);
+                    uiManager.SetTypingSpeed(customer.textSpeed);
                 }
             }
 
