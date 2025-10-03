@@ -67,7 +67,7 @@ public class Dialogue_Manager : MonoBehaviour
     
     private void Update()
     {
-        if (interactAction.WasPerformedThisFrame() && dialogQueue.Count == 0 && !uiManager.textTyping)
+        if (Input.GetKeyDown(KeyCode.E) && dialogQueue.Count == 0 && !uiManager.textTyping)
         {
             EndDialog();
         }
