@@ -3990,25 +3990,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f656c0dcd25d5459b7bf87497ac062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  globalMinSpawn: 15
+  globalMaxSpawn: 20
   possibleResources:
   - {fileID: 11400000, guid: 80ee327079d59de41a2d38289dd89d6f, type: 2}
   - {fileID: 11400000, guid: 97586fec84298c7489d081880a485db5, type: 2}
   - {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
   interactablePrefab: {fileID: 6503592380340263545, guid: dfef63f2e652c9f44aedfca01ed4aa75, type: 3}
-  totalToSpawn: 12
+  totalToSpawn: 10
   spawnAreas:
   - centerOffset: {x: -5.75, y: 0, z: 3.03}
     size: {x: 5.88, y: 0, z: 16.17}
+    minSpawn: 2
+    maxSpawn: 3
   - centerOffset: {x: 30.28, y: 0, z: 15.4}
     size: {x: 14.35, y: 0, z: 9.1}
+    minSpawn: 3
+    maxSpawn: 4
   - centerOffset: {x: 24.6, y: 0, z: -6.6}
     size: {x: 6.9, y: 0, z: 15.64}
+    minSpawn: 0
+    maxSpawn: 0
   - centerOffset: {x: 2.1, y: 0, z: 21.2}
     size: {x: 15.13, y: 0, z: 12.2}
+    minSpawn: 0
+    maxSpawn: 2
   - centerOffset: {x: 8.72, y: 0, z: -9.6}
     size: {x: 4.8, y: 0, z: 12.09}
+    minSpawn: 1
+    maxSpawn: 3
   - centerOffset: {x: 16.97, y: 0, z: 6.2}
     size: {x: 6.88, y: 0, z: 22.7}
+    minSpawn: 4
+    maxSpawn: 5
 --- !u!1 &422044030
 GameObject:
   m_ObjectHideFlags: 0
