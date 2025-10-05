@@ -39,18 +39,16 @@ public class Game_Manager : MonoBehaviour
             if (npcDatabase == null)
                 Debug.LogError("GameManager: npcDatabase not set in inspector!");
 
-            Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-            Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
-            Player_Progress.Instance.UnlockNPC(CustomerData.NPCs.Elf);
-            Debug.Log("GameManager: Player_Progress initialized and Blinding Stew, Mc_Dragons_Burger, and Asper_Agis unlocked.");
+            playerProgress.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
+            playerProgress.UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
+            playerProgress.UnlockNPC(CustomerData.NPCs.Elf);
+            playerProgress.UnlockIngredient(Ingredient_Inventory.Instance.IngrEnumToData(IngredientType.Bone));
+            playerProgress.UnlockIngredient(Ingredient_Inventory.Instance.IngrEnumToData(IngredientType.Uncut_Fogshroom));
+            playerProgress.UnlockIngredient(Ingredient_Inventory.Instance.IngrEnumToData(IngredientType.Uncut_Fermented_Eye));
+            Debug.Log("GameManager: Player_Progress initialized. Blinding Stew, Mc_Dragons_Burger, Bone, Fogshroom, Fermented Eye, and Asper_Agis unlocked.");
 
             if (foragingDatabase == null)
                 Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
-            else
-            {
-                foragingDatabase.UnlockItem("Bone");
-                Debug.Log("GameManager: ForagingDatabase initialized and Bone unlocked.");
-            }
         }
         else
         {

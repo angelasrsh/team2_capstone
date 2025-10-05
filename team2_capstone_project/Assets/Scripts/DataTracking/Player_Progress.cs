@@ -9,7 +9,10 @@ public class Player_Progress : ScriptableObject
     // HashSet ensures no duplicates and fast lookups
     [SerializeField] private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
     [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
+    [SerializeField] private HashSet<Ingredient_Data> unlockedIngredients = new HashSet<Ingredient_Data>();
     public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked
+    public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked
+    public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked
 
     private void OnEnable()
     {
@@ -41,13 +44,41 @@ public class Player_Progress : ScriptableObject
     public List<Dish_Data.Dishes> GetUnlockedDishes() => new List<Dish_Data.Dishes>(unlockedDishes);
     #endregion
 
+    #region Ingredients
+    /// <summary>
+    /// Unlock an ingredient by Ingredient_Data
+    /// </summary>
+    public void UnlockIngredient(Ingredient_Data ingr)
+    {
+        if (unlockedIngredients.Add(ingr))
+        {
+            // Fire event only if a new ingredient was added
+            OnIngredientUnlocked?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// Check if an ingredient is unlocked
+    /// </summary>
+    public bool IsIngredientUnlocked(Ingredient_Data ingr) => unlockedIngredients.Contains(ingr);
+
+    /// <summary>
+    /// Get all unlocked ingredients as a list
+    /// </summary>
+    public List<Ingredient_Data> GetUnlockedIngredients() => new List<Ingredient_Data>(unlockedIngredients);
+    #endregion
+
     #region NPCs
     /// <summary>
     /// Unlock an NPC by enum
     /// </summary>
     public void UnlockNPC(CustomerData.NPCs npc)
     {
-        unlockedNPCs.Add(npc);
+        if (unlockedNPCs.Add(npc))
+        {
+            // Fire event only if a new npc was added
+            OnNPCUnlocked?.Invoke();
+        }
     }
 
     /// <summary>

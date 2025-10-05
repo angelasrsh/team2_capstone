@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "NPCs/NPC Database")]
 public class NPC_Database : ScriptableObject
 {
-    [SerializeField] private List<CustomerData> allNPCs = new List<CustomerData>();
+    [SerializeField] public List<CustomerData> allNPCs = new List<CustomerData>();
     private Dictionary<CustomerData.NPCs, CustomerData> lookup;
     public static NPC_Database Instance;
 

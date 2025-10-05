@@ -7,11 +7,7 @@ public class Foraging_Database : ScriptableObject
 {
     [Tooltip("All possible foraging items that can be discovered.")]
     public List<Ingredient_Data> foragingItems;
-
-    public event System.Action OnForagingItemUnlocked; // Notify UI updates
-
     private Dictionary<string, Ingredient_Data> foragingLookup;
-    private HashSet<string> unlockedItems = new HashSet<string>();
 
     // Initialize when ScriptableObject loads
     private void OnEnable()
@@ -41,27 +37,5 @@ public class Foraging_Database : ScriptableObject
 
         Debug.LogWarning($"Foraging item {Name} not found in database!");
         return null;
-    }
-
-    public void UnlockItem(string Name)
-    {
-        if (foragingLookup.ContainsKey(Name) && unlockedItems.Add(Name))
-        {
-            OnForagingItemUnlocked?.Invoke(); // notify listeners
-        }
-        // else
-        // {
-        //     Debug.LogWarning($"Item {Name} does not exist in the foraging database.");
-        // }
-    }
-
-    public bool IsItemUnlocked(string Name)
-    {
-        return unlockedItems.Contains(Name);
-    }
-
-    public HashSet<string> GetUnlockedItems()
-    {
-        return new HashSet<string>(unlockedItems);
     }
 }
