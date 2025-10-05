@@ -7,13 +7,14 @@ using Unity.VisualScripting;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Grimoire;
+using System.Linq;
 
 public class Journal_Menu : MonoBehaviour
 {
   public GameObject journal;
   private bool isPaused = false; // Currently will overlap pause menu, I think
-  private PlayerInput playerInput;
-  // private InputAction openJournalAction;
+  private Player_Progress playerProgress = Player_Progress.Instance;
+  private InputAction openJournalAction;
 
   [Header("Recipe Menu References")]
   [SerializeField] private GameObject Dish_Slot_Prefab;
@@ -28,9 +29,17 @@ public class Journal_Menu : MonoBehaviour
   [SerializeField] private GameObject Foraging_Left_Page;
   [SerializeField] private GameObject Foraging_Right_Page;
 
+  [Header("NPC Menu References")]
+  [SerializeField] private GameObject NPC_Slot_Prefab;
+  [SerializeField] private GameObject NPC_Grid;
+  [SerializeField] private GameObject NPC_Left_Page;
+  [SerializeField] private GameObject NPC_Right_Page;
+  [SerializeField] private Slider NPC_Slider;
+
   [Header("Journal Sections")]
   [SerializeField] private CanvasGroup recipeMenuGroup;
   [SerializeField] private CanvasGroup foragingMenuGroup;
+  [SerializeField] private CanvasGroup npcMenuGroup;
 
   private Dish_Database dishDatabase;
   private Foraging_Database foragingDatabase;
@@ -45,14 +54,12 @@ public class Journal_Menu : MonoBehaviour
   {
     dishDatabase = Game_Manager.Instance.dishDatabase;
     foragingDatabase = Game_Manager.Instance.foragingDatabase;
-    PlayerInput playerInput = FindObjectOfType<PlayerInput>();
-    // playerInput check is not necessary to show as warning or error since journal can be opened in minigames too
-    // if (playerInput == null)
-    //   Debug.LogWarning("Journal_Menu: No PlayerInput found in scene!");
 
-    // openJournalAction = playerInput.actions["OpenJournal"];
-    // if (openJournalAction == null)
-    //   Debug.LogError("Journal_Menu: 'OpenJournal' action not found in PlayerInput actions!");
+    Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+    if (pic != null)
+    {
+        openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
+    }
 
     if (journal == null)
       Debug.LogError("Journal_Menu: Journal GameObject not assigned in inspector!");
@@ -78,31 +85,25 @@ public class Journal_Menu : MonoBehaviour
     else
       Debug.Log("Choose_Menu_Items still alive. Dishes count: " + Choose_Menu_Items.instance.GetSelectedDishes().Count);
 
-    if (dishDatabase != null && foragingDatabase != null)
-    {
-      dishDatabase.OnDishUnlocked += PopulateDishes; // subscribe to the event
-      PopulateDishes();
-    }
+    PopulateDishes();
+    PopulateNPCs();
   }
 
   // Update is called once per frame
   void Update()
   {
-        // if (openJournalAction.WasPerformedThisFrame())
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            if (isPaused)
-            {
-                ResumeGame();
-                Game_Events_Manager.Instance.JournalToggled(false);
-            }
-            else
-            {
-                PauseGame();
-                Game_Events_Manager.Instance.JournalToggled(true);
-            }
-                
-        
+    if (openJournalAction.WasPerformedThisFrame())
+    {
+      if (isPaused)
+      {
+          ResumeGame();
+          Game_Events_Manager.Instance.JournalToggled(false);
+      }
+      else
+      {
+          PauseGame();
+          Game_Events_Manager.Instance.JournalToggled(true);
+      }
     }
   }
 
@@ -133,29 +134,34 @@ public class Journal_Menu : MonoBehaviour
 
     ShowGroup(recipeMenuGroup, false);
     ShowGroup(foragingMenuGroup, false);
+    ShowGroup(npcMenuGroup, false);
   }
 
   private void OnEnable()
   {
-      Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
-      Debug.Log("Subscribed to OnDailyMenuSelected event.");
+    Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
+    Debug.Log("Subscribed to OnDailyMenuSelected event.");
 
-      if (dishDatabase == null)
-      {
-          dishDatabase = Game_Manager.Instance?.dishDatabase;
-      }
+    if (Choose_Menu_Items.instance != null && Choose_Menu_Items.instance.HasSelectedDishes() && dishDatabase != null)
+    {
+      PopulateForaging(Choose_Menu_Items.instance.GetSelectedDishes());
+      Debug.Log("Populated foraging menu from existing daily menu selection.");
+    }
 
-      if (dishDatabase != null && Choose_Menu_Items.instance != null && Choose_Menu_Items.instance.HasSelectedDishes())
-      {
-          PopulateForaging(Choose_Menu_Items.instance.GetSelectedDishes());
-          Debug.Log("Populated foraging menu from existing daily menu selection.");
-      }
+    if (Player_Progress.Instance != null)
+    {
+      playerProgress.OnDishUnlocked += PopulateDishes;
+      playerProgress.OnDishUnlocked += PopulateNPCs;
+    }
   }
 
   private void OnDisable()
   {
-    if (dishDatabase != null)
-      dishDatabase.OnDishUnlocked -= PopulateDishes;
+    if (Player_Progress.Instance != null)
+    {
+      Player_Progress.Instance.OnDishUnlocked -= PopulateDishes;
+      Player_Progress.Instance.OnDishUnlocked -= PopulateNPCs;
+    }
 
     Choose_Menu_Items.OnDailyMenuSelected -= PopulateForaging;
   }
@@ -172,8 +178,8 @@ public class Journal_Menu : MonoBehaviour
     }
 
     // Populate with unlocked dishes
-    Debug.Log($"Unlocked dishes count: {dishDatabase.GetUnlockedDishes().Count}");
-    foreach (var unlockedDishType in dishDatabase.GetUnlockedDishes())
+    Debug.Log($"Unlocked dishes count: {playerProgress.GetUnlockedDishes().Count}");
+    foreach (var unlockedDishType in playerProgress.GetUnlockedDishes())
     {
       Dish_Data dishData = dishDatabase.GetDish(unlockedDishType);
       if (dishData == null) continue; // safety check 
@@ -236,7 +242,7 @@ public class Journal_Menu : MonoBehaviour
     }
 
     // For each selected dish
-   Debug.Log("PopulateForaging called. DishDatabase: " + (dishDatabase != null) +
+   Debug.Log("PopulateForaging called. playerProgress: " + (playerProgress != null) +
           ", ForagingPrefab: " + (Foraging_Slot_Prefab != null) +
           ", ContentParent: " + (Foraging_Grid != null));
 
@@ -267,43 +273,118 @@ public class Journal_Menu : MonoBehaviour
     }
   }
 
-    private void DisplayDishForagingDetails(Dish_Data dishData)
+  private void DisplayDishForagingDetails(Dish_Data dishData)
+  {
+    Foraging_Left_Page.SetActive(true);
+
+    Transform pagePanel = Foraging_Left_Page.transform.Find("Left_Page_Item_Panel");
+
+    // Dish Info
+    pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
+    pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.Image;
+
+    // Collect ingredient lines
+    string ingredientText = "";
+    foreach (var req in dishData.ingredientQuantities)
     {
-        Foraging_Left_Page.SetActive(true);
+      Ingredient_Data ingredient = req.ingredient;
+      int required = req.amountRequired;
 
-        Transform pagePanel = Foraging_Left_Page.transform.Find("Left_Page_Item_Panel");
+      // Pick the display ingredient
+      Ingredient_Data displayIngredient = ingredient;
 
-        // Dish Info
-        pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
-        pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.Image;
+      // If this ingredient has equivalencies, pick the first one as the base
+      if (ingredient.countsAs != null && ingredient.countsAs.Count > 0)
+      {
+        displayIngredient = ingredient.countsAs[0];
+      }
 
-        // Collect ingredient lines
-        string ingredientText = "";
-        foreach (var req in dishData.ingredientQuantities)
-        {
-            Ingredient_Data ingredient = req.ingredient;
-            int required = req.amountRequired;
+      // Now display the base ingredient instead of the processed one
+      ingredientText += $"{displayIngredient.Name} x{required}\n";
 
-            // Pick the display ingredient
-            Ingredient_Data displayIngredient = ingredient;
+    }
 
-            // If this ingredient has equivalencies, pick the first one as the base
-            if (ingredient.countsAs != null && ingredient.countsAs.Count > 0)
-            {
-                displayIngredient = ingredient.countsAs[0];
-            }
+    // Assign once
+    var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
+    detailsText.text = ingredientText.TrimEnd(); // trim last newline
 
-            // Now display the base ingredient instead of the processed one
-            ingredientText += $"{displayIngredient.Name} x{required}\n";
+    // Broadcast event for tutorial
+    Game_Events_Manager.Instance.ForageDetailsClick();
+  }
+  #endregion
 
-        }
+  #region NPC Menu Methods
+  private void PopulateNPCs()
+  {
+    Debug.Log("Populating npcs in journal...");
 
-        // Assign once
-        var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
-        detailsText.text = ingredientText.TrimEnd(); // trim last newline
+    // Clear existing npc slots
+    foreach (Transform child in NPC_Grid.transform)
+    {
+      DestroyImmediate(child.gameObject, true);
+    }
 
-        // Broadcast event for tutorial
-        Game_Events_Manager.Instance.ForageDetailsClick();
+    // Populate with unlocked dishes
+    Debug.Log($"Unlocked npcs count: {playerProgress.GetUnlockedNPCs().Count}");
+    foreach (var unlockedNPC in playerProgress.GetUnlockedNPCs())
+    {
+      CustomerData npcData = NPC_Database.Instance.GetNPCData(unlockedNPC);
+      if (npcData == null) continue; // safety check 
+
+      // Instantiate an npc slot prefab as a child of the grid
+      GameObject slot = Instantiate(NPC_Slot_Prefab, NPC_Grid.transform);
+
+      // Find and set the UI elements within the slot
+      Transform NPCBG = slot.transform.Find("NPC_Button_BG");
+      Transform button = NPCBG.Find("Button");
+      Transform npcName = button.Find("NPC_Name");
+      var textComp = npcName.GetComponent<TextMeshProUGUI>();
+      textComp.text = npcData.customerName;
+
+      Transform iconPanel = NPCBG.Find("Icon_Panel");
+      Transform icon = iconPanel.Find("Icon");
+      var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
+      imageComp.sprite = npcData.defaultPortrait;
+
+      // Add button listener to show details on click
+      var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
+      buttonComp.onClick.AddListener(() => DisplayNPCDetails(npcData));
+    }
+  }
+    private void DisplayNPCDetails(CustomerData npcData)
+    {
+        NPC_Left_Page.SetActive(true);
+
+        Transform pagePanel = NPC_Left_Page.transform.Find("Left_Page_Panel");
+
+        // NPC Info
+        pagePanel.Find("NPC_Name").GetComponent<TextMeshProUGUI>().text = npcData.customerName;
+        pagePanel.Find("NPC_Icon_Panel/NPC_Image").GetComponent<UnityEngine.UI.Image>().sprite = npcData.defaultPortrait;
+
+        // Build the description text
+        string npcText = "Background Info: \n" + npcData.lore + "\n\n";
+
+        npcText += "Favorite Dishes: " +
+            (npcData.favoriteDishes.Length > 0
+                ? string.Join(", ", npcData.favoriteDishes.Select(d => d.Name))
+                : "None") + "\n";
+
+        npcText += "Disliked Dishes: " +
+            (npcData.dislikedDishes.Length > 0
+                ? string.Join(", ", npcData.dislikedDishes.Select(d => d.Name))
+                : "None") + "\n";
+
+        npcText += "Neutral Dishes: " +
+            (npcData.neutralDishes.Length > 0
+                ? string.Join(", ", npcData.neutralDishes.Select(d => d.Name))
+                : "None");
+
+        // Assign to text component
+        var detailsText = pagePanel.Find("NPC_Details").GetComponent<TextMeshProUGUI>();
+        detailsText.text = npcText;
+
+        // Assign slider value
+        NPC_Slider.value = Affection_System.Instance.GetAffectionLevel(npcData);
   }
   #endregion
 
@@ -319,12 +400,21 @@ public class Journal_Menu : MonoBehaviour
   {
     ShowGroup(recipeMenuGroup, true);
     ShowGroup(foragingMenuGroup, false);
+    ShowGroup(npcMenuGroup, false);
   }
 
   public void ShowForagingMenu()
   {
     ShowGroup(recipeMenuGroup, false);
     ShowGroup(foragingMenuGroup, true);
+    ShowGroup(npcMenuGroup, false);
+  }
+
+  public void ShowNPCMenu()
+  {
+    ShowGroup(npcMenuGroup, true);
+    ShowGroup(foragingMenuGroup, false);
+    ShowGroup(recipeMenuGroup, false);
   }
 
   public void HideEverything()
@@ -334,6 +424,7 @@ public class Journal_Menu : MonoBehaviour
     journal.transform.GetChild(2).gameObject.SetActive(false);
     ShowGroup(recipeMenuGroup, false);
     ShowGroup(foragingMenuGroup, false);
+    ShowGroup(npcMenuGroup, false);
   }
   #endregion
 }

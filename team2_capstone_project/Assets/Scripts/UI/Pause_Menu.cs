@@ -6,20 +6,44 @@ using UnityEngine.SceneManagement;
 
 public class Pause_Menu : MonoBehaviour
 {
+  public static Pause_Menu instance;
+
+  [Header("UI Elements")]
   public GameObject menuBox;
   public GameObject darkOverlay;
-  private bool isPaused = false;
 
-  // Update is called once per frame
+  [Header("Room Change Settings")]
+  public Room_Data currentRoom;
+  public Room_Data.RoomID exitingTo;
+
+  private bool isPaused = false;
+  private bool canPause = true; 
+    
+  private void Awake()
+  {
+    instance = this;
+    HideMenu();
+  }
+
   void Update()
   {
-      if(Input.GetKeyDown(KeyCode.Escape))
+      if (!canPause) return; // ignore pause if disabled
+
+      if (Input.GetKeyDown(KeyCode.Escape))
       {
-          if(isPaused)
-            ResumeGame();
+          if (isPaused)
+              ResumeGame();
           else
-            PauseGame();
+              PauseGame();
       }
+  }
+
+  public void SetCanPause(bool value)
+  {
+      canPause = value;
+
+      if (!canPause && isPaused)
+          ResumeGame(); // auto-resume if pause is forcibly disabled
   }
 
   public void PauseGame()
@@ -27,10 +51,10 @@ public class Pause_Menu : MonoBehaviour
     Audio_Manager.instance.PlaySFX(Audio_Manager.instance.menuOpen);
 
     Debug.Log("Pausing game...");
-    if(menuBox == null)
+    if (menuBox == null)
       Debug.Log("Menubox is null?");
     menuBox.SetActive(true);
-    if(darkOverlay == null)
+    if (darkOverlay == null)
       Debug.Log("Dark Overlay is null?");
     darkOverlay.SetActive(true);
     isPaused = true;
@@ -40,7 +64,7 @@ public class Pause_Menu : MonoBehaviour
   public void ResumeGame()
   {
     Audio_Manager.instance.PlaySFX(Audio_Manager.instance.menuClose);
-    
+
     Debug.Log("Resuming game...");
     menuBox.SetActive(false);
     darkOverlay.SetActive(false);
@@ -51,6 +75,13 @@ public class Pause_Menu : MonoBehaviour
   public void QuitGame()
   {
     Debug.Log("Quitting game...");
-    SceneManager.LoadScene("Main_Menu");
+    Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+  }
+  
+  private void HideMenu()
+  {
+    menuBox.SetActive(false);
+    darkOverlay.SetActive(false);
+    isPaused = false;
   }
 }

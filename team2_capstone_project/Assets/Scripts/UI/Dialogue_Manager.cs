@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
+using Grimoire;
 
 public class Dialogue_Manager : MonoBehaviour
 {
@@ -17,10 +19,12 @@ public class Dialogue_Manager : MonoBehaviour
     public bool autoAdvanceDialog = false; // Enable auto mode
     public float autoAdvanceDelay = 2.5f;  // Time between lines
 
-    [Header("Character Portraits")]
-    public Dictionary<Character_Portrait_Data.CharacterName, Character_Portrait_Data> characterPortraits 
-        = new Dictionary<Character_Portrait_Data.CharacterName, Character_Portrait_Data>();
-    [SerializeField] private List<Character_Portrait_Data> characterPortraitList;
+    [Header("Character Data")]
+    public Dictionary<CustomerData.NPCs, CustomerData> customerDataDict 
+        = new Dictionary<CustomerData.NPCs, CustomerData>();
+    [SerializeField] private List<CustomerData> customerDataList;
+    private Dictionary<string, CustomerData.NPCs> nameToEnumMap = new Dictionary<string, CustomerData.NPCs>
+        (StringComparer.OrdinalIgnoreCase);  
 
     // Internal references
     private Dictionary<string, string> dialogMap;
@@ -28,6 +32,7 @@ public class Dialogue_Manager : MonoBehaviour
     private string myDialogKey;
     [HideInInspector] public enum DialogueState { Normal, Waiting }
     [HideInInspector] public DialogueState currentState = DialogueState.Normal;
+    private InputAction interactAction;
 
     // Components    
     private Player_Controller playerOverworld;
@@ -35,28 +40,74 @@ public class Dialogue_Manager : MonoBehaviour
     private void Awake()
     {
         playerOverworld = FindObjectOfType<Player_Controller>();
-        
         dialogMap = new Dictionary<string, string>();
 
-        foreach (var characterPortrait in characterPortraitList)
+        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+        if (pic != null)
         {
-            if (!characterPortraits.ContainsKey(characterPortrait.characterName))
-            {
-                characterPortraits.Add(characterPortrait.characterName, characterPortrait);
-            }
+            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
         }
-        PopulateDialogMap();
+
+        foreach (var customer in customerDataList)
+        {
+            if (!customerDataDict.ContainsKey(customer.npcID))
+            {
+                customerDataDict.Add(customer.npcID, customer);
+            }
+
+            // Map name to enum for easy lookup
+            if (!string.IsNullOrEmpty(customer.customerName) && !nameToEnumMap.ContainsKey(customer.customerName))
+            {
+                nameToEnumMap.Add(customer.customerName, customer.npcID);
+            }
+
+            PopulateDialogMap();
+        }
     }
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R) && dialogQueue.Count == 0 && !uiManager.textTyping)
+        if (Input.GetKeyDown(KeyCode.E) && dialogQueue.Count == 0 && !uiManager.textTyping)
         {
             EndDialog();
         }
     }
 
     #region Dialog Map Population
+    private bool TryResolveCharacterKey(string key, out CustomerData.NPCs result)
+    {
+        // 1) direct enum parse (expects names like "Elf" or "Phrog")
+        if (Enum.TryParse(key, true, out result))
+            return true;
+
+        // 2) try replace spaces with underscores (handles "Asper Agis" -> "Asper_Agis")
+        string alt = key.Replace(" ", "_");
+        if (Enum.TryParse(alt, true, out result))
+            return true;
+
+        // 3) try removing spaces (handles "Asper Agis" -> "AsperAgis")
+        string altNoSpace = key.Replace(" ", "");
+        if (Enum.TryParse(altNoSpace, true, out result))
+            return true;
+
+        // 4) try the display-name map (maps "Asper Agis" -> npcID)
+        if (nameToEnumMap.TryGetValue(key, out result))
+            return true;
+
+        // 5) fallback: case-insensitive match through the map keys
+        foreach (var kv in nameToEnumMap)
+        {
+            if (string.Equals(kv.Key, key, StringComparison.OrdinalIgnoreCase))
+            {
+                result = kv.Value;
+                return true;
+            }
+        }
+
+        result = default;
+        return false;
+    }
+
     private void PopulateDialogMap()
     {
         if (dialogMap.Count > 0 || dialogFile == null)
@@ -140,27 +191,35 @@ public class Dialogue_Manager : MonoBehaviour
             // Parse dialog line -> text {Emotion}
             string[] parts = dialogLine.Split(new[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
             string dialogText = parts[0].Trim(); 
-            Character_Portrait_Data.EmotionPortrait.Emotion emotion = Character_Portrait_Data.EmotionPortrait.Emotion.Neutral;
+            CustomerData.EmotionPortrait.Emotion emotion = CustomerData.EmotionPortrait.Emotion.Neutral;
 
-            if (parts.Length > 1 && Enum.TryParse(parts[1].Trim(), true, out Character_Portrait_Data.EmotionPortrait.Emotion parsedEmotion))
+            if (parts.Length > 1 && Enum.TryParse(parts[1].Trim(), true, out CustomerData.EmotionPortrait.Emotion parsedEmotion))
             {
                 emotion = parsedEmotion;
             }
 
             // Character from key
             string characterKey = myDialogKey.Split('.')[0];
-            if (Enum.TryParse(characterKey, true, out Character_Portrait_Data.CharacterName charEnum))
+            if (TryResolveCharacterKey(characterKey, out CustomerData.NPCs charEnum))
             {
-                if (characterPortraits.TryGetValue(charEnum, out Character_Portrait_Data characterData))
+                if (customerDataDict.TryGetValue(charEnum, out CustomerData customer))
                 {
-                    Sprite portrait = characterData.defaultPortrait;
+                    Sprite portrait = customer.defaultPortrait;
 
-                    if (characterData.GetEmotionPortraits().TryGetValue(emotion, out Sprite emotionPortrait))
+                    if (customer.GetEmotionPortraits().TryGetValue(emotion, out Sprite emotionPortrait))
                     {
                         portrait = emotionPortrait;
                     }
 
                     uiManager.ShowOrHidePortrait(portrait);
+
+                    uiManager.SetDialogSound(customer.dialogClipSound);
+                    uiManager.SetDialogSoundSettings(customer.pitchMin, customer.pitchMax);
+                    uiManager.SetTypingSpeed(customer.textSpeed);
+                }
+                else
+                {
+                    Debug.LogWarning($"Dialogue_Manager: Could not resolve character key '{characterKey}' from dialog key '{myDialogKey}'.");
                 }
             }
 
@@ -183,9 +242,12 @@ public class Dialogue_Manager : MonoBehaviour
     /// Starts a dialog sequence from the given key, but forces the portrait to a given emotion.
     /// Useful for reactions to liked/disliked/neutral dishes.
     /// </summary>
-    public void PlayScene(string aDialogKey, Character_Portrait_Data.EmotionPortrait.Emotion forcedEmotion)
+    public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion)
     {
-        if (dialogQueue.Count > 0) 
+        // Tell Game events manager so we don't overlap the dialogue box
+        Game_Events_Manager.Instance.BeginDialogueBox();
+
+        if (dialogQueue.Count > 0)
         {
             PlayNextDialog(forcedEmotion);
             return;
@@ -209,7 +271,7 @@ public class Dialogue_Manager : MonoBehaviour
     /// <summary>
     /// Plays the next line of dialog, forcing a specific emotion (ignores {Braces} in text).
     /// </summary>
-    public void PlayNextDialog(Character_Portrait_Data.EmotionPortrait.Emotion forcedEmotion)
+    public void PlayNextDialog(CustomerData.EmotionPortrait.Emotion forcedEmotion)
     {
         if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
 
@@ -225,20 +287,24 @@ public class Dialogue_Manager : MonoBehaviour
 
             // Character from key
             string characterKey = myDialogKey.Split('.')[0];
-            if (Enum.TryParse(characterKey, true, out Character_Portrait_Data.CharacterName charEnum))
+            if (Enum.TryParse(characterKey, true, out CustomerData.NPCs charEnum))
             {
-                if (characterPortraits.TryGetValue(charEnum, out Character_Portrait_Data characterData))
+                if (customerDataDict.TryGetValue(charEnum, out CustomerData customer))
                 {
-                    Sprite portrait = characterData.defaultPortrait;
+                    Sprite portrait = customer.defaultPortrait;
                     Debug.Log($"Forcing portrait emotion to {emotion} for character {characterKey}");
 
-                    if (characterData.GetEmotionPortraits().TryGetValue(emotion, out Sprite emotionPortrait))
+                    if (customer.GetEmotionPortraits().TryGetValue(emotion, out Sprite emotionPortrait))
                     {
                         portrait = emotionPortrait;
                         Debug.Log($"Found portrait for emotion {emotion}.");
                     }
 
                     uiManager.ShowOrHidePortrait(portrait);
+
+                    uiManager.SetDialogSound(customer.dialogClipSound);
+                    uiManager.SetDialogSoundSettings(customer.pitchMin, customer.pitchMax);
+                    uiManager.SetTypingSpeed(customer.textSpeed);
                 }
             }
 
@@ -268,7 +334,7 @@ public class Dialogue_Manager : MonoBehaviour
     public void EndDialog()
     {
         Debug.Log("EndDialog called.");
-        
+
         uiManager.HideTextBox();
         uiManager.ClearText();
         uiManager.HidePortrait();
@@ -276,6 +342,7 @@ public class Dialogue_Manager : MonoBehaviour
         playerOverworld.EnablePlayerController();
 
         onDialogComplete?.Invoke();
+        Game_Events_Manager.Instance.EndDialogBox(); // Could probably merge with above
     }
 
     public void ResetDialogForKey(string aDialogKey)

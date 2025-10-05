@@ -39,7 +39,12 @@ public class Room_Change_Manager : MonoBehaviour
         }
     }
 
+    // <<summary>
+    // Call this to transition to a new room.
+    // currentRoomID: the RoomID of the room you are currently in
+    // exitingTo: the RoomID of the room you want to go to
     // e.g. Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Restaurant, Room_Data.RoomID.CookingMinigame);
+    // </summary>
     public void GoToRoom(Room_Data.RoomID currentRoomID, Room_Data.RoomID exitingTo)
     {
         Room_Data currentRoom = Room_Manager.GetRoom(currentRoomID);
@@ -79,9 +84,22 @@ public class Room_Change_Manager : MonoBehaviour
             Debug.LogError($"[Room_Change_Manager] Exit from {currentRoomID} to {exitingTo} has no target room assigned!");
             return;
         }
+
+        // Set time of day (and override if needed)
+        if (Day_Turnover_Manager.Instance != null)
+        {
+            if (exit.overrideTimeOfDay)
+            {
+                Day_Turnover_Manager.Instance.SetTimeOfDay(exit.overrideValue);
+            }
+            else
+            {
+                // fallback: target room could have a default if you want
+                Debug.Log($"No time override for this exit. Using whatever state already exists: {Day_Turnover_Manager.Instance.currentTimeOfDay}");
+            }
+        }
         StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
     }
-
 
     private RoomExitOptions Exit(Room_Data room, Room_Data.RoomID exitingTo)
     {
@@ -93,6 +111,9 @@ public class Room_Change_Manager : MonoBehaviour
         return null;
     }
 
+    // <<summary>
+    // Handles the transition process: fade out, load new scene, fade in.
+    // </summary>
     private IEnumerator HandleRoomTransition(Room_Data targetRoom, Room_Data.SpawnPointID spawnPointID)
     {
         blackScreenFade = FindObjectOfType<Screen_Fade>();
@@ -103,11 +124,11 @@ public class Room_Change_Manager : MonoBehaviour
         }
 
         // Disable player controls
-        if(Player_Input_Controller.instance != null)
-          Player_Input_Controller.instance.DisablePlayerInput();
+        if (Player_Input_Controller.instance != null)
+            Player_Input_Controller.instance.DisablePlayerInput();
 
         // Fade out music/ambient
-        if(Music_Persistence.instance != null)
+        if (Music_Persistence.instance != null)
         {
             Music_Persistence.instance.PreTransitionCheckMusic(targetRoom.music);
             Music_Persistence.instance.PreTransitionCheckAmbient(targetRoom.ambientSound);
@@ -127,20 +148,12 @@ public class Room_Change_Manager : MonoBehaviour
         while (!asyncLoad.isDone)
             yield return null;
 
-        // Fade out black
-        blackScreenFade = FindObjectOfType<Screen_Fade>();
-        if (blackScreenFade != null)
-        {
-            yield return StartCoroutine(HandleNewRoomTransition(targetRoom));
-        }
-
-        // Place player at spawn point if overworld scene
+        // place player immediately after scene loads prior to fade out
         if (targetRoom.isOverworldScene)
         {
             GameObject player = GameObject.FindWithTag("Player");
             if (player != null)
             {
-                Player_Input_Controller.instance.EnablePlayerInput();
                 Spawn_Point[] spawnPoints = FindObjectsOfType<Spawn_Point>();
                 foreach (var sp in spawnPoints)
                 {
@@ -153,13 +166,22 @@ public class Room_Change_Manager : MonoBehaviour
             }
         }
 
-        // Handle music
+        // now fade out
+        blackScreenFade = FindObjectOfType<Screen_Fade>();
+        if (blackScreenFade != null)
+        {
+            yield return StartCoroutine(HandleNewRoomTransition(targetRoom));
+        }
+
+        // re-enable player controls and set music/ambient
+        if (Player_Input_Controller.instance != null)
+            Player_Input_Controller.instance.EnablePlayerInput();
+
         if (targetRoom.music != null)
             Music_Persistence.instance.CheckMusic(targetRoom.music, targetRoom.musicVolume);
         else
             Music_Persistence.instance.StopMusic();
 
-        // Handle ambient
         if (targetRoom.ambientSound != null)
             Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound, targetRoom.ambientVolume);
         else

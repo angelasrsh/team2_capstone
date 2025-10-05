@@ -11,15 +11,17 @@ public class Room_Data : ScriptableObject
         Main_Menu,
         World_Map,
         Restaurant,
+        Bedroom,
         Cooking_Minigame,
-        Chopping_Minigame
+        Chopping_Minigame,
+        Frying_Minigame,
     }
 
     public enum SpawnPointID
     {
         Default,
-        Entrance,
-        Exit
+        Cauldron,
+        Cutting_Board,
     }
 
     [Header("Room Info")]
@@ -42,5 +44,7 @@ public class RoomExitOptions
     public Room_Data.RoomID exitingTo;
     public Room_Data.SpawnPointID spawnPointID;
     public Room_Data targetRoom;
+    public bool overrideTimeOfDay;
+    public Day_Turnover_Manager.TimeOfDay overrideValue;
 }
 

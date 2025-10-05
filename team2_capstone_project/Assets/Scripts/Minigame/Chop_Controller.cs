@@ -4,6 +4,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+// using UnityEngine.UIElements;
+using System;
+using UnityEngine.InputSystem.LowLevel; //for actions
+
 
 
 [System.Serializable]
@@ -18,7 +22,7 @@ public class Chop_Controller : MonoBehaviour
 {
     [Header("References")]
     public Camera mainCamera;
-    public GameObject ingredient;  
+    // public GameObject ingredient;  
     public CutLine[] cutLines;
 
     [Header("Settings")]
@@ -37,7 +41,7 @@ public class Chop_Controller : MonoBehaviour
     public bool isActive = false;
 
     public Drag_All drag_all_script;
-    public Knife_Script knife_script;
+    public Knife_Script k_script;
     
     [Header("Cut Settings")]
     public GameObject cutPrefab;
@@ -46,6 +50,23 @@ public class Chop_Controller : MonoBehaviour
     public Ingredient_Data ingredient_data_var;
     public GameObject ingredient_object;
     private bool hasIngredientData = true;
+
+    private GameObject currentCuttingLines;
+    public GameObject uiLineRendererPrefab; // Prefab with UILineRenderer script attached
+    public Transform cuttingLinesParent;
+
+    public Ingredient_Data defaultIngredient; // Assign in Inspector
+    private Vector2 swipeStart;
+
+    private Vector3 knife_pos;
+    public bool knife_is_overlapping = false;
+    public RectTransform redZoneForKnife;
+    public bool in_inventory = false;
+    private bool wasDragging = false;
+
+    private GameObject knifePoint;
+    public List<Vector2> newPoints;
+
 
 
     public Ingredient_Data SetIngredientData(Ingredient_Data ingredientData, GameObject ing_gameOb)
@@ -58,55 +79,139 @@ public class Chop_Controller : MonoBehaviour
         // Debug.Log("[Chp_ctrller] Received ingredient data: " + ingredient_data_var); //works
         return ingredient_data_var;
     }
-    private void showCuttingLines()
-    {
-        //function to make the lines appear
-        // then start the game
 
+
+    public UILineRenderer lineRenderer;
+    /// <summary>
+    ///  function to make the lines appear per ingredient
+    /// </summary>
+    private void ShowCuttingLines()
+    {
+
+        if (currentCuttingLines != null)
+        {
+            Destroy(currentCuttingLines);
+        }
+
+
+
+        cuttingLinesParent = GameObject.Find("IngredientResize-Canvas").transform;
+        // instantiate new cutting lines
+        currentCuttingLines = Instantiate(uiLineRendererPrefab, cuttingLinesParent);
+
+        // Immediately configure after instantiation
+        lineRenderer = currentCuttingLines.GetComponent<UILineRenderer>();
+
+        if (lineRenderer != null)
+        {
+            Debug.Log("LineRendere is not null");
+            if (ingredient_data_var.Name == "Uncut Fermented Eye")
+            {
+                Debug.Log("Found Uncut Fermented eye");
+
+                //first line
+                newPoints = new List<Vector2>
+                {
+                    new Vector2(0f, 36.03f),
+                    new Vector2(268.4f, 300f),
+                };
+                lineRenderer.points = newPoints;
+
+            }
+            else if (ingredient_data_var.Name == "Uncut Fogshroom")
+            {
+                newPoints = new List<Vector2>
+                {
+                    new Vector2(0.64f,166.9f),
+                    new Vector2(300f, 217.7f),
+                };
+                lineRenderer.points = newPoints;
+
+            }
+        }
+        else
+        {
+            Debug.LogError("LineRenderer not set");
+        }
+
+        //cut Fermented Eye coordinates
+        //point 1: x = 0, y = 36.03
+        //point 2: x = 268.4, y = 300
+
+        //cut fogshroom
+        //line 1: (0.64,166.9), (300, 217.7)
+        //line 2: (0.64,166.9),(81.8,121,1), (186.5,104), (280.4,134.3)
+        //line 3: (12.1,50.6), (261.5, 75.1)
 
     }
 
-    public Ingredient_Data defaultIngredient; // Assign in Inspector
+
+    private void ClearCuttingLines()
+    {
+        if (currentCuttingLines != null)
+        {
+            Destroy(currentCuttingLines);
+            currentCuttingLines = null;
+        }
+    }
+
 
     void Start()
     {
         drag_all_script = FindObjectOfType<Drag_All>();
         // Debug.LogError("Drag_All found in CHop_Controller!");
         // Set default if no ingredient is set
-    //     if (ingredient_data_var == null && defaultIngredient != null)
-    //     {
-    //         ingredient_data_var = defaultIngredient;
-    // }
+        //     if (ingredient_data_var == null && defaultIngredient != null)
+        //     {
+        //         ingredient_data_var = defaultIngredient;
+        // }
         if (drag_all_script == null)
         {
             Debug.LogError("Drag_All not found in CHop_Controller!");
         }
-      
-        knife_script = FindObjectOfType<Knife_Script>();
-        if (knife_script == null)
+
+        k_script = FindObjectOfType<Knife_Script>();
+        if (k_script == null)
         {
             Debug.LogError("knife_Script not found in CHop_Controller!");
         }
+
+        knifePoint = GameObject.Find("KnifePoint");
+        if(knifePoint)
+
+        //invoked functions
+        k_script.OnDragStart += ShowCuttingLines;
+        k_script.OnDragEnd += ClearCuttingLines;
+
         // Debug.Log("[Chp_Cntrller] ingredient_data_var = " + ingredient_data_var);
-        // Start with script disabled
-        // DeactivateChopController();
 
     }
-
-    public void DeactivateChopController()
-    {
-        
-    }
-    private Vector2 swipeStart;
-
-    private Vector3 knife_pos;
-    public bool knife_is_overlapping = false;
-    public RectTransform redZoneForKnife;
-    public bool in_inventory = false;
+    public Vector2 kPoint;
+    public RectTransform knifeRect;
     void Update()
     {
-        // if (drag_all_script.canDrag == false) //TODO check if this is set up properly in drag all
         {
+            // knifeRect = knifePoint.GetComponent<RectTransform>();
+            // kPoint = knifeRect.transform.position; //or anchorPosition get knife rect position
+
+
+            //Spawn the cut lines when the knife gets dragged
+            if (k_script.knife_is_being_dragged == true && !wasDragging) //if the knife is being dragged from Knife Script
+            {
+                //TODO nice to have = swipeStart  = to position of the little box on the knife that i made instead of mous position
+                uiLineRendererPrefab.SetActive(true);
+                // swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                // startDragPos = Mouse.current.position.ReadValue();
+            }
+            // else if (k_script.knife_is_being_dragged == false && wasDragging)
+            // {
+            //     // Vector2 endDragPos = Mouse.current.position.ReadValue();
+            //     // SpawnCut();
+
+            //     // EvaluateChop(startDragPos, endDragPos, duration);
+            // }
+            wasDragging = isDragging; // set the is dragging to was dragging value and the first if statement wont run again
+
 
             if (hasIngredientData)
             {
@@ -117,9 +222,10 @@ public class Chop_Controller : MonoBehaviour
                 {
                     Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
                 }
-                knife_pos = knife_script.currKnifePosition;
+                knife_pos = k_script.currKnifePosition;
 
-                if (!knife_is_overlapping && Drag_All.IsOverlapping(knife_script.knifeRectTransform, redZoneForKnife))
+
+                if (!knife_is_overlapping && Drag_All.IsOverlapping(k_script.knifeRectTransform, redZoneForKnife))
                 {
                     Debug.Log("[Chp_cntrller] Knife is overlapping redZoneForKnife");
                     // SpawnCutPrefabs();
@@ -131,33 +237,33 @@ public class Chop_Controller : MonoBehaviour
 
                 }
 
-                if (knife_is_overlapping == true)
+                if (knife_is_overlapping == true && ingredient_object != null)
                 {
-                    Debug.Log("went inside the chopscript.knife_is_overlappting if statement");
+                    //this if statement is to change to cut sprite when knife is overealpping properly
+                    // Debug.Log("went inside the chopscript.knife_is_overlapping if statement");
 
                     // Get the Image component from the transform, then change the sprite
                     Image imageComponent = ingredient_object.GetComponent<Image>();
 
+
+                    //if the image of the sprite exists on the cutting board
                     if (imageComponent != null)
                     {
-                        // Use a cut image if available
-                        if (ingredient_data_var.CutIngredientImages.Length > 0)
-                        {
-                            imageComponent.sprite = ingredient_data_var.CutIngredientImages[0];
-                        }
-                        //use the regular image
-                        else
-                        {
-                            imageComponent.sprite = ingredient_data_var.Image;
-                        }
+                        //this assumes that the lines are already showing, change the sprite
+                        EvaluateChop(imageComponent);
+                        
                     }
+
+                    //checks
                     if (Ingredient_Inventory.Instance.HasItem(ingredient_data_var.makesIngredient[0].ingredient) == false)
                     {
+                        Debug.Log("[Chop_Cntrl] Inventory has item");
                         in_inventory = false;
                     }
                     if (!in_inventory)
                     {
-                        Ingredient_Inventory.Instance.AddResources(ingredient_data_var.makesIngredient[0].ingredient, 1);
+                        Debug.Log("Ingredient adding name: " + Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient));
+                        Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient), 1);
 
                         StartCoroutine(DelayedActions());
 
@@ -166,123 +272,95 @@ public class Chop_Controller : MonoBehaviour
                             yield return new WaitForSeconds(0.75f); // Wait .75 seconds
 
                             imageComponent.enabled = false;
-                            Drag_All.cuttingBoardActive = false;
                         }
+
+                        Drag_All.cuttingBoardActive = false;
                         in_inventory = true;
                     }
                 }
             }
-            // Debug.Log("[Chop_cntrller] position of knife" + position);
-            // if (Input.GetMouseButtonDown(0))
-            // {
-            //     isDragging = true;
-            //     swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //     startDragPos = Mouse.current.position.ReadValue();
-            //     startTime = Time.time;
-            // }
-            // else if (isDragging && Input.GetMouseButtonUp(0))
-            // {
-            //     isDragging = false;
-            //     Vector2 endDragPos = Mouse.current.position.ReadValue();
-            //     // float duration = Time.time - startTime;
-            //     // SpawnCut();
-
-            //     // EvaluateChop(startDragPos, endDragPos, duration);
-            // }
+            
         }
         
     }
 
 
-    private void SpawnCutPrefabs()
+    public void ChangeToCutPiece(Image imageComponent)
     {
+        //null checks
         Debug.Log("[SpawnCut] initiated.");
-            // Check if the array exists and has elements
+        // Check if the array exists and has elements
         if (ingredient_data_var == null)
         {
             Debug.LogError("ingredient_data_var is null!");
             return;
         }
-        
+
         if (ingredient_data_var.CutIngredientImages == null)
         {
             Debug.LogError("CutIngredientImages array is null!");
             return;
         }
-        
+
         if (ingredient_data_var.CutIngredientImages.Length == 0)
         {
             Debug.LogError("CutIngredientImages array is empty!");
             return;
         }
-    
-        ingredient_data_var.Image = ingredient_data_var.CutIngredientImages[0];
-        
-        // Vector2 swipeEnd = Camera.main.ScreenToWorldPoint(Input.mousePosition); //where the swipe ended
-        // GameObject cutInstance = Instantiate(cutPrefab, swipeStart, Quaternion.identity); //create the cut object
-        // cutInstance.GetComponent<LineRenderer>().SetPosition(0, swipeStart); //create the line
-        // cutInstance.GetComponent<LineRenderer>().SetPosition(1, swipeEnd);
+        //end of null checks
 
-        // Vector2[] colliderPoints = new Vector2[2];
-        // colliderPoints[0] = Vector2.zero;
-        // colliderPoints[1] = swipeEnd - swipeStart;
-
-        // Destroy(cutInstance);
-        Debug.Log("[SpawnCut] done.");
-
-    }
-
-    private void EvaluateChop(Vector2 startScreen, Vector2 endScreen, float duration)
-    {
-        Vector2 chop = endScreen - startScreen;
-        float distance = chop.magnitude;
-
-        if (distance < minChopDistance) { Debug.Log("Chop too short"); return; }
-        if (duration <= 0f) duration = 0.0001f;
-        float speed = distance / duration;
-        if (speed < minChopSpeed) { Debug.Log("Chop too slow"); return; }
-
-        Vector2 chopDir = chop.normalized;
-        float alignment = Vector2.Dot(chopDir, requiredDirection.normalized);
-        if (alignment < directionTolerance) { Debug.Log("Wrong direction"); return; }
-
-        if (requireSequential)
+        // Use a cut image if available
+        if (ingredient_data_var.CutIngredientImages.Length > 0)
         {
-            // find first uncut line
-            for (int i = 0; i < cutLines.Length; i++)
-            {
-                if (!cutLines[i].cutCompleted)
-                {
-                    if (IsChopNearLine_ScreenSpace(startScreen, endScreen, cutLines[i]))
-                    {
-                        cutLines[i].cutCompleted = true;
-                        PerformChop(cutLines[i]);
-                    }
-                    else
-                    {
-                        Debug.Log("Missed current required line");
-                    }
-                    return; // only try the next uncut line
-                }
-            }
-            Debug.Log("All lines already cut");
+            ChooseCutImage(imageComponent); //depending on the ingredient and the line position you need to change the sprite
         }
+        //use the regular image
         else
         {
-            // allow any order
-            foreach (var line in cutLines)
-            {
-                if (line.cutCompleted) continue;
-                if (IsChopNearLine_ScreenSpace(startScreen, endScreen, line))
-                {
-                    line.cutCompleted = true;
-                    PerformChop(line);
-                    return;
-                }
-            }
-            Debug.Log("Chop didn't match any line");
+            imageComponent.sprite = ingredient_data_var.Image;
         }
     }
+    //depending on the ingredient and the line position you need to change the sprite
+    private void ChooseCutImage(Image imgComp)
+    {
+
+        if (newPoints != null) //if the first line is not null
+        {   //use the cut sprite after first line is cut
+            imgComp.sprite = ingredient_data_var.CutIngredientImages[0];
+        }
+        else
+        { //use default image
+            imgComp.sprite = ingredient_data_var.Image;
+
+        }
+        return;
+    //TODO: add if statements if the second or third line is cut
+
+
+    }
+
+    /// <summary>
+    /// Check if the knife pos is close to any of the chop lines
+    /// </summary>
+    /// 
+    /// 1. get knife rect position
+    /// 2. compare knife rect position to the line 
+    /// 3. if knife is on the line, then start timer
+    /// 4. end timer after .02 seconds
+    /// 5. spawn the cut version depending on which line was cut
+
+    private void EvaluateChop(Image imageComp)
+    {
+        // float dist = DistancePointToSegment(kPoint, lineRenderer.points[0], lineRenderer.points[1]); //compare knife rect position to line1;
+
+        if (k_script.currentTime >= 1f) //after some time while dragging
+        {
+            ChangeToCutPiece(imageComp);
+            k_script.currentTime = 0f; //reset it 
+        }
+
+    }
+
 
     // Convert markers to screen space and compute segment-to-segment distance (in pixels)
     private bool IsChopNearLine_ScreenSpace(Vector2 swipeStart, Vector2 swipeEnd, CutLine line)
@@ -294,7 +372,7 @@ public class Chop_Controller : MonoBehaviour
         return dist <= lineTolerancePixels;
     }
 
-    private float DistancePointToSegment(Vector2 p, Vector2 a, Vector2 b)
+    public float DistancePointToSegment(Vector2 p, Vector2 a, Vector2 b)
     {
         Vector2 ap = p - a;
         Vector2 ab = b - a;

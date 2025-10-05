@@ -7,8 +7,13 @@ namespace Grimoire
   public class Audio_Manager : MonoBehaviour
   {
     public static Audio_Manager instance;
-    private AudioSource sfxSource;
+
+    // --- Sources ---
+    private List<AudioSource> sfxSources;
+    private int nextSfxIndex = 0;
     private AudioSource ambientSource;
+    private AudioSource footstepsSource;
+    [SerializeField] private int sfxPoolSize = 8;
 
     [Header("SFX Clips")]
     public AudioClip pickupSFX;
@@ -18,8 +23,14 @@ namespace Grimoire
     public AudioClip menuOpen;
     public AudioClip menuClose;
     public AudioClip bookClose;
+    public AudioClip doorBell;
+    public AudioClip firstAreaWalkingSFX;
+    public AudioClip sparkle;
 
     [Header("Cauldron Specific")]
+    public AudioClip addingOneIngredient;
+    public AudioClip addingMultiIngredients;
+    public AudioClip addingWater;
     private AudioSource stirringSource;
     private AudioSource bubblingSource;
     private AudioSource fireAmbientSource;
@@ -27,8 +38,6 @@ namespace Grimoire
     [SerializeField] private AudioClip bubbling;
     [SerializeField] private AudioClip startFire;
     [SerializeField] private AudioClip ambientFire;
-    [SerializeField] private AudioClip addingOneIng;
-    [SerializeField] private AudioClip addingMultiIng;
 
     private void Awake()
     {
@@ -43,18 +52,23 @@ namespace Grimoire
         return;
       }
 
-      // Get AudioSources in order: 0 = music, 1 = sfx, 2 = ambient
-      AudioSource[] sources = GetComponents<AudioSource>();
-      if (sources.Length >= 3)
-      {
-        // Assign only SFX and ambient (for cauldron) here; others are used by MusicPersistance
-        sfxSource = sources[1];
-        ambientSource = sources[2];
-      }
-      else
-        Debug.LogError("AudioManager: You must have at least 3 AudioSources (music, sfx, ambient)");
+      // --------------------------
+      // Build SFX pool dynamically
+      // --------------------------
+      sfxSources = new List<AudioSource>(sfxPoolSize);
 
-      // Create dedicated sources for stirring & bubbling
+      for (int i = 0; i < sfxPoolSize; i++)
+      {
+        AudioSource src = gameObject.AddComponent<AudioSource>();
+        src.playOnAwake = false;
+        sfxSources.Add(src);
+      }
+
+      // Ambient gets its own dedicated source
+      ambientSource = gameObject.AddComponent<AudioSource>();
+      ambientSource.loop = true;
+
+      // Dedicated sources for stirring, bubbling, fire
       stirringSource = gameObject.AddComponent<AudioSource>();
       stirringSource.loop = true;
 
@@ -63,6 +77,11 @@ namespace Grimoire
 
       fireAmbientSource = gameObject.AddComponent<AudioSource>();
       fireAmbientSource.loop = true;
+
+      // Dedicated source for footsteps
+      footstepsSource = gameObject.AddComponent<AudioSource>();
+      footstepsSource.loop = false;
+      footstepsSource.playOnAwake = false;
     }
 
     // -----------------------------------------------------------------------
@@ -87,20 +106,47 @@ namespace Grimoire
 
     // -----------------------------------------------------------------------
     // SFX
-    public void PlaySFX(AudioClip clip)
+    public void PlaySFX(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
-      if (sfxSource == null || clip == null) return;
-      sfxSource.PlayOneShot(clip);
+        if (clip == null) return;
+
+        AudioSource src = sfxSources[nextSfxIndex];
+        nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
+
+        src.Stop(); // prevent leftover state
+        src.clip = clip;
+        src.volume = Mathf.Clamp01(volume);
+        src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
+        src.Play();
     }
 
-    public void SetSFXVolume(float volume) => sfxSource.volume = Mathf.Clamp01(volume);
-    public void SetSFXPitch(float pitch) => sfxSource.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
-    public void StopSFX() => sfxSource?.Stop();
+    public void ForestWalk()
+    {
+      PlaySFX(firstAreaWalkingSFX, 0.1f, Random.Range(0.9f, 1.1f));
+    }
+
+    public void StopAllSFX()
+    {
+      foreach (var src in sfxSources)
+        src.Stop();
+    }
+
+    public IEnumerator ResetSFXAfterClip(float delay, AudioSource src)
+    {
+      yield return new WaitForSeconds(delay);
+
+      if (src != null)
+      {
+        src.volume = 1f;
+        src.pitch = 1f;
+      }
+    }
 
     // -----------------------------------------------------------------------
     // CAULDRON SPECIFIC METHODS!!
-
+    #region Cauldron SFX
     public void GoodDishMade() => PlaySFX(goodDishMade);
+
     public void PlayStirringOnLoop()
     {
       if (stirring == null || stirringSource == null)
@@ -112,6 +158,7 @@ namespace Grimoire
       else if (!stirringSource.isPlaying) // First play
         stirringSource.Play();
     }
+
     public void StopStirring()
     {
       if (stirringSource != null && stirringSource.isPlaying)
@@ -137,8 +184,7 @@ namespace Grimoire
 
     public void StartFire()
     {
-      sfxSource.volume = 0.5f;
-      PlaySFX(startFire);
+      PlaySFX(startFire, 0.5f, 1f);
       PlayAmbientFireOnLoop();
     }
 
@@ -162,7 +208,58 @@ namespace Grimoire
       if (fireAmbientSource != null && fireAmbientSource.isPlaying)
         fireAmbientSource.Stop();
     }
-    public void addingOneIngredient() => PlaySFX(addingOneIng);
-    public void AddingMultiIng() => PlaySFX(addingMultiIng);
-  }  
+
+    public void AddOneIngredient()
+    {
+      float randomPitch = Random.Range(0.8f, 1.2f);
+      PlaySFX(addingOneIngredient, 0.5f, randomPitch);
+    }
+
+    public void AddWater()
+    {
+      if (addingWater == null) return;
+
+      PlaySFX(addingWater, 0.3f, 0.8f);
+    }
+    #endregion
+
+    #region Footsteps SFX
+    // -------------------------------------------------------
+    // FOOTSTEPS
+    public void PlayFootsteps(AudioClip clip, float speed = 1.6f)
+    {
+        if (clip == null) return;
+
+        if (!footstepsSource.isPlaying)
+        {
+            footstepsSource.clip = clip;
+            footstepsSource.loop = true;
+            footstepsSource.volume = 0.1f;
+            footstepsSource.pitch = Random.Range(speed - 0.1f, speed + 0.1f);
+            footstepsSource.Play();
+        }
+    }
+
+    public void StopFootsteps()
+    {
+      footstepsSource.Stop();
+      footstepsSource.clip = null;
+    }
+    #endregion
+
+    public void PlayDoorbell()
+    {
+      float randomPitch = Random.Range(0.9f, 1.05f);
+      PlaySFX(doorBell, 0.4f, randomPitch);
+    }
+    
+    public void PlaySparkleSFX()
+    {
+        float[] allowedPitches = { 1.5f, 1.7f };
+        float chosenPitch = allowedPitches[Random.Range(0, allowedPitches.Length)];
+
+        PlaySFX(sparkle, 0.3f, chosenPitch);
+    }
+  }
 }
+

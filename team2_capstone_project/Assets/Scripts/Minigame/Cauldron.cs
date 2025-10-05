@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Grimoire;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -34,85 +35,85 @@ public class Cauldron : MonoBehaviour
     CheckRecipeAndCreateDish();
   }
 
-    /// <summary>
-    /// Check the current ingredients in the pot against possible recipes and create the appropriate dish.
-    /// Adds the created dish to the Dish_Tool_Inventory and clears the pot.
-    /// This is called in FinishedStir after the stirring time is completed.
-    /// </summary>
-    private void CheckRecipeAndCreateDish()
+  /// <summary>
+  /// Check the current ingredients in the pot against possible recipes and create the appropriate dish.
+  /// Adds the created dish to the Dish_Tool_Inventory and clears the pot.
+  /// This is called in FinishedStir after the stirring time is completed.
+  /// </summary>
+  private void CheckRecipeAndCreateDish()
+  {
+    // Loop through possible dishes and see if any can be made with current ingredients
+    Dish_Data potentialDish = null;
+    foreach (var dish in possibleDishes)
     {
-        // Loop through possible dishes and see if any can be made with current ingredients
-        Dish_Data potentialDish = null;
-        foreach (var dish in possibleDishes)
+      if (ingredientInPot.Count != dish.ingredientQuantities.Count)
+        continue;
+
+      potentialDish = dish;
+      foreach (var req in dish.ingredientQuantities)
+      {
+        if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
         {
-            if (ingredientInPot.Count != dish.ingredientQuantities.Count)
-                continue;
+          potentialDish = null;
+          break;
+        }
+      }
 
-            potentialDish = dish;
-            foreach (var req in dish.ingredientQuantities)
-            {
-                if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
-                {
-                    potentialDish = null;
-                    break;
-                }
-            }
+      if (potentialDish != null) // Found a matching dish recipe
+      {
+        dishMade = potentialDish;
+        break;
+      }
+    }
 
-            if (potentialDish != null) // Found a matching dish recipe
-            {
-                dishMade = potentialDish;
-                break;
-            }
+    Ingredient_Data potentialIngredient = null;
+    if (dishMade == null)
+    {
+      // Loop through possible ingredients and see if any can be made with current ingredients
+      foreach (var ingredient in possibleIngredients)
+      {
+        if (ingredientInPot.Count != ingredient.ingredient.ingredientsNeeded.Count)
+          continue;
+
+        potentialIngredient = ingredient.ingredient;
+        foreach (var req in potentialIngredient.ingredientsNeeded)
+        {
+          if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
+          {
+            potentialIngredient = null;
+            break;
+          }
         }
 
-        Ingredient_Data potentialIngredient = null;
-        if (dishMade == null)
+        if (potentialIngredient != null) // Found a matching ingredient recipe
         {
-            // Loop through possible ingredients and see if any can be made with current ingredients
-            foreach (var ingredient in possibleIngredients)
-            {
-                if (ingredientInPot.Count != ingredient.ingredient.ingredientsNeeded.Count)
-                    continue;
-
-                potentialIngredient = ingredient.ingredient;
-                foreach (var req in potentialIngredient.ingredientsNeeded)
-                {
-                    if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
-                    {
-                        potentialIngredient = null;
-                        break;
-                    }
-                }
-
-                if (potentialIngredient != null) // Found a matching ingredient recipe
-                {
-                    ingredientMade = potentialIngredient;
-                    break;
-                }
-            }
+          ingredientMade = potentialIngredient;
+          break;
         }
+      }
+    }
 
-        if (ingredientMade != null)
-        {
-            Debug.Log("Ingredient made: " + ingredientMade.Name);
-            Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredientMade), 1);
-        }
-        else if (dishMade != null)
-        {
-            Debug.Log("Dish made: " + dishMade.Name);
-            Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
-        }
-        else if (dishMade == null)
-        {
-            Debug.Log("No recipe found with ingredients provided. Made bad dish.");
-            dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
-            Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
-        }
+    if (ingredientMade != null)
+    {
+      Debug.Log("Ingredient made: " + ingredientMade.Name);
+      Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredientMade), 1);
+    }
+    else if (dishMade != null)
+    {
+      Debug.Log("Dish made: " + dishMade.Name);
+      Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+    }
+    else if (dishMade == null)
+    {
+      Debug.Log("No recipe found with ingredients provided. Made bad dish.");
+      dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
+      Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+    }
 
-        ResetAll();
+    ResetAll();
 
-        // Broadcast that a dish has been made (regardless of success)
-        //Game_Events_Manager.Instance.MakeCauldronDish();
+    // Broadcast that a dish has been made (regardless of success)
+    //Game_Events_Manager.Instance.MakeCauldronDish();
   }
 
   /// <summary>
@@ -143,6 +144,7 @@ public class Cauldron : MonoBehaviour
     return stirring;
   }
 
+  #region Add/Remove Ingredients
   /// <summary>
   /// Call this to add an ingredient to the pot (e.g., when an ingredient is dragged into the pot area).
   /// This should be called in Drag_All when an ingredient is dragged into the pot area.
@@ -151,22 +153,30 @@ public class Cauldron : MonoBehaviour
   /// </summary>
   public void AddToPot(Ingredient_Data ingredient)
   {
-    if (ingredientInPot.ContainsKey(ingredient))
-      ingredientInPot[ingredient]++;
-    else
-      ingredientInPot[ingredient] = 1;
+      if (ingredientInPot.ContainsKey(ingredient))
+        ingredientInPot[ingredient]++;
+      else
+        ingredientInPot[ingredient] = 1;
 
-    if (ingredientInPot.Count == 1)
-    {
-      possibleDishes = new List<Dish_Data>(ingredient.usedInDishes);
-      possibleIngredients = new List<Ingredient_Requirement>(ingredient.makesIngredient);
-      if (possibleDishes.Count == 0 && possibleIngredients.Count == 0)
+      // SFX
+      if (ingredient.Name == "Water")
       {
-        Debug.Log("No dishes or ingredients are made with this ingredient, making bad dish");
-        dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
+          Audio_Manager.instance.AddWater();
       }
-    }
-    Debug.Log("Different ingredients in pot: " + ingredientInPot.Count);
+      else
+        Audio_Manager.instance.AddOneIngredient();
+
+      if (ingredientInPot.Count == 1)
+      {
+          possibleDishes = new List<Dish_Data>(ingredient.usedInDishes);
+          possibleIngredients = new List<Ingredient_Requirement>(ingredient.makesIngredient);
+          if (possibleDishes.Count == 0 && possibleIngredients.Count == 0)
+          {
+              Debug.Log("No dishes or ingredients are made with this ingredient, making bad dish");
+              dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
+          }
+      }
+      Debug.Log("Different ingredients in pot: " + ingredientInPot.Count);
   }
 
   /// <summary>
@@ -189,4 +199,5 @@ public class Cauldron : MonoBehaviour
   {
     return ingredientInPot.Count == 0;
   }
+  #endregion
 }

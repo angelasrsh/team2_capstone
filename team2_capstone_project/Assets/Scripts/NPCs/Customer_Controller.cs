@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class Customer_Controller : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class Customer_Controller : MonoBehaviour
     private Dish_Data requestedDish;
     private Inventory playerInventory;
     private bool playerInRange = false;
+    private InputAction interactAction;
     private bool hasSatDown = false;
     private bool hasRequestedDish = false;
     public event Action<string> OnCustomerLeft;
@@ -26,6 +28,12 @@ public class Customer_Controller : MonoBehaviour
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+        if (pic != null)
+        {
+            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+        }
     }
 
     public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory, bool spawnSeated = false)
@@ -66,7 +74,7 @@ public class Customer_Controller : MonoBehaviour
     {
         if (playerInRange)
         {
-            if (Input.GetKeyDown(KeyCode.R) && playerInventory != null)
+            if (interactAction.WasPerformedThisFrame() && playerInventory != null)
             {
                 if (hasSatDown && !hasRequestedDish)
                 {
@@ -102,30 +110,97 @@ public class Customer_Controller : MonoBehaviour
         Debug.Log($"{data.customerName} sat down and is waiting for interaction.");
     }
 
+    #region Dish Picking
+    private Dish_Data ChooseWeightedDish()
+    {
+        var dailyMenu = Choose_Menu_Items.instance?.GetSelectedDishes();
+        List<Dish_Data> dailyMenuDishes = new List<Dish_Data>();
+        List<Dish_Data> favoriteDishes = new List<Dish_Data>();
+        List<Dish_Data> neutralDishes = new List<Dish_Data>();
+
+        if (dailyMenu != null)
+        {
+            foreach (var dishEnum in dailyMenu)
+            {
+                Dish_Data dish = Game_Manager.Instance.dishDatabase.GetDish(dishEnum);
+                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                    dailyMenuDishes.Add(dish);
+            }
+        }
+
+        if (data.favoriteDishes != null)
+        {
+            foreach (var dish in data.favoriteDishes)
+                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                    favoriteDishes.Add(dish);
+        }
+
+        if (data.neutralDishes != null)
+        {
+            foreach (var dish in data.neutralDishes)
+                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                    neutralDishes.Add(dish);
+        }
+
+        // Weighted roll
+        int roll = UnityEngine.Random.Range(0, 100);
+
+        if (roll < 70 && dailyMenuDishes.Count > 0)
+            return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
+        else if (roll < 90 && favoriteDishes.Count > 0)
+            return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
+        else if (neutralDishes.Count > 0)
+            return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
+
+        // Final fallback: pick *any cookable dish* from the menu
+        var allCookable = new List<Dish_Data>();
+        foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes())
+        {
+            if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                allCookable.Add(dish);
+        }
+
+        if (allCookable.Count > 0)
+            return allCookable[UnityEngine.Random.Range(0, allCookable.Count)];
+
+        // Nuclear fallback: no cookable dishes, pick random (to avoid nulls)
+        Debug.LogWarning($"[Customer_Controller] {data.customerName} found no cookable dishes. Picking truly random.");
+        var allDishes = Game_Manager.Instance.dishDatabase.GetAllDishes();
+        return allDishes.Count > 0 ? allDishes[UnityEngine.Random.Range(0, allDishes.Count)] : null;
+    }
+
+
+    /// <summary>
+    /// Handles the process of requesting a dish after initial dialogue.
+    /// </summary>
     private void RequestDishAfterDialogue()
     {
         // Play filler dialogue
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null)
         {
-            string fillerKey = $"{data.customerName}.Filler";
-            dm.PlayScene(fillerKey, Character_Portrait_Data.EmotionPortrait.Emotion.Neutral);
+            string fillerKey = $"{data.npcID}.Filler";
+            dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
         }
 
-        // After dialogue, show dish
-        if (data.favoriteDishes != null && data.favoriteDishes.Length > 0)
+        // Pick weighted dish
+        requestedDish = ChooseWeightedDish();
+
+        // Show in bubble
+        if (requestedDish != null && thoughtBubble != null)
         {
-            requestedDish = data.favoriteDishes[UnityEngine.Random.Range(0, data.favoriteDishes.Length)];
-            if (thoughtBubble != null)
-            {
-                thoughtBubble.SetActive(true);
-                if (bubbleDishImage != null && requestedDish != null)
-                    bubbleDishImage.sprite = requestedDish.Image;
-            }
-            Debug.Log($"{data.customerName} now wants {requestedDish?.name ?? "Unknown"}!");
+            thoughtBubble.SetActive(true);
+            if (bubbleDishImage != null)
+                bubbleDishImage.sprite = requestedDish.Image;
+
+            Debug.Log($"{data.customerName} now wants {requestedDish.name}!");
         }
+        else
+            Debug.LogWarning($"{data.customerName} could not decide on a dish (no valid dishes).");
+
         hasRequestedDish = true;
     }
+    #endregion
 
     private void OnCollisionEnter(Collision other)
     {
@@ -180,33 +255,95 @@ public class Customer_Controller : MonoBehaviour
             Debug.Log($"Selected dish {selectedDish.name} does not match requested {requestedDish.name}.");
             return false;
         }
-
+       
         // Remove it from inventory
         dishInventory.RemoveSelectedSlot();
 
         Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
-        // Play dialogue
+        // Record dish served, money earned, and customer served for day summary
+        int currencyEarned = Mathf.RoundToInt(selectedDish.price);
+        Day_Turnover_Manager.Instance.RecordDishServed(selectedDish, currencyEarned, data.customerName);
+
+        // Prep for dialogue
         (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
         requestedDish = null; // clear after serving
 
+        // Add affection and play a cutscene (if the event has been reached)
+        Affection_System.Instance.AddAffection(data, suffix, false);
+
+        // Play dialogue
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null && !string.IsNullOrEmpty(dialogueKey))
         {
             var emotion = MapReactionToEmotion(suffix);
-            dm.PlayScene(dialogueKey, emotion);
-        }
 
-        return true;
+            // Assign leave logic to onDialogComplete
+            dm.onDialogComplete = () =>
+            {
+                // Clear to avoid multiple invocations
+                dm.onDialogComplete = null;
+                LeaveRestaurant();
+            };
+
+            dm.PlayScene(dialogueKey, emotion);
+            return true;
+        }
+        else
+        {
+            // Fallback: leave immediately if no dialogue
+            LeaveRestaurant();
+            return true;
+        }
     }
 
     public void LeaveRestaurant()
     {
-        // your leave logic…
+        Debug.Log($"{data.customerName} is leaving the restaurant.");
+
+        if (seat != null)
+        {
+            Seat_Manager.Instance.FreeSeat(seat);
+            seat = null;
+        }
+
+        // Pick an exit
+        Transform exitPoint = Customer_Exit_Manager.Instance?.GetRandomExit();
+        if (exitPoint != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(exitPoint.position);
+
+            // Start coroutine to wait until arrival
+            StartCoroutine(LeaveAfterReachingExit(exitPoint));
+        }
+        else
+        {
+            // if no exit, destroy immediately instead
+            Debug.LogWarning("No exit points defined or agent not on NavMesh. Destroying customer immediately.");
+            OnCustomerLeft?.Invoke(data.customerName);
+            Destroy(gameObject);
+        }
+    }
+
+    private IEnumerator LeaveAfterReachingExit(Transform exitPoint)
+    {
+        // Wait until path is computed
+        while (agent.pathPending)
+            yield return null;
+
+        // Wait until close enough to exit
+        while (agent.remainingDistance > agent.stoppingDistance)
+        {
+            yield return null;
+        }
+
+        // Reached exit
         OnCustomerLeft?.Invoke(data.customerName);
         Destroy(gameObject);
     }
+
 
     #region Dialog
     /// <summary>
@@ -219,7 +356,7 @@ public class Customer_Controller : MonoBehaviour
         if (servedDish == null || data == null)
             return (string.Empty, string.Empty);
 
-        string baseKey = data.customerName;
+        string baseKey = data.npcID.ToString();
 
         string suffix = "NeutralDish";
         if (data.favoriteDishes != null && Array.Exists(data.favoriteDishes, d => d == servedDish))
@@ -237,16 +374,16 @@ public class Customer_Controller : MonoBehaviour
     /// <summary>
     /// Maps the reaction type to a portrait emotion.
     /// </summary>
-    private Character_Portrait_Data.EmotionPortrait.Emotion MapReactionToEmotion(string suffix)
+    private CustomerData.EmotionPortrait.Emotion MapReactionToEmotion(string suffix)
     {
         switch (suffix)
         {
             case "LikedDish":
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Happy;
+                return CustomerData.EmotionPortrait.Emotion.Happy;
             case "DislikedDish":
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Disgusted;
+                return CustomerData.EmotionPortrait.Emotion.Disgusted;
             default:
-                return Character_Portrait_Data.EmotionPortrait.Emotion.Neutral;
+                return CustomerData.EmotionPortrait.Emotion.Neutral;
         }
     }
     #endregion

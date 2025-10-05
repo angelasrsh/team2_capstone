@@ -11,10 +11,14 @@ public class Dialog_UI_Manager : MonoBehaviour
     public TMP_Text textBoxText;
     public CanvasGroup textBoxCanavasGroup;
 
-    [Header("Text Blip Sound Randomization Range")]
+    [Header("Default Text Blip Sound Settings")]
     public float lowRandomRange = 0.9f;
     public float highRandomRange = 1.1f;
-    public float textTypingSpeed = 0.025f; 
+    public float textTypingSpeed = 0.025f;
+
+    private float currentLowRange;
+    private float currentHighRange;
+    private float currentTypingSpeed;
 
     [Header("Character Portrait")]
     public Image characterPortraitImage;
@@ -22,12 +26,13 @@ public class Dialog_UI_Manager : MonoBehaviour
     private bool htmlText = false;
 
     private Dialogue_Manager dialogManager;
-    private Player_Controller playerOverworld; 
+    private Player_Controller playerOverworld;
+    private AudioClip currentDialogSound;
     // private TextBoxAnimation textBoxAnimation;
 
     private void Awake()
     {
-        dialogManager = FindObjectOfType<Dialogue_Manager>(); 
+        dialogManager = FindObjectOfType<Dialogue_Manager>();
         playerOverworld = FindObjectOfType<Player_Controller>();
         // textBoxAnimation = GetComponentInChildren<TextBoxAnimation>();
     }
@@ -36,8 +41,13 @@ public class Dialog_UI_Manager : MonoBehaviour
     {
         HideTextBox();
         ClearText();
+
+        // Initialize dialog sound settings w/ default values
+        currentLowRange = lowRandomRange;
+        currentHighRange = highRandomRange;
+        currentTypingSpeed = textTypingSpeed;
     }
-    
+
     public void HideTextBox()
     {
         // textBoxAnimation.Close();
@@ -50,7 +60,7 @@ public class Dialog_UI_Manager : MonoBehaviour
     {
         textBoxText.text = "";
     }
-    
+
     public void ShowText(string aText)
     {
         playerOverworld.DisablePlayerController();
@@ -80,13 +90,13 @@ public class Dialog_UI_Manager : MonoBehaviour
                     yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Z) || Input.GetMouseButtonDown(0));
                     continue;
                 }
-                
+
                 // Add normal characters to the text
                 textBoxText.text += aText[i];
 
-                Audio_Manager.instance?.SetSFXPitch(Random.Range(lowRandomRange, highRandomRange)); 
-                Audio_Manager.instance?.PlaySFX(Audio_Manager.instance?.textSound);
-                yield return new WaitForSeconds(textTypingSpeed); // Typing delay/speed
+                Audio_Manager.instance?.PlaySFX(currentDialogSound, 1f, Random.Range(currentLowRange, currentHighRange));
+                Debug.Log($"Playing sound: {currentDialogSound} | AudioManager instance: {Audio_Manager.instance}");
+                yield return new WaitForSeconds(currentTypingSpeed);  // Typing delay/speed
             }
 
             // Handle HTML tags
@@ -94,8 +104,8 @@ public class Dialog_UI_Manager : MonoBehaviour
             {
                 htmlText = false;
 
-                int htmlStart = aText.LastIndexOf('<', i); 
-                string htmlFull = aText.Substring(htmlStart, i - htmlStart + 1); 
+                int htmlStart = aText.LastIndexOf('<', i);
+                string htmlFull = aText.Substring(htmlStart, i - htmlStart + 1);
                 textBoxText.text += htmlFull;  // Add full HTML tag to the text
             }
         }
@@ -103,12 +113,14 @@ public class Dialog_UI_Manager : MonoBehaviour
         textTyping = false;
     }
 
+    #region Portraits
     public void ShowOrHidePortrait(Sprite newPortrait)
     {
         if (characterPortraitImage != null && newPortrait != null)
         {
             characterPortraitImage.sprite = newPortrait;
             characterPortraitImage.enabled = true;
+            Debug.Log("Character portrait updated.");
         }
         else
         {
@@ -122,4 +134,24 @@ public class Dialog_UI_Manager : MonoBehaviour
         if (characterPortraitImage == null) return;
         characterPortraitImage.enabled = false;
     }
+    #endregion
+
+    #region Dialog Sound Settings
+    public void SetDialogSound(AudioClip clip)
+    {
+        Debug.Log($"UI Manager received clip: {clip}");
+        currentDialogSound = clip;
+    }
+
+    public void SetDialogSoundSettings(float minPitch, float maxPitch)
+    {
+        currentLowRange = minPitch;
+        currentHighRange = maxPitch;
+    }
+
+    public void SetTypingSpeed(float speed)
+    {
+        currentTypingSpeed = speed;
+    }
+    #endregion
 }

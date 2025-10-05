@@ -51,6 +51,7 @@ public class Ingredient_Inventory : Inventory
     public int AddResources(IngredientType type, int count)
     {
         // Error-checking
+        
         if (count < 0)
             Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
 
@@ -127,6 +128,21 @@ public class Ingredient_Inventory : Inventory
     return count - amtLeftToRemove;
   }
 
+  public bool CanMakeDish(Dish_Data dish)
+  {
+    if (dish == null || dish.ingredientQuantities == null) return false;
+    Debug.Log($"[Ingr_Inventory] Checking if we can make {dish.Name}");
+
+    foreach (var req in dish.ingredientQuantities)
+    {
+      if (GetItemCount(req.ingredient) < req.amountRequired)
+        return false;
+      Debug.Log("Don't have enough " + req.ingredient.Name);  
+    }
+    return true;
+  }
+
+  #region Ingredient enum/string conversion
   /// <summary>
   /// Convert enum IngredientType to a name string.
   /// String here must match Item_Data Name!
@@ -220,9 +236,10 @@ public class Ingredient_Inventory : Inventory
     if (IngredientDict.ContainsKey(name))
       return IngredientDict[IngrEnumToName(t)];
     else
-      Debug.LogError($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
+      Debug.LogWarning($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
     return null;
   }
+  #endregion
 
   /// <summary>
   /// get the total count of a specific ingredient in the inventory by name
@@ -230,17 +247,51 @@ public class Ingredient_Inventory : Inventory
   /// </summary>
   /// <param name="ingredientName"></param>
   /// <returns></returns>
-  public int GetItemCount(string ingredientName)
+  // public int GetItemCount(string ingredientName)
+  // {
+  //   int total = 0;
+  //   foreach (Item_Stack stack in InventoryStacks)
+  //   {
+  //     if (stack != null && stack.resource != null && stack.resource.Name == ingredientName)
+  //     {
+  //       total += stack.amount;
+  //     }
+  //   }
+  //   return total;
+  // }
+
+  public int GetItemCount(Ingredient_Data ingredient)
   {
-    int total = 0;
-    foreach (Item_Stack stack in InventoryStacks)
-    {
-      if (stack != null && stack.resource != null && stack.resource.Name == ingredientName)
+      int total = 0;
+
+      foreach (Item_Stack stack in InventoryStacks)
       {
-        total += stack.amount;
+          if (stack == null || stack.resource == null) continue;
+
+          // Direct match
+          if (stack.resource == ingredient)
+          {
+              total += stack.amount;
+              continue;
+          }
+
+          // Check "countsAs" from the inventory item side
+          if (stack.resource is Ingredient_Data invIngredient)
+          {
+              if (invIngredient.countsAs != null && invIngredient.countsAs.Contains(ingredient))
+              {
+                  total += stack.amount;
+                  continue;
+              }
+          }
+
+          // also check "countsAs" from the ingredient side
+          if (ingredient.countsAs != null && ingredient.countsAs.Contains(stack.resource as Ingredient_Data))
+          {
+              total += stack.amount;
+          }
       }
-    }
-    return total;
+      return total;
   }
 
   /// <returns>Water's ingredient data</returns>

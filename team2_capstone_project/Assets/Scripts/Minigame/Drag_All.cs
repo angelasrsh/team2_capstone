@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Grimoire;
 using TMPro;
+using System.Linq;
 
 public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -192,10 +193,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
           //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
-          //make the ingredient from the inventory Bigger:
-          if (!cuttingBoardActive)
+
+          Ingredient_Data ingredient_data_var;
+          
+          if ((!cuttingBoardActive) && (Ingredient_Inventory.Instance.IngrEnumToData(ingredientType) != null)
+                && (((Ingredient_Data)(ParentSlot.stk.resource)).CutIngredientImages.Count() > 0))
           {
-            Ingredient_Data ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
+            //not found in ingredient dictionary
+            ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
+
+
             DuplicateInventorySlot();
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
             if (resizeCanvas != null)
@@ -208,8 +215,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               canDrag = false;
               //start chopscript experience :)
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
-
-
             }
             cuttingBoardActive = true;
           }

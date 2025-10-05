@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// TODO: Merge with Tutorial Canvas
@@ -48,19 +49,25 @@ public class Cafe_Tutorial_Canvas : MonoBehaviour
         {
             Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
             Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
+            Game_Events_Manager.Instance.onBeginDialogBox += BeginDialogueBox;
+            Game_Events_Manager.Instance.onEndDialogBox += EndDialogBox;
+            SceneManager.sceneLoaded += CheckScene;
 
             //currentQuestState = Quest_Manager.Instance.GetQuestByID(questID).state; // implement better method for getting state later
-            //Game_Events_Manager.Instance.QuestStateChange()
+        //Game_Events_Manager.Instance.QuestStateChange()
 
-            if (currentQuestState < Quest_State.IN_PROGRESS) // not great because it allows REQUIREMENTS_NOT_MET to start too
-                Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id); // Start the quest immediately
+        if (currentQuestState < Quest_State.IN_PROGRESS) // not great because it allows REQUIREMENTS_NOT_MET to start too
+            Game_Events_Manager.Instance.StartQuest(questInfoForCanvas.id); // Start the quest immediately
 
         }
 
-        void OnDisable()
-        {
-            Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
-            Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
+    void OnDisable()
+    {
+        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
+        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
+        Game_Events_Manager.Instance.onBeginDialogBox -= BeginDialogueBox;
+        Game_Events_Manager.Instance.onEndDialogBox -= EndDialogBox;
+        SceneManager.sceneLoaded -= CheckScene; // TODO: Find a better way later
         }
 
     // Update the Canvas's quest state when the quest changes
@@ -76,6 +83,24 @@ public class Cafe_Tutorial_Canvas : MonoBehaviour
             this.gameObject.SetActive(false);
 
 
+    }
+
+    private void BeginDialogueBox()
+    {
+        GetComponent<Canvas>().enabled = false;
+    }
+
+    private void EndDialogBox()
+    {
+        GetComponent<Canvas>().enabled = true;
+    }
+
+    private void CheckScene(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name.Equals("Dating_Events") || scene.name.Equals("Main_Menu")) // TODO: Hard-coded- will change in next tutorial update
+            GetComponent<Canvas>().enabled = false;
+        else
+            GetComponent<Canvas>().enabled = true;
     }
 
     /// <summary>

@@ -12,10 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9984a113d3db8934cbed6028d499cb5e, type: 3}
   m_Name: Phrog
   m_EditorClassIdentifier: 
+  npcID: 1
   customerName: Phrog
   overworldSprite: {fileID: 21300000, guid: b8806c553d907a04fa0a4f175cdb06ce, type: 3}
   datable: 0
-  portraitData: {fileID: 11400000, guid: 3ab1cacb90817ba4492c87f88162d3d2, type: 2}
+  lore: Part of a large family of frogs.
+  dialogClipSound: {fileID: 8300000, guid: aab5491747f1ed0489e77481c7e6aa7d, type: 3}
+  pitchMin: 1
+  pitchMax: 1.15
+  textSpeed: 0.02
+  defaultPortrait: {fileID: 21300000, guid: b8806c553d907a04fa0a4f175cdb06ce, type: 3}
+  emotionPortraitList:
+  - emotion: 0
+    portrait: {fileID: 21300000, guid: b8806c553d907a04fa0a4f175cdb06ce, type: 3}
+  - emotion: 5
+    portrait: {fileID: 21300000, guid: b8806c553d907a04fa0a4f175cdb06ce, type: 3}
+  - emotion: 3
+    portrait: {fileID: 21300000, guid: b8806c553d907a04fa0a4f175cdb06ce, type: 3}
   favoriteDishes:
   - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
   neutralDishes: []

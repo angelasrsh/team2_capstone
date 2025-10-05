@@ -47,7 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fa00365e881b7a4ba74a075e1d5364d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 15
+  moveSpeed: 10
+  deadzoneEnter: 0.12
+  deadzoneExit: 0.05
+  smoothingTime: 0.02
+  zeroToleranceTime: 0.18
   movement: {x: 0, y: 0}
   currentRoom: {fileID: 0}
 --- !u!54 &9083165254151032956
