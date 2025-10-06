@@ -11,6 +11,7 @@ public class Persistent_Day_UI : MonoBehaviour
 
     private void Start()
     {
+        UpdateDayLabelImmediate();
         RefreshIcons();
     }
 
@@ -40,5 +41,11 @@ public class Persistent_Day_UI : MonoBehaviour
     {
         dayLabel.text = $"{data.currentDay}";
         RefreshIcons();
+    }
+
+    private void UpdateDayLabelImmediate()
+    {
+        if (Day_Turnover_Manager.Instance == null) return;
+        dayLabel.text = $"{Day_Turnover_Manager.Instance.CurrentDay}";
     }
 }
