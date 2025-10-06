@@ -110,6 +110,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
             // Debug.Log($"Point b: {chop_script.lineRenderer.points[1]}");
 
             //screen coordinates
+            
             dist = chop_script.DistancePointToSegment(p, Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[0]),
                 Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[1])); //compare knife rect position to line1;
             // dist = Mathf.FloorToInt(dist);

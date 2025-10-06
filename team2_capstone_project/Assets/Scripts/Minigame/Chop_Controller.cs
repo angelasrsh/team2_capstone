@@ -96,12 +96,13 @@ public class Chop_Controller : MonoBehaviour
 
 
         cuttingLinesParent = GameObject.Find("IngredientResize-Canvas").transform;
+        // cuttingLinesParent.anchorMin = new Vector2(1, 1);
+        // cuttingLinesParent.anchorMax = new Vector2(1, 1);
         // instantiate new cutting lines
         currentCuttingLines = Instantiate(uiLineRendererPrefab, cuttingLinesParent);
-
         // Immediately configure after instantiation
         lineRenderer = currentCuttingLines.GetComponent<UILineRenderer>();
-
+        
         if (lineRenderer != null)
         {
             Debug.Log("LineRendere is not null");
@@ -112,8 +113,8 @@ public class Chop_Controller : MonoBehaviour
                 //first line
                 newPoints = new List<Vector2>
                 {
-                    new Vector2(0f, 36.03f),
-                    new Vector2(268.4f, 300f),
+                    new Vector2(0f, 0f),
+                    new Vector2(386.3f, 382.59f),
                 };
                 lineRenderer.points = newPoints;
 
