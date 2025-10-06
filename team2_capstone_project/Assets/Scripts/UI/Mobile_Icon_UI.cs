@@ -28,17 +28,16 @@ public class Mobile_Icon_UI : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
-        // // Hide automatically on non-mobile platforms
-        // if (SystemInfo.deviceType != DeviceType.Handheld)
-        // {
-        //     gameObject.SetActive(false);
-        // }
+        // Hide automatically on non-mobile platforms
+        if (SystemInfo.deviceType != DeviceType.Handheld)
+        {
+            gameObject.SetActive(false);
+        }
 
         playerInput = FindObjectOfType<PlayerInput>();
         if (playerInput != null)
-            swipeAction = playerInput.actions["SwipeLeft"];
+            swipeAction = playerInput.actions["CloseInventory"];
     }
-
 
     private void Start()
     {
@@ -116,7 +115,7 @@ public class Mobile_Icon_UI : MonoBehaviour
 
     public void OnInventoryButtonPressed()
     {
-        inventoryCanvas = GameObject.Find("Canvas_Inventory")?.GetComponent<Canvas>();
+        inventoryCanvas = GameObject.Find("Canvas_Inventory_Open")?.GetComponent<Canvas>();
         if (inventoryCanvas == null)
         {
             Debug.LogWarning("[Mobile_Icon_UI] Error: no InventoryCanvas found!");
@@ -141,7 +140,7 @@ public class Mobile_Icon_UI : MonoBehaviour
 
     public void OnJournalButtonPressed()
     {
-        Canvas journalCanvas = GameObject.Find("Canvas_Journal")?.GetComponent<Canvas>();
+        Canvas journalCanvas = GameObject.Find("Journal")?.GetComponent<Canvas>();
         if (journalCanvas == null)
         {
             Debug.LogWarning("[Mobile_Icon_UI] Error: no JournalCanvas found!");
@@ -151,7 +150,7 @@ public class Mobile_Icon_UI : MonoBehaviour
         journalMenu = journalCanvas.GetComponent<Journal_Menu>();
         bool isOpen = journalCanvas.enabled && journalMenu != null && journalMenu.gameObject.activeInHierarchy;
 
-        if (isOpen)
+        if (!isOpen)
         {
             journalMenu.ResumeGame();
             Game_Events_Manager.Instance.JournalToggled(false);
@@ -181,13 +180,19 @@ public class Mobile_Icon_UI : MonoBehaviour
 
     public void OnCloseInventoryPressed()
     {
-        if (inventoryCanvas != null)
+        if (GameObject.Find("Canvas_Inventory_Open") != null)
         {
+            inventoryCanvas = GameObject.Find("Canvas_Inventory_Open").GetComponent<Canvas>();
             inventoryCanvas.enabled = false;
             Game_Events_Manager.Instance.InventoryToggled(false);
         }
         EnableMainButtons();
         closeInventoryButton.gameObject.SetActive(false);
+    }
+
+    public void OnInventoryCloseButtonPressed()
+    {
+        TryCloseInventory();
     }
 
     public void OnCloseJournalPressed()
