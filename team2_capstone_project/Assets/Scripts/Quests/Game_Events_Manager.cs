@@ -66,14 +66,24 @@ public class Game_Events_Manager : MonoBehaviour
     }
 
 
-    public event Action onForageDetailsClick;
+    public event Action<Dish_Data> onDishDetailsClick;
     /// <summary>
-    /// Broadcast the RecipeClick event
+    /// Broadcast the RecipeClick event and send the dish being sent
     /// </summary>
-    public void ForageDetailsClick()
+    public void DishDetailsClick(Dish_Data dishData)
     {
-        if (onForageDetailsClick != null)
-            onForageDetailsClick();
+        if (onDishDetailsClick != null)
+            onDishDetailsClick(dishData);
+    }
+
+    public event Action onHarvestRequirementsMet;
+    /// <summary>
+    /// Broadcast event for unblocking the exit to the world map
+    /// </summary>
+    public void HarvestRequirementsMet()
+    {
+        if (onHarvestRequirementsMet != null)
+            onHarvestRequirementsMet();
     }
 
 

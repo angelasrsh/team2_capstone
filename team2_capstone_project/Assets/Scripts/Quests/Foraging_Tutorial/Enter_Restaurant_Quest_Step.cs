@@ -5,9 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class Enter_Restaurant_Quest_Step : Quest_Step
 {
+
     void OnEnable()
     {
         SceneManager.sceneLoaded += onSceneLoaded;
+      
     }
 
     // Unsubscribe to clean up

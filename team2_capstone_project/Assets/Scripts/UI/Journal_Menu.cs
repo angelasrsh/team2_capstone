@@ -205,28 +205,31 @@ public class Journal_Menu : MonoBehaviour
     }
   }
 
-  private void DisplayDishDetails(Dish_Data dishData)
-  {
-    Left_Page.SetActive(true);
+    private void DisplayDishDetails(Dish_Data dishData)
+    {
+        Left_Page.SetActive(true);
 
-    // Find left page UI elements
-    Transform pagePanel = Left_Page.transform.Find("Page_Panel");
+        // Find left page UI elements
+        Transform pagePanel = Left_Page.transform.Find("Page_Panel");
 
-    Transform nameObj = pagePanel.Find("Dish_Name");
-    var nameText = nameObj.GetComponent<TextMeshProUGUI>();
-    nameText.text = dishData.Name;
+        Transform nameObj = pagePanel.Find("Dish_Name");
+        var nameText = nameObj.GetComponent<TextMeshProUGUI>();
+        nameText.text = dishData.Name;
 
-    // Find and set the recipe text
-    Transform recipeObj = pagePanel.Find("Recipe_Image");
-    Image recipeImage = recipeObj.GetComponent<Image>();
-    recipeImage.sprite = dishData.recipeImage;
-    recipeImage.preserveAspect = true;
+        // Find and set the recipe text
+        Transform recipeObj = pagePanel.Find("Recipe_Image");
+        Image recipeImage = recipeObj.GetComponent<Image>();
+        recipeImage.sprite = dishData.recipeImage;
+        recipeImage.preserveAspect = true;
 
-    // Find and set the dish icon
-    Transform iconPanel = pagePanel.Find("Icon_Panel");
-    Transform iconObj = iconPanel.Find("Icon_Image");
-    Image iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
-    iconImage.sprite = dishData.Image;
+        // Find and set the dish icon
+        Transform iconPanel = pagePanel.Find("Icon_Panel");
+        Transform iconObj = iconPanel.Find("Icon_Image");
+        Image iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
+        iconImage.sprite = dishData.Image;
+    
+        // Broadcast event for tutorial
+        Game_Events_Manager.Instance.DishDetailsClick(dishData);
   }
   #endregion
 
@@ -308,8 +311,6 @@ public class Journal_Menu : MonoBehaviour
     var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
     detailsText.text = ingredientText.TrimEnd(); // trim last newline
 
-    // Broadcast event for tutorial
-    Game_Events_Manager.Instance.ForageDetailsClick();
   }
   #endregion
 
