@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Click_Journal_Recipe_Quest_Step : Quest_Step
+public class Click_Journal_Recipe_Quest_Step : Tutorial_Quest_Step
 {
     void OnEnable()
     {
         Game_Events_Manager.Instance.onDishDetailsClick += RecipeClick;
+        DelayedInstructionStart();
     }
 
     // Unsubscribe to clean up

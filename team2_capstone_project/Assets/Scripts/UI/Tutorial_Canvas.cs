@@ -76,6 +76,7 @@ public class Tutorial_Canvas : MonoBehaviour
         }
     }
 
+
     /// <summary>
     /// Called by Tutorial_Manager to display a tutorial text string and its background textbox 
     /// </summary>

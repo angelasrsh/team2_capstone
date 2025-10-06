@@ -50,7 +50,7 @@ namespace Grimoire
             }
 
             // Broadcast message to listening scripts
-            Game_Events_Manager.Instance.Harvest();
+            Game_Events_Manager.Instance.Harvest(); // Currently unused until foraging is implemented
         }
     }
 }

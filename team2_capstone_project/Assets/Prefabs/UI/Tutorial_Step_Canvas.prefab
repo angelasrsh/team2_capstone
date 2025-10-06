@@ -146,13 +146,13 @@ GameObject:
   - component: {fileID: 8096547273781254300}
   - component: {fileID: 8464855698600763561}
   - component: {fileID: 7212381251314349488}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8096547273781254300
 RectTransform:
   m_ObjectHideFlags: 0
@@ -222,13 +222,13 @@ GameObject:
   - component: {fileID: 6489144104507836728}
   - component: {fileID: 8436358824397164534}
   - component: {fileID: 5204773867359451496}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Highlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6489144104507836728
 RectTransform:
   m_ObjectHideFlags: 0
@@ -298,9 +298,8 @@ GameObject:
   - component: {fileID: 3361922030865975124}
   - component: {fileID: 5673042013977994517}
   - component: {fileID: 5278400420339929651}
-  - component: {fileID: 30614593351815237}
   - component: {fileID: 73766609362883148}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Tutorial_Step_Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +347,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 6
   m_TargetDisplay: 0
 --- !u!114 &5278400420339929651
 MonoBehaviour:
@@ -373,23 +372,6 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
---- !u!114 &30614593351815237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6332420554393562676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &73766609362883148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,7 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7169812, g: 0.36299986, b: 0.36299986, a: 0.392}
+  m_Color: {r: 0.6981132, g: 0.5865279, b: 0.5115106, a: 0.392}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -492,7 +474,7 @@ GameObject:
   - component: {fileID: 5233878684864300633}
   - component: {fileID: 7135768032539494607}
   - component: {fileID: 8018262234989217125}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: GraphicsPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -549,7 +531,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1

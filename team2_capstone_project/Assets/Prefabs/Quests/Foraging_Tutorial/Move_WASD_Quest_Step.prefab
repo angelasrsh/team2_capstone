@@ -51,8 +51,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TutorialCanvas: {fileID: 7857373674420713871}
-  InstructionText: Testing
-  InstructionWaitTime: 5
+  InstructionText: Wow, what lovely weather to explore! Let's take a look around.
+    Press WASD or use the arrow keys to move.
+  InstructionWaitTime: 0
   PopupWaitTime: 10
 --- !u!1001 &7785859458651270083
 PrefabInstance:
@@ -145,9 +146,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4149062930564330788, guid: b8557a4a3f9966f4198e083d0b6c86de, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4499998683005808411, guid: b8557a4a3f9966f4198e083d0b6c86de, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6332420554393562676, guid: b8557a4a3f9966f4198e083d0b6c86de, type: 3}
       propertyPath: m_Name
