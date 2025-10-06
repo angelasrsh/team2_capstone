@@ -161,6 +161,14 @@ public class Game_Events_Manager : MonoBehaviour
             onQuestStepChange(id, stepIndex);
 
     }
+
+
+    public event Action<string, bool> onSetQuestPaused;
+    public void SetQuestPaused(string id, bool isPaused)
+    {
+        if (onSetQuestPaused != null)
+            onSetQuestPaused(id, isPaused);
+    }
     #endregion
 
     //////////// SCENE TRANSITION EVENTS ///////////////

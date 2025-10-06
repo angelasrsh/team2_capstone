@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // Credit for the quest system goes to https://www.youtube.com/watch?v=UyTJLDGcT64 (with modification)
 
@@ -51,6 +53,10 @@ public class Quest_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onFinishQuest += FinishQuest;
 
         Game_Events_Manager.Instance.onQuestStepChange += QuestStepChange;
+
+        SceneManager.sceneLoaded += CheckPauseQuests;
+
+
     }
 
     private void OnDisable()
@@ -59,8 +65,10 @@ public class Quest_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onStartQuest -= StartQuest;
         Game_Events_Manager.Instance.onAdvanceQuest -= AdvanceQuest;
         Game_Events_Manager.Instance.onFinishQuest -= FinishQuest;
-        
+
         Game_Events_Manager.Instance.onQuestStepChange -= QuestStepChange;
+        
+        SceneManager.sceneLoaded -= CheckPauseQuests;
     }
 
     /// <summary>
@@ -140,6 +148,37 @@ public class Quest_Manager : MonoBehaviour
         Quest quest = GetQuestByID(id);
         ChangeQuestState(id, quest.state); // Re-broadcast quest with the same state (only step has changed)
         Debug.Log($"[Q_MAN] Quest Step Change {id} {quest.state} to step {stepIndex}");
+    }
+
+    /// <summary>
+    /// Check all quests and pause/activate them based on the room we're in
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void CheckPauseQuests(Scene scene, LoadSceneMode mode)
+    {
+        foreach (KeyValuePair<string, Quest> questkvp in questMap)
+        {
+            Quest q = questkvp.Value;
+            q.IsPaused = true; // Assume not an active room (pause)
+
+            for (int i = 0; i < q.Info.ActiveRooms.Count; i++)
+            {
+                // Is an active room - unpause
+                if (q.Info.ActiveRooms[i].ToString().Equals(scene.name))
+                {
+                    q.IsPaused = false;
+                }
+
+            }
+
+            Game_Events_Manager.Instance.SetQuestPaused(q.Info.id, q.IsPaused);
+
+
+
+        }
+
+
     }
 
     /// <summary>

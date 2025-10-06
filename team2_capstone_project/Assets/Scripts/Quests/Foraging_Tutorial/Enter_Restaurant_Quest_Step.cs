@@ -12,7 +12,7 @@ public class Enter_Restaurant_Quest_Step : Tutorial_Quest_Step
 
     void OnEnable()
     {
-        SceneManager.sceneLoaded += onSceneLoaded;
+        SceneManager.sceneUnloaded += onSceneUnloaded;
         Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
 
         
@@ -27,7 +27,7 @@ public class Enter_Restaurant_Quest_Step : Tutorial_Quest_Step
     // Unsubscribe to clean up
     void OnDisable()
     {
-        SceneManager.sceneLoaded -= onSceneLoaded;
+        SceneManager.sceneUnloaded -= onSceneUnloaded;
         Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
     }
     
@@ -53,9 +53,9 @@ public class Enter_Restaurant_Quest_Step : Tutorial_Quest_Step
     }
 
 
-    private void onSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void onSceneUnloaded(Scene scene)
     {
-        if (scene.name == "Restaurant")
+        if (scene.name == "World_Map")
             FinishQuestStep();
 
     }
