@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.30692166, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1477,11 +1477,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   originalSprite: {fileID: 21300000, guid: 03439ea6bd0c7cc4c8c214ac158f8882, type: 3}
   draggingSprite: {fileID: 21300000, guid: 003cbb692504ef942a7f27de9e191e5f, type: 3}
-  knifeRectTransform: {fileID: 0}
+  knifeRectTransform: {fileID: 866780471}
   currKnifePosition: {x: 0, y: 0, z: 0}
   knife_is_being_dragged: 0
   chop_script: {fileID: 0}
   currentTime: 0
+  dist: 0
+  seconds: 0
+  knifeRect: {fileID: 0}
+  kPoint: {x: 0, y: 0}
 --- !u!1 &1079789260
 GameObject:
   m_ObjectHideFlags: 0
@@ -3513,8 +3517,6 @@ MonoBehaviour:
   in_inventory: 0
   newPoints: []
   lineRenderer: {fileID: 0}
-  kPoint: {x: 0, y: 0}
-  knifeRect: {fileID: 0}
 --- !u!4 &2035282244
 Transform:
   m_ObjectHideFlags: 0
