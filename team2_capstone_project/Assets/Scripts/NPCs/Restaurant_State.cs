@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Grimoire;
 
 public class Restaurant_State : MonoBehaviour
 {
@@ -15,7 +16,33 @@ public class Restaurant_State : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
+    private void OnEnable()
+    {
+        Day_Turnover_Manager.OnDayEnded += HandleDayEnded;
+        Day_Turnover_Manager.OnDayStarted += HandleDayStarted;
+    }
+
+    private void OnDisable()
+    {
+        Day_Turnover_Manager.OnDayEnded -= HandleDayEnded;
+        Day_Turnover_Manager.OnDayStarted -= HandleDayStarted;
+    }
+
+    private void HandleDayEnded(Day_Summary_Data summary)
+    {
+        SaveCustomers();
+    }
+
+    private void HandleDayStarted()
+    {
+        ResetRestaurantState();  // Clear previous state for new day
     }
 
     public void SaveCustomers()
@@ -41,5 +68,11 @@ public class Restaurant_State : MonoBehaviour
         }
 
         Debug.Log($"Restaurant_State: Saved {customers.Count} customers.");
+    }
+
+    public void ResetRestaurantState()
+    {
+        Debug.Log("Restaurant_State: Resetting customers for new day.");
+        customers.Clear();
     }
 }
