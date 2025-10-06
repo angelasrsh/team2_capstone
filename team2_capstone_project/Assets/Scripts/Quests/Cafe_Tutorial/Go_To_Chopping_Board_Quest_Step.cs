@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Go_To_Chopping_Board_Quest_Step : Quest_Step
+public class Go_To_Chopping_Board_Quest_Step : Tutorial_Quest_Step
 {
     void OnEnable()
     {
         SceneManager.sceneLoaded += onSceneLoaded;
+        DelayedInstructionStart();
 
     }
 

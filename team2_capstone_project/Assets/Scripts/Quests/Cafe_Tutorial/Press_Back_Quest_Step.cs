@@ -7,12 +7,13 @@ using UnityEngine.SceneManagement;
 /// Same as Enter_Restaurant_Quest_Step
 /// TODO: DELETE
 /// </summary>
-public class Press_Back_Quest_Step : Quest_Step
+public class Press_Back_Quest_Step : Tutorial_Quest_Step
 {
     void OnEnable()
     {
         // Game_Events_Manager.Instance.onRoomChange += RoomChange;
         SceneManager.sceneLoaded += onSceneLoaded;
+        DelayedInstructionStart();
 
 
     }
