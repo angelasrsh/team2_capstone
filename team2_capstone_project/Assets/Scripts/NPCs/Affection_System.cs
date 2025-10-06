@@ -89,8 +89,8 @@ public class Affection_System : MonoBehaviour
 
     // Constants
     [Header("Constants")]
-    [SerializeField] private int LikedDishAffection = 25; // NOTE TODO: Could maybe make the whole Liked/Disliked thing an enum or scale/int later
-    [SerializeField] private int NeutralDishAffection = 5;
+    [SerializeField] private int LikedDishAffection = 5; // NOTE TODO: Could maybe make the whole Liked/Disliked thing an enum or scale/int later
+    [SerializeField] private int NeutralDishAffection = 2;
     [SerializeField] private int DislikedDishAffection = -5;
 
     public static Affection_System Instance;
