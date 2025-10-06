@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// The child canvas used by the Tutorial_Manager. 
@@ -16,19 +17,53 @@ using UnityEngine;
 /// </summary>
 public class Tutorial_Canvas : MonoBehaviour
 {
+    [SerializeField] private Room_Data.RoomID TutorialRoom;
+
+
     [SerializeField] private GameObject TextboxPanel; // Set in code eventuallyS
     [SerializeField] private GameObject HighlightPanel;
 
     private TextMeshProUGUI Textbox;
 
+    private bool popupAlreadySet = false;
+
     // List of panels that must be in the desired order
     //private GameObject TutorialPanels;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += checkDisplayCanvas;
+
+        TutorialRoom = Room_Manager.GetRoomFromActiveScene().roomID;
+        
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= checkDisplayCanvas;
+    }
 
 
     private void Awake()
     {
         // Set textbox and Tutorial Panels list
         Textbox = TextboxPanel.GetComponentInChildren<TextMeshProUGUI>();
+
+    }
+
+    private void checkDisplayCanvas(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name.Equals(TutorialRoom.ToString()))
+        {
+            TextboxPanel.SetActive(true);
+
+            if (popupAlreadySet) // Only enable if the player got to the popup in the past
+                HighlightPanel.SetActive(true);
+        }
+        else
+        {
+            DisableAll();
+        }
 
     }
 
@@ -49,7 +84,7 @@ public class Tutorial_Canvas : MonoBehaviour
     public void DisplayGraphicDelayed(float delayStart = 0, float delayHide = 0)
     {
         StartCoroutine(displayGraphicDelayed(delayStart, delayHide));
-        
+
     }
 
     public void DisableAll()
@@ -58,6 +93,7 @@ public class Tutorial_Canvas : MonoBehaviour
         HighlightPanel.SetActive(false);
     }
 
+
     /// <summary>
     /// Change this quest step's canvas text after delayStart time. Hide after delayHide time.
     /// </summary>
@@ -65,7 +101,8 @@ public class Tutorial_Canvas : MonoBehaviour
     /// <param name="delayStart"></param>
     /// <param name="delayHide"> Input 0 to never hide </param>
     /// <returns></returns>
-    IEnumerator displayTextDelayed(String text, float delayStart, float delayHide) {
+    IEnumerator displayTextDelayed(String text, float delayStart, float delayHide)
+    {
         yield return new WaitForSeconds(delayStart);
         setText(text);
         TextboxPanel.SetActive(true);
@@ -95,15 +132,17 @@ public class Tutorial_Canvas : MonoBehaviour
     /// <param name="delayStart"></param>
     /// <param name="delayHide"> Input 0 to never hide </param>
     /// <returns></returns>
-    IEnumerator displayGraphicDelayed(float delayStart, float delayHide) {
+    IEnumerator displayGraphicDelayed(float delayStart, float delayHide)
+    {
         yield return new WaitForSeconds(delayStart);
         HighlightPanel.SetActive(true);
+        popupAlreadySet = true;
         if (delayHide > 0)
         {
             yield return new WaitForSeconds(delayHide);
-            HighlightPanel.SetActive(false); 
+            HighlightPanel.SetActive(false);
         }
-        
+
     }
 
     // public void DisplayHighlight()
@@ -111,7 +150,7 @@ public class Tutorial_Canvas : MonoBehaviour
     //     if (HighlightPanel == null)
     //         Debug.Log("[TU_CAN] Cannot display highlight- panel is null. Please assign it in the inspector.");
     //     else
-            
+
     // }
 
 
@@ -126,5 +165,6 @@ public class Tutorial_Canvas : MonoBehaviour
             Debug.Log("[Tu_CAN] Cannot set textbox because it is null! Has it been initialized yet?");
         Textbox.text = newText;
     }
+    
     
 }
