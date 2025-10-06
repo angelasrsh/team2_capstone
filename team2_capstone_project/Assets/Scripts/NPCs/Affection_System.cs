@@ -113,14 +113,13 @@ public class Affection_System : MonoBehaviour
 
     private void OnEnable()
     {
-        Game_Events_Manager.Instance.onEndDialogBox += TryPlayNextEvent;
+      Game_Events_Manager.Instance.onEndDialogBox += TryPlayNextEvent;
     }
 
     private void OnDisable()
     {
-        Game_Events_Manager.Instance.onEndDialogBox -= TryPlayNextEvent;
+      Game_Events_Manager.Instance.onEndDialogBox -= TryPlayNextEvent;
     }
-
 
 
     // Note: whatever database used should only hold dateable NPCs

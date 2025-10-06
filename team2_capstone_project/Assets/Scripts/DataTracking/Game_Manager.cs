@@ -5,69 +5,68 @@ using UnityEngine.SceneManagement;
 
 public class Game_Manager : MonoBehaviour
 {
-    public static Game_Manager Instance;
+  public static Game_Manager Instance;
 
-    [Header("Databases")]
-    [SerializeField] public Dish_Database dishDatabase;
-    [SerializeField] public Foraging_Database foragingDatabase;
-    [SerializeField] public NPC_Database npcDatabase;
-    [SerializeField] private Player_Progress playerProgress;
+  [Header("Databases")]
+  [SerializeField] public Dish_Database dishDatabase;
+  // [SerializeField] public Foraging_Database foragingDatabase;
+  [SerializeField] public Ingredient_Database ingredientDatabase;
+  [SerializeField] public NPC_Database npcDatabase;
+  [SerializeField] private Player_Progress playerProgress;
 
-    [Header("Room Setup")]
-    [SerializeField] private Room_Collection_Data roomCollection;
+  [Header("Room Setup")]
+  [SerializeField] private Room_Collection_Data roomCollection;
 
-    private void Awake()
+  private void Awake()
+  {
+    if (roomCollection != null)
     {
-        if (roomCollection != null)
-        {
-            Room_Manager.Initialize(roomCollection);
-            Debug.Log("GameManager: Room_Manager initialized!");
-        }
-        else
-        {
-            Debug.LogError("GameManager: No RoomCollectionData assigned!");
-        }
-
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            if (dishDatabase == null)
-                Debug.LogError("GameManager: DishDatabase not set in inspector!");
-
-            if (npcDatabase == null)
-                Debug.LogError("GameManager: npcDatabase not set in inspector!");
-
-            playerProgress.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-            playerProgress.UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
-            playerProgress.UnlockNPC(CustomerData.NPCs.Elf);
-            playerProgress.UnlockIngredient(Ingredient_Inventory.Instance.IngrEnumToData(IngredientType.Bone));
-            playerProgress.UnlockIngredient(Ingredient_Inventory.Instance.IngrEnumToData(IngredientType.Uncut_Fogshroom));
-            playerProgress.UnlockIngredient(Ingredient_Inventory.Instance.IngrEnumToData(IngredientType.Uncut_Fermented_Eye));
-            Debug.Log("GameManager: Player_Progress initialized. Blinding Stew, Mc_Dragons_Burger, Bone, Fogshroom, Fermented Eye, and Asper_Agis unlocked.");
-
-            if (foragingDatabase == null)
-                Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+      Room_Manager.Initialize(roomCollection);
+      Debug.Log("[GameManager]: Room_Manager initialized!");
+    }
+    else
+    {
+      Debug.LogError("[GameManager]: No RoomCollectionData assigned!");
     }
 
-    public void QuitGame()
+    if (Instance == null)
     {
-        Debug.Log("QuitGame button pressed!");
+      Instance = this;
+      DontDestroyOnLoad(gameObject);
+
+      if (dishDatabase == null)
+        Debug.LogError("[GameManager]: DishDatabase not set in inspector!");
+
+      if (npcDatabase == null)
+        Debug.LogError("[GameManager]: npcDatabase not set in inspector!");
+       
+      if (ingredientDatabase == null)
+        Debug.LogError("[GameManager]: ingredientDatabase not set in inspector!");
+
+      // starting unlocks are done in player_progress onEnable
+      Debug.Log("[GameManager]: Player_Progress initialized. Starting dishes, ingredients, and npcs unlocked.");
+
+      // if (foragingDatabase == null)
+      //   Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
+    }
+    else
+    {
+      Destroy(gameObject);
+    }
+  }
+
+  public void QuitGame()
+  {
+    Debug.Log("QuitGame button pressed!");
 
     #if UNITY_EDITOR
-        // Stop play mode if running in the editor
-        UnityEditor.EditorApplication.isPlaying = false;
+      // Stop play mode if running in the editor
+      UnityEditor.EditorApplication.isPlaying = false;
     #else
-        // Quit game if built
-        Application.Quit();
+      // Quit game if built
+      Application.Quit();
     #endif
-    }
+  }
 }
 
 [System.Serializable]

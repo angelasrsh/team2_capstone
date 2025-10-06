@@ -53,11 +53,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b62b3275ceb3e349ae84693ae596bd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
   dishDatabase: {fileID: 11400000, guid: 88a1998f93d89d64c9f529370030ca97, type: 2}
-  foragingDatabase: {fileID: 11400000, guid: 294545c759b90a54b9625ea8dd5cb588, type: 2}
+  ingredientDatabase: {fileID: 11400000, guid: 49c484858a049574198ee921da5f23bf, type: 2}
   npcDatabase: {fileID: 11400000, guid: 333fe90f2a2e96c42a4bfbb80d1f23be, type: 2}
   playerProgress: {fileID: 11400000, guid: f2c59ef6e9041524e924df3048a855ee, type: 2}
+  roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
 --- !u!114 &3461038497445604444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +82,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b425ab2cc5f3b644989ed7ec3145638e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentTimeOfDay: 0
 --- !u!114 &1934729213419131961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +110,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6f8d960e5bb27348ad4b3e662100aae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minPoolSize: 3
+  maxPoolSize: 5
+  minSelect: 1
+  maxSelect: 2
 --- !u!114 &6113680877637856580
 MonoBehaviour:
   m_ObjectHideFlags: 0
