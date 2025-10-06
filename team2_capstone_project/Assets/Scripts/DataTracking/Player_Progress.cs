@@ -5,103 +5,59 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Saves/PlayerProgress")]
 public class Player_Progress : ScriptableObject
 {
-  public static Player_Progress Instance;
-  // HashSet ensures no duplicates and fast lookups
-  [SerializeField] private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
-  [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
-  [SerializeField] private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
-  public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used )
-  public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used )
-  public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used )
+    public static Player_Progress Instance;
+    // HashSet ensures no duplicates and fast lookups
+    [SerializeField] private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
+    [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
+    public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked
 
-  private void OnEnable()
-  {
-    Instance = this;
-    // Initialize with default unlocks if needed
-    UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-    // UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
-    UnlockNPC(CustomerData.NPCs.Elf);
-    UnlockNPC(CustomerData.NPCs.Phrog);
-    UnlockIngredient(IngredientType.Slime);
-    UnlockIngredient(IngredientType.Water);
-    UnlockIngredient(IngredientType.Bone_Broth);
-    UnlockIngredient(IngredientType.Bone);
-    UnlockIngredient(IngredientType.Uncut_Fogshroom);
-    UnlockIngredient(IngredientType.Uncut_Fermented_Eye);
-    UnlockIngredient(IngredientType.Cut_Fogshroom);
-    UnlockIngredient(IngredientType.Cut_Fermented_Eye);
-  }
-
-  #region Dishes
-  /// <summary>
-  /// Unlock a dish by enum
-  /// </summary>
-  public void UnlockDish(Dish_Data.Dishes dish)
-  {
-    // HashSet.Add returns true if item was actually added
-    if (unlockedDishes.Add(dish))
+    private void OnEnable()
     {
-      // Fire event only if a new dish was added
-      OnDishUnlocked?.Invoke();
+        Instance = this;
     }
-  }
 
-  /// <summary>
-  /// Check if a dish is unlocked
-  /// </summary>
-  public bool IsDishUnlocked(Dish_Data.Dishes dish) => unlockedDishes.Contains(dish);
+    #region Dishes
+    /// <summary>
+    /// Unlock a dish by enum
+    /// </summary>
+    public void UnlockDish(Dish_Data.Dishes dish)
+    {
+        // HashSet.Add returns true if item was actually added
+        if (unlockedDishes.Add(dish))
+        {
+            // Fire event only if a new dish was added
+            OnDishUnlocked?.Invoke();
+        }
+    }
 
-  /// <summary>
-  /// Get all unlocked dishes as a list
-  /// </summary>
-  public List<Dish_Data.Dishes> GetUnlockedDishes() => new List<Dish_Data.Dishes>(unlockedDishes);
-  #endregion
+    /// <summary>
+    /// Check if a dish is unlocked
+    /// </summary>
+    public bool IsDishUnlocked(Dish_Data.Dishes dish) => unlockedDishes.Contains(dish);
 
-  #region Ingredients
-  /// <summary>
-  /// Unlock an ingredient by Ingredient_Data
-  /// </summary>
-  public void UnlockIngredient(IngredientType ingr)
-  {
-      if (unlockedIngredients.Add(ingr))
-      {
-          // Fire event only if a new ingredient was added
-          OnIngredientUnlocked?.Invoke();
-      }
-  }
+    /// <summary>
+    /// Get all unlocked dishes as a list
+    /// </summary>
+    public List<Dish_Data.Dishes> GetUnlockedDishes() => new List<Dish_Data.Dishes>(unlockedDishes);
+    #endregion
 
-  /// <summary>
-  /// Check if an ingredient is unlocked
-  /// </summary>
-  public bool IsIngredientUnlocked(IngredientType ingr) => unlockedIngredients.Contains(ingr);
+    #region NPCs
+    /// <summary>
+    /// Unlock an NPC by enum
+    /// </summary>
+    public void UnlockNPC(CustomerData.NPCs npc)
+    {
+        unlockedNPCs.Add(npc);
+    }
 
-  /// <summary>
-  /// Get all unlocked ingredients as a list
-  /// </summary>
-  public List<IngredientType> GetUnlockedIngredients() => new List<IngredientType>(unlockedIngredients);
-  #endregion
+    /// <summary>
+    /// Check if an NPC is unlocked
+    /// </summary>
+    public bool IsNPCUnlocked(CustomerData.NPCs npc) => unlockedNPCs.Contains(npc);
 
-  #region NPCs
-  /// <summary>
-  /// Unlock an NPC by enum
-  /// </summary>
-  public void UnlockNPC(CustomerData.NPCs npc)
-  {
-      if (unlockedNPCs.Add(npc))
-      {
-          // Fire event only if a new npc was added
-          OnNPCUnlocked?.Invoke();
-      }
-  }
-
-  /// <summary>
-  /// Check if an NPC is unlocked
-  /// </summary>
-  public bool IsNPCUnlocked(CustomerData.NPCs npc) => unlockedNPCs.Contains(npc);
-
-  /// <summary>
-  /// Get all unlocked NPCs as a list
-  /// </summary>
-  public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
-  #endregion
+    /// <summary>
+    /// Get all unlocked NPCs as a list
+    /// </summary>
+    public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
+    #endregion
 }

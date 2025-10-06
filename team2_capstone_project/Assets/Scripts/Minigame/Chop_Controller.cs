@@ -96,13 +96,12 @@ public class Chop_Controller : MonoBehaviour
 
 
         cuttingLinesParent = GameObject.Find("IngredientResize-Canvas").transform;
-        // cuttingLinesParent.anchorMin = new Vector2(1, 1);
-        // cuttingLinesParent.anchorMax = new Vector2(1, 1);
         // instantiate new cutting lines
         currentCuttingLines = Instantiate(uiLineRendererPrefab, cuttingLinesParent);
+
         // Immediately configure after instantiation
         lineRenderer = currentCuttingLines.GetComponent<UILineRenderer>();
-        
+
         if (lineRenderer != null)
         {
             Debug.Log("LineRendere is not null");
@@ -113,8 +112,8 @@ public class Chop_Controller : MonoBehaviour
                 //first line
                 newPoints = new List<Vector2>
                 {
-                    new Vector2(0f, 0f),
-                    new Vector2(386.3f, 382.59f),
+                    new Vector2(0f, 36.03f),
+                    new Vector2(268.4f, 300f),
                 };
                 lineRenderer.points = newPoints;
 
@@ -177,6 +176,8 @@ public class Chop_Controller : MonoBehaviour
             Debug.LogError("knife_Script not found in CHop_Controller!");
         }
 
+        knifePoint = GameObject.Find("KnifePoint");
+        if(knifePoint)
 
         //invoked functions
         k_script.OnDragStart += ShowCuttingLines;
@@ -185,14 +186,19 @@ public class Chop_Controller : MonoBehaviour
         // Debug.Log("[Chp_Cntrller] ingredient_data_var = " + ingredient_data_var);
 
     }
+    public Vector2 kPoint;
+    public RectTransform knifeRect;
     void Update()
     {
         {
+            // knifeRect = knifePoint.GetComponent<RectTransform>();
+            // kPoint = knifeRect.transform.position; //or anchorPosition get knife rect position
+
+
             //Spawn the cut lines when the knife gets dragged
             if (k_script.knife_is_being_dragged == true && !wasDragging) //if the knife is being dragged from Knife Script
             {
                 //TODO nice to have = swipeStart  = to position of the little box on the knife that i made instead of mous position
-
                 uiLineRendererPrefab.SetActive(true);
                 // swipeStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 // startDragPos = Mouse.current.position.ReadValue();
@@ -222,6 +228,7 @@ public class Chop_Controller : MonoBehaviour
                 if (!knife_is_overlapping && Drag_All.IsOverlapping(k_script.knifeRectTransform, redZoneForKnife))
                 {
                     Debug.Log("[Chp_cntrller] Knife is overlapping redZoneForKnife");
+                    // SpawnCutPrefabs();
                     knife_is_overlapping = true;
                 }
                 else
@@ -247,31 +254,29 @@ public class Chop_Controller : MonoBehaviour
                         
                     }
 
-                    //checks if item is in inventory and if its cut version cant make something
-                    // and add it to the inventory
-                    if (Drag_All.cuttingBoardActive == true) //something is on the board
+                    //checks
+                    if (Ingredient_Inventory.Instance.HasItem(ingredient_data_var.makesIngredient[0].ingredient) == false)
                     {
-                        //k_script.currentTime > 0.08f && k_script.dist <= 0.9f
-                        if (k_script.dist <= 0.9f)
+                        Debug.Log("[Chop_Cntrl] Inventory has item");
+                        in_inventory = false;
+                    }
+                    if (!in_inventory)
+                    {
+                        Debug.Log("Ingredient adding name: " + Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient));
+                        Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient), 1);
+
+                        StartCoroutine(DelayedActions());
+
+                        IEnumerator DelayedActions()
                         {
-                            Debug.Log("Ingredient adding name: " + Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient));
+                            yield return new WaitForSeconds(0.75f); // Wait .75 seconds
 
-                            Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient), 1);
-
-                            StartCoroutine(DelayedActions());
-
-                            IEnumerator DelayedActions()
-                            {
-                                yield return new WaitForSeconds(0.75f); // Wait .75 seconds
-
-                                imageComponent.enabled = false;
-                            }
-
-                            Drag_All.cuttingBoardActive = false;
+                            imageComponent.enabled = false;
                         }
 
+                        Drag_All.cuttingBoardActive = false;
+                        in_inventory = true;
                     }
-
                 }
             }
             
@@ -307,10 +312,13 @@ public class Chop_Controller : MonoBehaviour
         // Use a cut image if available
         if (ingredient_data_var.CutIngredientImages.Length > 0)
         {
-            Debug.Log("length of cut images is greater than 0");
             ChooseCutImage(imageComponent); //depending on the ingredient and the line position you need to change the sprite
         }
-
+        //use the regular image
+        else
+        {
+            imageComponent.sprite = ingredient_data_var.Image;
+        }
     }
     //depending on the ingredient and the line position you need to change the sprite
     private void ChooseCutImage(Image imgComp)
@@ -325,7 +333,6 @@ public class Chop_Controller : MonoBehaviour
             imgComp.sprite = ingredient_data_var.Image;
 
         }
-        k_script.currentTime = 0f; //reset the timer 
         return;
     //TODO: add if statements if the second or third line is cut
 
@@ -345,11 +352,11 @@ public class Chop_Controller : MonoBehaviour
     private void EvaluateChop(Image imageComp)
     {
         // float dist = DistancePointToSegment(kPoint, lineRenderer.points[0], lineRenderer.points[1]); //compare knife rect position to line1;
-        if (k_script.dist <= 2f && k_script.seconds > 0.2f) //after some time while dragging
+
+        if (k_script.currentTime >= 1f) //after some time while dragging
         {
-            Debug.Log("Going into the if state in Eval Chop");
             ChangeToCutPiece(imageComp);
-            
+            k_script.currentTime = 0f; //reset it 
         }
 
     }

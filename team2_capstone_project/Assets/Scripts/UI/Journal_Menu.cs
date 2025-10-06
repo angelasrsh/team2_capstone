@@ -11,137 +11,82 @@ using System.Linq;
 
 public class Journal_Menu : MonoBehaviour
 {
-  public static Journal_Menu Instance;
+  public GameObject journal;
   private bool isPaused = false; // Currently will overlap pause menu, I think
   private Player_Progress playerProgress = Player_Progress.Instance;
   private InputAction openJournalAction;
-  private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
-  private Choose_Menu_Items dailyMenu;
 
-  [Header("Databases")]
+  [Header("Recipe Menu References")]
+  [SerializeField] private GameObject Dish_Slot_Prefab;
+  [SerializeField] private GameObject Dishes_Grid;
+  [SerializeField] private GameObject Left_Page;
+  [SerializeField] private GameObject Right_Page;
+
+  [Header("Foraging Menu References")]
+  [SerializeField] private Choose_Menu_Items dailyMenu;
+  [SerializeField] private GameObject Foraging_Slot_Prefab;
+  [SerializeField] private GameObject Foraging_Grid;
+  [SerializeField] private GameObject Foraging_Left_Page;
+  [SerializeField] private GameObject Foraging_Right_Page;
+
+  [Header("NPC Menu References")]
+  [SerializeField] private GameObject NPC_Slot_Prefab;
+  [SerializeField] private GameObject NPC_Grid;
+  [SerializeField] private GameObject NPC_Left_Page;
+  [SerializeField] private GameObject NPC_Right_Page;
+  [SerializeField] private Slider NPC_Slider;
+
+  [Header("Journal Sections")]
+  [SerializeField] private CanvasGroup recipeMenuGroup;
+  [SerializeField] private CanvasGroup foragingMenuGroup;
+  [SerializeField] private CanvasGroup npcMenuGroup;
+
   private Dish_Database dishDatabase;
-  private Ingredient_Database ingredientDatabase;
-  private NPC_Database npcDatabase;
+  private Foraging_Database foragingDatabase;
 
-  [Header("Data Lists")]
-  private List<Dish_Data> allDishes;
-  private List<Ingredient_Data> allIngredients;
-  private List<CustomerData> allNPCs;
-
-  [Header("Journal GameObject References")]
-  private GameObject darkOverlay; // journal's dark overlay child
-  private GameObject journalContents; // journal's background child
-  private GameObject tabs; // journal's tab child
-
-  [Header("Left Page References")]
-  [SerializeField] private TextMeshProUGUI detailsText;
-  [SerializeField] private TextMeshProUGUI nameText;
-  [SerializeField] private Image recipeImage;
-  [SerializeField] private Image icon;
-  [SerializeField] private GameObject leftPagePanel; // used only to turn it off
-  [SerializeField] private Slider affectionGauge;
-
-  [Header("Right Page References")]
-  [SerializeField] public List<JournalSlot> slots; // assign 6 slots in inspector
-  [SerializeField] private Transform objectGrid; // Right page's grid of buttons
-
-  [Header("UI References and Variables")]
-  [SerializeField] public Sprite LockedIcon; // generic locked icon for locked items (just a question mark)
-  private Tabs currentTab = Tabs.None;
-  // Dictionary allows players to open to last page they had open in each tab
-  private Dictionary<Tabs, int> tabCurrentPage = new Dictionary<Tabs, int>()
-  {
-    { Tabs.Dish, 1 },
-    { Tabs.Ingredient, 1 },
-    { Tabs.NPC, 1 }
-  };
-  private Dictionary<Tabs, int> tabMaxPages;
-  public enum Tabs
-  {
-    None,
-    Dish,
-    Ingredient,
-    NPC
-  }
-
-  private void Awake()
-  {
-    if (Instance != null && Instance != this)
-    {
-      Destroy(gameObject);
-      return;
-    }
-
-    Instance = this;
-    DontDestroyOnLoad(gameObject);
-    SceneManager.sceneLoaded += OnSceneLoaded;
-  }
-
-  private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-  {
-    if (scene.name == "Main_Menu")
-      gameObject.SetActive(false);
-    else
-      gameObject.SetActive(true);
-  }
+  // private void Awake()
+  // {
+  //     dishDatabase = Game_Manager.Instance.dishDatabase;
+  //     foragingDatabase = Game_Manager.Instance.foragingDatabase;
+  // }
 
   private void Start()
   {
     dishDatabase = Game_Manager.Instance.dishDatabase;
-    ingredientDatabase = Game_Manager.Instance.ingredientDatabase;
-    npcDatabase = Game_Manager.Instance.npcDatabase;
-
-    allDishes = Game_Manager.Instance.dishDatabase.dishes;
-    // allIngredients = Game_Manager.Instance.ingredientDatabase.rawForagables;
-    // If wanting to use all ingredients list instead of showing only the raw foragable ones:
-    allIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
-    allNPCs = Game_Manager.Instance.npcDatabase.allNPCs;
-
-    tabMaxPages = new Dictionary<Tabs, int>()
-    {
-      { Tabs.Dish, Mathf.CeilToInt((float)allDishes.Count / objectsPerPage) },
-      { Tabs.Ingredient, Mathf.CeilToInt((float)allIngredients.Count / objectsPerPage) },
-      { Tabs.NPC, Mathf.CeilToInt((float)allNPCs.Count / objectsPerPage) }
-    };
-
-    darkOverlay = transform.GetChild(0).gameObject;
-    journalContents = transform.GetChild(1).gameObject;
-    tabs = transform.GetChild(2).gameObject;
+    foragingDatabase = Game_Manager.Instance.foragingDatabase;
 
     Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
     if (pic != null)
     {
-      openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
+        openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
     }
 
-    if (detailsText == null)
-      Debug.LogError("[Journal_Menu]: detailsText not assigned in inspector!");
+    if (journal == null)
+      Debug.LogError("Journal_Menu: Journal GameObject not assigned in inspector!");
+    else
+    {
+      HideEverything();
+    }
 
-    if (recipeImage == null)
-      Debug.LogError("[Journal_Menu]: recipeImage not assigned in inspector!");
+    if (Dish_Slot_Prefab == null)
+      Debug.LogError("Journal_Menu: Dish_Slot_Prefab not assigned in inspector!");
 
-    if (affectionGauge == null)
-      Debug.LogError("[Journal_Menu]: affectionGauge not assigned in inspector!");
+    if (Dishes_Grid == null)
+      Debug.LogError("Journal_Menu: Dishes_Grid not assigned in inspector!");
+
+    if (Foraging_Slot_Prefab == null)
+      Debug.LogError("Journal_Menu: Foraging_Slot_Prefab not assigned in inspector!");
+
+    if (Foraging_Grid == null)
+      Debug.LogError("Journal_Menu: Foraging_Grid not assigned in inspector!");
 
     if (Choose_Menu_Items.instance == null)
       Debug.LogWarning("Choose_Menu_Items instance is NULL in this scene!");
     else
-    {
       Debug.Log("Choose_Menu_Items still alive. Dishes count: " + Choose_Menu_Items.instance.GetSelectedDishes().Count);
-      dailyMenu = Choose_Menu_Items.instance;
-    }
 
-    Choose_Menu_Items.OnMenuSelectedNoParams += PopulateDishes; // to show stars on dishes in journal that are on daily menu
-
-    ShowDishTab(); // default to dish tab
-    leftPagePanel.SetActive(false); // hide left page details at start
-    ResumeGame(); // start with journal closed
-  }
-
-  private void OnDestroy()
-  {
-    SceneManager.sceneLoaded -= OnSceneLoaded;
-    Choose_Menu_Items.OnMenuSelectedNoParams -= PopulateDishes;
+    PopulateDishes();
+    PopulateNPCs();
   }
 
   // Update is called once per frame
@@ -151,13 +96,13 @@ public class Journal_Menu : MonoBehaviour
     {
       if (isPaused)
       {
-        ResumeGame();
-        Game_Events_Manager.Instance.JournalToggled(false); //this is being checked every time the journal is opened/closed. Might not be ideal
+          ResumeGame();
+          Game_Events_Manager.Instance.JournalToggled(false);
       }
       else
       {
-        PauseGame();
-        Game_Events_Manager.Instance.JournalToggled(true);
+          PauseGame();
+          Game_Events_Manager.Instance.JournalToggled(true);
       }
     }
   }
@@ -165,389 +110,322 @@ public class Journal_Menu : MonoBehaviour
   public void PauseGame()
   {
     Debug.Log("Opening journal and pausing game...");
-    darkOverlay.SetActive(true);
-    journalContents.SetActive(true);
-    tabs.SetActive(true);
+    journal.transform.GetChild(0).gameObject.SetActive(true);
+    journal.transform.GetChild(1).gameObject.SetActive(true);
+    journal.transform.GetChild(2).gameObject.SetActive(true);
     isPaused = true;
+
+    // Default to showing recipe menu
+    ShowGroup(recipeMenuGroup, true);
   }
 
+  // Resume the game from the pause menu
   public void ResumeGame()
   {
     Debug.Log("Closing journal and resuming game...");
 
     Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose);
 
-    darkOverlay.SetActive(false);
-    journalContents.SetActive(false);
-    tabs.SetActive(false);
+    journal.transform.GetChild(0).gameObject.SetActive(false);
+    journal.transform.GetChild(1).gameObject.SetActive(false);
+    journal.transform.GetChild(2).gameObject.SetActive(false);
     isPaused = false;
+    Left_Page.SetActive(false);
+
+    ShowGroup(recipeMenuGroup, false);
+    ShowGroup(foragingMenuGroup, false);
+    ShowGroup(npcMenuGroup, false);
   }
 
-  #region Recipe Tab Methods
+  private void OnEnable()
+  {
+    Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
+    Debug.Log("Subscribed to OnDailyMenuSelected event.");
+
+    if (Choose_Menu_Items.instance != null && Choose_Menu_Items.instance.HasSelectedDishes() && dishDatabase != null)
+    {
+      PopulateForaging(Choose_Menu_Items.instance.GetSelectedDishes());
+      Debug.Log("Populated foraging menu from existing daily menu selection.");
+    }
+
+    if (Player_Progress.Instance != null)
+    {
+      playerProgress.OnDishUnlocked += PopulateDishes;
+      playerProgress.OnDishUnlocked += PopulateNPCs;
+    }
+  }
+
+  private void OnDisable()
+  {
+    if (Player_Progress.Instance != null)
+    {
+      Player_Progress.Instance.OnDishUnlocked -= PopulateDishes;
+      Player_Progress.Instance.OnDishUnlocked -= PopulateNPCs;
+    }
+
+    Choose_Menu_Items.OnDailyMenuSelected -= PopulateForaging;
+  }
+
+  #region Recipe Menu Methods
   private void PopulateDishes()
   {
-    // Debug.Log("Populating dishes for current page in journal...");
-    int currentPage = tabCurrentPage[currentTab];
-    List<Dish_Data.Dishes> unlockedDishes = playerProgress.GetUnlockedDishes();
-    int currGridCell = 0;
-    int startIndex = (currentPage - 1) * objectsPerPage;
-    int index = startIndex + currGridCell;
+    Debug.Log("Populating dishes in journal...");
 
-    // Populate with unlocked dishes if needed
-    while (currGridCell < objectsPerPage)
+    // Clear existing dish slots
+    foreach (Transform child in Dishes_Grid.transform)
     {
-      JournalSlot slot = slots[currGridCell];
-      if (index < unlockedDishes.Count)
-      {
-        Dish_Data dishData = dishDatabase.GetDish(unlockedDishes[index]);
+      DestroyImmediate(child.gameObject, true);
+    }
 
-        // Check if dish is on daily menu
-        if (dailyMenu != null && dailyMenu.GetSelectedDishes().Contains(dishData.dishType))
-            slot.SetItem(dishData, true, true);
-        else
-          slot.SetItem(dishData, true, false);
-      }
-      else if (index < allDishes.Count)
-      {
-        // Show locked dishes only if there are still more dishes in the database
-        slot.SetItem(null, false, false);
-      }
-      else
-      {
-        // Don't show empty slots if no more NPCs to show
-        slot.ClearItem();
-      }
+    // Populate with unlocked dishes
+    Debug.Log($"Unlocked dishes count: {playerProgress.GetUnlockedDishes().Count}");
+    foreach (var unlockedDishType in playerProgress.GetUnlockedDishes())
+    {
+      Dish_Data dishData = dishDatabase.GetDish(unlockedDishType);
+      if (dishData == null) continue; // safety check 
 
-      index++;
-      currGridCell++;
+      // Instantiate a dish slot prefab as a child of the grid
+      GameObject slot = Instantiate(Dish_Slot_Prefab, Dishes_Grid.transform);
+
+      // Find and set the UI elements within the slot
+      Transform dishBG = slot.transform.Find("Dish_BG");
+      Transform button = dishBG.Find("Button");
+      Transform dishName = button.Find("Dish_Name");
+      var textComp = dishName.GetComponent<TextMeshProUGUI>();
+      textComp.text = dishData.Name;
+
+      Transform iconPanel = dishBG.Find("Dish_Icon_Panel");
+      Transform icon = iconPanel.Find("Dish_Icon");
+      var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
+      imageComp.sprite = dishData.Image;
+      
+      // Add button listener to show details on click
+      var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
+      buttonComp.onClick.AddListener(() => DisplayDishDetails(dishData));
     }
   }
 
-  private void DisplayDishDetails(Dish_Data dishData)
-  {
-    leftPagePanel.SetActive(true);
+    private void DisplayDishDetails(Dish_Data dishData)
+    {
+        Left_Page.SetActive(true);
 
-    nameText.text = dishData.Name;
-    recipeImage.sprite = dishData.recipeImage;
-    recipeImage.preserveAspect = true;
-    icon.sprite = dishData.Image;
-    icon.preserveAspect = true;
+        // Find left page UI elements
+        Transform pagePanel = Left_Page.transform.Find("Page_Panel");
+
+        Transform nameObj = pagePanel.Find("Dish_Name");
+        var nameText = nameObj.GetComponent<TextMeshProUGUI>();
+        nameText.text = dishData.Name;
+
+        // Find and set the recipe text
+        Transform recipeObj = pagePanel.Find("Recipe_Image");
+        Image recipeImage = recipeObj.GetComponent<Image>();
+        recipeImage.sprite = dishData.recipeImage;
+        recipeImage.preserveAspect = true;
+
+        // Find and set the dish icon
+        Transform iconPanel = pagePanel.Find("Icon_Panel");
+        Transform iconObj = iconPanel.Find("Icon_Image");
+        Image iconImage = iconObj.GetComponent<UnityEngine.UI.Image>();
+        iconImage.sprite = dishData.Image;
+    
+        // Broadcast event for tutorial
+        Game_Events_Manager.Instance.DishDetailsClick(dishData);
   }
   #endregion
 
-  #region Ingredient Tab Methods
-  private void PopulateIngredients()
+  #region Daily Menu Methods
+  private void PopulateForaging(List<Dish_Data.Dishes> selectedDishes)
   {
-    // Debug.Log("Populating ingredients for current page in journal...");
-    int currentPage = tabCurrentPage[currentTab];
-    List<IngredientType> unlockedIngredients = playerProgress.GetUnlockedIngredients();
-    int currGridCell = 0;
-    int startIndex = (currentPage - 1) * objectsPerPage;
-    int index = startIndex + currGridCell;
+    Debug.Log("Populating foraging menu...");
 
-    // Populate with unlocked dishes if needed
-    while (currGridCell < objectsPerPage)
+    // Clear existing slots
+    foreach (Transform child in Foraging_Grid.transform)
     {
-      JournalSlot slot = slots[currGridCell];
-      if (index < unlockedIngredients.Count)
-      {
-        Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
-        slot.SetItem(ingredientData, true, false);
-      }
-      else if (index < allIngredients.Count)
-      {
-        // Show locked ingredients only if there are still more ingredients in the database
-        slot.SetItem(null, false, false);
-      }
-      else
-      {
-        // Don't show empty slots if no more NPCs to show
-        slot.ClearItem();
-      }
+      DestroyImmediate(child.gameObject, true);
+    }
 
-      index++;
-      currGridCell++;
+    // For each selected dish
+   Debug.Log("PopulateForaging called. playerProgress: " + (playerProgress != null) +
+          ", ForagingPrefab: " + (Foraging_Slot_Prefab != null) +
+          ", ContentParent: " + (Foraging_Grid != null));
+
+    foreach (var dishType in selectedDishes)
+    {
+      Debug.Log("Trying to fetch dish: " + dishType);
+      var dishData = dishDatabase.GetDish(dishType); // line 215?
+      if (dishData == null)
+      {
+          Debug.LogError("Dish not found in database: " + dishType);
+          continue;
+      }
+      GameObject dishSlot = Instantiate(Foraging_Slot_Prefab, Foraging_Grid.transform);
+
+      Transform bg = dishSlot.transform.Find("Item_BG");
+      Transform button = bg.Find("Item_Button");
+      Transform itemName = button.Find("Item_Name");
+      var nameText = itemName.GetComponent<TextMeshProUGUI>();
+      nameText.text = dishData.Name;
+
+      Transform iconPanel = bg.Find("Item_Icon_Panel");
+      Transform icon = iconPanel.Find("Item_Icon");
+      var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
+      imageComp.sprite = dishData.Image;
+
+      var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
+      buttonComp.onClick.AddListener(() => DisplayDishForagingDetails(dishData));
     }
   }
 
-  private void DisplayIngredientDetails(Ingredient_Data ingredient)
+  private void DisplayDishForagingDetails(Dish_Data dishData)
   {
-    leftPagePanel.SetActive(true);
+    Foraging_Left_Page.SetActive(true);
 
-    // Ingredient Info
-    nameText.text = ingredient.Name;
-    icon.sprite = ingredient.Image;
-    icon.preserveAspect = true;
+    Transform pagePanel = Foraging_Left_Page.transform.Find("Left_Page_Item_Panel");
+
+    // Dish Info
+    pagePanel.Find("Item_Name").GetComponent<TextMeshProUGUI>().text = dishData.Name;
+    pagePanel.Find("Item_Icon_Panel/Item_Image").GetComponent<UnityEngine.UI.Image>().sprite = dishData.Image;
 
     // Collect ingredient lines
-    Ingredient_Requirement[] makesIngredientArray = ingredient.makesIngredient.ToArray();
-    Dish_Data[] usedInDishesArray = ingredient.usedInDishes.ToArray();
+    string ingredientText = "";
+    foreach (var req in dishData.ingredientQuantities)
+    {
+      Ingredient_Data ingredient = req.ingredient;
+      int required = req.amountRequired;
 
-    string ingredientText = "Description: \n" + ingredient.description + "\n\n";
+      // Pick the display ingredient
+      Ingredient_Data displayIngredient = ingredient;
 
-    ingredientText += "Rarity: " + ingredient.rarityWeight + "\n";
+      // If this ingredient has equivalencies, pick the first one as the base
+      if (ingredient.countsAs != null && ingredient.countsAs.Count > 0)
+      {
+        displayIngredient = ingredient.countsAs[0];
+      }
 
-    ingredientText += "Used to make ingredients: " +
-        (makesIngredientArray.Length > 0
-            ? string.Join(", ", makesIngredientArray.Select(d => d.ingredient.Name))
-            : "None") + "\n";
+      // Now display the base ingredient instead of the processed one
+      ingredientText += $"{displayIngredient.Name} x{required}\n";
 
-    ingredientText += "Used to make dishes: " +
-        (usedInDishesArray.Length > 0
-            ? string.Join(", ", usedInDishesArray.Select(d => d.Name))
-            : "None");
+    }
 
-    // Assign once to text component
-    detailsText.text = ingredientText;
+    // Assign once
+    var detailsText = pagePanel.Find("Item_Details").GetComponent<TextMeshProUGUI>();
+    detailsText.text = ingredientText.TrimEnd(); // trim last newline
 
   }
   #endregion
 
-  #region NPC Tab Methods
+  #region NPC Menu Methods
   private void PopulateNPCs()
   {
-    // Debug.Log("Populating npcs for current page in journal...");
-    int currentPage = tabCurrentPage[currentTab];
-    List<CustomerData.NPCs> unlockedNPCs = playerProgress.GetUnlockedNPCs();
-    int currGridCell = 0;
-    int startIndex = (currentPage - 1) * objectsPerPage;
-    int index = startIndex + currGridCell;
+    Debug.Log("Populating npcs in journal...");
 
-    // Populate with unlocked dishes if needed
-    while (currGridCell < objectsPerPage)
+    // Clear existing npc slots
+    foreach (Transform child in NPC_Grid.transform)
     {
-      JournalSlot slot = slots[currGridCell];
-      if (index < unlockedNPCs.Count)
-      {
-        CustomerData NPC = npcDatabase.GetNPCData(unlockedNPCs[index]);
-        slot.SetItem(NPC, true, false);
-      }
-      else if (index < allNPCs.Count)
-      {
-        // Show locked NPCs only if there are still more NPCs in the database
-        slot.SetItem(null, false, false);
-      }
-      else
-      {
-        // Don't show empty slots if no more NPCs to show
-        slot.ClearItem();
-      }
+      DestroyImmediate(child.gameObject, true);
+    }
 
-      index++;
-      currGridCell++;
+    // Populate with unlocked dishes
+    Debug.Log($"Unlocked npcs count: {playerProgress.GetUnlockedNPCs().Count}");
+    foreach (var unlockedNPC in playerProgress.GetUnlockedNPCs())
+    {
+      CustomerData npcData = NPC_Database.Instance.GetNPCData(unlockedNPC);
+      if (npcData == null) continue; // safety check 
+
+      // Instantiate an npc slot prefab as a child of the grid
+      GameObject slot = Instantiate(NPC_Slot_Prefab, NPC_Grid.transform);
+
+      // Find and set the UI elements within the slot
+      Transform NPCBG = slot.transform.Find("NPC_Button_BG");
+      Transform button = NPCBG.Find("Button");
+      Transform npcName = button.Find("NPC_Name");
+      var textComp = npcName.GetComponent<TextMeshProUGUI>();
+      textComp.text = npcData.customerName;
+
+      Transform iconPanel = NPCBG.Find("Icon_Panel");
+      Transform icon = iconPanel.Find("Icon");
+      var imageComp = icon.GetComponent<UnityEngine.UI.Image>();
+      imageComp.sprite = npcData.defaultPortrait;
+
+      // Add button listener to show details on click
+      var buttonComp = button.GetComponent<UnityEngine.UI.Button>();
+      buttonComp.onClick.AddListener(() => DisplayNPCDetails(npcData));
     }
   }
-  private void DisplayNPCDetails(CustomerData npcData)
-  {
-    leftPagePanel.SetActive(true);
-
-    // NPC Info
-    nameText.text = npcData.customerName;
-    icon.sprite = npcData.defaultPortrait;
-    icon.preserveAspect = true;
-
-    // Build the description text
-    string npcText = "Background Info: \n" + npcData.lore + "\n\n";
-
-    npcText += "Dateable: " + (npcData.datable ? "YES" : "no") + "\n";
-
-    npcText += "Favorite Dishes: " +
-        (npcData.favoriteDishes.Length > 0
-            ? string.Join(", ", npcData.favoriteDishes.Select(d => d.Name))
-            : "None") + "\n";
-
-    npcText += "Disliked Dishes: " +
-        (npcData.dislikedDishes.Length > 0
-            ? string.Join(", ", npcData.dislikedDishes.Select(d => d.Name))
-            : "None") + "\n";
-
-    npcText += "Neutral Dishes: " +
-        (npcData.neutralDishes.Length > 0
-            ? string.Join(", ", npcData.neutralDishes.Select(d => d.Name))
-            : "None");
-
-    // Assign to text component
-    detailsText.text = npcText;
-
-    // Assign slider value if datable
-    if (npcData.datable)
+    private void DisplayNPCDetails(CustomerData npcData)
     {
-      affectionGauge.value = Affection_System.Instance.GetAffectionLevel(npcData);
-      affectionGauge.gameObject.SetActive(true);
-    }
-    else
-      affectionGauge.gameObject.SetActive(false);
+        NPC_Left_Page.SetActive(true);
+
+        Transform pagePanel = NPC_Left_Page.transform.Find("Left_Page_Panel");
+
+        // NPC Info
+        pagePanel.Find("NPC_Name").GetComponent<TextMeshProUGUI>().text = npcData.customerName;
+        pagePanel.Find("NPC_Icon_Panel/NPC_Image").GetComponent<UnityEngine.UI.Image>().sprite = npcData.defaultPortrait;
+
+        // Build the description text
+        string npcText = "Background Info: \n" + npcData.lore + "\n\n";
+
+        npcText += "Favorite Dishes: " +
+            (npcData.favoriteDishes.Length > 0
+                ? string.Join(", ", npcData.favoriteDishes.Select(d => d.Name))
+                : "None") + "\n";
+
+        npcText += "Disliked Dishes: " +
+            (npcData.dislikedDishes.Length > 0
+                ? string.Join(", ", npcData.dislikedDishes.Select(d => d.Name))
+                : "None") + "\n";
+
+        npcText += "Neutral Dishes: " +
+            (npcData.neutralDishes.Length > 0
+                ? string.Join(", ", npcData.neutralDishes.Select(d => d.Name))
+                : "None");
+
+        // Assign to text component
+        var detailsText = pagePanel.Find("NPC_Details").GetComponent<TextMeshProUGUI>();
+        detailsText.text = npcText;
+
+        // Assign slider value
+        NPC_Slider.value = Affection_System.Instance.GetAffectionLevel(npcData);
   }
   #endregion
 
   #region Show/Hide UI Helper Methods
-  /// <summary>
-  /// Disable afffection gauge and detail text. Enable recipe image. Fill right page's buttons with correct dishes
-  /// </summary>
-  public void ShowDishTab()
+  private void ShowGroup(CanvasGroup group, bool show)
   {
-    // Debug.Log("Showing Dish tab...");
-    detailsText.gameObject.SetActive(false);
-    affectionGauge.gameObject.SetActive(false);
-    recipeImage.gameObject.SetActive(true);
-    if (currentTab != Tabs.Dish) // only hide left page details when switching to dish tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to dish tab, since no dish selected yet
-      currentTab = Tabs.Dish;
-      FillRightPage();
-    }
+    group.alpha = show ? 1 : 0;
+    group.interactable = show;
+    group.blocksRaycasts = show;
   }
 
-  /// <summary>
-  /// Disable affection gauge and recipe image. Enable details text. Fill right page's buttons with correct ingredients
-  /// </summary>
-  public void ShowIngredientTab()
+  public void ShowRecipeMenu()
   {
-    // Debug.Log("Showing Ingredient tab...");
-    detailsText.gameObject.SetActive(true);
-    affectionGauge.gameObject.SetActive(false);
-    recipeImage.gameObject.SetActive(false);
-    if (currentTab != Tabs.Ingredient) // only hide left page details when switching to ingredient tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to ingredient tab, since no ingredient selected yet
-      currentTab = Tabs.Ingredient;
-      FillRightPage();
-    }
+    ShowGroup(recipeMenuGroup, true);
+    ShowGroup(foragingMenuGroup, false);
+    ShowGroup(npcMenuGroup, false);
   }
 
-  /// <summary>
-  /// Disable recipe image. Enable details text. Fill right page's buttons with correct npcs. Affection gauge should
-  /// only show up for the npcs that are datable, so don't enable it here (enabled in DisplayNPCDetails if datable)
-  /// </summary>
-  public void ShowNPCTab()
+  public void ShowForagingMenu()
   {
-    // Debug.Log("Showing NPC tab...");
-    detailsText.gameObject.SetActive(true);
-    recipeImage.gameObject.SetActive(false);
-    if (currentTab != Tabs.NPC) // only hide left page details when switching to npc tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to npc tab, since no npc selected yet
-      currentTab = Tabs.NPC;
-      FillRightPage();
-    }
+    ShowGroup(recipeMenuGroup, false);
+    ShowGroup(foragingMenuGroup, true);
+    ShowGroup(npcMenuGroup, false);
   }
 
-  /// <summary>
-  /// Fills right page's buttons with correct images and names for the current tab's current page.
-  /// Current tab's current page should be within the correct bounds, so no out of bounds exception should occur here.
-  /// </summary>
-  private void FillRightPage()
+  public void ShowNPCMenu()
   {
-    if (currentTab == Tabs.Dish)
-      PopulateDishes();
-    else if (currentTab == Tabs.Ingredient)
-      PopulateIngredients();
-    else if (currentTab == Tabs.NPC)
-      PopulateNPCs();
+    ShowGroup(npcMenuGroup, true);
+    ShowGroup(foragingMenuGroup, false);
+    ShowGroup(recipeMenuGroup, false);
   }
 
-  /// <summary>
-  /// Flip page to next page (to the right)
-  /// </summary>
-  public void FlipToNext()
+  public void HideEverything()
   {
-    Debug.Log("Flipping to next page...");
-    if (tabCurrentPage[currentTab] < tabMaxPages[currentTab])
-    {
-      tabCurrentPage[currentTab] += 1;
-      FillRightPage();
-      leftPagePanel.SetActive(false); // hide left page details when flipping to next page, since no item selected yet
-    }
-    else
-    {
-      Debug.Log("[Journal_Menu]: There is no next page to current tab's current page.");
-    }
-  }
-
-  /// <summary>
-  /// Flip page to previous page (to the left)
-  /// </summary>
-  public void FlipToPrevious()
-  {
-    Debug.Log("Flipping to previous page...");
-    if (tabCurrentPage[currentTab] > 1)
-    {
-      tabCurrentPage[currentTab] -= 1;
-      FillRightPage();
-      leftPagePanel.SetActive(false); // hide left page details when flipping to previous page, since no item selected yet
-    }
-    else
-    {
-      Debug.Log("[Journal_Menu]: There is no previous page to current tab's current page.");
-    }
+    journal.transform.GetChild(0).gameObject.SetActive(false);
+    journal.transform.GetChild(1).gameObject.SetActive(false);
+    journal.transform.GetChild(2).gameObject.SetActive(false);
+    ShowGroup(recipeMenuGroup, false);
+    ShowGroup(foragingMenuGroup, false);
+    ShowGroup(npcMenuGroup, false);
   }
   #endregion
-
-  [System.Serializable]
-  public class JournalSlot
-  {
-    public GameObject background; // the button's background object, used to turn off when no item
-    public Button button;
-    public TextMeshProUGUI nameText;
-    public Image iconImage;
-    private object currentItem;
-    public Image starImage;
-
-    public void SetItem(object item, bool unlocked, bool onDailyMenu)
-    {
-      background.SetActive(true);
-      currentItem = item;
-
-      // Set name and icon based on type
-      if (!unlocked)
-      {
-        nameText.text = "Unknown"; // if we want to show ? for the name, then replace with "?"
-        iconImage.sprite = Instance.LockedIcon;
-      }
-      else if (item is Dish_Data dish)
-      {
-        nameText.text = dish.Name;
-        iconImage.sprite = dish.Image;
-      }
-      else if (item is Ingredient_Data ingredient)
-      {
-        nameText.text = ingredient.Name;
-        iconImage.sprite = ingredient.Image;
-      }
-      else if (item is CustomerData npc)
-      {
-        nameText.text = npc.customerName;
-        iconImage.sprite = npc.defaultPortrait;
-      }
-      iconImage.preserveAspect = true;
-
-      if (onDailyMenu)
-          starImage.gameObject.SetActive(true);
-      else
-        starImage.gameObject.SetActive(false);
-      starImage.preserveAspect = true;
-
-      // Set the button click
-      button.onClick.RemoveAllListeners();
-      if (unlocked)
-        button.onClick.AddListener(OnClick);
-    }
-
-    public void ClearItem()
-    {
-      currentItem = null;
-      background.SetActive(false);
-      button.onClick.RemoveAllListeners();
-    }
-
-    private void OnClick()
-    {
-      if (currentItem is Dish_Data dish)
-        Instance.DisplayDishDetails(dish);
-      else if (currentItem is Ingredient_Data ingredient)
-        Instance.DisplayIngredientDetails(ingredient);
-      else if (currentItem is CustomerData npc)
-        Instance.DisplayNPCDetails(npc);
-    }
-  }
 }

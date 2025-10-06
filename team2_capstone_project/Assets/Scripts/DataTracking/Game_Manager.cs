@@ -5,68 +5,71 @@ using UnityEngine.SceneManagement;
 
 public class Game_Manager : MonoBehaviour
 {
-  public static Game_Manager Instance;
+    public static Game_Manager Instance;
 
-  [Header("Databases")]
-  [SerializeField] public Dish_Database dishDatabase;
-  // [SerializeField] public Foraging_Database foragingDatabase;
-  [SerializeField] public Ingredient_Database ingredientDatabase;
-  [SerializeField] public NPC_Database npcDatabase;
-  [SerializeField] private Player_Progress playerProgress;
+    [Header("Databases")]
+    [SerializeField] public Dish_Database dishDatabase;
+    [SerializeField] public Foraging_Database foragingDatabase;
+    [SerializeField] public NPC_Database npcDatabase;
+    [SerializeField] private Player_Progress playerProgress;
 
-  [Header("Room Setup")]
-  [SerializeField] private Room_Collection_Data roomCollection;
+    [Header("Room Setup")]
+    [SerializeField] private Room_Collection_Data roomCollection;
 
-  private void Awake()
-  {
-    if (roomCollection != null)
+    private void Awake()
     {
-      Room_Manager.Initialize(roomCollection);
-      Debug.Log("[GameManager]: Room_Manager initialized!");
+        if (roomCollection != null)
+        {
+            Room_Manager.Initialize(roomCollection);
+            Debug.Log("GameManager: Room_Manager initialized!");
+        }
+        else
+        {
+            Debug.LogError("GameManager: No RoomCollectionData assigned!");
+        }
+
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            if (dishDatabase == null)
+                Debug.LogError("GameManager: DishDatabase not set in inspector!");
+
+            if (npcDatabase == null)
+                Debug.LogError("GameManager: npcDatabase not set in inspector!");
+
+            Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Blinding_Stew);
+            Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
+            Player_Progress.Instance.UnlockNPC(CustomerData.NPCs.Elf);
+            Debug.Log("GameManager: Player_Progress initialized and Blinding Stew, Mc_Dragons_Burger, and Asper_Agis unlocked.");
+
+            if (foragingDatabase == null)
+                Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
+            else
+            {
+                foragingDatabase.UnlockItem("Bone");
+                Debug.Log("GameManager: ForagingDatabase initialized and Bone unlocked.");
+            }
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
-    else
+
+    public void QuitGame()
     {
-      Debug.LogError("[GameManager]: No RoomCollectionData assigned!");
-    }
-
-    if (Instance == null)
-    {
-      Instance = this;
-      DontDestroyOnLoad(gameObject);
-
-      if (dishDatabase == null)
-        Debug.LogError("[GameManager]: DishDatabase not set in inspector!");
-
-      if (npcDatabase == null)
-        Debug.LogError("[GameManager]: npcDatabase not set in inspector!");
-       
-      if (ingredientDatabase == null)
-        Debug.LogError("[GameManager]: ingredientDatabase not set in inspector!");
-
-      // starting unlocks are done in player_progress onEnable
-      Debug.Log("[GameManager]: Player_Progress initialized. Starting dishes, ingredients, and npcs unlocked.");
-
-      // if (foragingDatabase == null)
-      //   Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
-    }
-    else
-    {
-      Destroy(gameObject);
-    }
-  }
-
-  public void QuitGame()
-  {
-    Debug.Log("QuitGame button pressed!");
+        Debug.Log("QuitGame button pressed!");
 
     #if UNITY_EDITOR
-      // Stop play mode if running in the editor
-      UnityEditor.EditorApplication.isPlaying = false;
+        // Stop play mode if running in the editor
+        UnityEditor.EditorApplication.isPlaying = false;
     #else
-      // Quit game if built
-      Application.Quit();
+        // Quit game if built
+        Application.Quit();
     #endif
-  }
+    }
 }
 
 [System.Serializable]

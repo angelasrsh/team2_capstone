@@ -10,22 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: Uncooked_Patty
+  m_Name: Uncooked_Burger_Patty
   m_EditorClassIdentifier: 
-  Name: Uncooked Patty
+  Name: 
   Amount: 0
   Image: {fileID: 0}
   tier: 0
   price: 0
-  rarityWeight: 0
+  rarityWeight: 1
   minSpawn: 0
-  maxSpawn: 0
+  maxSpawn: 5
   countsAs: []
-  description: 
   CutIngredientImages: []
   usedInDishes: []
-  makesIngredient:
-  - ingredient: {fileID: 11400000, guid: 98efee7800ae5774591e4af778edbd5b, type: 2}
-    amountRequired: 1
+  makesIngredient: []
   ingredientsNeeded: []
-  ingredientType: 13

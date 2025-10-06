@@ -18,32 +18,11 @@ public class Ingredient_Data : Item_Data
   // used to tracking ingredient requirements for dishes in Journal_Menu
   public List<Ingredient_Data> countsAs;
 
-  public string description;
   public Sprite[] CutIngredientImages;
   public List<Dish_Data> usedInDishes;
   public List<Ingredient_Requirement> makesIngredient; // e.g. 1 bone used to make bone broth
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
-  public IngredientType ingredientType;
 }
-
-public enum IngredientType
-  {
-    Null,
-    Egg,
-    Melon,
-    Milk,
-    Cheese,
-    Uncut_Fogshroom,
-    Uncut_Fermented_Eye,
-    Slime,
-    Bone_Broth,
-    Bone,
-    Cut_Fermented_Eye,
-    Cut_Fogshroom,
-    Water,
-    Uncooked_Patty,
-    Cooked_Patty
-  }
 
 // public class CutLine
 // {
