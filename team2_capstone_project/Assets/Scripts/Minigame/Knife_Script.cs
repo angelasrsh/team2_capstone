@@ -47,7 +47,8 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     }
     public float currentTime = 0f;
-    private float dist = 0f;
+    public float dist = 0f;
+    public float seconds = 0f;
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
@@ -57,26 +58,8 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         {
             Debug.LogWarning("LineRend from chop null");
         }
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
-        Vector2 p = new Vector2(mouseWorld.x, mouseWorld.y); 
 
-        // Debug.Log($"Mouse p: {p}");
-        // Debug.Log($"Point a: {chop_script.lineRenderer.points[0]}");
-        // Debug.Log($"Point b: {chop_script.lineRenderer.points[1]}");
-
-        //screen coordinates
-        dist = chop_script.DistancePointToSegment(p, Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[0]),
-        Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[1])); //compare knife rect position to line1;
-        Debug.Log("Distance:" + dist);
-        if (dist <= 30f) //if knife is on the line
-        {
-            Debug.Log("Went close to cut line, starting timer");
-            //TODO start timeer
-            currentTime += Time.deltaTime;
-            // DisplayTime(currentTime);
-        }
-
-
+        CheckDist();
 
     }
 
@@ -96,9 +79,15 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     // Start is called before the first frame update
     void Start()
     {
-        knifeRectTransform = GetComponent<RectTransform>();
+        //fidn the rectTransform of the knife, and the knife point
+        knifePoint = GameObject.Find("KnifePoint");
+        knifeRect = knifePoint.GetComponent<RectTransform>();
+
+
+        knifeRectTransform = GetComponent<RectTransform>();//this one is to return knife to the og position
         parentAfterDrag = transform.parent;
-        knifeOrigPos = knifeRectTransform.anchoredPosition;
+        knifeOrigPos = knifeRectTransform.anchoredPosition; //return the knife to this position
+        
         knifeImage = GetComponent<UnityEngine.UI.Image>();
         GameObject chop_script_obj = GameObject.Find("ChopController");
         chop_script = chop_script_obj.GetComponent<Chop_Controller>();
@@ -109,10 +98,49 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         }
     }
 
+    void CheckDist()
+    {
+        if (chop_script.lineRenderer != null)
+        {
+            Vector3 rectWorld = Camera.main.ScreenToWorldPoint(new Vector3(kPoint.x, kPoint.y, -Camera.main.transform.position.z)); //used to be mouseWorld
+            Vector2 p = new Vector2(rectWorld.x, rectWorld.y);
 
+            // Debug.Log($"Mouse p: {p}");
+            // Debug.Log($"Point a: {chop_script.lineRenderer.points[0]}");
+            // Debug.Log($"Point b: {chop_script.lineRenderer.points[1]}");
+
+            //screen coordinates
+            
+            dist = chop_script.DistancePointToSegment(p, Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[0]),
+                Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[1])); //compare knife rect position to line1;
+            // dist = Mathf.FloorToInt(dist);
+            Debug.Log("Distance:" + dist);
+
+            if (dist <= 2f) //if knife is on the line
+            {
+                Debug.Log("Went close to cut line, starting timer");
+                //TODO start timeer
+                currentTime += Time.deltaTime;
+                seconds = currentTime % 60f;
+                Debug.Log("seconds " + seconds);
+                // DisplayTime(currentTime);
+            }
+        }
+        else
+        {
+            Debug.Log("chop_script.lineRenderer.points = null");
+        }
+
+    }
     // Update is called once per frame
+    public RectTransform knifeRect;
+    private GameObject knifePoint;
+    public Vector2 kPoint;
+
     void Update()
     {
+        kPoint = knifeRect.transform.position; // get knife Point position
+
         currKnifePosition = transform.position;
     }
 }
