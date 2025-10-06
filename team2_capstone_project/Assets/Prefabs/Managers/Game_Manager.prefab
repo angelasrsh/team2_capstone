@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4670473249970048115}
   - component: {fileID: 1934729213419131961}
   - component: {fileID: 6642626054669146854}
+  - component: {fileID: 3228094000564085673}
   - component: {fileID: 6113680877637856580}
   - component: {fileID: 6958590387895689391}
   - component: {fileID: 2041556558690807774}
@@ -114,6 +115,20 @@ MonoBehaviour:
   maxPoolSize: 5
   minSelect: 1
   maxSelect: 2
+  minCustomersForDay: 2
+  maxCustomersForDay: 5
+--- !u!114 &3228094000564085673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9858dd33a8c2dd4fa636e5f6c8937fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6113680877637856580
 MonoBehaviour:
   m_ObjectHideFlags: 0

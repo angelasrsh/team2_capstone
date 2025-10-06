@@ -74,8 +74,11 @@ public class Customer_Spawner : MonoBehaviour
     /// </summary>
     private IEnumerator SpawnCustomersCoroutine()
     {
-        int customerCount = Random.Range(minCustomers, maxCustomers + 1); // inclusive of max
-        Debug.Log($"Attempting to spawn {customerCount} customers...");
+        int customerCount = Day_Plan_Manager.instance != null 
+            ? Day_Plan_Manager.instance.customersPlannedForEvening 
+            : Random.Range(minCustomers, maxCustomers + 1);
+            
+        Debug.Log($"Spawning {customerCount} customers based on daily plan...");
 
         for (int i = 0; i < customerCount; i++)
         {

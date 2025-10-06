@@ -10,10 +10,15 @@ public class Choose_Menu_Items : MonoBehaviour
 
     public static event System.Action<List<Dish_Data.Dishes>> OnDailyMenuSelected;
 
+    // Dish pool and selection constraints
     [SerializeField] private int minPoolSize = 3;
     [SerializeField] private int maxPoolSize = 5;
     [SerializeField] private int minSelect = 1;
     [SerializeField] private int maxSelect = 2;
+
+    // Customer constraints for the day
+    [SerializeField] private int minCustomersForDay = 2;
+    [SerializeField] private int maxCustomersForDay = 5;
 
     private void Awake()
     {
@@ -37,7 +42,7 @@ public class Choose_Menu_Items : MonoBehaviour
     }
 
     /// <summary>
-    /// Builds the pool of dishes the player can choose from today (3–5).
+    /// Builds the pool of dishes the player can choose from for the day.
     /// </summary>
     public void GenerateDailyPool()
     {
@@ -108,7 +113,9 @@ public class Choose_Menu_Items : MonoBehaviour
 
     public bool HasSelectedDishes() => dishesSelected.Count >= minSelect;
 
-    // Call this when player confirms their menu
+    /// <summary>
+    /// Finalizes the daily menu selection, sets the day plan, and triggers events.
+    /// </summary>
     public void NotifyMenuConfirmed()
     {
         if (!HasSelectedDishes())
@@ -117,7 +124,40 @@ public class Choose_Menu_Items : MonoBehaviour
             return;
         }
 
+        // 1. Decide how many customers today (with day-based scaling)
+        int customersToday = CalculateCustomersForToday();
+
+        // 2. Save the day's plan (selected dishes + expected customer count)
+        Day_Plan_Manager.instance.SetPlan(dishesSelected, customersToday);
+
+        // 3. Notify other systems
         OnDailyMenuSelected?.Invoke(new List<Dish_Data.Dishes>(dishesSelected));
-        Debug.Log("Daily menu confirmed with " + dishesSelected.Count + " dishes.");
+        
+        Debug.Log($"Daily menu confirmed with {dishesSelected.Count} dishes and {customersToday} expected customers.");
+    }
+
+    /// <summary>
+    /// Determines the number of customers for the day based on constraints and modifiers.
+    /// (E.g. Thursdays and Sundays have increased traffic.)
+    /// </summary>
+    private int CalculateCustomersForToday()
+    {
+        var turnover = Day_Turnover_Manager.Instance;
+        int dayIndex = turnover != null ? (int)turnover.CurrentDay : 0;
+
+        // Base random between min/max
+        int baseCount = Random.Range(minCustomersForDay, maxCustomersForDay + 1);
+
+        // Thursdays and Sundays get boosted traffic
+        var currentDay = turnover.CurrentDay;
+        if (currentDay == Day_Turnover_Manager.WeekDay.Thursday ||
+            currentDay == Day_Turnover_Manager.WeekDay.Sunday)
+        {
+            baseCount += Random.Range(1, 3); // boost by 1–2
+            Debug.Log($"Increased traffic! Today ({currentDay}) has boosted customer count.");
+        }
+
+        // Clamp to ensure within absolute min/max
+        return Mathf.Clamp(baseCount, minCustomersForDay, maxCustomersForDay + 3);
     }
 }
