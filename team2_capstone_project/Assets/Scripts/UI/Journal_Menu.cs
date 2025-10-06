@@ -79,7 +79,7 @@ public class Journal_Menu : MonoBehaviour
 
   private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
   {
-    if (scene.name == "MainMenu")
+    if (scene.name == "Main_Menu")
       gameObject.SetActive(false);
     else
       gameObject.SetActive(true);
@@ -126,7 +126,12 @@ public class Journal_Menu : MonoBehaviour
     if (Choose_Menu_Items.instance == null)
       Debug.LogWarning("Choose_Menu_Items instance is NULL in this scene!");
     else
+    {
       Debug.Log("Choose_Menu_Items still alive. Dishes count: " + Choose_Menu_Items.instance.GetSelectedDishes().Count);
+      dailyMenu = Choose_Menu_Items.instance;
+    }
+
+    Choose_Menu_Items.OnMenuSelectedNoParams += PopulateDishes; // to show stars on dishes in journal that are on daily menu
 
     ShowDishTab(); // default to dish tab
     leftPagePanel.SetActive(false); // hide left page details at start
@@ -136,6 +141,7 @@ public class Journal_Menu : MonoBehaviour
   private void OnDestroy()
   {
     SceneManager.sceneLoaded -= OnSceneLoaded;
+    Choose_Menu_Items.OnMenuSelectedNoParams -= PopulateDishes;
   }
 
   // Update is called once per frame
@@ -177,11 +183,11 @@ public class Journal_Menu : MonoBehaviour
     isPaused = false;
   }
 
-  #region Recipe Menu Methods
-  private void PopulateDishes(int currentPage)
+  #region Recipe Tab Methods
+  private void PopulateDishes()
   {
     // Debug.Log("Populating dishes for current page in journal...");
-
+    int currentPage = tabCurrentPage[currentTab];
     List<Dish_Data.Dishes> unlockedDishes = playerProgress.GetUnlockedDishes();
     int currGridCell = 0;
     int startIndex = (currentPage - 1) * objectsPerPage;
@@ -194,12 +200,17 @@ public class Journal_Menu : MonoBehaviour
       if (index < unlockedDishes.Count)
       {
         Dish_Data dishData = dishDatabase.GetDish(unlockedDishes[index]);
-        slot.SetItem(dishData, true);
+
+        // Check if dish is on daily menu
+        if (dailyMenu != null && dailyMenu.GetSelectedDishes().Contains(dishData.dishType))
+            slot.SetItem(dishData, true, true);
+        else
+          slot.SetItem(dishData, true, false);
       }
       else if (index < allDishes.Count)
       {
         // Show locked dishes only if there are still more dishes in the database
-        slot.SetItem(null, false);
+        slot.SetItem(null, false, false);
       }
       else
       {
@@ -224,11 +235,11 @@ public class Journal_Menu : MonoBehaviour
   }
   #endregion
 
-  #region Daily Menu Methods
-  private void PopulateIngredients(int currentPage)
+  #region Ingredient Tab Methods
+  private void PopulateIngredients()
   {
     // Debug.Log("Populating ingredients for current page in journal...");
-
+    int currentPage = tabCurrentPage[currentTab];
     List<IngredientType> unlockedIngredients = playerProgress.GetUnlockedIngredients();
     int currGridCell = 0;
     int startIndex = (currentPage - 1) * objectsPerPage;
@@ -241,12 +252,12 @@ public class Journal_Menu : MonoBehaviour
       if (index < unlockedIngredients.Count)
       {
         Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
-        slot.SetItem(ingredientData, true);
+        slot.SetItem(ingredientData, true, false);
       }
       else if (index < allIngredients.Count)
       {
         // Show locked ingredients only if there are still more ingredients in the database
-        slot.SetItem(null, false);
+        slot.SetItem(null, false, false);
       }
       else
       {
@@ -294,11 +305,11 @@ public class Journal_Menu : MonoBehaviour
   }
   #endregion
 
-  #region NPC Menu Methods
-  private void PopulateNPCs(int currentPage)
+  #region NPC Tab Methods
+  private void PopulateNPCs()
   {
     // Debug.Log("Populating npcs for current page in journal...");
-
+    int currentPage = tabCurrentPage[currentTab];
     List<CustomerData.NPCs> unlockedNPCs = playerProgress.GetUnlockedNPCs();
     int currGridCell = 0;
     int startIndex = (currentPage - 1) * objectsPerPage;
@@ -311,12 +322,12 @@ public class Journal_Menu : MonoBehaviour
       if (index < unlockedNPCs.Count)
       {
         CustomerData NPC = npcDatabase.GetNPCData(unlockedNPCs[index]);
-        slot.SetItem(NPC, true);
+        slot.SetItem(NPC, true, false);
       }
       else if (index < allNPCs.Count)
       {
         // Show locked NPCs only if there are still more NPCs in the database
-        slot.SetItem(null, false);
+        slot.SetItem(null, false, false);
       }
       else
       {
@@ -429,14 +440,12 @@ public class Journal_Menu : MonoBehaviour
   /// </summary>
   private void FillRightPage()
   {
-    int currentPage = tabCurrentPage[currentTab];
-
     if (currentTab == Tabs.Dish)
-      PopulateDishes(currentPage);
+      PopulateDishes();
     else if (currentTab == Tabs.Ingredient)
-      PopulateIngredients(currentPage);
+      PopulateIngredients();
     else if (currentTab == Tabs.NPC)
-      PopulateNPCs(currentPage);
+      PopulateNPCs();
   }
 
   /// <summary>
@@ -484,8 +493,9 @@ public class Journal_Menu : MonoBehaviour
     public TextMeshProUGUI nameText;
     public Image iconImage;
     private object currentItem;
+    public Image starImage;
 
-    public void SetItem(object item, bool unlocked)
+    public void SetItem(object item, bool unlocked, bool onDailyMenu)
     {
       background.SetActive(true);
       currentItem = item;
@@ -512,6 +522,12 @@ public class Journal_Menu : MonoBehaviour
         iconImage.sprite = npc.defaultPortrait;
       }
       iconImage.preserveAspect = true;
+
+      if (onDailyMenu)
+          starImage.gameObject.SetActive(true);
+      else
+        starImage.gameObject.SetActive(false);
+      starImage.preserveAspect = true;
 
       // Set the button click
       button.onClick.RemoveAllListeners();
