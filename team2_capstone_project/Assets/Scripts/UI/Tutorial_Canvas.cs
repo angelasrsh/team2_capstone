@@ -34,13 +34,19 @@ public class Tutorial_Canvas : MonoBehaviour
     {
         SceneManager.sceneLoaded += checkDisplayCanvas;
 
+        Game_Events_Manager.Instance.onBeginDialogBox += BeginDialogueBox;
+        Game_Events_Manager.Instance.onEndDialogBox += EndDialogBox;
+
         TutorialRoom = Room_Manager.GetRoomFromActiveScene().roomID;
-        
+
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= checkDisplayCanvas;
+
+        Game_Events_Manager.Instance.onBeginDialogBox -= BeginDialogueBox;
+        Game_Events_Manager.Instance.onEndDialogBox -= EndDialogBox;
     }
 
 
@@ -164,6 +170,16 @@ public class Tutorial_Canvas : MonoBehaviour
         if (Textbox == null)
             Debug.Log("[Tu_CAN] Cannot set textbox because it is null! Has it been initialized yet?");
         Textbox.text = newText;
+    }
+
+    private void BeginDialogueBox()
+    {
+        TextboxPanel.SetActive(false);
+    }
+
+    private void EndDialogBox()
+    {
+        TextboxPanel.SetActive(true);
     }
     
     

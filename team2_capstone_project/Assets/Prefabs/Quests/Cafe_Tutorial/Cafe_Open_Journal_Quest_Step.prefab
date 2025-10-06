@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6200707804114755666}
-  - component: {fileID: 3618023443071831722}
+  - component: {fileID: -5539919750963130355}
   m_Layer: 0
-  m_Name: Serve_Customer_Quest_Step
+  m_Name: Cafe_Open_Journal_Quest_Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,11 +29,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8190200812546283176}
+  - {fileID: 2359122565662594680}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3618023443071831722
+--- !u!114 &-5539919750963130355
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,15 +42,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7026085292084513843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5b9ad43863b1eb43ae2a4dab1a182c9, type: 3}
+  m_Script: {fileID: 11500000, guid: 080b9d01f3c684a418b1364bef65d46d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TutorialCanvas: {fileID: 0}
-  InstructionText: Now that you have a dish, press '1' or '2' to select which dish
-    slot to choose and serve it to your customers with "R". Hopefully they like it!
+  InstructionText: Nice job moving around! Let's see what we need to collect. Press
+    "J" to view your journal.
   InstructionWaitTime: 0
-  PopupWaitTime: 10
---- !u!1001 &6849555537512387068
+  PopupWaitTime: 0
+--- !u!1001 &1016330546118054188
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -147,8 +147,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8557a4a3f9966f4198e083d0b6c86de, type: 3}
---- !u!224 &8190200812546283176 stripped
+--- !u!224 &2359122565662594680 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3361922030865975124, guid: b8557a4a3f9966f4198e083d0b6c86de, type: 3}
-  m_PrefabInstance: {fileID: 6849555537512387068}
+  m_PrefabInstance: {fileID: 1016330546118054188}
   m_PrefabAsset: {fileID: 0}
