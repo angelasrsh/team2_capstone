@@ -36,11 +36,11 @@ public class Player_Controller : MonoBehaviour
 
     // Internal
     private Rigidbody rb;
-    private Vector2 rawInput = Vector2.zero;
+    // private Vector2 rawInput = Vector2.zero;
     private Vector2 targetInput = Vector2.zero;
     private Vector2 smoothInput = Vector2.zero;
-    private Vector2 smoothVelocity = Vector2.zero;
-    private Vector2 lastNonZeroInput = Vector2.zero;
+    // private Vector2 smoothVelocity = Vector2.zero;
+    // private Vector2 lastNonZeroInput = Vector2.zero;
     private Vector2 lastStableInput = Vector2.zero;
     private float zeroTimer = 0f;
     private bool onMobile = false;
@@ -50,7 +50,10 @@ public class Player_Controller : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         if (rb != null && rb.interpolation == RigidbodyInterpolation.None)
             rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
 
+    private void Start()
+    {
         playerInput = FindObjectOfType<PlayerInput>();
         if (playerInput == null)
         {
@@ -64,32 +67,52 @@ public class Player_Controller : MonoBehaviour
         openJournalAction = playerInput.actions["OpenJournal"];
 
         if (moveAction != null)
-            moveAction.performed += onMove;
+        {
+            moveAction.Enable();
+
+            // moveAction.performed += onMove;
+            moveAction.performed += OnMovePerformed;
+        }
 
         // Detect if platform = mobile
         onMobile = Application.isMobilePlatform;
+        // #if UNITY_EDITOR
+        //     onMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+        // #endif
+        Debug.Log("Active control scheme: " + playerInput.currentControlScheme);
     }
 
     private void OnDestroy()
     {
         if (moveAction != null)
-            moveAction.performed -= onMove;
+        {
+            moveAction.Disable();
+            moveAction.performed -= OnMovePerformed;
+        }
     }
 
     private void OnEnable()
     {
-        if (moveAction != null) moveAction.Enable();
+        if (moveAction != null)
+        {
+            moveAction.Enable();
+            moveAction.performed += OnMovePerformed;
+        }
     }
 
     private void OnDisable()
     {
-        if (moveAction != null) moveAction.Disable();
+        if (moveAction != null)
+        {
+            moveAction.Disable();
+            moveAction.performed -= OnMovePerformed;
+        }
     }
 
     private void Update()
     {
         Vector2 raw = moveAction.ReadValue<Vector2>();
-
+        
         if (onMobile)
         {
             // --- MOBILE LOGIC (ignore single-frame zero drops) ---
@@ -124,7 +147,6 @@ public class Player_Controller : MonoBehaviour
     {
         // Smooth input for both modes
         smoothInput = Vector2.Lerp(smoothInput, targetInput, Time.fixedDeltaTime * 15f);
-
         movement = smoothInput;
 
         if (rb != null)
@@ -168,9 +190,19 @@ public class Player_Controller : MonoBehaviour
     /// Tell the GameEventsManager that this action occurred.
     /// GameEvents wants to know this for the sake of the tutorial.
     /// </summary>
-    private void onMove(InputAction.CallbackContext context)
+    private void OnMoveEvent()
     {
         Debug.Log("[P_C] Player is moving");
         Game_Events_Manager.Instance.PlayerMoved();
+    }
+    
+    private void OnMovePerformed(InputAction.CallbackContext ctx)
+    {
+        // This code seems redundant, but we need it here otherwise mobile movement will not work
+        Vector2 raw = ctx.ReadValue<Vector2>();
+        targetInput = raw;
+        lastStableInput = raw;
+        zeroTimer = 0f;
+        OnMoveEvent();
     }
 }
