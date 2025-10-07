@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.Animations;
 
 public class Customer_Controller : MonoBehaviour
 {
@@ -25,14 +26,28 @@ public class Customer_Controller : MonoBehaviour
     private bool hasRequestedDish = false;
     public event Action<string> OnCustomerLeft;
 
+    // Animation
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private Transform spriteTransform;
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
 
+        // Interact action
         Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
         if (pic != null)
         {
             interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+        }
+
+        // Animation components
+        spriteTransform = transform.Find("Sprite");
+        if (spriteTransform != null)
+        {
+            spriteRenderer = spriteTransform.GetComponent<SpriteRenderer>();
+            animator = spriteTransform.GetComponent<Animator>();
         }
     }
 
@@ -43,9 +58,15 @@ public class Customer_Controller : MonoBehaviour
         seatIndex = Seat_Manager.Instance.GetSeatIndex(targetSeat);
         playerInventory = inventory;
 
+        // Set sprite
         Transform npc_sprite = transform.Find("Sprite");
         if (npc_sprite != null)
             npc_sprite.GetComponent<SpriteRenderer>().sprite = data.overworldSprite;
+
+        // Set walk animation  
+
+        if (animator != null && data.walkAnimatorController != null)
+            animator.runtimeAnimatorController = data.walkAnimatorController;
 
         if (spawnSeated)
         {
@@ -88,17 +109,49 @@ public class Customer_Controller : MonoBehaviour
                 }
             }
         }
-        
+
         // only try to sit if not already sat
         if (!hasSatDown && seat != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             SitDown();
         }
+
+        HandleWalkAnimation();
     }
 
     void LateUpdate()
     {
         transform.forward = Vector3.forward;
+    }
+
+    private void HandleWalkAnimation()
+    {
+        if (animator == null || spriteRenderer == null || agent == null)
+            return;
+
+        float speed = agent.velocity.magnitude;
+
+        if (animator.runtimeAnimatorController != null)
+        {
+            if (animator.HasParameterOfType("speed", AnimatorControllerParameterType.Float))
+                animator.SetFloat("speed", speed);
+
+            if (animator.HasParameterOfType("isSeated", AnimatorControllerParameterType.Bool))
+                animator.SetBool("isSeated", hasSatDown);
+        }
+
+        // Flip sprite based on movement direction
+        if (speed > 0.05f)
+        {
+            bool faceRight = agent.velocity.x > 0.01f;
+            spriteRenderer.flipX = faceRight;
+
+            if (animator.runtimeAnimatorController != null &&
+                animator.HasParameterOfType("facingRight", AnimatorControllerParameterType.Bool))
+            {
+                animator.SetBool("facingRight", faceRight);
+            }
+        }
     }
 
     private void SitDown()
@@ -255,7 +308,7 @@ public class Customer_Controller : MonoBehaviour
             Debug.Log($"Selected dish {selectedDish.name} does not match requested {requestedDish.name}.");
             return false;
         }
-       
+
         // Remove it from inventory
         dishInventory.RemoveSelectedSlot();
 
@@ -430,3 +483,18 @@ public class Customer_Controller : MonoBehaviour
     }
     #endregion
 }
+
+public static class AnimatorExtensions
+{
+    public static bool HasParameterOfType(this Animator self, string name, AnimatorControllerParameterType type)
+    {
+        if (self == null) return false;
+        foreach (var param in self.parameters)
+        {
+            if (param.type == type && param.name == name)
+                return true;
+        }
+        return false;
+    }
+}
+
