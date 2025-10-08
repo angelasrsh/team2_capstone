@@ -1630,9 +1630,7 @@ MonoBehaviour:
   currKnifePosition: {x: 0, y: 0, z: 0}
   knife_is_being_dragged: 0
   chop_script: {fileID: 0}
-  currentTime: 0
   dist: 0
-  seconds: 0
   knifeRect: {fileID: 0}
   kPoint: {x: 0, y: 0}
 --- !u!1 &1079789260
@@ -3745,7 +3743,11 @@ MonoBehaviour:
   defaultIngredient: {fileID: 0}
   knife_is_overlapping: 0
   redZoneForKnife: {fileID: 0}
-  newPoints: []
+  currentLinePoints: []
+  currentState: 0
+  currentLineIndex: 0
+  swipeThreshold: 50
+  swipeAngleTolerance: 30
   lineRenderer: {fileID: 0}
 --- !u!4 &2035282244
 Transform:
@@ -4206,6 +4208,10 @@ PrefabInstance:
     - target: {fileID: 6850087402582518981, guid: b94b36bd55fff9e488222c7cafb4c11f, type: 3}
       propertyPath: m_Name
       value: ChopLine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6850087402582518981, guid: b94b36bd55fff9e488222c7cafb4c11f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b94b36bd55fff9e488222c7cafb4c11f, type: 3}

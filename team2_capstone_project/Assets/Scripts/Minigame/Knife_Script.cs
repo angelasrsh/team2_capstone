@@ -184,8 +184,8 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         }
 
         // Get line midpoint in world space
-        Vector2 lineStart = chop_script.lineRenderer.points[0];//Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[0]);
-        Vector2 lineEnd = chop_script.lineRenderer.points[1];//Camera.main.ScreenToWorldPoint(chop_script.lineRenderer.points[1]);
+        Vector2 lineStart = chop_script.lineRenderer.points[0];
+        Vector2 lineEnd = chop_script.lineRenderer.points[1];
         Vector2 lineMidpoint = (lineStart + lineEnd) / 2f;
 
         // Calculate line rotation
