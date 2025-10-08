@@ -109,6 +109,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6f8d960e5bb27348ad4b3e662100aae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minPoolSize: 3
+  maxPoolSize: 5
+  minSelect: 1
+  maxSelect: 2
+  minCustomersForDay: 2
+  maxCustomersForDay: 4
+--- !u!114 &3228094000564085673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9858dd33a8c2dd4fa636e5f6c8937fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6113680877637856580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,8 +257,12 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 4d43735f-d1ed-47f0-8abd-64e0112b3321
     m_ActionName: UI/TrackedDeviceOrientation
-  m_NeverAutoSwitchControlSchemes: 1
-  m_DefaultControlScheme: Keyboard&Mouse
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 931df43f-574e-4d29-a14c-dbb309981b28
+    m_ActionName: Player/CloseInventory[/Touchscreen/delta]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
