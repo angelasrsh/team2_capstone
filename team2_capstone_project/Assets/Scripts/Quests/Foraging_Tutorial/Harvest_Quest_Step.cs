@@ -4,13 +4,22 @@ using UnityEngine;
 
 public class Harvest_Quest_Step : Tutorial_Quest_Step
 {
-   
+
 
     void OnEnable()
     {
         Game_Events_Manager.Instance.onResourceAdd += Harvest;
 
         DelayedInstructionStart();
+
+        // Immediately complete if player already has harvested something
+        
+    }
+
+    void Start()
+    {
+        if (Ingredient_Inventory.Instance.InventoryStacks.Length > 0)
+            FinishQuestStep();
     }
 
     // Unsubscribe to clean up

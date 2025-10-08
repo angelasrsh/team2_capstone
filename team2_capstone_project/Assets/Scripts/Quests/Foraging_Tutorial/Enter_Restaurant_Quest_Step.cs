@@ -12,26 +12,45 @@ public class Enter_Restaurant_Quest_Step : Tutorial_Quest_Step
 
     void OnEnable()
     {
-        SceneManager.sceneUnloaded += onSceneUnloaded;
+        SceneManager.sceneLoaded += onSceneLoaded;
         Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
 
-        
+
         if (ItemCounts.Length != RequiredIngredients.Length)
             Debug.Log($"{GetType().Name} on {gameObject.name} Error: Please ensure there is a required count for every item");
-       
+
 
         DelayedInstructionStart();
       
     }
 
+
+    // Open door to exit immediately if the player already has the necessary ingredients
+    private void Start()
+    {
+        checkRequirementsMet();
+    }
+
     // Unsubscribe to clean up
     void OnDisable()
     {
-        SceneManager.sceneUnloaded -= onSceneUnloaded;
+        SceneManager.sceneLoaded -= onSceneLoaded;
         Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
     }
     
     private void ResourceAdd(Ingredient_Data ing)
+    {
+        // Check if all required items have been collected
+        checkRequirementsMet();
+            
+    }
+
+    /// <summary>
+    /// Helper function that checks if the player has all the ingredients listed in this quest step's
+    /// required ingredients list. If so, it sends a message (which is used to allow the player to progress by
+    /// deactivating the door blocker)
+    /// </summary>
+    private void checkRequirementsMet()
     {
         // Check if all required items have been collected
         bool hasAllItems = true;
@@ -42,20 +61,23 @@ public class Enter_Restaurant_Quest_Step : Tutorial_Quest_Step
                 hasAllItems = false;
                 break;
             }
-                
+
         }
 
         if (hasAllItems)
         {
-            Game_Events_Manager.Instance.HarvestRequirementsMet(); 
+            Game_Events_Manager.Instance.HarvestRequirementsMet();
         }
-            
     }
 
-
-    private void onSceneUnloaded(Scene scene)
+    /// <summary>
+    /// Called on scene load to end the quest if the player enters the restaurant scene
+    /// </summary>
+    ///<param name="scene">Scene being entered</param>
+    /// <param name="mode"></param>
+    private void onSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "World_Map")
+        if (scene.name == "Restaurant")
             FinishQuestStep();
 
     }

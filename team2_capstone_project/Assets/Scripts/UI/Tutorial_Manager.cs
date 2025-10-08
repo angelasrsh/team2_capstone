@@ -41,7 +41,7 @@ public class Tutorial_Manager : MonoBehaviour
     private Dictionary<String, Quest_Info_SO> RoomTutorialMap = new Dictionary<String, Quest_Info_SO>();
     private Dictionary<String, Quest_State> QuestIDQuestStateMap = new Dictionary<String, Quest_State>(); // Map quest IDs to quest states
 
-    private int instructionIndex = 0;
+    //private int instructionIndex = 0;
 
     // Set variables
     private void Awake()

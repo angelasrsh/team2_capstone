@@ -27,7 +27,7 @@ public class Quest_Info_SO : ScriptableObject
     public GameObject[] QuestStepPrefabs;
 
     // List of strings for instructions, dialogue, etc.
-    public String[] dialogueList;
+    //public String[] dialogueList; Replaced with individual-step dialogue
 
     // Take identifier name from filename
     private void OnValidate()
