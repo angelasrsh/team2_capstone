@@ -9,6 +9,7 @@ public class Player_Controller : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 5f;
+    public LayerMask groundMask;
 
     [Tooltip("Deadzone to ENTER movement (larger).")]
     [Range(0f, 0.5f)]
@@ -117,6 +118,19 @@ public class Player_Controller : MonoBehaviour
         {
             // --- PC / CONSOLE LOGIC ---
             targetInput = raw;
+        }
+
+        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        Vector3 move = transform.TransformDirection(input) * moveSpeed * Time.deltaTime;
+        transform.position += move;
+
+        // --- Stick to ground ---
+        if (input.magnitude > 0f &&
+            Physics.Raycast(transform.position + Vector3.up * 1f, Vector3.down, out RaycastHit hit, 5f, groundMask))
+        {
+            Vector3 pos = transform.position;
+            pos.y = hit.point.y; // Set player to surface height
+            transform.position = pos;
         }
     }
 

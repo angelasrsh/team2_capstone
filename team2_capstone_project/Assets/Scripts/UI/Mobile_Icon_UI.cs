@@ -16,6 +16,7 @@ public class Mobile_Icon_UI : MonoBehaviour
     [SerializeField] private Button closeInventoryButton;
     [SerializeField] private Button closeJournalButton;
 
+    public static Mobile_Icon_UI instance;
     private Journal_Menu journalMenu;
     private Canvas inventoryCanvas;
 
@@ -26,6 +27,14 @@ public class Mobile_Icon_UI : MonoBehaviour
 
     private void Awake()
     {
+        // Singleton pattern
+        instance = this;
+
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         DontDestroyOnLoad(gameObject);
 
         // Hide automatically on non-mobile platforms
