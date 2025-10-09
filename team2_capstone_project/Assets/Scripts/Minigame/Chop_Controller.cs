@@ -414,7 +414,7 @@ public class Chop_Controller : MonoBehaviour
         return Vector2.Distance(p, closest);
     }
 
-    public float GetLineRotation()
+    public float GetLineRotation() //TODO: check this because the rotation is not working
     {
         if (currentLinePoints != null && currentLinePoints.Count >= 2)
         {
