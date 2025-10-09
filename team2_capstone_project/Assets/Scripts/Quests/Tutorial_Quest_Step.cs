@@ -5,7 +5,7 @@ using UnityEngine;
 public class Tutorial_Quest_Step : Quest_Step
 {
     [Header("Child canvas object")]
-    public Tutorial_Canvas TutorialCanvas;
+    private Tutorial_Canvas TutorialCanvas;
 
     /* Extra fields for displaying hints or instruction after some time */
     [Header("Quest step fields")]

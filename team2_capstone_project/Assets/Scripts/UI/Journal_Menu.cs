@@ -52,9 +52,6 @@ public class Journal_Menu : MonoBehaviour
 
   private void Start()
   {
-    dishDatabase = Game_Manager.Instance.dishDatabase;
-    foragingDatabase = Game_Manager.Instance.foragingDatabase;
-
     Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
     if (pic != null)
     {
@@ -138,7 +135,10 @@ public class Journal_Menu : MonoBehaviour
   }
 
   private void OnEnable()
-  {
+ {
+    dishDatabase = Game_Manager.Instance.dishDatabase;
+    foragingDatabase = Game_Manager.Instance.foragingDatabase;
+    
     Choose_Menu_Items.OnDailyMenuSelected += PopulateForaging;
     Debug.Log("Subscribed to OnDailyMenuSelected event.");
 
