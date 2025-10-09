@@ -14,7 +14,7 @@ public class Room_Data : ScriptableObject
         Bedroom,
         Cooking_Minigame,
         Chopping_Minigame,
-        Frying_Minigame,
+        Frying_Pan_Minigame,
     }
 
     public enum SpawnPointID

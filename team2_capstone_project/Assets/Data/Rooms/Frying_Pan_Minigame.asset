@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
-  m_Name: Chopping_Minigame
+  m_Name: Frying_Pan_Minigame
   m_EditorClassIdentifier: 
-  roomID: 5
+  roomID: 6
   isOverworldScene: 0
   music: {fileID: 8300000, guid: 80eb8acaf53a78542a2136c1112118bf, type: 3}
   ambientSound: {fileID: 0}
@@ -20,7 +20,7 @@ MonoBehaviour:
   ambientVolume: 1
   exits:
   - exitingTo: 2
-    spawnPointID: 2
+    spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: fefb8eb7638a8904aa2544370338bda9, type: 2}
     overrideTimeOfDay: 0
     overrideValue: 1
