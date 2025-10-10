@@ -192,19 +192,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
-          //TODO: Call function to show the cutting lines + the enlarged ingredient here (bottom code should be in function)
-
           Ingredient_Data ingredient_data_var;
           
           if ((!cuttingBoardActive) && (Ingredient_Inventory.Instance.IngrEnumToData(ingredientType) != null)
                 && (((Ingredient_Data)(ParentSlot.stk.resource)).CutIngredientImages.Count() > 0))
           {
-            //not found in ingredient dictionary
+            //be able to remove the ingredient from its spot and decrease the count
             ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
-
-
             DuplicateInventorySlot();
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+            
             if (resizeCanvas != null)
             {
               // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
