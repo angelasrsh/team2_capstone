@@ -200,8 +200,6 @@ public class Chop_Controller : MonoBehaviour
             Debug.LogError("knife_Script not found in CHop_Controller!");
         }
 
-        knifePoint = GameObject.Find("KnifePoint");
-        if(knifePoint)
 
         //invoked functions
         k_script.OnDragStart += ShowCuttingLines;
@@ -212,8 +210,6 @@ public class Chop_Controller : MonoBehaviour
         // Debug.Log("[Chp_Cntrller] ingredient_data_var = " + ingredient_data_var);
 
     }
-    public Vector2 kPoint;
-    public RectTransform knifeRect;
     void Update()
     {
         if (!hasIngredientData) return; //if there isnt something on the cutting board

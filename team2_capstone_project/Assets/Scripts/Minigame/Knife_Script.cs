@@ -55,6 +55,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         Debug.Log("[Knife_Script] OndragStart Invoked");
 
     }
+
     public void OnDrag(PointerEventData eventData)
     {
         // If knife is already snapped, don't allow movement
@@ -115,7 +116,12 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     // Start is called before the first frame update
     void Start()
     {
-        knifeRectTransform = GetComponent<RectTransform>();
+        //fidn the rectTransform of the knife, and the knife point
+        knifePoint = GameObject.Find("KnifePoint");
+        knifeRect = knifePoint.GetComponent<RectTransform>();
+
+
+        knifeRectTransform = GetComponent<RectTransform>();//this one is to return knife to the og position
         parentAfterDrag = transform.parent;
         knifeOrigPos = knifeRectTransform.anchoredPosition; //return the knife to this position
 
@@ -155,8 +161,14 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         return dist;
     }
     // Update is called once per frame
+    public RectTransform knifeRect;
+    private GameObject knifePoint;
+    public Vector2 kPoint;
+
     void Update()
     {
+        kPoint = knifeRect.transform.position; // get knife Point position
+
         currKnifePosition = transform.position;
     }
 
