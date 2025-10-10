@@ -8081,13 +8081,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1176785172000826261, guid: a528dae7b7a186148851741358f9be21, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 13400000, guid: fc86115ff817ca24182b323afdaea376, type: 2}
+    - target: {fileID: 8043455314699639965, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: m_SlopeLimit
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 8043455314699639965, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: m_StepOffset
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 9083165254151032945, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 9083165254151032947, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: acceleration
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 9083165254151032947, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: deceleration
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 9083165254151032947, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: groundMask.m_Bits

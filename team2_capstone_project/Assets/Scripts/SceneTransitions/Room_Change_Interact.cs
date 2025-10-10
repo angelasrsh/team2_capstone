@@ -31,7 +31,8 @@ public class Room_Change_Interact : MonoBehaviour
             var player = other.GetComponent<Player_Controller>();
             if (player != null)
             {
-                player.DisablePlayerController();
+                Player_Input_Controller.instance.DisablePlayerInput();
+                // player.DisablePlayerController();
                 Game_Events_Manager.Instance.RoomChange(exitingTo);
                 Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
             }
