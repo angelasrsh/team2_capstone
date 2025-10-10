@@ -15,6 +15,11 @@ public class UILineRenderer : MaskableGraphic
     float unitHeight;
     public float thickness = 10f;
     public bool center = true;
+    
+    [Header("Dotted Line Settings")]
+    public bool isDotted = false;
+    public float dotLength = 10f;
+    public float gapLength = 5f;
 
     protected override void OnPopulateMesh(VertexHelper vh)
     {
@@ -25,7 +30,18 @@ public class UILineRenderer : MaskableGraphic
             return;
         }
 
+        if (isDotted)
+        {
+            DrawDottedLine(vh);
+        }
+        else
+        {
+            DrawSolidLine(vh);
+        }
+    }
 
+    void DrawSolidLine(VertexHelper vh)
+    {
         for (int i = 0; i < points.Count - 1; i++)
         {
             // Create a line segment between the next two points
@@ -44,6 +60,48 @@ public class UILineRenderer : MaskableGraphic
             {
                 vh.AddTriangle(index, index - 1, index - 3);
                 vh.AddTriangle(index + 1, index - 1, index - 2);
+            }
+        }
+    }
+
+    void DrawDottedLine(VertexHelper vh)
+    {
+        int vertexIndex = 0;
+        
+        for (int i = 0; i < points.Count - 1; i++)
+        {
+            Vector2 start = points[i];
+            Vector2 end = points[i + 1];
+            
+            Vector2 direction = (end - start).normalized;
+            float segmentLength = Vector2.Distance(start, end);
+            float currentDistance = 0f;
+            
+            while (currentDistance < segmentLength)
+            {
+                float remainingDistance = segmentLength - currentDistance;
+                float currentDotLength = Mathf.Min(dotLength, remainingDistance);
+                
+                Vector2 dotStart = start + direction * currentDistance;
+                Vector2 dotEnd = start + direction * (currentDistance + currentDotLength);
+                
+                // Create the dot segment
+                CreateLineSegment(dotStart, dotEnd, vh);
+                
+                // Add triangles for this dot
+                vh.AddTriangle(vertexIndex, vertexIndex + 1, vertexIndex + 3);
+                vh.AddTriangle(vertexIndex + 3, vertexIndex + 2, vertexIndex);
+                
+                vertexIndex += 5;
+                
+                // Move to next dot position
+                currentDistance += dotLength + gapLength;
+                
+                // Break if we've covered the segment
+                if (currentDistance >= segmentLength)
+                {
+                    break;
+                }
             }
         }
     }
