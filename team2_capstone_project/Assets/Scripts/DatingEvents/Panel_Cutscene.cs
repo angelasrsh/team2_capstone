@@ -85,7 +85,7 @@ public class Panel_Cutscene : MonoBehaviour
         if (panelIndex < DatingCutsceneData.panels.Length)
             ChangePanel();
         else
-            SceneManager.LoadScene("Restaurant");
+            SceneManager.LoadScene("Updated_Restaurant");
     }
 
     // IEnumerator FadeSprites(UnityEngine.UI.Image sprite, float newAlpha, float fadeDuration)

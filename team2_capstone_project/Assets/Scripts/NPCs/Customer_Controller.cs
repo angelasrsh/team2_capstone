@@ -7,6 +7,8 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(BoxCollider))]
 public class Customer_Controller : MonoBehaviour
 {
     public CustomerData data;
@@ -255,7 +257,7 @@ public class Customer_Controller : MonoBehaviour
     }
     #endregion
 
-    private void OnCollisionEnter(Collision other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
@@ -264,7 +266,7 @@ public class Customer_Controller : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit(Collision other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
