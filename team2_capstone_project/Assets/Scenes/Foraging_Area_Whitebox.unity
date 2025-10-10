@@ -7886,14 +7886,6 @@ PrefabInstance:
       propertyPath: InventoryGrid
       value: 
       objectReference: {fileID: 1654298122}
-    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
-      propertyPath: AllIngredientList.Array.size
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
-      propertyPath: AllIngredientList.Array.data[11]
-      value: 
-      objectReference: {fileID: 11400000, guid: 8b7cb872142e2234eb85044271bb059e, type: 2}
     - target: {fileID: 7687544807885682485, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: m_RootOrder
       value: 17
@@ -9267,6 +9259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1284132848}
   - component: {fileID: 1284132847}
+  - component: {fileID: 1284132849}
   m_Layer: 0
   m_Name: FirstAreaAudioHandler
   m_TagString: Untagged
@@ -9301,6 +9294,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1284132849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284132846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98a1fb2a48cab8044a9b9ab105879aa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMusic: {fileID: 8300000, guid: 63ffea455e01a0b4aa2dd721065bc703, type: 3}
+  musicVolume: 0.66
+  musicPlayDurationRange: {x: 60, y: 120}
+  silenceDurationRange: {x: 45, y: 90}
+  playExtraAmbientDuringSilence: 1
+  extraAmbientClips:
+  - clip: {fileID: 8300000, guid: f973e1493747f3440a06c32e3a696d26, type: 3}
+    volume: 1
+  - clip: {fileID: 8300000, guid: 051f7f7a75a80aa4592fb6bdec89f2b6, type: 3}
+    volume: 0.615
+  fadeDuration: 8
 --- !u!1 &1300166982
 GameObject:
   m_ObjectHideFlags: 0

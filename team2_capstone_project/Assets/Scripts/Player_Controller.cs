@@ -191,16 +191,17 @@ public class Player_Controller : MonoBehaviour
         return movement.magnitude > 0.1f;
     }
 
-    // public void DisablePlayerController()
-    // {
-    //     Player_Input_Controller.instance.DisablePlayerInput();
-    //     if (rb != null) rb.velocity = Vector3.zero;
-    // }
+    public void DisablePlayerMovement()
+    {
+        if (playerInput != null && moveAction != null)
+            moveAction.Disable();
+    }
 
-    // public void EnablePlayerController()
-    // {
-    //     Player_Input_Controller.instance.EnablePlayerInput();
-    // }
+    public void EnablePlayerMovement()
+    {
+        if (playerInput != null && moveAction != null)
+            moveAction.Enable();
+    }
 
     public void UpdatePlayerRoom(Room_Data.RoomID newRoomID)
     {
