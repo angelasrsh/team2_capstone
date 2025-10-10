@@ -37,9 +37,8 @@ public class Item_Stack
 public class Inventory : MonoBehaviour
 {
     [field: System.NonSerialized] public virtual int InventorySizeLimit { get; set; } = 12;
+    [field: System.NonSerialized] public Item_Stack[] InventoryStacks { get; protected set; }
 
-    [field: SerializeField]
-    public Item_Stack[] InventoryStacks { get; protected set; }
 
     /// <summary>
     /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
@@ -49,11 +48,12 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// Initialize Inventory to be size InventorySizeLimit
     /// </summary>
-    protected void Awake()
+    protected virtual void Awake()
     {
         InitializeInventoryStacks<Item_Stack>();
         updateInventory();
     }
+
 
 
 
@@ -66,6 +66,13 @@ public class Inventory : MonoBehaviour
     /// <returns> The number of items actually added </returns>
     public virtual int AddResources(Item_Data type, int count)
     {
+        // ensure the array exists and is the correct length
+        if (InventoryStacks == null || InventoryStacks.Length != InventorySizeLimit)
+        {
+            InitializeInventoryStacks<Item_Stack>();
+            Debug.Log("[Inventory] Rebuilt inventory stack array.");    
+        }
+
         return addResourcesOfType<Item_Stack>(type, count);
     }
 
@@ -78,17 +85,20 @@ public class Inventory : MonoBehaviour
     /// <returns>How many items were added</returns>
     protected int addResourcesOfType<Stack_Type>(Item_Data type, int count) where Stack_Type : Item_Stack, new()
     {
-        // Error-checking
         if (count < 0)
-            Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
+            Debug.LogError("[Invtry] Cannot add negative amount");
 
-        // Track the amount of resources we still need to add
+        if (InventoryStacks == null || InventoryStacks.Length != InventorySizeLimit)
+        {
+            Debug.LogWarning($"[Inventory] Stack array mismatch before add! Rebuilding ({InventoryStacks?.Length ?? 0} vs limit {InventorySizeLimit}).");
+            InitializeInventoryStacks<Stack_Type>();
+        }
+
         int amtLeftToAdd = count;
 
-        // Check if there is a slot with the same type and add if not full
+        // Fill existing stacks first
         foreach (Item_Stack istack in InventoryStacks)
         {
-            // Add as much as we can to existing stacks
             if (istack != null && istack.resource == type && istack.amount < istack.stackLimit)
             {
                 int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
@@ -96,11 +106,11 @@ public class Inventory : MonoBehaviour
                 amtLeftToAdd -= amtToAdd;
             }
         }
-        // We were not able to add all items to existing slots, so check if we can start a new stack
-        // These are two separate loops because we don't assume slots will be filled in order
-        for (int i = 0; i < InventorySizeLimit; i++)
+
+        // Make new stacks if needed
+        for (int i = 0; i < InventoryStacks.Length && amtLeftToAdd > 0; i++)   // ✅ use actual length
         {
-            if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
+            if (InventoryStacks[i] == null || InventoryStacks[i].resource == null)
             {
                 InventoryStacks[i] = new Stack_Type();
                 int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
@@ -110,16 +120,16 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // Broadcast to other listening events
-        if (type is Ingredient_Data)
-            Game_Events_Manager.Instance.ResourceAdd((Ingredient_Data)type);
-        else if (type is Dish_Data)
-            Game_Events_Manager.Instance.DishAdd((Dish_Data)type);
+        if (type is Ingredient_Data ing)
+            Game_Events_Manager.Instance.ResourceAdd(ing);
+        else if (type is Dish_Data dish)
+            Game_Events_Manager.Instance.DishAdd(dish);
 
         updateInventory();
-        Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {type.Name}");
-        return count - amtLeftToAdd; // Return how many items were actually added
+        Debug.Log($"[Inventory] Added {count - amtLeftToAdd} {type.Name}");
+        return count - amtLeftToAdd;
     }
+
 
     /// <summary>
     /// Take away resources and update inventory

@@ -23,24 +23,51 @@ public class Ingredient_Inventory : Inventory
 
   new private void Awake()
   {
-    if (Instance != null && Instance != this)
-      Destroy(gameObject);
-    else
-    {
+      if (Instance != null && Instance != this)
+      {
+          Destroy(gameObject);
+          return;
+      }
+
       Instance = this;
       DontDestroyOnLoad(gameObject);
-    }
 
-    base.Awake();
+      // Ensure InventorySizeLimit before initialization
+      InventorySizeLimit = 12;
+      InitializeInventoryStacks<Item_Stack>();
+      updateInventory();
 
-    // Put the list of ingredients into the dictionary to be accessed by their name string
-    foreach (Ingredient_Data idata in AllIngredientList)
-    {
-      IngredientDict.Add(idata.Name, idata);
-      if (idata.Name == "Water")
-        water = idata;
+      // Now build ingredient dictionary
+      IngredientDict.Clear();
+      foreach (Ingredient_Data idata in AllIngredientList)
+      {
+          IngredientDict.Add(idata.Name, idata);
+          if (idata.Name == "Water")
+              water = idata;
+      }
+
+      // Put the list of ingredients into the dictionary to be accessed by their name string
+      foreach (Ingredient_Data idata in AllIngredientList)
+      {
+          if (idata == null) continue;
+
+          // Add the full name
+          if (!IngredientDict.ContainsKey(idata.Name))
+              IngredientDict.Add(idata.Name, idata);
+
+          // Also add a trimmed version w/o numbers or underscores
+          string cleanName = idata.Name;
+          cleanName = cleanName.Trim();
+          cleanName = cleanName.Replace("_", " ");
+          cleanName = System.Text.RegularExpressions.Regex.Replace(cleanName, @"^\d+\s*", "");
+
+          if (!IngredientDict.ContainsKey(cleanName))
+              IngredientDict.Add(cleanName, idata);
+
+          if (idata.Name.Contains("Water", System.StringComparison.OrdinalIgnoreCase))
+              water = idata;
+      }
     }
-  }
 
     /// <summary>
     /// Overload AddResources to allow for using the IngredientType enum
