@@ -6,16 +6,26 @@ using UnityEngine.SceneManagement;
 public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
 {
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         SceneManager.sceneLoaded += LeaveBedroom;
+
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm != null)
+        {
+            string fillerKey = $"Tutorial.Bedroom";
+            dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
+        }
+
+        DelayedInstructionStart();
 
 
     }
 
     // Update is called once per frame
-    void Update()
+    void OnDisable()
     {
+        SceneManager.sceneLoaded -= LeaveBedroom;
 
     }
 

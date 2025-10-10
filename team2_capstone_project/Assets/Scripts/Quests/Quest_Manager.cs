@@ -18,6 +18,8 @@ using UnityEngine.SceneManagement;
 /// 5) Create a GameObject prefab with a Quest_Step for each step in the quest
 /// 6) Add the Quest_Step prefabs to the Quest_Info_SO for the quest
 /// 7) Add the Quest_Info_SO to the Quest_Database so the manager can see it
+/// 8) Make sure there is something that triggers the start of the quest (...StartQuest(...))
+///    If it is a tutorial, add it to the Tutorial_Manager to start when a certain room is first loaded
 /// </summary>
 public class Quest_Manager : MonoBehaviour
 {
