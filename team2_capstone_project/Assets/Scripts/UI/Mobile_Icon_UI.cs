@@ -38,7 +38,13 @@ public class Mobile_Icon_UI : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // Hide automatically on non-mobile platforms
-        if (SystemInfo.deviceType != DeviceType.Handheld)
+        bool simulateMobile = false;
+        
+        // #if UNITY_EDITOR
+        //     simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+        // #endif
+
+        if (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile)
         {
             gameObject.SetActive(false);
         }
