@@ -10,22 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: Bread
+  m_Name: 04_Cooked_Patty
   m_EditorClassIdentifier: 
-  Name: Bread
+  Name: Cooked Patty
   Amount: 0
-  Image: {fileID: 21300000, guid: 464c5b762b0dacf4381b751a4c79a82c, type: 3}
+  Image: {fileID: 21300000, guid: ac2526ab11379c840951bc3f80e9390b, type: 3}
   tier: 0
   price: 0
-  rarityWeight: 1
+  rarityWeight: 0
   minSpawn: 0
   maxSpawn: 0
   countsAs: []
   description: 
   CutIngredientImages: []
   usedInDishes:
-  - {fileID: 11400000, guid: 27a4fa6f971425542bff05f741603d37, type: 2}
   - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}
   makesIngredient: []
-  ingredientsNeeded: []
-  ingredientType: 15
+  ingredientsNeeded:
+  - ingredient: {fileID: 11400000, guid: 8b7cb872142e2234eb85044271bb059e, type: 2}
+    amountRequired: 1
+  ingredientType: 14

@@ -210,21 +210,25 @@ public class Inventory : MonoBehaviour
 /// Generic functions to initialize the inventory with some sort of Inventory stack
 /// </summary>
 /// <typeparam name="T"> must be of or child of Item_Stack type</typeparam>
-    protected void InitializeInventoryStacks<T>() where T : Item_Stack
+    public void InitializeInventoryStacks<T>() where T : Item_Stack, new()
     {
-        if (InventoryStacks == null)
-            InventoryStacks = new T[InventorySizeLimit];
-        else if (InventoryStacks.Length != InventorySizeLimit)
+        // if an old array exists, and it's of the wrong type, clear it
+        if (InventoryStacks != null && InventoryStacks.Length > 0)
         {
-            Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
-            InventoryStacks = new T[InventorySizeLimit];
-
-            for (int i = 0; i < temp.Length; i++) // copy over elements
+            var existingType = InventoryStacks.GetType().GetElementType();
+            if (existingType != typeof(T))
             {
-                InventoryStacks[i] = temp[i]; // Todo: Item_Stacks are trying to go into dish_tool_stacks and that's not great
+                Debug.LogWarning($"[Inventory] Clearing mismatched stack array. Expected {typeof(T)}, found {existingType}.");
+                InventoryStacks = null;
             }
         }
-    }
 
+        // now safely (re)initialize
+        if (InventoryStacks == null)
+            InventoryStacks = new T[InventorySizeLimit];
+
+        for (int i = 0; i < InventoryStacks.Length; i++)
+            InventoryStacks[i] = new T();
+    }
 }
 

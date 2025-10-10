@@ -54,7 +54,7 @@ public class Chop_Controller : MonoBehaviour
     private Vector3 knife_pos;
     public bool knife_is_overlapping = false;
     public RectTransform redZoneForKnife;
-    private bool wasDragging = false;
+    // private bool wasDragging = false;
 
     public List<Vector2> currentLinePoints;
 

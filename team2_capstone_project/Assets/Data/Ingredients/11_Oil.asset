@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: Cheese
+  m_Name: 11_Oil
   m_EditorClassIdentifier: 
-  Name: Cheese
+  Name: Oil
   Amount: 0
   Image: {fileID: 0}
   tier: 0
@@ -23,9 +23,9 @@ MonoBehaviour:
   countsAs: []
   description: 
   CutIngredientImages: []
-  usedInDishes:
-  - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}
-  - {fileID: 11400000, guid: 27a4fa6f971425542bff05f741603d37, type: 2}
-  makesIngredient: []
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: cd06ee55c5585ff41869e0b7aace4d2b, type: 2}
+    amountRequired: 1
   ingredientsNeeded: []
-  ingredientType: 2
+  ingredientType: 18
