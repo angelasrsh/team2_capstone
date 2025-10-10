@@ -29,13 +29,11 @@ public class Ingredient_Data : Item_Data
 public enum IngredientType
 {
   Null,
-  Egg,
-  Melon,
   Milk,
   Cheese,
   Uncut_Fogshroom,
   Uncut_Fermented_Eye,
-  Slime,
+  Slime_Gelatin,
   Bone_Broth,
   Bone,
   Cut_Fermented_Eye,
@@ -45,8 +43,11 @@ public enum IngredientType
   Cooked_Patty,
   Bread,
   Uncut_Mandrake,
-  Cut_Mandrake
-  }
+  Cut_Mandrake,
+  French_Fries,
+  Honey,
+  Oil
+}
 
 // public class CutLine
 // {

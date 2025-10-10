@@ -19,11 +19,15 @@ MonoBehaviour:
   price: 0
   rarityWeight: 1
   minSpawn: 0
-  maxSpawn: 5
+  maxSpawn: 0
   countsAs: []
   description: 
   CutIngredientImages: []
   usedInDishes: []
-  makesIngredient: []
-  ingredientsNeeded: []
-  ingredientType: 17
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: cd06ee55c5585ff41869e0b7aace4d2b, type: 2}
+    amountRequired: 1
+  ingredientsNeeded:
+  - ingredient: {fileID: 11400000, guid: ff6964c7a342c2b47a52e1ffb7c71a34, type: 2}
+    amountRequired: 1
+  ingredientType: 15

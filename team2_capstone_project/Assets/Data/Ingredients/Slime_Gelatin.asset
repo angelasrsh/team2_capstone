@@ -10,22 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: Milk
+  m_Name: Slime_Gelatin
   m_EditorClassIdentifier: 
-  Name: Milk
-  Amount: 1
-  Image: {fileID: 21300000, guid: a7d8c65ce62910c449a11e763414d78b, type: 3}
-  tier: 0
-  price: 0
+  Name: Slime
+  Amount: 0
+  Image: {fileID: 874888072, guid: 0bc07084128222645887207139a40350, type: 3}
+  tier: 1
+  price: 150
   rarityWeight: 1
   minSpawn: 0
-  maxSpawn: 0
+  maxSpawn: 5
   countsAs: []
-  description: 
+  description: Remains of a slime found in the Forest. Very slimy...
   CutIngredientImages: []
   usedInDishes:
-  - {fileID: 11400000, guid: 3fbcd05fd89c8684e8068a4df9504a46, type: 2}
   - {fileID: 11400000, guid: dc41864eb9c4b804a86902d1e1e68ee7, type: 2}
   makesIngredient: []
   ingredientsNeeded: []
-  ingredientType: 1
+  ingredientType: 7
