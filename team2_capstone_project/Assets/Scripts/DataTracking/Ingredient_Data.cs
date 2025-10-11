@@ -24,6 +24,29 @@ public class Ingredient_Data : Item_Data
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
 }
 
+public enum IngredientType
+{
+  Null,
+  Milk,
+  Cheese,
+  Uncut_Fogshroom,
+  Uncut_Fermented_Eye,
+  Slime_Gelatin,
+  Bone_Broth,
+  Bone,
+  Cut_Fermented_Eye,
+  Cut_Fogshroom,
+  Water,
+  Uncooked_Patty,
+  Cooked_Patty,
+  Bread,
+  Uncut_Mandrake,
+  Cut_Mandrake,
+  French_Fries,
+  Honey,
+  Oil
+}
+
 // public class CutLine
 // {
 //     public Transform startMarker;

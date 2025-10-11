@@ -11,7 +11,32 @@ public class Player_Progress : ScriptableObject
     [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
     public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked
 
-    private void OnEnable()
+  private void OnEnable()
+  {
+    Instance = this;
+    // Initialize with default unlocks if needed
+    UnlockDish(Dish_Data.Dishes.Blinding_Stew);
+    // UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
+    UnlockNPC(CustomerData.NPCs.Elf);
+    UnlockNPC(CustomerData.NPCs.Phrog);
+    UnlockIngredient(IngredientType.Slime_Gelatin);
+    UnlockIngredient(IngredientType.Water);
+    UnlockIngredient(IngredientType.Bone_Broth);
+    UnlockIngredient(IngredientType.Bone);
+    UnlockIngredient(IngredientType.Uncut_Fogshroom);
+    UnlockIngredient(IngredientType.Uncut_Fermented_Eye);
+    UnlockIngredient(IngredientType.Cut_Fogshroom);
+    UnlockIngredient(IngredientType.Cut_Fermented_Eye);
+  }
+
+  #region Dishes
+  /// <summary>
+  /// Unlock a dish by enum
+  /// </summary>
+  public void UnlockDish(Dish_Data.Dishes dish)
+  {
+    // HashSet.Add returns true if item was actually added
+    if (unlockedDishes.Add(dish))
     {
         Instance = this;
     }

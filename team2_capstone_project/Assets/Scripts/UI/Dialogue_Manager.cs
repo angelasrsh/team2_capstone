@@ -339,7 +339,7 @@ public class Dialogue_Manager : MonoBehaviour
         uiManager.ClearText();
         uiManager.HidePortrait();
         ResetDialogForKey(myDialogKey);
-        playerOverworld.EnablePlayerController();
+        Player_Input_Controller.instance.EnablePlayerInput();
 
         onDialogComplete?.Invoke();
         Game_Events_Manager.Instance.EndDialogBox(); // Could probably merge with above
