@@ -10,11 +10,15 @@ public class Bee_Guide : MonoBehaviour
     [SerializeField] private GameObject resourceToReveal;
 
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 3f;
-    [SerializeField] private float buzzAmplitude = 0.1f;
+    [SerializeField] private float moveSpeed = 7f;
+    [SerializeField] private float buzzAmplitude = 0.05f;
     [SerializeField] private float buzzFrequency = 5f;
 
-    private Vector3 basePosition;
+    [Header("Hover")]
+    [SerializeField] private float hoverAmplitude = 0.02f;
+    [SerializeField] private float hoverSpeed = 2f;   
+    private float hoverBaseHeight;  // remembered height at start of hover
+
     private int currentWaypointIndex = 0;
     private bool isActive = false;
     private bool waitingForPlayer = false;
@@ -22,32 +26,62 @@ public class Bee_Guide : MonoBehaviour
     public int CurrentWaypointIndex => currentWaypointIndex;
     public Transform CurrentWaypoint => waypoints[currentWaypointIndex];
 
+    private Vector3 basePosition;
+    private float buzzSeed;
+
     void Start()
     {
         basePosition = transform.position;
+        buzzSeed = Random.Range(0f, 100f);
     }
 
     void Update()
     {
-        if (!isActive || waitingForPlayer) return;
-        MoveTowardsWaypoint();
+        if (!isActive) return;
+
+        if (waitingForPlayer)
+        {
+            IdleBuzz();
+        }
+        else
+        {
+            MoveTowardsWaypoint();
+        }
+
+        ApplyBuzzOffset();
     }
 
-   private void MoveTowardsWaypoint()
-   {
-
+    private void MoveTowardsWaypoint()
+    {
         Transform target = waypoints[currentWaypointIndex];
-        Vector3 direction = (target.position - transform.position).normalized;
-        transform.position += direction * moveSpeed * Time.deltaTime;
+        Vector3 direction = (target.position - basePosition).normalized;
+        basePosition += direction * moveSpeed * Time.deltaTime;
 
-        // Add bee-like buzzing motion
-        float noiseX = Mathf.PerlinNoise(Time.time * buzzFrequency, 0f) - 0.5f;
-        float noiseY = Mathf.PerlinNoise(0f, Time.time * buzzFrequency) - 0.5f;
-        Vector3 buzzOffset = new Vector3(noiseX, noiseY, 0f) * buzzAmplitude;
-        transform.position += buzzOffset;
-
-        if (Vector3.Distance(transform.position, target.position) < stoppingDistance)
+        if (Vector3.Distance(basePosition, target.position) < stoppingDistance)
+        {
             waitingForPlayer = true;
+            basePosition = target.position;
+        }
+    }
+    
+    private void IdleBuzz()
+    {
+        // Only set once when bee starts waiting
+        if (Mathf.Approximately(hoverBaseHeight, 0f))
+            hoverBaseHeight = basePosition.y;
+
+        // Calculate up/down offset
+        float floatY = Mathf.Sin(Time.time * hoverSpeed + buzzSeed) * hoverAmplitude;
+        basePosition.y = hoverBaseHeight + floatY;
+    }
+
+    private void ApplyBuzzOffset()
+    {
+        // Stable buzzing around base position
+        float buzzX = Mathf.Sin(Time.time * buzzFrequency + buzzSeed) * buzzAmplitude;
+        float buzzY = Mathf.Cos(Time.time * buzzFrequency + buzzSeed) * buzzAmplitude * 0.5f;
+
+        transform.position = basePosition + new Vector3(buzzX, buzzY, 0);
     }
 
     public void PlayerReachedCheckpoint()
@@ -73,7 +107,6 @@ public class Bee_Guide : MonoBehaviour
             Debug.Log("[BeeGuide] Resource activated and ready to forage!");
         }
     }
-
 
     public void Activate()
     {
