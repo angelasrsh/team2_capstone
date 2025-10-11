@@ -13,6 +13,7 @@ using UnityEngine;
 public abstract class Quest_Step : MonoBehaviour
 {
     private bool isFinished = false;
+    private bool isPaused = false;
     private string questId;
 
     private int stepIndex;
@@ -23,6 +24,9 @@ public abstract class Quest_Step : MonoBehaviour
         this.questId = questId;
         this.stepIndex = stepIndex;
         Game_Events_Manager.Instance.QuestStepChange(questId, stepIndex);
+
+        // Subscribe to pausing quest steps
+        Game_Events_Manager.Instance.onSetQuestPaused += SetQuestPaused; // maybe move these to OnEnable or OnDisable?
     }
 
     /// <summary>
@@ -30,12 +34,30 @@ public abstract class Quest_Step : MonoBehaviour
     /// </summary>
     protected void FinishQuestStep()
     {
-        if (!isFinished)
+        if (isPaused)
+            Helpers.printLabeled(this, "Quest step is paused and cannot finish");
+        if (!isFinished && !isPaused)
         {
             isFinished = true;
             Game_Events_Manager.Instance.AdvanceQuest(questId);
+
+            // Unsubscribe to pausing quest steps
+            Game_Events_Manager.Instance.onSetQuestPaused -= SetQuestPaused;
+
             Destroy(this.gameObject);
         }
+    }
+
+    /// <summary>
+    /// Prevent quest from running when we're in the wrong room
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="isPaused"></param>
+    protected void SetQuestPaused(string id, bool isPaused)
+    {
+        if (id == questId)
+            this.isPaused = isPaused;
+
     }
 
     // protected void ChangeState()

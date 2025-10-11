@@ -9,6 +9,7 @@ public class CustomerData : ScriptableObject
     public NPCs npcID; // Internal enum key
     public string customerName; // Display name (e.g. "Asper Aigis" that can include spaces)
     public Sprite overworldSprite;
+    public RuntimeAnimatorController walkAnimatorController;
     public bool datable = true;
     public string lore;
 

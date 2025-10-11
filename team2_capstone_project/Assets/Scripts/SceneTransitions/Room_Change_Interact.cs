@@ -5,34 +5,61 @@ using UnityEngine.InputSystem;
 
 public class Room_Change_Interact : MonoBehaviour
 {
+    [Header("Room Transition Settings")]
     public Room_Data currentRoom;
     public Room_Data.RoomID exitingTo;
 
-    private bool interactPressed;
+    private bool isPlayerInRange = false;
+    private bool interactPressed = false;
+    private Player_Controller player;
+    private InputAction interactAction;
 
     private void Awake()
     {
         var playerInput = FindObjectOfType<PlayerInput>();
         if (playerInput != null)
         {
-            InputAction interactAction = playerInput.actions["Interact"];
-            interactAction.performed += ctx => interactPressed = true;
+            interactAction = playerInput.actions["Interact"];
+            if (interactAction != null)
+                interactAction.performed += ctx => interactPressed = true;
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnDestroy()
     {
-        if (other.CompareTag("Player") && interactPressed)
+        if (interactAction != null)
+            interactAction.performed -= ctx => interactPressed = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
-            interactPressed = false; // consume input to prevent spamming
+            isPlayerInRange = true;
+            player = other.GetComponent<Player_Controller>();
+        }
+    }
 
-            Debug.Log("Player interacted to change room to: " + exitingTo);
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isPlayerInRange = false;
+            player = null;
+        }
+    }
 
-            var player = other.GetComponent<Player_Controller>();
+    private void Update()
+    {
+        // Only process input once per press while player is inside trigger
+        if (isPlayerInRange && interactPressed)
+        {
+            interactPressed = false; // consume input
+            Debug.Log($"Player interacted to change room to: {exitingTo}");
+
             if (player != null)
             {
-                player.DisablePlayerController();
-                Game_Events_Manager.Instance.RoomChange(exitingTo);
+                Player_Input_Controller.instance.DisablePlayerInput();
                 Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
             }
         }

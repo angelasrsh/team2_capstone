@@ -110,14 +110,15 @@ public class Inventory : MonoBehaviour
             }
         }
 
+        updateInventory();
+        Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {type.Name}");
+
         // Broadcast to other listening events
         if (type is Ingredient_Data)
             Game_Events_Manager.Instance.ResourceAdd((Ingredient_Data)type);
         else if (type is Dish_Data)
             Game_Events_Manager.Instance.DishAdd((Dish_Data)type);
 
-        updateInventory();
-        Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {type.Name}");
         return count - amtLeftToAdd; // Return how many items were actually added
     }
 
