@@ -13,17 +13,19 @@ MonoBehaviour:
   m_Name: Cheese
   m_EditorClassIdentifier: 
   Name: Cheese
-  Amount: 1
-  Image: {fileID: 21300000, guid: 51fd12d756bdc8c43b39ef009b106263, type: 3}
+  Amount: 0
+  Image: {fileID: 0}
   tier: 0
   price: 0
   rarityWeight: 1
   minSpawn: 0
-  maxSpawn: 5
+  maxSpawn: 0
   countsAs: []
   description: 
   CutIngredientImages: []
-  usedInDishes: []
+  usedInDishes:
+  - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}
+  - {fileID: 11400000, guid: 27a4fa6f971425542bff05f741603d37, type: 2}
   makesIngredient: []
   ingredientsNeeded: []
-  ingredientType: 4
+  ingredientType: 2

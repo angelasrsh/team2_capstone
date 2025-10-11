@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class End_Day : MonoBehaviour
 {
     private bool interactPressed;
+    private Room_Change_Trigger leaveTrigger;
 
     private void Awake()
     {
@@ -14,6 +15,34 @@ public class End_Day : MonoBehaviour
         {
             InputAction interactAction = playerInput.actions["Interact"];
             interactAction.performed += ctx => interactPressed = true;
+        }
+
+        FindTimeofDay();
+    }
+
+    private void FindTimeofDay()
+    {
+        leaveTrigger = FindObjectOfType<Room_Change_Trigger>();
+        if (leaveTrigger == null)
+        {
+            Debug.LogWarning("[End_Day] No Room_Change_Trigger found in scene.");
+        }
+
+        if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
+        {
+            if (leaveTrigger != null)
+            {
+                leaveTrigger.gameObject.SetActive(false);
+                Debug.Log($"[End_Day] Disabled {leaveTrigger.gameObject.name} for evening.");
+            }
+        }
+        else
+        {
+            if (leaveTrigger != null)
+            {
+                leaveTrigger.gameObject.SetActive(true);
+                Debug.Log($"[End_Day] Enabled {leaveTrigger.gameObject.name} for morning.");
+            }
         }
     }
 
@@ -25,12 +54,12 @@ public class End_Day : MonoBehaviour
 
             if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
             {
-                Debug.Log("Player interacted to end day.");
                 Day_Turnover_Manager.Instance.EndDay();
+                leaveTrigger.gameObject.SetActive(true);  // Re-enable the trigger for next morning
             }
             else
             {
-                Debug.Log("You can’t end the day yet – it’s still morning!");
+                Debug.Log($"[End_Day] Cannot end day yet. TimeOfDay = {Day_Turnover_Manager.Instance.currentTimeOfDay}");
             }
         }
     }

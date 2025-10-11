@@ -53,7 +53,7 @@ public class Dialog_UI_Manager : MonoBehaviour
         // textBoxAnimation.Close();
         textBoxCanavasGroup.alpha = 0;
         ClearText();
-        playerOverworld.EnablePlayerController();
+        Player_Input_Controller.instance.EnablePlayerInput();
     }
 
     public void ClearText()
@@ -63,7 +63,7 @@ public class Dialog_UI_Manager : MonoBehaviour
 
     public void ShowText(string aText)
     {
-        playerOverworld.DisablePlayerController();
+        Player_Input_Controller.instance.DisablePlayerInput();
         textBoxCanavasGroup.alpha = 1;
         // textBoxAnimation.Open();
         StartCoroutine(AddOneCharEnumerator(aText));

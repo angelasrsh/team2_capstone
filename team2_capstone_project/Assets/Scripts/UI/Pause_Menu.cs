@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Grimoire;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class Pause_Menu : MonoBehaviour
 {
@@ -17,25 +18,37 @@ public class Pause_Menu : MonoBehaviour
   public Room_Data.RoomID exitingTo;
 
   private bool isPaused = false;
-  private bool canPause = true; 
-    
+  [HideInInspector] public bool canPause = true; 
+  private InputAction pauseAction;
+
   private void Awake()
   {
     instance = this;
     HideMenu();
   }
+  
+  private void Start()
+  {
+    Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+    if (pic != null)
+    {
+      pauseAction = pic.GetComponent<PlayerInput>().actions["Pause"];
+    }
 
-  void Update()
+    if (pauseAction != null)
+      pauseAction.performed += ctx => {
+          if (canPause) {
+              if (isPaused)
+                  ResumeGame();
+              else
+                  PauseGame();
+          }
+      };
+  }
+
+  private void Update()
   {
       if (!canPause) return; // ignore pause if disabled
-
-      if (Input.GetKeyDown(KeyCode.Escape))
-      {
-          if (isPaused)
-              ResumeGame();
-          else
-              PauseGame();
-      }
   }
 
   public void SetCanPause(bool value)
