@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: 14_Uncut_Fermented_Eye
+  m_Name: Uncut_Fermented_Eye
   m_EditorClassIdentifier: 
   Name: Uncut Fermented Eye
   Amount: 0
@@ -21,7 +21,7 @@ MonoBehaviour:
   minSpawn: 3
   maxSpawn: 6
   countsAs: []
-  description: Fermented eyeball from a fallen Eyedrake found in the Forest.
+  description: 
   CutIngredientImages:
   - {fileID: 3512557, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
   - {fileID: 1730087433, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
@@ -32,4 +32,5 @@ MonoBehaviour:
   - ingredient: {fileID: 11400000, guid: 42342020c85c8354b946a340f7ad1b8b, type: 2}
     amountRequired: 1
   ingredientsNeeded: []
-  ingredientType: 4
+  ingredientType: 0
+  CombinedCutPiecePrefab: {fileID: 546484759057031243, guid: b2b84b08a39d4fa4bb7645b10a113c22, type: 3}

@@ -203,13 +203,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             if (resizeCanvas != null)
             {
               // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
-              //transform the ingredient image
-              transform.SetParent(resizeCanvas);
-              transform.localPosition = Vector3.zero; // Center within the target canvas
-              transform.localScale = targetScale;
+              //put the cut image prefab in:
+              //hide the image
+              transform.gameObject.SetActive(false);
+              Debug.Log("ingredient is hidden!");
               canDrag = false;
-              //start chopscript experience :)
+              //set the ingredient data in chopScript
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
+              //spawn the cut prefab
+              chopScript.ShowIngredientPiecedTogether();
+            
             }
             cuttingBoardActive = true;
           }

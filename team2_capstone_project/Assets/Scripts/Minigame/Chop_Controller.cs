@@ -129,6 +129,18 @@ public class Chop_Controller : MonoBehaviour
 
     }
 
+//shows the ingredient made from pieces pieced together
+    public void ShowIngredientPiecedTogether()
+    {   
+        if (ingredient_data_var.Name == "Uncut Fermented Eye")
+        {
+            //
+            //show the image of the cut stuff all 
+            GameObject CombinedCutPiecePrefab = Instantiate(ingredient_data_var.CombinedCutPiecePrefab);
+            CombinedCutPiecePrefab.SetActive(true);
+            Debug.Log("Ingredient should be on cutting board now");
+        }
+    }
     private void InitializeCuttingLines()
     {
         allCuttingLines.Clear();
