@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using Grimoire;
+using UnityEngine.SceneManagement;
 
 public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -39,7 +40,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       Debug.LogError("[Stir_Controller]: No Image component found on Ladle!");
 
     audio = Audio_Manager.instance;
-    if (audio == null)
+    if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && audio == null)
       Debug.LogError("[Stir_Controller]: No audio manager instance received from Drag_All!");
   }
 

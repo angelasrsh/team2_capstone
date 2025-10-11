@@ -9,24 +9,33 @@ public class Room_Change_Trigger : MonoBehaviour
   public Room_Data.RoomID exitingTo;
   private Player_Controller player;
 
-  private void OnTriggerEnter(Collider other)
-  {
-    if (other.CompareTag("Player"))
+  private bool isSceneTransitioning = false;
+
+    private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Player entered the trigger for room change: " + exitingTo);
-        Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
-            
+        if (isSceneTransitioning) return;
+
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Player entered the trigger for room change: " + exitingTo);
+            isSceneTransitioning = true;
+            Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+        }
     }
-  }
 
   public void OnPlayButtonPressed()
   {
-    //Game_Events_Manager.Instance.RoomChange(exitingTo);
+    if (isSceneTransitioning) return;
+    isSceneTransitioning = true;
+
     Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
   }
   
   public void OnBackButtonPressedForMinigame()
   {
+    if (isSceneTransitioning) return;
+    isSceneTransitioning = true;
+  
     Audio_Manager.instance.StopBubbling();
     Audio_Manager.instance.StopAmbientFire();
     Drag_All.ResetMinigame();

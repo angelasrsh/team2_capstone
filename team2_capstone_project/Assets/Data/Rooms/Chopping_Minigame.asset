@@ -19,13 +19,18 @@ MonoBehaviour:
   musicVolume: 0.1
   ambientVolume: 1
   exits:
-  - exitingTo: 2
+  - exitingTo: 8
     spawnPointID: 2
-    targetRoom: {fileID: 11400000, guid: fefb8eb7638a8904aa2544370338bda9, type: 2}
+    targetRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
     overrideTimeOfDay: 0
     overrideValue: 1
   - exitingTo: 0
     spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: 9196e552c6124a94696f1bdc553b82ec, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 1
+  - exitingTo: 2
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: fefb8eb7638a8904aa2544370338bda9, type: 2}
     overrideTimeOfDay: 0
     overrideValue: 1
