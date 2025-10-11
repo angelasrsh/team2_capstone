@@ -135,9 +135,9 @@ public class Chop_Controller : MonoBehaviour
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
             //
-            //show the image of the cut stuff all together
-            GameObject image = GameObject.Find("F_Cut_Group");
-            image.SetActive(true);
+            //show the image of the cut stuff all 
+            GameObject CombinedCutPiecePrefab = Instantiate(ingredient_data_var.CombinedCutPiecePrefab);
+            CombinedCutPiecePrefab.SetActive(true);
             Debug.Log("Ingredient should be on cutting board now");
         }
     }
