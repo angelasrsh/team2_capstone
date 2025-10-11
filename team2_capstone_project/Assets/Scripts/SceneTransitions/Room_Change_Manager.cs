@@ -98,7 +98,6 @@ public class Room_Change_Manager : MonoBehaviour
                 Debug.Log($"No time override for this exit. Using whatever state already exists: {Day_Turnover_Manager.Instance.currentTimeOfDay}");
             }
         }
-        Game_Events_Manager.Instance.RoomChange(currentRoomID, exitingTo);
         StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
     }
 

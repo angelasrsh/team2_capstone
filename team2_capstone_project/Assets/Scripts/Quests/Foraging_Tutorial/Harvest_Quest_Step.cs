@@ -2,37 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Harvest_Quest_Step : Tutorial_Quest_Step
+public class Harvest_Quest_Step : Quest_Step
 {
-
-
-    void OnEnable()
+   void OnEnable()
     {
-        Game_Events_Manager.Instance.onResourceAdd += Harvest;
-
-        DelayedInstructionStart();
-
-        // Immediately complete if player already has harvested something
-        
-    }
-
-    void Start()
-    {
-        if (Ingredient_Inventory.Instance.InventoryStacks.Length > 0)
-            FinishQuestStep();
+        Game_Events_Manager.Instance.onHarvest += Harvest;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
-        Game_Events_Manager.Instance.onResourceAdd -= Harvest;
+        Game_Events_Manager.Instance.onHarvest -= Harvest;
     }
 
 
-    private void Harvest(Ingredient_Data ing)
+    private void Harvest()
     {
-        
-        FinishQuestStep(); // Finish and destroy this object 
-            
+        FinishQuestStep(); // Finish and destroy this object
     }
 }

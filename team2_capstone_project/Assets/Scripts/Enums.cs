@@ -24,15 +24,3 @@ public enum Quest_State
 }
 
     
-public class Helpers
-{
-    /// <summary>
-    /// Helper function to print the string with the script and gameObject name. String must be quote-enclosed.
-    /// </summary>
-    /// <param name="script"> the script calling this function </param>
-    /// <param name="str"> The quote-enclosed string to print </param>
-    public static void printLabeled(MonoBehaviour script, string str)
-    {
-        Debug.Log($"{script.GetType().Name} on {script.name}: " + str);
-    }
-}
