@@ -25,6 +25,14 @@ public class Ingredient_Data : Item_Data
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
 }
 
+[System.Serializable]
+public class Ingredient_Requirement
+{
+  public Ingredient_Data ingredient;
+  public int amountRequired;  
+  public Recipe method; // how this ingredient is made (i.e., chop, fry, cauldron, combine)    
+}
+
 public enum IngredientType
 {
   Null,

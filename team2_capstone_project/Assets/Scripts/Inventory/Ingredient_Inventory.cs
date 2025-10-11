@@ -15,9 +15,7 @@ using UnityEngine;
 public class Ingredient_Inventory : Inventory
 {
   public static Ingredient_Inventory Instance { get; private set; }
-
-  // Must drop all ingredient lists into here! Sorry -V('.')V-
-  public List<Ingredient_Data> AllIngredientList;
+  [HideInInspector] public List<Ingredient_Data> AllIngredientList;
   private Ingredient_Data water;
   public Dictionary<String, Ingredient_Data> IngredientDict = new Dictionary<string, Ingredient_Data>(); // Make private once we know it works
 
@@ -32,6 +30,11 @@ public class Ingredient_Inventory : Inventory
     }
 
     base.Awake();
+  }
+
+  private void Start()
+  {
+    AllIngredientList = Game_Manager.Instance.ingredientDatabase.allIngredients;
 
     // Put the list of ingredients into the dictionary to be accessed by their name string
     foreach (Ingredient_Data idata in AllIngredientList)
@@ -42,54 +45,54 @@ public class Ingredient_Inventory : Inventory
     }
   }
 
-    /// <summary>
-    /// Overload AddResources to allow for using the IngredientType enum
-    /// </summary>
-    /// <param name="type"> IngredientType enum for ingredients </param>
-    /// <param name="count"> Amount to add </param>
-    /// <returns> Amount actually added </returns>
-    public int AddResources(IngredientType type, int count)
+  /// <summary>
+  /// Overload AddResources to allow for using the IngredientType enum
+  /// </summary>
+  /// <param name="type"> IngredientType enum for ingredients </param>
+  /// <param name="count"> Amount to add </param>
+  /// <returns> Amount actually added </returns>
+  public int AddResources(IngredientType type, int count)
+  {
+    // Error-checking
+    
+    if (count < 0)
+      Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
+
+    // Track the amount of resources we still need to add
+    int amtLeftToAdd = count;
+
+    // Check if there is a slot with the same type and add if not full
+    foreach (Item_Stack istack in InventoryStacks)
     {
-        // Error-checking
-        
-        if (count < 0)
-            Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
-
-        // Track the amount of resources we still need to add
-        int amtLeftToAdd = count;
-
-        // Check if there is a slot with the same type and add if not full
-        foreach (Item_Stack istack in InventoryStacks)
-        {
-            // Add as much as we can to existing stacks
-            if (istack != null && istack.resource == IngrEnumToData(type) && istack.amount < istack.stackLimit)
-            {
-                int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
-                istack.amount += amtToAdd;
-                amtLeftToAdd -= amtToAdd;
-            }
-        }
-        // We were not able to add all items to existing slots, so check if we can start a new stack
-        // These are two separate loops because we don't assume slots will be filled in order
-        for (int i = 0; i < InventorySizeLimit; i++)
-        {
-            if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
-            {
-                InventoryStacks[i] = new Item_Stack();
-                int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
-                InventoryStacks[i].amount = amtToAdd;
-                InventoryStacks[i].resource = IngrEnumToData(type);
-                amtLeftToAdd -= amtToAdd;
-            }
-        }
-
-         // Broadcast to listening events
-        Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
-
-        updateInventory();
-        Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {IngrEnumToData(type).Name}");
-        return count - amtLeftToAdd; // Return how many items were actually added
+      // Add as much as we can to existing stacks
+      if (istack != null && istack.resource == IngrEnumToData(type) && istack.amount < istack.stackLimit)
+      {
+        int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
+        istack.amount += amtToAdd;
+        amtLeftToAdd -= amtToAdd;
+      }
     }
+    // We were not able to add all items to existing slots, so check if we can start a new stack
+    // These are two separate loops because we don't assume slots will be filled in order
+    for (int i = 0; i < InventorySizeLimit; i++)
+    {
+      if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
+      {
+        InventoryStacks[i] = new Item_Stack();
+        int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
+        InventoryStacks[i].amount = amtToAdd;
+        InventoryStacks[i].resource = IngrEnumToData(type);
+        amtLeftToAdd -= amtToAdd;
+      }
+    }
+
+    // Broadcast to listening events
+    Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
+
+    updateInventory();
+    Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {IngrEnumToData(type).Name}");
+    return count - amtLeftToAdd; // Return how many items were actually added
+  }
 
   /// <summary>
   /// Overload base inventory RemoveResources function to allow removing ingredients using type enum

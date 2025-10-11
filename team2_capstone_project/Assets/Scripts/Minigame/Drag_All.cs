@@ -82,7 +82,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
     if (resizeCanvas_object != null)
       resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
-    else
+    else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
     {
       Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
     }
@@ -97,7 +97,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     if (audio == null)
       audio = Audio_Manager.instance;
-    // Reducing restaurant music only for cauldron for now
+    
     if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && !audioTriggered)
     {
       // audio.LowerRestaurantMusic();
@@ -145,7 +145,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       errorText.GetComponent<TMP_Text>().text = "Cannot add more ingredients once you have started stirring!";
       Invoke(nameof(HideErrorText), 3);
       return;
-    }
+    } // move this to onEndDrag later
 
     if (canDrag)
     {
@@ -194,7 +194,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
           Ingredient_Data ingredient_data_var;
-          
+
           if ((!cuttingBoardActive) && (Ingredient_Inventory.Instance.IngrEnumToData(ingredientType) != null)
                 && (((Ingredient_Data)(ParentSlot.stk.resource)).CutIngredientImages.Count() > 0))
           {
@@ -202,7 +202,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
             DuplicateInventorySlot();
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-            
+
             if (resizeCanvas != null)
             {
               // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
@@ -221,6 +221,13 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             rectTransform.position = ingrOriginalPos;
             Debug.Log("[Drag_All]: There is already an ingredient on the cutting board.");
           }
+        }
+        else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
+        {
+          pan ??= FindObjectOfType<Pan>();
+          DuplicateInventorySlot();
+          if (pan.AddToPan((Ingredient_Data)(ParentSlot.stk.resource))) // Only remove ingredient if pan was empty and ingredient was actually added;
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
         }
       }
       else
