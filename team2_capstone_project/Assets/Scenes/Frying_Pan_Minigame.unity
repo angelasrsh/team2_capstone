@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.30692166, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -847,7 +847,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 43.75
+  m_fontSize: 49.7
   m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1366,8 +1366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc2c92e502ab87047b37644191eb1952, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentRoom: {fileID: 11400000, guid: a159dab37fcf1d147bf5c9048279229f, type: 2}
-  exitingTo: 2
+  currentRoom: {fileID: 11400000, guid: be8fe1eacc40f6c4081b931d3d46bfa3, type: 2}
+  exitingTo: 8
 --- !u!1 &768688874
 GameObject:
   m_ObjectHideFlags: 0
@@ -1960,7 +1960,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2532bf57145e6524ab28e6ddbe0a836c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <InventoryStacks>k__BackingField: []
   InventoryGrid: {fileID: 0}
 --- !u!4 &994933467
 Transform:
