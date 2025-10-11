@@ -26,6 +26,19 @@ namespace Grimoire
     public AudioClip doorBell;
     public AudioClip firstAreaWalkingSFX;
     public AudioClip sparkle;
+    public AudioClip errorBuzz;
+    public AudioClip bagPutIn;
+    public AudioClip bagOpen;
+    public AudioClip bagClose;
+    public AudioClip pageTurn;
+    public AudioClip bookOpen;
+    public AudioClip goToBed;
+    public AudioClip getUpFromBed;
+    public AudioClip openDoor;
+    public AudioClip closeDoor;
+    public AudioClip lockedGateOpen;
+    public AudioClip pageFlip;
+    public AudioClip journalTabSelect;
 
     [Header("Cauldron Specific")]
     public AudioClip addingOneIngredient;
@@ -250,7 +263,7 @@ namespace Grimoire
     public void PlayDoorbell()
     {
       float randomPitch = Random.Range(0.9f, 1.05f);
-      PlaySFX(doorBell, 0.4f, randomPitch);
+      PlaySFX(doorBell, 0.32f, randomPitch);
     }
     
     public void PlaySparkleSFX()

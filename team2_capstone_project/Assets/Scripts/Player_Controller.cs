@@ -194,7 +194,12 @@ public class Player_Controller : MonoBehaviour
     public void DisablePlayerMovement()
     {
         if (playerInput != null && moveAction != null)
+        {
             moveAction.Disable();
+            targetInput = Vector2.zero;
+            smoothInput = Vector2.zero;
+            currentMoveVelocity = Vector3.zero;
+        }
     }
 
     public void EnablePlayerMovement()

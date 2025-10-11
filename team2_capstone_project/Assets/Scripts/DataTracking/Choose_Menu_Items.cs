@@ -48,6 +48,7 @@ public class Choose_Menu_Items : MonoBehaviour
   public void GenerateDailyPool()
   {
     dailyPool.Clear();
+    dishesSelected.Clear();
 
     var learned = Player_Progress.Instance.GetUnlockedDishes();
     if (learned == null || learned.Count == 0)
