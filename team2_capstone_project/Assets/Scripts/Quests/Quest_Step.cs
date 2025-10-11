@@ -34,6 +34,8 @@ public abstract class Quest_Step : MonoBehaviour
     /// </summary>
     protected void FinishQuestStep()
     {
+        if (isPaused)
+            Helpers.printLabeled(this, "Quest step is paused and cannot finish");
         if (!isFinished && !isPaused)
         {
             isFinished = true;

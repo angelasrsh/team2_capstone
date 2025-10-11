@@ -172,9 +172,17 @@ public class Game_Events_Manager : MonoBehaviour
     #endregion
 
     //////////// SCENE TRANSITION EVENTS ///////////////
-    // #region Scene Transition Events
+    #region Scene Transition Events
 
-    // #endregion Currently unused
+    public event Action<Room_Data.RoomID, Room_Data.RoomID> onRoomChange;
+    public void RoomChange(Room_Data.RoomID currentRoom, Room_Data.RoomID exitingTo)
+    {
+        if (onRoomChange != null)
+            onRoomChange(currentRoom, exitingTo);
+    }
+
+
+    #endregion
 
     /////////// CAFE INTERACTION EVENTS /////////
     #region Cafe Interaction Events

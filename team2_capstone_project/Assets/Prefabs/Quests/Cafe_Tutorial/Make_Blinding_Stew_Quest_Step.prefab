@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25b759f56f43ff4ca472ede5a66b408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TutorialCanvas: {fileID: 0}
   InstructionText: Now combine the broth, fogshroom, and eye  and stir to make your
     dish!
   InstructionWaitTime: 0
@@ -57,6 +56,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6200707804114755666}
     m_Modifications:
+    - target: {fileID: 73766609362883148, guid: b8557a4a3f9966f4198e083d0b6c86de, type: 3}
+      propertyPath: TutorialRoom
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3361922030865975124, guid: b8557a4a3f9966f4198e083d0b6c86de, type: 3}
       propertyPath: m_Pivot.x
       value: 0

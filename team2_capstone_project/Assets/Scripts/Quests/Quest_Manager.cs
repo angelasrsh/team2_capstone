@@ -125,7 +125,7 @@ public class Quest_Manager : MonoBehaviour
         if (quest.CurrentStepExists())
             quest.InstantiateCurrentQuestStep(this.transform);
         else
-            ChangeQuestState(quest.Info.id, Quest_State.CAN_FINISH); // or add CAN_FINISHED if not auto-finishing
+            ChangeQuestState(quest.Info.id, Quest_State.FINISHED); // or add CAN_FINISHED if not auto-finishing
     }
 
     /// <summary>
