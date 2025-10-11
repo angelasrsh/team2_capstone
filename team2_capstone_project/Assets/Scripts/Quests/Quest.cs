@@ -14,12 +14,15 @@ public class Quest
 
     public Quest_State state;
 
+    public bool IsPaused;
+
     private int currentQuestStepIndex;
 
     public Quest(Quest_Info_SO questInfo)
     {
         Info = questInfo;
         state = Quest_State.REQUIREMENTS_NOT_MET;
+        IsPaused = false;
         currentQuestStepIndex = 0;
     }
 

@@ -78,7 +78,7 @@ public class Ingredient_Inventory : Inventory
     public int AddResources(IngredientType type, int count)
     {
         // Error-checking
-        
+
         if (count < 0)
             Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
 
@@ -110,12 +110,17 @@ public class Ingredient_Inventory : Inventory
             }
         }
 
-         // Broadcast to listening events
-        Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
+
 
         updateInventory();
         Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {IngrEnumToData(type).Name}");
+
+        // Broadcast to listening events
+        Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
+        
         return count - amtLeftToAdd; // Return how many items were actually added
+        
+        
     }
 
   /// <summary>
