@@ -136,8 +136,10 @@ public class Chop_Controller : MonoBehaviour
         {
             //
             //show the image of the cut stuff all 
+            Transform parent = GameObject.FindAnyObjectByType<
             GameObject CombinedCutPiecePrefab = Instantiate(ingredient_data_var.CombinedCutPiecePrefab);
             CombinedCutPiecePrefab.SetActive(true);
+            CombinedCutPiecePrefab.transform.SetParent("Canvas-MinigameElements");
             Debug.Log("Ingredient should be on cutting board now");
         }
     }
