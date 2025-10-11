@@ -13,23 +13,6 @@ public enum InventoryCallStatusCode // Currently not used
     Success
 }
 
-public enum IngredientType // should delete after putting in maddie's code
-{
-    Null,
-    Egg,
-    Melon,
-    Morel,
-    Milk,
-    Cheese,
-    Uncut_Fogshroom,
-    Uncut_Fermented_Eye,
-    Slime,
-    Bone_Broth,
-    Bone,
-    Cut_Fermented_Eye,
-    Cut_Fogshroom
-}
-
 /// <summary>
 /// Used to keep track of the state of quests
 /// </summary>
