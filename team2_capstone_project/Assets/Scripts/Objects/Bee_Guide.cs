@@ -13,7 +13,6 @@ public class Bee_Guide : MonoBehaviour
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float buzzAmplitude = 0.1f;
     [SerializeField] private float buzzFrequency = 5f;
-    [SerializeField] private float buzzSpeedVariation = 0.3f;
 
     private Vector3 basePosition;
     private int currentWaypointIndex = 0;
