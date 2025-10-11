@@ -16,6 +16,7 @@ public class Mobile_Icon_UI : MonoBehaviour
     [SerializeField] private Button closeInventoryButton;
     [SerializeField] private Button closeJournalButton;
 
+    public static Mobile_Icon_UI instance;
     private Journal_Menu journalMenu;
     private Canvas inventoryCanvas;
 
@@ -26,10 +27,24 @@ public class Mobile_Icon_UI : MonoBehaviour
 
     private void Awake()
     {
+        // Singleton pattern
+        instance = this;
+
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         DontDestroyOnLoad(gameObject);
 
         // Hide automatically on non-mobile platforms
-        if (SystemInfo.deviceType != DeviceType.Handheld)
+        bool simulateMobile = false;
+        
+        // #if UNITY_EDITOR
+        //     simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+        // #endif
+
+        if (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile)
         {
             gameObject.SetActive(false);
         }

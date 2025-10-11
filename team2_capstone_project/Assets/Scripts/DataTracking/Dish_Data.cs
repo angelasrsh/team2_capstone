@@ -16,7 +16,8 @@ public class Dish_Data : Item_Data
     None,
     Stir,
     Chop,
-    Toss
+    Toss,
+    Combine
   }
   public Recipe recipe;
 
@@ -24,7 +25,10 @@ public class Dish_Data : Item_Data
   {
     Failed_Dish, // Generic failed dish if no recipe matches
     Mc_Dragons_Burger,
-    Blinding_Stew
+    Blinding_Stew,
+    Honey_Jelly_Drink,
+    Charcuterie_Board,
+    Boba_Milk_Drink
   }
 
   public List<Ingredient_Requirement> ingredientQuantities;
