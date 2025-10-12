@@ -4,30 +4,37 @@ using UnityEngine.UI;
 using TMPro;
 using Grimoire;
 using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 
-public class Pan_Controller : MonoBehaviour
+public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
   [Header("References")]
   private RectTransform panRedZone; // Pan's red zone RectTransform (used for drop detection)
-  // [SerializeField] private Animator backgroundAnimator;   // Background animator
-  // [SerializeField] private Image backgroundImage;         // Background image
-  // [SerializeField] private Sprite emptyCauldron;          // Normal background
-  [SerializeField] private GameObject errorText;          // For any messages to the player
-  private Pan pan;
+  [SerializeField] private GameObject errorText; // For any messages to the player
+  [SerializeField] private Pan pan;
   private Image panImage; // reference to the pan's Image component
   // private Audio_Manager audio;
 
   [Header("Settings")]
   private bool isDragging = false;
-  private Vector3 lastPointerPos;
   private Vector3 panOriginalPos; // used to reset pan position once minigame is done
+  private float maxY = 300f;
 
+  [Header("Ingredient Fall Settings")]
+  private float spawnInterval = 1f;
+  private float fallSpeed = 200f; // pixels per second
+  private Ingredient_Data fallingIngredientData;
+  private List<Sprite> listOfSprites; // All possible sprites for the falling ingredient
+  private List<GameObject> fallingIngredients; // current falling sprites
+  private bool isFalling = false;
+  private int ingredientsCaught = 0;
+  private int ingredientsToCatch; // Number of ingredients to catch before ending fall section
 
   private void Awake()
   {
-    pan = FindObjectOfType<Pan>();
     if (pan == null)
-      Debug.LogError("[Pan_Controller]: No Pan found!");
+      Debug.LogError("[Pan_Controller]: No Pan set in inspector!");
 
     panImage = GetComponent<Image>();
     if (panImage == null)
@@ -37,21 +44,17 @@ public class Pan_Controller : MonoBehaviour
     if (panRedZone == null)
       Debug.LogError("[Pan_Controller]: No Red Zone found on Pan!");
 
+    fallingIngredients = new List<GameObject>();
+
     // audio = Audio_Manager.instance;
     // if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame" && audio == null)
     //   Debug.LogError("[Pan_Controller]: No audio manager instance received from Drag_All!");
-  }
 
-  private void Update()
-  {
-    // if (!isDragging)
-    //   return;
-
-    // lastPointerPos = Input.mousePosition;
+    panOriginalPos = transform.position;
   }
   
   /// <summary>
-  /// Used to check if another image (e.g., ingredient) is over the pan's red zone.
+  /// Used to check if another image (falling ingredient) is over the pan's red zone.
   /// </summary>
   private bool IsOverRedZone(RectTransform otherRect)
   {
@@ -71,23 +74,85 @@ public class Pan_Controller : MonoBehaviour
     // Return true if they overlap
     return zoneRect.Overlaps(otherRectScreen);
   }
-  
-  // private bool IsOverRedZone(Vector2 pointerPos)
-  // {
-  //   if (panRedZone == null)
-  //     return false;
 
-  //   Vector3[] corners = new Vector3[4];
-  //   panRedZone.GetWorldCorners(corners);
-  //   Rect rect = new Rect(corners[0], corners[2] - corners[0]);
+  /// <summary>
+  /// Sets the ingredient data for the falling ingredients and prepares the list of sprites.
+  /// </summary>
+  public void SetFallingIngredient(Ingredient_Data ingredientData)
+  {
+    if (ingredientData == null)
+    {
+      Debug.LogError("[Pan_Controller]: No ingredient data provided to SetFallingIngredient!");
+      return;
+    }
 
-  //   return rect.Contains(pointerPos);
-  // }
+    fallingIngredientData = ingredientData;
+    if (fallingIngredientData.CutIngredientImages.Length > 0)
+    {
+      listOfSprites = new List<Sprite>(fallingIngredientData.CutIngredientImages);
+      ingredientsToCatch = listOfSprites.Count; // Set how many to catch based on number of images
+    }
+    else
+    {
+      listOfSprites = new List<Sprite>();
+      listOfSprites.Add(ingredientData.Image); // Fallback to main image
+      ingredientsToCatch = 1;
+    }
+  }
+
+  /// <summary>
+  /// Starts the ingredient fall section of the minigame.
+  /// </summary>
+  public void StartIngredientFall()
+  {
+    isFalling = true;
+    StartCoroutine(SpawnIngredients());
+  }
+
+  /// <summary>
+  /// Spawns ingredients at intervals until the required number is reached.
+  /// </summary>
+  private IEnumerator SpawnIngredients()
+  {
+    while (isFalling && fallingIngredients.Count < ingredientsToCatch)
+    {
+      SpawnOneIngredient();
+      yield return new WaitForSeconds(spawnInterval);
+    }
+  }
+
+  /// <summary>
+  /// Spawns one falling ingredient at a random horizontal position above the screen.
+  /// </summary>
+  private void SpawnOneIngredient()
+  {
+    // float randomX = randomX.Range(0f, canvasRect.rect.width);
+    float randomX = Random.Range(0f, Screen.width);
+    Vector3 spawnPos = new Vector3(randomX, Screen.height + 50f, 0f); // Spawn just above screen
+
+    GameObject ingredientObj = new GameObject("Falling_Ingredient");
+    ingredientObj.transform.SetParent(transform.parent); // Set parent to same canvas as pan
+    ingredientObj.transform.position = spawnPos;
+    // ingredientObj.transform.localScale = Vector3.one * 0.5f; // Scale
+    // ingredientObj.AddComponent<CanvasGroup>(); // For proper rendering in canvas
+    Image img = ingredientObj.AddComponent<Image>();
+    if (listOfSprites.Count > 0)
+    {
+      int randomIndex = Random.Range(0, listOfSprites.Count);
+      img.sprite = listOfSprites[randomIndex];
+      listOfSprites.RemoveAt(randomIndex); // Remove to avoid repeats
+    }
+    else
+    {
+      Debug.LogError("[Pan_Controller]: No sprites available for falling ingredient!");
+      img.sprite = fallingIngredientData.Image; // Fallback to main image
+    }
+    fallingIngredients.Add(ingredientObj);
+  }
 
   public void OnBeginDrag(PointerEventData eventData)
-  {     
+  {
     isDragging = true;
-    // lastPointerPos = eventData.position;
   }
 
   public void OnDrag(PointerEventData eventData)
@@ -95,12 +160,54 @@ public class Pan_Controller : MonoBehaviour
     if (!isDragging)
       return;
 
-    transform.position = eventData.position;
+    // Move pan with pointer, prevent going above maxY or off screen
+    Vector3 newPos = eventData.position;
+    newPos.y = Mathf.Min(newPos.y, maxY); // Clamp to maxY
+    newPos.x = Mathf.Clamp(newPos.x, 0f, Screen.width); // Clamp to screen width
+    transform.position = newPos;
   }
 
   public void OnEndDrag(PointerEventData eventData)
   {
     isDragging = false;
+  }
+
+  /// <summary>
+  /// Handles moving falling ingredients down and checks for catches each frame.
+  /// </summary>
+  private void LateUpdate()
+  {
+    if (!isFalling && (fallingIngredients == null || fallingIngredients.Count == 0))
+      return;
+
+    // Move all falling ingredients down
+    foreach (GameObject obj in fallingIngredients)
+    {
+      if (obj == null)
+        continue;
+
+      obj.transform.position += Vector3.down * fallSpeed * Time.deltaTime;
+
+      // Check if over red zone
+      RectTransform objRect = obj.GetComponent<RectTransform>();
+      if (IsOverRedZone(objRect))
+      {
+        ingredientsCaught++;
+        Destroy(obj);
+        fallingIngredients.Remove(obj);
+        // audio.PlaySound("Catch_Ingredient");
+        if (ingredientsCaught >= ingredientsToCatch)
+        {
+          isFalling = false;
+          pan.Invoke(nameof(pan.StartSecondSlider), 1f);
+        }
+      }
+      else if (obj.transform.position.y < -50f) // Off bottom of screen
+      {
+        Destroy(obj);
+        fallingIngredients.Remove(obj);
+      }
+    }
   }
 
   private void HideErrorText() => errorText.SetActive(false);

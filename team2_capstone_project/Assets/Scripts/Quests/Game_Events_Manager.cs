@@ -39,7 +39,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onPlayerMove != null) // Guessing null means no subscribers?
             onPlayerMove();
-        Debug.Log("[G_E_M] Player Moved");
+        //Debug.Log("[G_E_M] Player Moved");
     }
 
 
@@ -66,14 +66,24 @@ public class Game_Events_Manager : MonoBehaviour
     }
 
 
-    public event Action onForageDetailsClick;
+    public event Action<Dish_Data> onDishDetailsClick;
     /// <summary>
-    /// Broadcast the RecipeClick event
+    /// Broadcast the RecipeClick event and send the dish being sent
     /// </summary>
-    public void ForageDetailsClick()
+    public void DishDetailsClick(Dish_Data dishData)
     {
-        if (onForageDetailsClick != null)
-            onForageDetailsClick();
+        if (onDishDetailsClick != null)
+            onDishDetailsClick(dishData);
+    }
+
+    public event Action onHarvestRequirementsMet;
+    /// <summary>
+    /// Broadcast event for unblocking the exit to the world map
+    /// </summary>
+    public void HarvestRequirementsMet()
+    {
+        if (onHarvestRequirementsMet != null)
+            onHarvestRequirementsMet();
     }
 
 
@@ -101,8 +111,12 @@ public class Game_Events_Manager : MonoBehaviour
     public void StartQuest(string id)
     {
         if (onStartQuest != null)
+        {
             onStartQuest(id);
-        Debug.Log($"[G_E_M] Starting quest {id}");
+            Debug.Log($"[G_E_M] Starting quest {id}");
+        }
+            
+        
     }
 
     public event Action<string> onAdvanceQuest;
@@ -147,16 +161,23 @@ public class Game_Events_Manager : MonoBehaviour
             onQuestStepChange(id, stepIndex);
 
     }
+
+    public event Action<string, bool> onSetQuestPaused;
+    public void SetQuestPaused(string id, bool isPaused)
+    {
+        if (onSetQuestPaused != null)
+            onSetQuestPaused(id, isPaused);
+    }
     #endregion
 
     //////////// SCENE TRANSITION EVENTS ///////////////
     #region Scene Transition Events
 
-    public event Action<Room_Data.RoomID> onRoomChange;
-    public void RoomChange(Room_Data.RoomID newRoom)
+    public event Action<Room_Data.RoomID, Room_Data.RoomID> onRoomChange;
+    public void RoomChange(Room_Data.RoomID currentRoom, Room_Data.RoomID exitingTo)
     {
         if (onRoomChange != null)
-            onRoomChange(newRoom);
+            onRoomChange(currentRoom, exitingTo);
     }
 
     #endregion

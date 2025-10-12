@@ -21,10 +21,16 @@ MonoBehaviour:
   minSpawn: 0
   maxSpawn: 0
   countsAs: []
-  description: 
+  ingredientType: 17
+  description: Sweet.
+  CombinedCutPiecePrefab: {fileID: 0}
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
   CutIngredientImages: []
   usedInDishes:
   - {fileID: 11400000, guid: dc41864eb9c4b804a86902d1e1e68ee7, type: 2}
   makesIngredient: []
   ingredientsNeeded: []
-  ingredientType: 17

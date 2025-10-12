@@ -190,6 +190,8 @@ public class Ingredient_Inventory : Inventory
         return "Uncooked Patty";
       case IngredientType.Cooked_Patty:
         return "Cooked Patty";
+      case IngredientType.Burnt_Blob:
+        return "Burnt Blob";
       default:
         return "";
     }
@@ -242,6 +244,8 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.Uncooked_Patty;
       case "Cooked Patty":
         return IngredientType.Cooked_Patty;
+      case "Burnt Blob":
+        return IngredientType.Burnt_Blob;
       default:
         return IngredientType.Null;
     }
