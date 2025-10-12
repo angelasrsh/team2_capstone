@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -241,7 +241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9083165254151032959, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_RootOrder
-      value: 27
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 9083165254151032959, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1112,6 +1112,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6809417295548205093, guid: 9baeeea6fe031b34db1595f11d79da99, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.4000854
+      objectReference: {fileID: 0}
     - target: {fileID: 7174819845281938421, guid: 9baeeea6fe031b34db1595f11d79da99, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1186,38 +1190,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9baeeea6fe031b34db1595f11d79da99, type: 3}
---- !u!1 &499020262
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 499020263}
-  m_Layer: 0
-  m_Name: Void
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &499020263
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 499020262}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1701582532}
-  m_Father: {fileID: 733291160}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &511171202
 GameObject:
   m_ObjectHideFlags: 0
@@ -1749,7 +1721,7 @@ Transform:
   m_Children:
   - {fileID: 1801260303}
   m_Father: {fileID: 0}
-  m_RootOrder: 24
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &733291159
 GameObject:
@@ -1774,15 +1746,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 733291159}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1006373, y: -0.15793753, z: 3.7433968}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.9539514, y: 62.68163, z: 14.633226}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 658116464}
-  - {fileID: 499020263}
-  m_Father: {fileID: 0}
-  m_RootOrder: 23
+  - {fileID: 1701582532}
+  m_Father: {fileID: 1003640392}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &738491567
 PrefabInstance:
@@ -2134,7 +2106,8 @@ Transform:
   m_LocalPosition: {x: -0.8533141, y: -62.839565, z: -10.88983}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 733291160}
   m_Father: {fileID: 0}
   m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4068,12 +4041,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
-      propertyPath: m_NotificationBehavior
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 15
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_NeverAutoSwitchControlSchemes
@@ -4084,8 +4053,40 @@ PrefabInstance:
       value: 931df43f-574e-4d29-a14c-dbb309981b28
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionId
+      value: 253ced77-a953-48d3-8d7c-8c818a96bc7d
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionId
+      value: 64bab8b5-f68f-4017-9c08-2aaa07432d03
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionId
+      value: 65fd1754-d588-4b1d-9c9c-5635e4c2b81d
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_ActionId
+      value: 0b55d02f-6679-46aa-ad99-f1f47a44e275
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_ActionName
       value: Player/CloseInventory[/Touchscreen/delta]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_ActionName
+      value: Journal/Click[/Keyboard/e,/Mouse/leftButton]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionName
+      value: Journal/FlipLeft[/Keyboard/a,/Keyboard/leftArrow]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionName
+      value: Journal/FlipRight[/Keyboard/d,/Keyboard/rightArrow]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_ActionName
+      value: Journal/CloseJournal[/Keyboard/j,/Keyboard/escape]
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.size
@@ -4493,7 +4494,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 25
+  m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1701582531
 GameObject:
@@ -4508,7 +4509,7 @@ GameObject:
   - component: {fileID: 1701582534}
   - component: {fileID: 1701582533}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Void
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4521,13 +4522,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1701582531}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -2.0578, y: -4.3, z: 76.0381}
   m_LocalScale: {x: 232.19781, y: 2.3437183, z: 177.27107}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 499020263}
-  m_RootOrder: 0
+  m_Father: {fileID: 733291160}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1701582533
 BoxCollider:
@@ -5249,7 +5250,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
       propertyPath: m_RootOrder
-      value: 26
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3576415848198993676, guid: 82c14562078547d49aeeba9ba2e7ee86, type: 3}
       propertyPath: m_LocalScale.z
