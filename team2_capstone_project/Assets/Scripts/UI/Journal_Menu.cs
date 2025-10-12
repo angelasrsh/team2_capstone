@@ -15,7 +15,7 @@ public class Journal_Menu : MonoBehaviour
   private bool isPaused = false; // Currently will overlap pause menu, I think
   private bool haveTabsInitialized = false;
   private Player_Progress playerProgress = Player_Progress.Instance;
-  private InputAction openJournalAction;
+  private InputAction openJournalAction, closeJournalAction, flipLeftAction, flipRightAction, clickAction;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
 
@@ -49,6 +49,7 @@ public class Journal_Menu : MonoBehaviour
   [Header("UI References and Variables")]
   [SerializeField] public Sprite LockedIcon; // generic locked icon for locked items (just a question mark)
   private Tabs currentTab = Tabs.None;
+
   // Dictionary allows players to open to last page they had open in each tab
   private Dictionary<Tabs, int> tabCurrentPage = new Dictionary<Tabs, int>()
   {
@@ -109,12 +110,6 @@ public class Journal_Menu : MonoBehaviour
     journalContents = transform.GetChild(1).gameObject;
     tabs = transform.GetChild(2).gameObject;
 
-    // Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
-    // if (pic != null)
-    // {
-    //   openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
-    // }
-
     if (detailsText == null)
       Debug.LogError("[Journal_Menu]: detailsText not assigned in inspector!");
 
@@ -150,6 +145,14 @@ public class Journal_Menu : MonoBehaviour
     SceneManager.sceneLoaded -= OnSceneLoadedRebind;
     if (openJournalAction != null)
       openJournalAction.Disable();
+    if (closeJournalAction != null)
+      closeJournalAction.Disable();
+    if (flipLeftAction != null)
+      flipLeftAction.Disable();
+    if (flipRightAction != null)
+      flipRightAction.Disable();
+    if (clickAction != null)
+      clickAction.Disable();
   }
 
   private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
@@ -162,21 +165,35 @@ public class Journal_Menu : MonoBehaviour
     // Find the active PlayerInput in the scene (e.g. on Game_Manager)
     if (Game_Manager.Instance == null)
     {
-      Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal input.");
+      Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal inputs.");
       return;
     }
     PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (playerInput == null)
     {
-      Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal input.");
+      Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal inputs.");
       return;
     }
 
-    // Use the runtime (clone-safe) asset from that PlayerInput
+    // Bind the "OpenJournal" action (Player Map)
     openJournalAction = playerInput.actions["OpenJournal"];
-
-    // Make sure the action is enabled
     openJournalAction.Enable();
+
+    // Bind Journal actions (Journal Map)
+    flipLeftAction = playerInput.actions["FlipLeft"];
+    flipRightAction = playerInput.actions["FlipRight"];
+    closeJournalAction = playerInput.actions["CloseJournal"];
+    clickAction = playerInput.actions["Click"];
+
+    flipLeftAction.performed += ctx => FlipToPrevious();
+    flipRightAction.performed += ctx => FlipToNext();
+    closeJournalAction.performed += ctx => ResumeGame();
+    // clickAction.performed += ctx => OnClick();
+
+    flipLeftAction.Disable();
+    flipRightAction.Disable();
+    closeJournalAction.Disable();
+    clickAction.Disable();
   }
 
   private void OnDestroy()
@@ -205,18 +222,30 @@ public class Journal_Menu : MonoBehaviour
 
   public void PauseGame()
   {
-    Debug.Log("Opening journal and pausing game...");
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 0.75f);
-    darkOverlay.SetActive(true);
-    journalContents.SetActive(true);
-    tabs.SetActive(true);
-    isPaused = true;
+      Debug.Log("Opening journal and pausing game...");
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 0.75f);
+      darkOverlay.SetActive(true);
+      journalContents.SetActive(true);
+      tabs.SetActive(true);
+      isPaused = true;
+
+      // Get current PlayerInput
+      PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+      
+      // Switch to the "Journal" input map
+      if (playerInput != null)
+      {
+        playerInput.SwitchCurrentActionMap("Journal");
+        flipLeftAction.Enable();
+        flipRightAction.Enable();
+        closeJournalAction.Enable();
+        clickAction.Enable();
+      }
   }
 
   public void ResumeGame(bool playSound = true)
   {
       Debug.Log("Closing journal and resuming game...");
-
       if (playSound)
           Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.75f);
 
@@ -224,6 +253,19 @@ public class Journal_Menu : MonoBehaviour
       journalContents.SetActive(false);
       tabs.SetActive(false);
       isPaused = false;
+      
+       // Get current PlayerInput
+      PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+      // Switch back to Player map
+      if (playerInput != null)
+      {
+          flipLeftAction.Disable();
+          flipRightAction.Disable();
+          closeJournalAction.Disable();
+          clickAction.Disable();
+          playerInput.SwitchCurrentActionMap("Player");
+      }
   }
 
   #region Recipe Tab Methods
