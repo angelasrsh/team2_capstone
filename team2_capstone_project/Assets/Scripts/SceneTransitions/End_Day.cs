@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Grimoire;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -55,6 +56,7 @@ public class End_Day : MonoBehaviour
             if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
             {
                 Day_Turnover_Manager.Instance.EndDay();
+                Audio_Manager.instance.PlaySFX(Audio_Manager.instance.goToBed, 0.35f);
                 leaveTrigger.gameObject.SetActive(true);  // Re-enable the trigger for next morning
             }
             else

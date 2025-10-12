@@ -10,6 +10,7 @@ public class Cauldron : MonoBehaviour
   private List<Dish_Data> possibleDishes; // not a deep copy, but clearing this won't affect original list in Ingredient_Data
   private List<Ingredient_Requirement> possibleIngredients;
   // private bool badDishMade = false;
+  [SerializeField] private GameObject errorText;
   private Dish_Data dishMade;
   private Ingredient_Data ingredientMade;
   private bool stirring = false;
@@ -142,6 +143,16 @@ public class Cauldron : MonoBehaviour
   public bool IsStirring()
   {
     return stirring;
+  }
+
+  public void DisableErrorTextAfterDelay()
+  {
+    Invoke("HideErrorText", 3f);
+  }
+
+  public void HideErrorText()
+  {
+    errorText?.SetActive(false);
   }
 
   #region Add/Remove Ingredients

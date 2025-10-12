@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Enums and helper functions
-
 // namespace Grimoire
 // {
-public enum InventoryCallStatusCode // Currently not used
-{
-    InventoryFull,
-    NotEnoughItems,
-    Success
-}
+    public enum InventoryCallStatusCode // Currently not used
+    {
+        InventoryFull,
+        NotEnoughItems,
+        Success
+    }
 
 /// <summary>
 /// Used to keep track of the state of quests

@@ -150,7 +150,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onQuestStateChange != null)
             onQuestStateChange(quest);
-        //Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
+        Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
     }
 
 
@@ -161,26 +161,17 @@ public class Game_Events_Manager : MonoBehaviour
             onQuestStepChange(id, stepIndex);
 
     }
-
-
-    public event Action<string, bool> onSetQuestPaused;
-    public void SetQuestPaused(string id, bool isPaused)
-    {
-        if (onSetQuestPaused != null)
-            onSetQuestPaused(id, isPaused);
-    }
     #endregion
 
     //////////// SCENE TRANSITION EVENTS ///////////////
     #region Scene Transition Events
 
-    public event Action<Room_Data.RoomID, Room_Data.RoomID> onRoomChange;
-    public void RoomChange(Room_Data.RoomID currentRoom, Room_Data.RoomID exitingTo)
+    public event Action<Room_Data.RoomID> onRoomChange;
+    public void RoomChange(Room_Data.RoomID newRoom)
     {
         if (onRoomChange != null)
-            onRoomChange(currentRoom, exitingTo);
+            onRoomChange(newRoom);
     }
-
 
     #endregion
 

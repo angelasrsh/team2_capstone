@@ -29,30 +29,26 @@ public class Game_Manager : MonoBehaviour
       Debug.LogError("[GameManager]: No RoomCollectionData assigned!");
     }
 
-    if (Instance == null)
-    {
-      Instance = this;
-      DontDestroyOnLoad(gameObject);
-
-      if (dishDatabase == null)
-        Debug.LogError("[GameManager]: DishDatabase not set in inspector!");
-
-      if (npcDatabase == null)
-        Debug.LogError("[GameManager]: npcDatabase not set in inspector!");
-       
-      if (ingredientDatabase == null)
-        Debug.LogError("[GameManager]: ingredientDatabase not set in inspector!");
-
-      // starting unlocks are done in player_progress onEnable
-      Debug.Log("[GameManager]: Player_Progress initialized. Starting dishes, ingredients, and npcs unlocked.");
-
-      // if (foragingDatabase == null)
-      //   Debug.LogError("GameManager: ForagingDatabase not set in inspector!");
-    }
-    else
+    if (Instance != null && Instance != this)
     {
       Destroy(gameObject);
+      return;
     }
+
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+
+    if (dishDatabase == null)
+      Debug.LogError("[GameManager]: DishDatabase not set in inspector!");
+
+    if (npcDatabase == null)
+      Debug.LogError("[GameManager]: npcDatabase not set in inspector!");
+     
+    if (ingredientDatabase == null)
+      Debug.LogError("[GameManager]: ingredientDatabase not set in inspector!");
+
+    // starting unlocks are done in player_progress onEnable
+    Debug.Log("[GameManager]: Player_Progress initialized. Starting dishes, ingredients, and npcs unlocked.");
   }
 
   public void QuitGame()

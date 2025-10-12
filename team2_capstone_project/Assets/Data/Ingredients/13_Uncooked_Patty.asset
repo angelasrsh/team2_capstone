@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
+  m_Name: 13_Uncooked_Patty
+  m_EditorClassIdentifier: 
+  Name: Uncooked Patty
+  Amount: 0
+  Image: {fileID: 44908903, guid: 94306558c1600fb428a2fbf85938c91d, type: 3}
+  tier: 0
+  price: 0
+  rarityWeight: 0
+  minSpawn: 0
+  maxSpawn: 0
+  countsAs: []
+  ingredientType: 11
+  description: 
+  CombinedCutPiecePrefab: {fileID: 0}
+  cookThresholds:
+    rawEnd: 0.45
+    almostEnd: 0.6
+    cookedEnd: 0.7
+    overcookedEnd: 0.8
+  CutIngredientImages: []
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: 98efee7800ae5774591e4af778edbd5b, type: 2}
+    amountRequired: 1
+    method: 3
+  ingredientsNeeded: []

@@ -89,8 +89,8 @@ public class Affection_System : MonoBehaviour
 
     // Constants
     [Header("Constants")]
-    [SerializeField] private int LikedDishAffection = 25; // NOTE TODO: Could maybe make the whole Liked/Disliked thing an enum or scale/int later
-    [SerializeField] private int NeutralDishAffection = 5;
+    [SerializeField] private int LikedDishAffection = 5; // NOTE TODO: Could maybe make the whole Liked/Disliked thing an enum or scale/int later
+    [SerializeField] private int NeutralDishAffection = 2;
     [SerializeField] private int DislikedDishAffection = -5;
 
     public static Affection_System Instance;
@@ -113,14 +113,13 @@ public class Affection_System : MonoBehaviour
 
     private void OnEnable()
     {
-        Game_Events_Manager.Instance.onEndDialogBox += TryPlayNextEvent;
+      Game_Events_Manager.Instance.onEndDialogBox += TryPlayNextEvent;
     }
 
     private void OnDisable()
     {
-        Game_Events_Manager.Instance.onEndDialogBox -= TryPlayNextEvent;
+      Game_Events_Manager.Instance.onEndDialogBox -= TryPlayNextEvent;
     }
-
 
 
     // Note: whatever database used should only hold dateable NPCs

@@ -13,16 +13,13 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   // private ICustomDrag onDrag;
   private Transform parentAfterDrag; //original parent of the drag
   private Vector3 ingrOriginalPos;
+  private static GameObject errorText; // only exists in cauldron and pan scenes
 
   [Header("Target Transform")]
   private RectTransform rectTransform;
-
   public RectTransform redZone;
   public RectTransform redZoneForKnife;
-
-
   private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
-
   private Vector3 targetScale = new Vector3(5f, 5f, 5f);
 
   [Header("Cooking Minigame")]
@@ -30,7 +27,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private static Cauldron cauldron; // Static reference to Cauldron script in scene
   private static bool waterAdded = false;
   private static Animator backgroundAnimator;
-  private static GameObject errorText;
 
   [Header("Chopping Minigame")]
   private Canvas canvas;
@@ -40,12 +36,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   public Chop_Controller chopScript;
   public static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
 
+  [Header("Frying Pan Minigame")]
+  private static Pan pan; // Static reference to Pan script in scene
+
+
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
   [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
 
   [Header("Audio")]
-  private static Audio_Manager audio;
+  private static Audio_Manager audioManager;
   private static bool audioTriggered = false;
 
   // Start is called before the first frame update
@@ -65,10 +65,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
 
     // Find errorText from Ladle_Canvas
-    if (errorText == null && SceneManager.GetActiveScene().name == "Cooking_Minigame")
+    if (errorText == null && (SceneManager.GetActiveScene().name == "Cooking_Minigame" ||
+                              SceneManager.GetActiveScene().name == "Frying_Pan_Minigame"))
     {
-      Transform ladleCanvas = GameObject.Find("Ladle_Canvas").transform;
-      errorText = ladleCanvas.Find("Error_Text").gameObject;
+      Transform backgroundCanvas = GameObject.Find("BackgroundCanvas").transform;
+      errorText = backgroundCanvas.Find("Error_Text").gameObject;
     }
 
     GameObject red_zone_found = GameObject.Find("RedZone");
@@ -81,7 +82,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
     if (resizeCanvas_object != null)
       resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
-    else
+    else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
     {
       Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
     }
@@ -94,16 +95,14 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       Debug.Log("- " + comp.GetType().Name);
     }
 
-    if (audio == null)
-      audio = Audio_Manager.instance;
-    // Reducing restaurant music only for cauldron for now
+    if (audioManager == null)
+      audioManager = Audio_Manager.instance;
+    
     if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && !audioTriggered)
     {
-      // audio.LowerRestaurantMusic();
-      audio.StartFire();
+      audioManager.StartFire();
       audioTriggered = true;
     }
-
 
     if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
     {
@@ -144,7 +143,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       errorText.GetComponent<TMP_Text>().text = "Cannot add more ingredients once you have started stirring!";
       Invoke(nameof(HideErrorText), 3);
       return;
-    }
+    } // move this to onEndDrag later
 
     if (canDrag)
     {
@@ -193,7 +192,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
           Ingredient_Data ingredient_data_var;
-          
+
           if ((!cuttingBoardActive) && (Ingredient_Inventory.Instance.IngrEnumToData(ingredientType) != null)
                 && (((Ingredient_Data)(ParentSlot.stk.resource)).CutIngredientImages.Count() > 0))
           {
@@ -201,17 +200,20 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
             DuplicateInventorySlot();
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-            
+
             if (resizeCanvas != null)
             {
               // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
-              //transform the ingredient image
-              transform.SetParent(resizeCanvas);
-              transform.localPosition = Vector3.zero; // Center within the target canvas
-              transform.localScale = targetScale;
+              //put the cut image prefab in:
+              //hide the image
+              transform.gameObject.SetActive(false);
+              Debug.Log("ingredient is hidden!");
               canDrag = false;
-              //start chopscript experience :)
+              //set the ingredient data in chopScript
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
+              //spawn the cut prefab
+              chopScript.ShowIngredientPiecedTogether();
+            
             }
             cuttingBoardActive = true;
           }
@@ -221,17 +223,19 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             Debug.Log("[Drag_All]: There is already an ingredient on the cutting board.");
           }
         }
+        else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
+        {
+          pan ??= FindObjectOfType<Pan>();
+          DuplicateInventorySlot();
+          if (pan.AddToPan((Ingredient_Data)(ParentSlot.stk.resource))) // Only remove ingredient if pan was empty and ingredient was actually added;
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+          
+          // Start pan slider minigame
+          pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
+        }
       }
       else
       {
-        if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
-        {
-          if (isOnPot)
-          {
-            cauldron.RemoveFromPot((Ingredient_Data)(ParentSlot.stk.resource));
-            isOnPot = false;
-          }
-        }
         // Debug.Log("Not in RED, snapping back");
         rectTransform.position = ingrOriginalPos;
       }
@@ -278,7 +282,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   /// For another object to set this image_slot's ingredient type (used in inventory UI)
   /// </summary>
   /// <param name="iData"></param>
-  public void SetIngredientType(Ingredient_Data iData) => ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
+  public void SetIngredientType(Ingredient_Data iData)
+  {
+      if (Ingredient_Inventory.Instance == null)
+      {
+          Debug.LogWarning("[Drag_All] Ingredient_Inventory not found — skipping SetIngredientType");
+          return;
+      }
+
+      ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
+  }
 
   public void SetCuttingBoardInactive() => cuttingBoardActive = false;
 
@@ -292,6 +305,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
       errorText.GetComponent<TMP_Text>().text = "Water already added. Cannot add more!";
       errorText.SetActive(true);
+      cauldron.DisableErrorTextAfterDelay();
       return;
     }
 
@@ -305,7 +319,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       backgroundAnimator.SetBool("empty", false);
     }
     waterAdded = true;
-    audio.PlayBubblingOnLoop();
+    audioManager.PlayBubblingOnLoop();
   }
 
   /// <summary>
@@ -345,8 +359,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       backgroundAnimator.SetBool("hasWater", false);
       backgroundAnimator.SetBool("empty", false);
     }
-    audio.PlayBubblingOnLoop();
+    audioManager.PlayBubblingOnLoop();
   }
 
-  private void HideErrorText() => errorText.SetActive(false);
+  private void HideErrorText()
+  {
+    errorText?.SetActive(false);
+  }
 }

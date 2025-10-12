@@ -5,28 +5,27 @@ using UnityEngine.InputSystem;
 
 public class Player_Input_Controller : MonoBehaviour
 {
-    public static Player_Input_Controller instance;
+  public static Player_Input_Controller instance;
 
-    void Awake()
+  void Awake()
+  {
+    if (instance != null && instance != this)
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+      Destroy(gameObject);
+      return;
     }
 
-    public void DisablePlayerInput()
-    {
-        GetComponent<PlayerInput>().enabled = false;
-    }
+    instance = this;
+    DontDestroyOnLoad(gameObject);
+  }
 
-    public void EnablePlayerInput()
-    {
-        GetComponent<PlayerInput>().enabled = true;
-    }   
+  public void DisablePlayerInput()
+  {
+    GetComponent<PlayerInput>().enabled = false;
+  }
+
+  public void EnablePlayerInput()
+  {
+    GetComponent<PlayerInput>().enabled = true;
+  }   
 }

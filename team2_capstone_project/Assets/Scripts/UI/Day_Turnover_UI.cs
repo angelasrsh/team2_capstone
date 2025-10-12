@@ -113,6 +113,8 @@ public class Day_Turnover_UI : MonoBehaviour
         if (blackScreenFade == null)
             blackScreenFade = FindObjectOfType<Screen_Fade>();
 
+        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.getUpFromBed, 0.35f);
+        
         if (blackScreenFade != null)
             yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeOut());
 
