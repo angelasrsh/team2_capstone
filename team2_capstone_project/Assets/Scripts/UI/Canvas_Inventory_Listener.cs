@@ -4,45 +4,88 @@ using UnityEngine;
 using UnityEngine.UI;
 using Grimoire;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class Canvas_Inventory_Listener : MonoBehaviour
 {
     private Canvas InventoryCanvas;
     private InputAction openInventory;
 
-    // Set gameObject to the canvas this is on
-    void Start()
+    private void Awake()
     {
-        InventoryCanvas = this.gameObject.GetComponent<Canvas>();
-
-        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
-        if (pic != null)
-        {
-            openInventory = pic.GetComponent<PlayerInput>().actions["OpenInventory"];
-        }
+        InventoryCanvas = GetComponent<Canvas>();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void Start()
+    {
+        TryBindInput();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        TryBindInput(); // rebind safely after scene changes
+    }
+
+    private void TryBindInput()
+    {
+        if (Game_Manager.Instance == null)
+        {
+            Debug.LogWarning("[Canvas_Inventory_Listener] No Game_Manager found in scene.");
+            return;
+        }
+
+        PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+        if (playerInput == null)
+        {
+            Debug.LogWarning("[Canvas_Inventory_Listener] No PlayerInput found on Game_Manager.");
+            return;
+        }
+
+        openInventory = playerInput.actions.FindAction("OpenInventory", true);
+        if (openInventory == null)
+        {
+            Debug.LogWarning("[Canvas_Inventory_Listener] Could not find 'OpenInventory' action in PlayerInput.");
+            return;
+        }
+
+        openInventory.Enable();
+
+        Debug.Log("[Canvas_Inventory_Listener] Successfully bound to OpenInventory action.");
+    }
+
+    private void Update()
+    {
+        if (openInventory == null)
+            return;
+
         if (openInventory.WasPerformedThisFrame())
         {
             if (InventoryCanvas == null)
-                Debug.LogWarning("[Canv_Inv_Lis] Error: no InventoryCanvas assigned!");
-
-            else if (InventoryCanvas.enabled == true)
             {
-                // If open, close the inventory
+                Debug.LogWarning("[Canvas_Inventory_Listener] Error: no InventoryCanvas assigned!");
+                return;
+            }
+
+            if (InventoryCanvas.enabled)
+            {
+                // Close
                 InventoryCanvas.enabled = false;
-                Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagClose, 1f);
-                Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
+                Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bagClose, 1f);
             }
             else
             {
-                InventoryCanvas.enabled = true; // If closed, open the inventory
-                Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagOpen, 0.9f);
-                Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
-            }       
+                // Open
+                InventoryCanvas.enabled = true;
+                Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bagOpen, 0.9f);
+            }
+
+            Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
         }
     }
 }

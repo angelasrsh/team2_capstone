@@ -131,7 +131,7 @@ public class Journal_Menu : MonoBehaviour
 
     ShowDishTab(); // default to dish tab
     leftPagePanel.SetActive(false); // hide left page details at start
-    ResumeGame(false); // ensure journal is closed at start
+    StartCoroutine(DelayedHideJournal());
   }
 
   private void OnEnable()
@@ -218,6 +218,12 @@ public class Journal_Menu : MonoBehaviour
         Game_Events_Manager.Instance.JournalToggled(true);
       }
     }
+  }
+
+  private IEnumerator DelayedHideJournal()
+  {
+    yield return new WaitForEndOfFrame(); // wait one frame to avoid null references
+    ResumeGame(false); // don't play sound on initial hide
   }
 
   public void PauseGame()

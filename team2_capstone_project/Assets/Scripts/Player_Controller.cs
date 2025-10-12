@@ -33,6 +33,7 @@ public class Player_Controller : MonoBehaviour
     public LayerMask groundMask = ~0;
 
     [HideInInspector] public Vector2 movement;
+    private bool movementLocked = false;
     private Vector3 velocity;
     private Vector3 currentMoveVelocity;
     private bool isGrounded;
@@ -134,7 +135,8 @@ public class Player_Controller : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (controller == null) return;
+        if (movementLocked || controller == null)
+        return;
 
         // Smooth input for movement
         smoothInput = Vector2.MoveTowards(smoothInput, targetInput, 15f * Time.fixedDeltaTime);
@@ -193,6 +195,7 @@ public class Player_Controller : MonoBehaviour
 
     public void DisablePlayerMovement()
     {
+        movementLocked = true;
         if (playerInput != null && moveAction != null)
         {
             moveAction.Disable();
@@ -204,6 +207,7 @@ public class Player_Controller : MonoBehaviour
 
     public void EnablePlayerMovement()
     {
+        movementLocked = false;
         if (playerInput != null && moveAction != null)
             moveAction.Enable();
     }

@@ -1,76 +1,93 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 
 namespace Grimoire
 {
     /// <summary>
-    /// Base class for any objects that need to do something when the player is in range.
-    /// Must be on an object with a trigger collider.
-    /// Derived classes can override the PerformInteract() function to add their own reponses.
+    /// Base class for any interactable world object (e.g., collectibles, doors, NPCs).
+    /// Detects when the player is in range and listens for the Interact input.
     /// </summary>
     public class Interactable_Object : MonoBehaviour
     {
-        public GameObject InteractIcon; // Not sure if this is really needed
-        private bool playerInside = false;
-        private PlayerInput playerInput;
-        private InputAction interactAction;
+        [Header("UI")]
+        public GameObject InteractIcon;
 
-        void Awake()
+        protected bool playerInside = false;
+        protected PlayerInput playerInput;
+        protected InputAction interactAction;
+        protected Player_Controller player;
+
+        protected virtual void Awake()
         {
             if (InteractIcon == null)
             {
-                InteractIcon = transform.Find("Interact_Icon").gameObject;
+                var icon = transform.Find("Interact_Icon");
+                if (icon != null)
+                    InteractIcon = icon.gameObject;
             }
 
-            // New input system (to allow for PC + mobile controls)
             playerInput = FindObjectOfType<PlayerInput>();
+            if (playerInput == null)
+            {
+                Debug.LogError("[Interactable_Object] No PlayerInput found in scene!");
+                return;
+            }
+
             interactAction = playerInput.actions["Interact"];
+            if (interactAction == null)
+            {
+                Debug.LogError("[Interactable_Object] No 'Interact' action found in PlayerInput!");
+            }
+            else
+            {
+                Debug.Log("[Interactable_Object] Interact action found.");
+            }
         }
 
-        void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
-            // show interact option
-            if (other.gameObject.CompareTag("Player"))
+            if (other.CompareTag("Player"))
             {
+                playerInside = true;
+                player = other.GetComponent<Player_Controller>();
+
                 if (InteractIcon != null)
                     InteractIcon.SetActive(true);
-                playerInside = true;
-            }
 
+                Debug.Log($"[Interactable_Object] Player entered {name}");
+            }
         }
 
-        void Update()
+        protected virtual void OnTriggerExit(Collider other)
         {
-            if (playerInside && interactAction.triggered)
+            if (other.CompareTag("Player"))
+            {
+                playerInside = false;
+                player = null;
+
+                if (InteractIcon != null)
+                    InteractIcon.SetActive(false);
+
+                Debug.Log($"[Interactable_Object] Player exited {name}");
+            }
+        }
+
+        protected virtual void Update()
+        {
+            if (!playerInside || interactAction == null)
+                return;
+
+            if (interactAction.triggered)
             {
                 PerformInteract();
             }
-
         }
 
-        void OnTriggerExit(Collider other)
-        {
-            // hide interact option
-            if (other.gameObject.CompareTag("Player"))
-            {
-                if (InteractIcon != null)
-                    InteractIcon.SetActive(false);
-                playerInside = false;
-            }
-
-        }
-
-        /// <summary>
-        /// Action that happens when player presses 'E' to interact while nearby.
-        /// </summary>
         public virtual void PerformInteract()
         {
-            Debug.Log($"[IntObj] Player interacted with " + gameObject.ToString());
+            Debug.Log($"[Interactable_Object] Player interacted with {name} (base)");
         }
     }
-
 }

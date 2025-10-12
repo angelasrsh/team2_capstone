@@ -8,6 +8,7 @@ public class Room_Change_Manager : MonoBehaviour
 {
     public static Room_Change_Manager instance;
     private Screen_Fade blackScreenFade;
+    private Player_Controller player;
 
     private void Awake()
     {
@@ -124,8 +125,9 @@ public class Room_Change_Manager : MonoBehaviour
         }
 
         // Disable player controls
-        if (Player_Input_Controller.instance != null)
-            Player_Input_Controller.instance.DisablePlayerInput();
+        player = FindObjectOfType<Player_Controller>();
+        if (player != null)
+            player.DisablePlayerMovement();
 
         // Fade out music/ambient
         if (Music_Persistence.instance != null)

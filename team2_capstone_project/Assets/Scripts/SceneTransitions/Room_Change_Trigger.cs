@@ -19,6 +19,11 @@ public class Room_Change_Trigger : MonoBehaviour
     {
       Debug.Log("Player entered the trigger for room change: " + exitingTo);
       isSceneTransitioning = true;
+
+      player = other.GetComponent<Player_Controller>();
+      if (player != null)
+        player.DisablePlayerMovement();
+          
       Game_Events_Manager.Instance.RoomChange(exitingTo);
       Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);    
     }
