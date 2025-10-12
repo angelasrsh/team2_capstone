@@ -12,12 +12,7 @@ public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
     {
         Game_Events_Manager.Instance.onRoomChange += LeaveBedroom;
 
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
-        if (dm != null)
-        {
-            string fillerKey = $"Tutorial.Bedroom";
-            dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
-        }
+        dm = FindObjectOfType<Dialogue_Manager>();
 
         //DelayedInstructionStart();
 
@@ -28,6 +23,15 @@ public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
     {
         Game_Events_Manager.Instance.onRoomChange -= LeaveBedroom;
 
+    }
+
+    private void Start()
+    {
+        if (dm != null)
+        {
+            string fillerKey = $"Tutorial.Bedroom";
+            dm.PlayScene(fillerKey);
+        }
     }
 
     /// <summary>

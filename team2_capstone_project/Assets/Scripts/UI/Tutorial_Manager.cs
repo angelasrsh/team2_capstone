@@ -68,9 +68,9 @@ public class Tutorial_Manager : MonoBehaviour
 
         for (int i = 0; i < TutorialList.Length; i++)
         {
-            QuestIDQuestStateMap[TutorialRoomIDs[i].ToString()] = Quest_State.REQUIREMENTS_NOT_MET;
-            QuestIDQuestStateMap[TutorialRoomIDs[i].ToString()] = Quest_Manager.Instance.GetQuestByID(TutorialList[i].id).state;
-            Helpers.printLabeled(this, TutorialRoomIDs[i].ToString() + QuestIDQuestStateMap[TutorialRoomIDs[i].ToString()].ToString());
+            QuestIDQuestStateMap[TutorialList[i].id] = Quest_State.REQUIREMENTS_NOT_MET;
+            QuestIDQuestStateMap[TutorialList[i].id] = Quest_Manager.Instance.GetQuestByID(TutorialList[i].id).state;
+            Helpers.printLabeled(this, TutorialList[i].id + QuestIDQuestStateMap[TutorialList[i].id].ToString());
         }
 
         Helpers.printLabeled(this, "");
