@@ -60,6 +60,7 @@ public class Room_Change_Interact : MonoBehaviour
             if (player != null)
             {
                 Player_Input_Controller.instance.DisablePlayerInput();
+                Game_Events_Manager.Instance.RoomChange(exitingTo);
                 Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
             }
         }

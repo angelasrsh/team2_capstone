@@ -1,28 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class Go_To_Chopping_Board_Quest_Step : Tutorial_Quest_Step
+public class Go_To_Chopping_Board_Quest_Step : Quest_Step
 {
     void OnEnable()
     {
-        SceneManager.sceneLoaded += onSceneLoaded;
-        DelayedInstructionStart();
-
+        Game_Events_Manager.Instance.onRoomChange += RoomChange;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
-        SceneManager.sceneLoaded -= onSceneLoaded;
+        Game_Events_Manager.Instance.onRoomChange -= RoomChange;
     }
 
 
-    private void onSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void RoomChange(Room_Data.RoomID newRoom)
     {
-        if (scene.name == "Chopping_Minigame")
-            FinishQuestStep();
-            
+        if (newRoom == Room_Data.RoomID.Chopping_Minigame)
+            FinishQuestStep(); // Finish and destroy this object
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Grimoire;
 using UnityEngine;
 
 public class Day_Turnover_Manager : MonoBehaviour
@@ -83,6 +84,13 @@ public class Day_Turnover_Manager : MonoBehaviour
 
         // fire after reset
         OnDayStarted?.Invoke();
+
+        // Show menu UI
+        Choose_Menu_UI ui = FindObjectOfType<Choose_Menu_UI>();
+        if (ui != null)
+        {
+            ui.gameObject.SetActive(true);
+        }
     }
 }
 

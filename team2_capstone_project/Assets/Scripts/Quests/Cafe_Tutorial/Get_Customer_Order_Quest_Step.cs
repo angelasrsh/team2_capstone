@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Get_Customer_Order_Quest_Step : Tutorial_Quest_Step
+public class Get_Customer_Order_Quest_Step : Quest_Step
 {
     void OnEnable()
     {
         Game_Events_Manager.Instance.onGetOrder += GetCustomerOrder;
-        DelayedInstructionStart();
     }
 
     // Unsubscribe to clean up

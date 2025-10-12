@@ -26,7 +26,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   private Vector3 ladleOriginalPos;
 
   private Image ladleImage; // reference to the ladle’s Image component
-  private Audio_Manager audio;
+  private Audio_Manager audioManager;
 
   private void Awake()
   {
@@ -39,8 +39,8 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     if (ladleImage == null)
       Debug.LogError("[Stir_Controller]: No Image component found on Ladle!");
 
-    audio = Audio_Manager.instance;
-    if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && audio == null)
+    audioManager = Audio_Manager.instance;
+    if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && audioManager == null)
       Debug.LogError("[Stir_Controller]: No audio manager instance received from Drag_All!");
   }
 
@@ -64,7 +64,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       {
         // Just started moving → start audio
         isMoving = true;
-        audio.PlayStirringOnLoop();
+        audioManager.PlayStirringOnLoop();
       }
 
       if (backgroundAnimator != null)
@@ -78,7 +78,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       {
         // Only stop once after being idle for a while
         isMoving = false;
-        audio.StopStirring();
+        audioManager.StopStirring();
 
         if (backgroundAnimator != null)
           backgroundAnimator.speed = 0f;
@@ -132,7 +132,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   {
     isDragging = false;
     isStirring = false; // shouldn't stir if not dragging ladle
-    audio.StopStirring();
+    audioManager.StopStirring();
     if (backgroundAnimator != null)
       backgroundAnimator.SetBool("isStirring", false);
     transform.position = ladleOriginalPos;
@@ -146,7 +146,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   {
     Debug.Log("[Stir_Controller]: Stirring started! Entered red zone.");
     isStirring = true;
-    audio.PlayStirringOnLoop();
+    audioManager.PlayStirringOnLoop();
 
     if (ladleImage != null)
       ladleImage.enabled = false;
@@ -175,7 +175,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       backgroundAnimator.SetBool("isStirring", false);
 
     Drag_All.ResetWaterStatus();
-    audio.StopStirring();
-    audio.StopBubbling();
+    audioManager.StopStirring();
+    audioManager.StopBubbling();
   }
 }

@@ -18,16 +18,13 @@ public class Quest_Info_SO : ScriptableObject
     // Display name
     public string DisplayName;
 
-    // Set this if the quest is only active in certain rooms
-    public List<Room_Data.RoomID> ActiveRooms;
-
     // Could later add requirements here (ex: finishing other quests)
 
     // Quest step GameObjects holding the quest step info
     public GameObject[] QuestStepPrefabs;
 
     // List of strings for instructions, dialogue, etc.
-    //public String[] dialogueList; Replaced with individual-step dialogue
+    public String[] dialogueList;
 
     // Take identifier name from filename
     private void OnValidate()

@@ -17,13 +17,21 @@ public class Ingredient_Data : Item_Data
   // mainly used to count processed variants (e.g. chopped) as their base ingredient
   // used to tracking ingredient requirements for dishes in Journal_Menu
   public List<Ingredient_Data> countsAs;
-
+  public IngredientType ingredientType;
   public string description;
   public Sprite[] CutIngredientImages;
   public List<Dish_Data> usedInDishes;
   public List<Ingredient_Requirement> makesIngredient; // e.g. 1 bone used to make bone broth
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
-  public IngredientType ingredientType;
+  public GameObject CombinedCutPiecePrefab;
+}
+
+[System.Serializable]
+public class Ingredient_Requirement
+{
+  public Ingredient_Data ingredient;
+  public int amountRequired;  
+  public Recipe method; // how this ingredient is made (i.e., chop, fry, cauldron, combine)    
 }
 
 public enum IngredientType
