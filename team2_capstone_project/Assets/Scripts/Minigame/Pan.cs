@@ -15,8 +15,10 @@ public class Pan : MonoBehaviour
   private CookedState secondCookedState = CookedState.Raw;
   [SerializeField] private GameObject errorText;
   [SerializeField] private Image ingrInPanImage; // reference to the pan's Image component
-  [SerializeField] private GameObject inventoryCanvas; // reference to the inventory canvas to re-enable after minigame
-  [SerializeField] private GameObject dishInventoryCanvas; // reference to the dish inventory canvas to re-enable after minigame
+  [SerializeField] private GameObject inventoryCanvas; // reference to the inventory canvas
+  [SerializeField] private GameObject dishInventoryCanvas; // reference to the dish inventory canvas
+  [SerializeField] private GameObject slider; // reference to the cooking slider
+  private Slider sliderComponent;
   public enum CookedState
   {
     Raw,
@@ -26,7 +28,10 @@ public class Pan : MonoBehaviour
 
   public void Start()
   {
-    ResetAll();
+    sliderComponent = slider.GetComponent<Slider>();
+    if (sliderComponent == null)
+      Debug.LogError("[Pan]: No Slider component found on Slider GameObject!");
+      ResetAll();
   }
 
   /// <summary>
@@ -41,6 +46,8 @@ public class Pan : MonoBehaviour
     firstCookedState = CookedState.Raw;
     secondCookedState = CookedState.Raw;
     ingrInPanImage.gameObject.SetActive(false);
+    sliderComponent.value = 0;
+    slider.SetActive(false);
   }
 
   /// <summary>
@@ -101,6 +108,8 @@ public class Pan : MonoBehaviour
     //   Audio_Manager.instance.AddOneIngredient();
     inventoryCanvas.SetActive(false);
     dishInventoryCanvas.SetActive(false);
+    slider.SetActive(true);
+    // sliderComponent.value = 0;
     return true;
   }
 
