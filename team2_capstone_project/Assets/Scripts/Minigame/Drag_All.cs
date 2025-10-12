@@ -229,6 +229,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
           DuplicateInventorySlot();
           if (pan.AddToPan((Ingredient_Data)(ParentSlot.stk.resource))) // Only remove ingredient if pan was empty and ingredient was actually added;
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+          
+          // Start pan slider minigame
+          pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
         }
       }
       else
