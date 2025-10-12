@@ -34,7 +34,6 @@ public class Room_Change_Trigger : MonoBehaviour
     Audio_Manager.instance.StopBubbling();
     Audio_Manager.instance.StopAmbientFire();
     Drag_All.ResetMinigame();
-    Game_Events_Manager.Instance.RoomChange(exitingTo);
     Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
   }
 }

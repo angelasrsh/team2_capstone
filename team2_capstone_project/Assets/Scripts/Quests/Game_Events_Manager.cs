@@ -161,16 +161,23 @@ public class Game_Events_Manager : MonoBehaviour
             onQuestStepChange(id, stepIndex);
 
     }
+
+    public event Action<string, bool> onSetQuestPaused;
+    public void SetQuestPaused(string id, bool isPaused)
+    {
+        if (onSetQuestPaused != null)
+            onSetQuestPaused(id, isPaused);
+    }
     #endregion
 
     //////////// SCENE TRANSITION EVENTS ///////////////
     #region Scene Transition Events
 
-    public event Action<Room_Data.RoomID> onRoomChange;
-    public void RoomChange(Room_Data.RoomID newRoom)
+    public event Action<Room_Data.RoomID, Room_Data.RoomID> onRoomChange;
+    public void RoomChange(Room_Data.RoomID currentRoom, Room_Data.RoomID exitingTo)
     {
         if (onRoomChange != null)
-            onRoomChange(newRoom);
+            onRoomChange(currentRoom, exitingTo);
     }
 
     #endregion
