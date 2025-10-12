@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
 {
+    Dialogue_Manager dm;
+
     // Start is called before the first frame update
     void OnEnable()
     {
@@ -17,8 +19,7 @@ public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
             dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
         }
 
-        DelayedInstructionStart();
-
+        //DelayedInstructionStart();
 
     }
 
