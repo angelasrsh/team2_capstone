@@ -15,63 +15,36 @@ using UnityEngine;
 public class Ingredient_Inventory : Inventory
 {
   public static Ingredient_Inventory Instance { get; private set; }
-  [HideInInspector] public List<Ingredient_Data> AllIngredientList;
+  [HideInInspector] public List<Ingredient_Data> AllIngredients;
   private Ingredient_Data water;
   public Dictionary<String, Ingredient_Data> IngredientDict = new Dictionary<string, Ingredient_Data>(); // Make private once we know it works
 
   new private void Awake()
   {
-      if (Instance != null && Instance != this)
-      {
-          Destroy(gameObject);
-          return;
-      }
-
-      Instance = this;
-      DontDestroyOnLoad(gameObject);
+    if (Instance != null && Instance != this)
+    {
+      Destroy(gameObject);
+      return;
+    }
+    
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
 
     base.Awake();
   }
 
   private void Start()
   {
-      AllIngredientList = Game_Manager.Instance.ingredientDatabase.allIngredients;
-      // Ensure InventorySizeLimit before initialization
-      InventorySizeLimit = 12;
-      InitializeInventoryStacks<Item_Stack>();
-      updateInventory();
-
-      // Now build ingredient dictionary
-      IngredientDict.Clear();
-      foreach (Ingredient_Data idata in AllIngredientList)
-      {
-          IngredientDict.Add(idata.Name, idata);
-          if (idata.Name == "Water")
-              water = idata;
-      }
-
-      // Put the list of ingredients into the dictionary to be accessed by their name string
-      foreach (Ingredient_Data idata in AllIngredientList)
-      {
-          if (idata == null) continue;
-
-          // Add the full name
-          if (!IngredientDict.ContainsKey(idata.Name))
-              IngredientDict.Add(idata.Name, idata);
-
-          // Also add a trimmed version w/o numbers or underscores
-          string cleanName = idata.Name;
-          cleanName = cleanName.Trim();
-          cleanName = cleanName.Replace("_", " ");
-          cleanName = System.Text.RegularExpressions.Regex.Replace(cleanName, @"^\d+\s*", "");
-
-          if (!IngredientDict.ContainsKey(cleanName))
-              IngredientDict.Add(cleanName, idata);
-
-          if (idata.Name.Contains("Water", System.StringComparison.OrdinalIgnoreCase))
-              water = idata;
-      }
+    AllIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
+    IngredientDict.Clear();
+    // Put the list of ingredients into the dictionary to be accessed by their name string
+    foreach (Ingredient_Data idata in AllIngredients)
+    {
+      IngredientDict.Add(idata.Name, idata);
+      if (idata.Name == "Water")
+        water = idata;
     }
+  }
 
   /// <summary>
   /// Overload AddResources to allow for using the IngredientType enum
@@ -82,9 +55,8 @@ public class Ingredient_Inventory : Inventory
   public int AddResources(IngredientType type, int count)
   {
     // Error-checking
-    
     if (count < 0)
-      Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
+      Debug.LogError("[Invtry] Cannot add negative amount");
 
     // Track the amount of resources we still need to add
     int amtLeftToAdd = count;
@@ -212,6 +184,12 @@ public class Ingredient_Inventory : Inventory
         return "French Fries";
       case IngredientType.Oil:
         return "Oil";
+      case IngredientType.Water:
+        return "Water";
+      case IngredientType.Uncooked_Patty:
+        return "Uncooked Patty";
+      case IngredientType.Cooked_Patty:
+        return "Cooked Patty";
       default:
         return "";
     }
@@ -258,6 +236,12 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.French_Fries;
       case "Oil":
         return IngredientType.Oil;
+      case "Water":
+        return IngredientType.Water;
+      case "Uncooked Patty":
+        return IngredientType.Uncooked_Patty;
+      case "Cooked Patty":
+        return IngredientType.Cooked_Patty;
       default:
         return IngredientType.Null;
     }
