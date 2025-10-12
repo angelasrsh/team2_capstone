@@ -13,6 +13,7 @@ public class Journal_Menu : MonoBehaviour
 {
   public static Journal_Menu Instance;
   private bool isPaused = false; // Currently will overlap pause menu, I think
+  private bool haveTabsInitialized = false;
   private Player_Progress playerProgress = Player_Progress.Instance;
   private InputAction openJournalAction;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
@@ -135,7 +136,7 @@ public class Journal_Menu : MonoBehaviour
 
     ShowDishTab(); // default to dish tab
     leftPagePanel.SetActive(false); // hide left page details at start
-    ResumeGame(); // start with journal closed
+    ResumeGame(false); // ensure journal is closed at start
   }
 
   private void OnEnable()
@@ -185,14 +186,14 @@ public class Journal_Menu : MonoBehaviour
   }
 
   // Update is called once per frame
-  void Update()
+  private void Update()
   {
     if (openJournalAction.WasPerformedThisFrame())
     {
       if (isPaused)
       {
         ResumeGame();
-        Game_Events_Manager.Instance.JournalToggled(false); //this is being checked every time the journal is opened/closed. Might not be ideal
+        Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
       }
       else
       {
@@ -205,22 +206,24 @@ public class Journal_Menu : MonoBehaviour
   public void PauseGame()
   {
     Debug.Log("Opening journal and pausing game...");
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 1f);
     darkOverlay.SetActive(true);
     journalContents.SetActive(true);
     tabs.SetActive(true);
     isPaused = true;
   }
 
-  public void ResumeGame()
+  public void ResumeGame(bool playSound = true)
   {
-    Debug.Log("Closing journal and resuming game...");
+      Debug.Log("Closing journal and resuming game...");
 
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose);
+      if (playSound)
+          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.3f);
 
-    darkOverlay.SetActive(false);
-    journalContents.SetActive(false);
-    tabs.SetActive(false);
-    isPaused = false;
+      darkOverlay.SetActive(false);
+      journalContents.SetActive(false);
+      tabs.SetActive(false);
+      isPaused = false;
   }
 
   #region Recipe Tab Methods
@@ -428,16 +431,24 @@ public class Journal_Menu : MonoBehaviour
   /// </summary>
   public void ShowDishTab()
   {
-    // Debug.Log("Showing Dish tab...");
-    detailsText.gameObject.SetActive(false);
-    affectionGauge.gameObject.SetActive(false);
-    recipeImage.gameObject.SetActive(true);
-    if (currentTab != Tabs.Dish) // only hide left page details when switching to dish tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to dish tab, since no dish selected yet
-      currentTab = Tabs.Dish;
-      FillRightPage();
-    }
+      detailsText.gameObject.SetActive(false);
+      affectionGauge.gameObject.SetActive(false);
+      recipeImage.gameObject.SetActive(true);
+
+      bool isSwitchingTabs = currentTab != Tabs.Dish;
+      if (isSwitchingTabs)
+      {
+          leftPagePanel.SetActive(false);
+          currentTab = Tabs.Dish;
+          FillRightPage();
+
+          // Only play sound if tabs have already been initialized once
+          if (haveTabsInitialized)
+              PlayJournalTabSelectSound();
+      }
+
+      // After first tab setup, mark as initialized
+      haveTabsInitialized = true;
   }
 
   /// <summary>
@@ -445,16 +456,22 @@ public class Journal_Menu : MonoBehaviour
   /// </summary>
   public void ShowIngredientTab()
   {
-    // Debug.Log("Showing Ingredient tab...");
-    detailsText.gameObject.SetActive(true);
-    affectionGauge.gameObject.SetActive(false);
-    recipeImage.gameObject.SetActive(false);
-    if (currentTab != Tabs.Ingredient) // only hide left page details when switching to ingredient tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to ingredient tab, since no ingredient selected yet
-      currentTab = Tabs.Ingredient;
-      FillRightPage();
-    }
+      detailsText.gameObject.SetActive(true);
+      affectionGauge.gameObject.SetActive(false);
+      recipeImage.gameObject.SetActive(false);
+
+      bool isSwitchingTabs = currentTab != Tabs.Ingredient;
+      if (isSwitchingTabs)
+      {
+          leftPagePanel.SetActive(false);
+          currentTab = Tabs.Ingredient;
+          FillRightPage();
+
+          if (haveTabsInitialized)
+              PlayJournalTabSelectSound();
+      }
+
+      haveTabsInitialized = true;
   }
 
   /// <summary>
@@ -463,15 +480,21 @@ public class Journal_Menu : MonoBehaviour
   /// </summary>
   public void ShowNPCTab()
   {
-    // Debug.Log("Showing NPC tab...");
-    detailsText.gameObject.SetActive(true);
-    recipeImage.gameObject.SetActive(false);
-    if (currentTab != Tabs.NPC) // only hide left page details when switching to npc tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to npc tab, since no npc selected yet
-      currentTab = Tabs.NPC;
-      FillRightPage();
-    }
+      detailsText.gameObject.SetActive(true);
+      recipeImage.gameObject.SetActive(false);
+
+      bool isSwitchingTabs = currentTab != Tabs.NPC;
+      if (isSwitchingTabs)
+      {
+          leftPagePanel.SetActive(false);
+          currentTab = Tabs.NPC;
+          FillRightPage();
+
+          if (haveTabsInitialized)
+              PlayJournalTabSelectSound();
+      }
+
+      haveTabsInitialized = true;
   }
 
   /// <summary>
@@ -494,6 +517,8 @@ public class Journal_Menu : MonoBehaviour
   public void FlipToNext()
   {
     Debug.Log("Flipping to next page...");
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.pageFlip, 0.8f);
+
     if (tabCurrentPage[currentTab] < tabMaxPages[currentTab])
     {
       tabCurrentPage[currentTab] += 1;
@@ -512,6 +537,8 @@ public class Journal_Menu : MonoBehaviour
   public void FlipToPrevious()
   {
     Debug.Log("Flipping to previous page...");
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.pageFlip, 0.8f);
+
     if (tabCurrentPage[currentTab] > 1)
     {
       tabCurrentPage[currentTab] -= 1;
@@ -564,7 +591,7 @@ public class Journal_Menu : MonoBehaviour
       iconImage.preserveAspect = true;
 
       if (onDailyMenu)
-          starImage.gameObject.SetActive(true);
+        starImage.gameObject.SetActive(true);
       else
         starImage.gameObject.SetActive(false);
       starImage.preserveAspect = true;
@@ -590,6 +617,13 @@ public class Journal_Menu : MonoBehaviour
         Instance.DisplayIngredientDetails(ingredient);
       else if (currentItem is CustomerData npc)
         Instance.DisplayNPCDetails(npc);
+
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.clickSFX, 0.8f);
     }
+  }
+  
+  private void PlayJournalTabSelectSound()
+  {
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.4f);
   }
 }

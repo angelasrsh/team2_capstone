@@ -23,25 +23,33 @@ public class Dish_Tool_Inventory : Inventory
   // How many stacks this inventory can have
   [field: System.NonSerialized] public override int InventorySizeLimit { get; set; } = 2;
 
-    // Testing
-    // public Dish_Data TEST_DISH;
+  // Testing
+  // public Dish_Data TEST_DISH;
 
-  new private void Awake()
+  protected override void Awake()
   {
+    // Singleton enforcement
     if (Instance != null && Instance != this)
-      Destroy(gameObject);
-    else
     {
-      Instance = this;
-      DontDestroyOnLoad(gameObject);
+      Destroy(gameObject);
+      return;
     }
 
-    // Create inventory stack structure to hold Dish_Tool_Stacks
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+
+    // Initialize Dish_Tool inventory specifically
+    InventorySizeLimit = 2;
     InitializeInventoryStacks<Dish_Tool_Stack>();
-    updateInventory();
 
     // AddResources(TEST_DISH, 1);
     // AddResources(TEST_DISH, 3);
+  }
+  
+  private void Start()
+  {
+    // Delay to Start to ensure Inventory_Grid is also initialized
+    updateInventory();
   }
 
   /// <summary>

@@ -45,7 +45,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
 
   [Header("Audio")]
-  private static Audio_Manager audio;
+  private static Audio_Manager audioManager;
   private static bool audioTriggered = false;
 
   // Start is called before the first frame update
@@ -95,16 +95,14 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       Debug.Log("- " + comp.GetType().Name);
     }
 
-    if (audio == null)
-      audio = Audio_Manager.instance;
+    if (audioManager == null)
+      audioManager = Audio_Manager.instance;
     
     if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && !audioTriggered)
     {
-      // audio.LowerRestaurantMusic();
-      audio.StartFire();
+      audioManager.StartFire();
       audioTriggered = true;
     }
-
 
     if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
     {
@@ -206,13 +204,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             if (resizeCanvas != null)
             {
               // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
-              //transform the ingredient image
-              transform.SetParent(resizeCanvas);
-              transform.localPosition = Vector3.zero; // Center within the target canvas
-              transform.localScale = targetScale;
+              //put the cut image prefab in:
+              //hide the image
+              transform.gameObject.SetActive(false);
+              Debug.Log("ingredient is hidden!");
               canDrag = false;
-              //start chopscript experience :)
+              //set the ingredient data in chopScript
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
+              //spawn the cut prefab
+              chopScript.ShowIngredientPiecedTogether();
+            
             }
             cuttingBoardActive = true;
           }
@@ -278,7 +279,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   /// For another object to set this image_slot's ingredient type (used in inventory UI)
   /// </summary>
   /// <param name="iData"></param>
-  public void SetIngredientType(Ingredient_Data iData) => ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
+  public void SetIngredientType(Ingredient_Data iData)
+  {
+      if (Ingredient_Inventory.Instance == null)
+      {
+          Debug.LogWarning("[Drag_All] Ingredient_Inventory not found — skipping SetIngredientType");
+          return;
+      }
+
+      ingredientType = Ingredient_Inventory.Instance.IngrDataToEnum(iData);
+  }
 
   public void SetCuttingBoardInactive() => cuttingBoardActive = false;
 
@@ -306,7 +316,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       backgroundAnimator.SetBool("empty", false);
     }
     waterAdded = true;
-    audio.PlayBubblingOnLoop();
+    audioManager.PlayBubblingOnLoop();
   }
 
   /// <summary>
@@ -346,7 +356,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       backgroundAnimator.SetBool("hasWater", false);
       backgroundAnimator.SetBool("empty", false);
     }
-    audio.PlayBubblingOnLoop();
+    audioManager.PlayBubblingOnLoop();
   }
 
   private void HideErrorText()

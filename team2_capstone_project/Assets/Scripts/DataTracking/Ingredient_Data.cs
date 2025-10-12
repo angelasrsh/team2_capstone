@@ -23,6 +23,7 @@ public class Ingredient_Data : Item_Data
   public List<Dish_Data> usedInDishes;
   public List<Ingredient_Requirement> makesIngredient; // e.g. 1 bone used to make bone broth
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
+  public GameObject CombinedCutPiecePrefab;
 }
 
 [System.Serializable]
