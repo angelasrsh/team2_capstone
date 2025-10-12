@@ -48,6 +48,7 @@ public class Pan : MonoBehaviour
     sliderComponent = slider.GetComponent<Slider>();
     if (sliderComponent == null)
       Debug.LogError("[Pan]: No Slider component found on Slider GameObject!");
+    // sliderComponent.interactable = false;
     ResetAll();
     panController = draggablePan.GetComponent<Pan_Controller>();
     if (panController == null)

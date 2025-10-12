@@ -78,7 +78,8 @@ public enum IngredientType
   Cut_Mandrake,
   French_Fries,
   Honey,
-  Oil
+  Oil,
+  Burnt_Blob
 }
 
 // public class CutLine
