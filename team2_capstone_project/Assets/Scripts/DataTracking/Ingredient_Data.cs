@@ -19,19 +19,43 @@ public class Ingredient_Data : Item_Data
   public List<Ingredient_Data> countsAs;
   public IngredientType ingredientType;
   public string description;
+  public GameObject CombinedCutPiecePrefab;
+  public CookThresholds cookThresholds; // null if not fryable
+
+  [Header("Lists")]
   public Sprite[] CutIngredientImages;
   public List<Dish_Data> usedInDishes;
   public List<Ingredient_Requirement> makesIngredient; // e.g. 1 bone used to make bone broth
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
-  public GameObject CombinedCutPiecePrefab;
 }
 
 [System.Serializable]
 public class Ingredient_Requirement
 {
   public Ingredient_Data ingredient;
-  public int amountRequired;  
+  public int amountRequired;
   public Recipe method; // how this ingredient is made (i.e., chop, fry, cauldron, combine)    
+}
+
+[System.Serializable]
+public class CookThresholds
+{
+  [Range(0f, 1f)] public float rawEnd = 0.4f;        // End of raw zone
+  [Range(0f, 1f)] public float almostEnd = 0.6f;     // End of almost cooked zone
+  [Range(0f, 1f)] public float cookedEnd = 0.7f;     // End of cooked zone (perfect)
+  [Range(0f, 1f)] public float overcookedEnd = 0.8f; // End of overcooked zone
+  // Burnt zone automatically goes from overcookedEnd to 1
+
+  /// <summary>
+  /// Ensures the thresholds are in ascending order between 0 and 1.
+  /// </summary>
+  public void ClampValues()
+  {
+    rawEnd = Mathf.Clamp01(rawEnd);
+    almostEnd = Mathf.Clamp(rawEnd, 0f, 1f);
+    cookedEnd = Mathf.Clamp(cookedEnd, almostEnd, 1f);
+    overcookedEnd = Mathf.Clamp(overcookedEnd, cookedEnd, 1f);
+  }
 }
 
 public enum IngredientType

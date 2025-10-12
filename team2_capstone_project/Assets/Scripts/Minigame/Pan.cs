@@ -17,8 +17,24 @@ public class Pan : MonoBehaviour
   [SerializeField] private Image ingrInPanImage; // reference to the pan's Image component
   [SerializeField] private GameObject inventoryCanvas; // reference to the inventory canvas
   [SerializeField] private GameObject dishInventoryCanvas; // reference to the dish inventory canvas
-  [SerializeField] private GameObject slider; // reference to the cooking slider
+
+  [Header("Slider")]
   private Slider sliderComponent;
+  [SerializeField] private GameObject slider; // reference to the cooking slider
+  // [SerializeField] private Image rawZone;
+  // [SerializeField] private Image cookedZone;
+  // [SerializeField] private Image burntZone;
+  [SerializeField] private RectTransform rawRect;
+  [SerializeField] private RectTransform almostRect;
+  [SerializeField] private RectTransform cookedRect;
+  [SerializeField] private RectTransform overcookedRect;
+  [SerializeField] private RectTransform burntRect;
+  // [Range(0, 1)] public float rawEnd = 0.4f;
+  // [Range(0, 1)] public float almostEnd = 0.6f;
+  // [Range(0, 1)] public float cookedEnd = 0.7f;
+  // [Range(0, 1)] public float overcookedEnd = 0.8f;
+  // burnt zone will fill the rest (overcookedEnd to 1)
+
   public enum CookedState
   {
     Raw,
@@ -110,7 +126,68 @@ public class Pan : MonoBehaviour
     dishInventoryCanvas.SetActive(false);
     slider.SetActive(true);
     // sliderComponent.value = 0;
+
+    UpdateSliderZones(ingredientInPan);
     return true;
+  }
+
+  /// <summary>
+  /// Allows for each ingredient to have different raw/cooked/burnt zones.
+  /// </summary>
+  private void UpdateSliderZones(Ingredient_Data ingredient)
+  {
+    if (!slider)
+      return;
+
+    if (!rawRect || !almostRect || !cookedRect || !overcookedRect || !burntRect) return;
+
+    // Default thresholds
+    float rawEnd = 0.4f;
+    float almostEnd = 0.6f;
+    float cookedEnd = 0.7f;
+    float overcookedEnd = 0.8f;
+
+    // Use ingredient-specific thresholds if available
+    if (ingredient.cookThresholds != null)
+    {
+      rawEnd = ingredient.cookThresholds.rawEnd;
+      almostEnd = ingredient.cookThresholds.almostEnd;
+      cookedEnd = ingredient.cookThresholds.cookedEnd;
+      overcookedEnd = ingredient.cookThresholds.overcookedEnd;
+      ingredient.cookThresholds.ClampValues();
+    }
+
+    // Raw zone
+    rawRect.anchorMin = new Vector2(0f, 0f);
+    rawRect.anchorMax = new Vector2(rawEnd, 1f);
+    rawRect.offsetMin = rawRect.offsetMax = Vector2.zero;
+
+    // Almost cooked
+    almostRect.anchorMin = new Vector2(rawEnd, 0f);
+    almostRect.anchorMax = new Vector2(almostEnd, 1f);
+    almostRect.offsetMin = almostRect.offsetMax = Vector2.zero;
+
+    // Cooked
+    cookedRect.anchorMin = new Vector2(almostEnd, 0f);
+    cookedRect.anchorMax = new Vector2(cookedEnd, 1f);
+    cookedRect.offsetMin = cookedRect.offsetMax = Vector2.zero;
+
+    // Overcooked
+    overcookedRect.anchorMin = new Vector2(cookedEnd, 0f);
+    overcookedRect.anchorMax = new Vector2(overcookedEnd, 1f);
+    overcookedRect.offsetMin = overcookedRect.offsetMax = Vector2.zero;
+
+    // Burnt
+    burntRect.anchorMin = new Vector2(overcookedEnd, 0f);
+    burntRect.anchorMax = new Vector2(1f, 1f);
+    burntRect.offsetMin = burntRect.offsetMax = Vector2.zero;
+
+    // Optional: assign colors (Cooking Mama style)
+    // rawRect.GetComponent<Image>().color = new Color32(255, 76, 76, 255);       // Red
+    // almostRect.GetComponent<Image>().color = new Color32(255, 213, 79, 255);   // Yellow
+    // cookedRect.GetComponent<Image>().color = new Color32(102, 255, 102, 255);  // Green
+    // overcookedRect.GetComponent<Image>().color = new Color32(255, 112, 67, 255);// Orange
+    // burntRect.GetComponent<Image>().color = new Color32(62, 39, 35, 255);
   }
 
   public bool IsEmpty()

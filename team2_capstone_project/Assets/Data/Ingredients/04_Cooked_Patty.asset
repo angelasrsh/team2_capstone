@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Cooked Patty
   Amount: 0
-  Image: {fileID: 21300000, guid: ac2526ab11379c840951bc3f80e9390b, type: 3}
+  Image: {fileID: 1268900555, guid: b0c12ea46ac20b049bac7fc70a80e885, type: 3}
   tier: 0
   price: 0
   rarityWeight: 0
@@ -23,6 +23,12 @@ MonoBehaviour:
   countsAs: []
   ingredientType: 12
   description: 
+  CombinedCutPiecePrefab: {fileID: 0}
+  cookThresholds:
+    rawEnd: 0.2
+    almostEnd: 0.4
+    cookedEnd: 0.6
+    overcookedEnd: 0.8
   CutIngredientImages: []
   usedInDishes:
   - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}
@@ -30,4 +36,4 @@ MonoBehaviour:
   ingredientsNeeded:
   - ingredient: {fileID: 11400000, guid: 8b7cb872142e2234eb85044271bb059e, type: 2}
     amountRequired: 1
-  ingredientType: 12
+    method: 0
