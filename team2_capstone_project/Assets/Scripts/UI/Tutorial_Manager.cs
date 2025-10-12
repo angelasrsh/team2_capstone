@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using UnityEditor;
 using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -61,9 +62,19 @@ public class Tutorial_Manager : MonoBehaviour
         if (TutorialList.Length != TutorialRoomIDs.Length)  // The tutorial and room list must match and be the same length
             Debug.LogWarning("[T_MAN] ERROR: Tutorial Manager tutorial list and Tutorial Room list are not the same length");
 
+        // Initialize room tutorial map
         for (int i = 0; i < TutorialList.Length; i++)
             RoomTutorialMap[TutorialRoomIDs[i].ToString()] = TutorialList[i]; // Map Tutorial S_O to RoomID key
 
+        for (int i = 0; i < TutorialList.Length; i++)
+        {
+            QuestIDQuestStateMap[TutorialRoomIDs[i].ToString()] = Quest_State.REQUIREMENTS_NOT_MET;
+            QuestIDQuestStateMap[TutorialRoomIDs[i].ToString()] = Quest_Manager.Instance.GetQuestByID(TutorialList[i].id).state;
+            Helpers.printLabeled(this, TutorialRoomIDs[i].ToString() + QuestIDQuestStateMap[TutorialRoomIDs[i].ToString()].ToString());
+        }
+
+        Helpers.printLabeled(this, "");
+            
 
     }
 

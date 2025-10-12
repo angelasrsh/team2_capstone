@@ -32,7 +32,7 @@ public class Helpers
     /// <param name="str"> The quote-enclosed string to print </param>
     public static void printLabeled(MonoBehaviour script, string str)
     {
-        Debug.Log($"{script.GetType().Name} on {script.name}: " + str);
+        Debug.Log($"[{script.GetType().Name} on {script.name}]: " + str);
     }
 }
 
