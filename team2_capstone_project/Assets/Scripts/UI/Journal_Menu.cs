@@ -166,7 +166,7 @@ public class Journal_Menu : MonoBehaviour
   public void PauseGame()
   {
     Debug.Log("Opening journal and pausing game...");
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 1f);
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 0.75f);
     darkOverlay.SetActive(true);
     journalContents.SetActive(true);
     tabs.SetActive(true);
@@ -178,7 +178,7 @@ public class Journal_Menu : MonoBehaviour
       Debug.Log("Closing journal and resuming game...");
 
       if (playSound)
-          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.3f);
+          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.75f);
 
       darkOverlay.SetActive(false);
       journalContents.SetActive(false);

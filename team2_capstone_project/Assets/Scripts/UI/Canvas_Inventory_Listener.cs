@@ -34,13 +34,13 @@ public class Canvas_Inventory_Listener : MonoBehaviour
             {
                 // If open, close the inventory
                 InventoryCanvas.enabled = false;
-                Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagClose, 0.28f);
+                Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagClose, 1f);
                 Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
             }
             else
             {
                 InventoryCanvas.enabled = true; // If closed, open the inventory
-                Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagOpen, 0.28f);
+                Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagOpen, 0.9f);
                 Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
             }       
         }
