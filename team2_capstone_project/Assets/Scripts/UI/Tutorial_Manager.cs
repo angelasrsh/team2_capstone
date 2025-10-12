@@ -101,17 +101,21 @@ public class Tutorial_Manager : MonoBehaviour
 #if !TUTORIAL_ENABLE
         return;
 #endif
+        Helpers.printLabeled(this, "");
         // End search if this isn't a room that is listed to have a tutorial
         if (!RoomTutorialMap.ContainsKey(scene.name))
             return;
 
         String tutorialID = RoomTutorialMap[scene.name].id;
+        Helpers.printLabeled(this, tutorialID);
+        Helpers.printLabeled(this, (QuestIDQuestStateMap.ContainsKey(tutorialID)).ToString() + (QuestIDQuestStateMap[tutorialID] == Quest_State.CAN_START).ToString());
 
         // If a tutorial exists and is ready to start, start it
         if (QuestIDQuestStateMap.ContainsKey(tutorialID) && QuestIDQuestStateMap[tutorialID] == Quest_State.CAN_START)
         {
             //Debug.Log($"[T_MAN] Auto-starting tutorial {tutorialID}");
             StartTutorial(tutorialID);
+            Helpers.printLabeled(this, "Starting" + tutorialID);
         }
     }
 

@@ -58,6 +58,8 @@ public class Quest_Manager : MonoBehaviour
 
         SceneManager.sceneLoaded += CheckPauseQuests;
 
+        UnlockQuests();
+
 
     }
 
@@ -100,7 +102,10 @@ public class Quest_Manager : MonoBehaviour
         return meetsRequirements;
     }
 
-    private void Update()
+    /// <summary>
+    /// Check all quests in the database and set the state to CAN_START if requirements have been met
+    /// </summary>
+    public void UnlockQuests()
     {
         foreach (Quest q in questMap.Values)
         {
