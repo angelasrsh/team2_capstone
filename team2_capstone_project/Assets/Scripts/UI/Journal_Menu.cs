@@ -109,11 +109,11 @@ public class Journal_Menu : MonoBehaviour
     journalContents = transform.GetChild(1).gameObject;
     tabs = transform.GetChild(2).gameObject;
 
-    Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
-    if (pic != null)
-    {
-      openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
-    }
+    // Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+    // if (pic != null)
+    // {
+    //   openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
+    // }
 
     if (detailsText == null)
       Debug.LogError("[Journal_Menu]: detailsText not assigned in inspector!");
@@ -137,6 +137,46 @@ public class Journal_Menu : MonoBehaviour
     ShowDishTab(); // default to dish tab
     leftPagePanel.SetActive(false); // hide left page details at start
     ResumeGame(false); // ensure journal is closed at start
+  }
+
+  private void OnEnable()
+  {
+    SceneManager.sceneLoaded += OnSceneLoadedRebind;
+    TryBindInput();
+  }
+
+  private void OnDisable()
+  {
+    SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+    if (openJournalAction != null)
+      openJournalAction.Disable();
+  }
+
+  private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
+  {
+    TryBindInput();
+  }
+
+  private void TryBindInput()
+  {
+    // Find the active PlayerInput in the scene (e.g. on Game_Manager)
+    if (Game_Manager.Instance == null)
+    {
+      Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal input.");
+      return;
+    }
+    PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+    if (playerInput == null)
+    {
+      Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal input.");
+      return;
+    }
+
+    // Use the runtime (clone-safe) asset from that PlayerInput
+    openJournalAction = playerInput.actions["OpenJournal"];
+
+    // Make sure the action is enabled
+    openJournalAction.Enable();
   }
 
   private void OnDestroy()

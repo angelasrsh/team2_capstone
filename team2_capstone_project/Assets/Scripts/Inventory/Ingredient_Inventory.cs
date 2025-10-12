@@ -15,108 +15,84 @@ using UnityEngine;
 public class Ingredient_Inventory : Inventory
 {
   public static Ingredient_Inventory Instance { get; private set; }
-
-  // Must drop all ingredient lists into here! Sorry -V('.')V-
-  public List<Ingredient_Data> AllIngredientList;
+  [HideInInspector] public List<Ingredient_Data> AllIngredients;
   private Ingredient_Data water;
   public Dictionary<String, Ingredient_Data> IngredientDict = new Dictionary<string, Ingredient_Data>(); // Make private once we know it works
 
   new private void Awake()
   {
-      if (Instance != null && Instance != this)
-      {
-          Destroy(gameObject);
-          return;
-      }
-
-      Instance = this;
-      DontDestroyOnLoad(gameObject);
-
-      // Ensure InventorySizeLimit before initialization
-      InventorySizeLimit = 12;
-      InitializeInventoryStacks<Item_Stack>();
-      updateInventory();
-
-      // Now build ingredient dictionary
-      IngredientDict.Clear();
-      foreach (Ingredient_Data idata in AllIngredientList)
-      {
-          IngredientDict.Add(idata.Name, idata);
-          if (idata.Name == "Water")
-              water = idata;
-      }
-
-      // Put the list of ingredients into the dictionary to be accessed by their name string
-      foreach (Ingredient_Data idata in AllIngredientList)
-      {
-          if (idata == null) continue;
-
-          // Add the full name
-          if (!IngredientDict.ContainsKey(idata.Name))
-              IngredientDict.Add(idata.Name, idata);
-
-          // Also add a trimmed version w/o numbers or underscores
-          string cleanName = idata.Name;
-          cleanName = cleanName.Trim();
-          cleanName = cleanName.Replace("_", " ");
-          cleanName = System.Text.RegularExpressions.Regex.Replace(cleanName, @"^\d+\s*", "");
-
-          if (!IngredientDict.ContainsKey(cleanName))
-              IngredientDict.Add(cleanName, idata);
-
-          if (idata.Name.Contains("Water", System.StringComparison.OrdinalIgnoreCase))
-              water = idata;
-      }
-    }
-
-    /// <summary>
-    /// Overload AddResources to allow for using the IngredientType enum
-    /// </summary>
-    /// <param name="type"> IngredientType enum for ingredients </param>
-    /// <param name="count"> Amount to add </param>
-    /// <returns> Amount actually added </returns>
-    public int AddResources(IngredientType type, int count)
+    if (Instance != null && Instance != this)
     {
-        // Error-checking
-        
-        if (count < 0)
-            Debug.LogError("[Invtry] Cannot add negative amount"); // not tested
-
-        // Track the amount of resources we still need to add
-        int amtLeftToAdd = count;
-
-        // Check if there is a slot with the same type and add if not full
-        foreach (Item_Stack istack in InventoryStacks)
-        {
-            // Add as much as we can to existing stacks
-            if (istack != null && istack.resource == IngrEnumToData(type) && istack.amount < istack.stackLimit)
-            {
-                int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
-                istack.amount += amtToAdd;
-                amtLeftToAdd -= amtToAdd;
-            }
-        }
-        // We were not able to add all items to existing slots, so check if we can start a new stack
-        // These are two separate loops because we don't assume slots will be filled in order
-        for (int i = 0; i < InventorySizeLimit; i++)
-        {
-            if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
-            {
-                InventoryStacks[i] = new Item_Stack();
-                int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
-                InventoryStacks[i].amount = amtToAdd;
-                InventoryStacks[i].resource = IngrEnumToData(type);
-                amtLeftToAdd -= amtToAdd;
-            }
-        }
-
-         // Broadcast to listening events
-        Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
-
-        updateInventory();
-        Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {IngrEnumToData(type).Name}");
-        return count - amtLeftToAdd; // Return how many items were actually added
+      Destroy(gameObject);
+      return;
     }
+    
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+
+    base.Awake();
+  }
+
+  private void Start()
+  {
+    AllIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
+    IngredientDict.Clear();
+    // Put the list of ingredients into the dictionary to be accessed by their name string
+    foreach (Ingredient_Data idata in AllIngredients)
+    {
+      IngredientDict.Add(idata.Name, idata);
+      if (idata.Name == "Water")
+        water = idata;
+    }
+  }
+
+  /// <summary>
+  /// Overload AddResources to allow for using the IngredientType enum
+  /// </summary>
+  /// <param name="type"> IngredientType enum for ingredients </param>
+  /// <param name="count"> Amount to add </param>
+  /// <returns> Amount actually added </returns>
+  public int AddResources(IngredientType type, int count)
+  {
+    // Error-checking
+    if (count < 0)
+      Debug.LogError("[Invtry] Cannot add negative amount");
+
+    // Track the amount of resources we still need to add
+    int amtLeftToAdd = count;
+
+    // Check if there is a slot with the same type and add if not full
+    foreach (Item_Stack istack in InventoryStacks)
+    {
+      // Add as much as we can to existing stacks
+      if (istack != null && istack.resource == IngrEnumToData(type) && istack.amount < istack.stackLimit)
+      {
+        int amtToAdd = Math.Min(istack.stackLimit - istack.amount, amtLeftToAdd);
+        istack.amount += amtToAdd;
+        amtLeftToAdd -= amtToAdd;
+      }
+    }
+    // We were not able to add all items to existing slots, so check if we can start a new stack
+    // These are two separate loops because we don't assume slots will be filled in order
+    for (int i = 0; i < InventorySizeLimit; i++)
+    {
+      if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
+      {
+        InventoryStacks[i] = new Item_Stack();
+        int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
+        InventoryStacks[i].amount = amtToAdd;
+        InventoryStacks[i].resource = IngrEnumToData(type);
+        amtLeftToAdd -= amtToAdd;
+      }
+    }
+
+    // Broadcast to listening events
+    Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
+
+    updateInventory();
+    Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {IngrEnumToData(type).Name}");
+    return count - amtLeftToAdd; // Return how many items were actually added
+  }
 
   /// <summary>
   /// Overload base inventory RemoveResources function to allow removing ingredients using type enum
@@ -208,6 +184,14 @@ public class Ingredient_Inventory : Inventory
         return "French Fries";
       case IngredientType.Oil:
         return "Oil";
+      case IngredientType.Water:
+        return "Water";
+      case IngredientType.Uncooked_Patty:
+        return "Uncooked Patty";
+      case IngredientType.Cooked_Patty:
+        return "Cooked Patty";
+      case IngredientType.Burnt_Blob:
+        return "Burnt Blob";
       default:
         return "";
     }
@@ -254,6 +238,14 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.French_Fries;
       case "Oil":
         return IngredientType.Oil;
+      case "Water":
+        return IngredientType.Water;
+      case "Uncooked Patty":
+        return IngredientType.Uncooked_Patty;
+      case "Cooked Patty":
+        return IngredientType.Cooked_Patty;
+      case "Burnt Blob":
+        return IngredientType.Burnt_Blob;
       default:
         return IngredientType.Null;
     }

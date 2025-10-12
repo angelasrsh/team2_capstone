@@ -21,11 +21,13 @@ MonoBehaviour:
   minSpawn: 0
   maxSpawn: 0
   countsAs: []
+  ingredientType: 10
   description: Just water... Unless...?
   CutIngredientImages: []
   usedInDishes: []
   makesIngredient:
   - ingredient: {fileID: 11400000, guid: 55ef2e90d6ee21745bcc07d91b3435a2, type: 2}
     amountRequired: 1
+    method: 1
   ingredientsNeeded: []
   ingredientType: 10
