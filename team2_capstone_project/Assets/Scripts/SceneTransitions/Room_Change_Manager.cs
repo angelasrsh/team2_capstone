@@ -154,6 +154,11 @@ public class Room_Change_Manager : MonoBehaviour
             GameObject player = GameObject.FindWithTag("Player");
             if (player != null)
             {
+                // Disable CharacterController before repositioning
+                CharacterController cc = player.GetComponent<CharacterController>();
+                if (cc != null)
+                    cc.enabled = false;
+
                 Spawn_Point[] spawnPoints = FindObjectsOfType<Spawn_Point>();
                 foreach (var sp in spawnPoints)
                 {
@@ -163,6 +168,13 @@ public class Room_Change_Manager : MonoBehaviour
                         break;
                     }
                 }
+
+                if (cc != null)
+                    cc.enabled = true;
+            }
+            else
+            {
+                Debug.LogWarning("No player found in the scene after room change.");
             }
         }
 

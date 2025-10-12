@@ -88,11 +88,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     rectTransform = GetComponent<RectTransform>();
 
-    Debug.Log("Components on " + gameObject.name + ":");
-    foreach (Component comp in GetComponents<Component>())
-    {
-      Debug.Log("- " + comp.GetType().Name);
-    }
+    // Debug.Log("Components on " + gameObject.name + ":");
+    // foreach (Component comp in GetComponents<Component>())
+    // {
+    //   Debug.Log("- " + comp.GetType().Name);
+    // }
 
     if (audioManager == null)
       audioManager = Audio_Manager.instance;

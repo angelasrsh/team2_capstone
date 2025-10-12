@@ -14,7 +14,7 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     private Player_Controller player;
     private bool confirmationActive = false;
-    private InputAction pauseAction; // reference to Pause input
+    private InputAction pauseAction;
 
     private void Awake()
     {
