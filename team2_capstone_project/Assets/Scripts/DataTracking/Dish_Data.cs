@@ -19,7 +19,8 @@ public class Dish_Data : Item_Data
     Blinding_Stew,
     Honey_Jelly_Drink,
     Charcuterie_Board,
-    Boba_Milk_Drink
+    Boba_Milk_Drink,
+    Honey_Glazed_Eleonoras
   }
 
   public List<Ingredient_Requirement> ingredientQuantities;

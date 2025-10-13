@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,45 +10,25 @@ public class Room_Change_Interact : MonoBehaviour
     public Room_Data.RoomID exitingTo;
 
     private bool isPlayerInRange = false;
-    private bool interactTriggered = false;
+    private bool interactPressed = false;
     private Player_Controller player;
     private InputAction interactAction;
 
     private void Awake()
     {
-        // Get PlayerInput safely (from GameManager or Player)
-        PlayerInput playerInput = FindObjectOfType<PlayerInput>();
+        var playerInput = FindObjectOfType<PlayerInput>();
         if (playerInput != null)
         {
             interactAction = playerInput.actions["Interact"];
-
             if (interactAction != null)
-            {
-                interactAction.performed += OnInteractPerformed;
-                interactAction.Enable();
-                Debug.Log("[Room_Change_Interact] Interact action bound.");
-            }
-            else
-            {
-                Debug.LogWarning("[Room_Change_Interact] 'Interact' action not found in PlayerInput.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("[Room_Change_Interact] PlayerInput not found in scene.");
+                interactAction.performed += ctx => interactPressed = true;
         }
     }
 
     private void OnDestroy()
     {
         if (interactAction != null)
-            interactAction.performed -= OnInteractPerformed;
-    }
-
-    private void OnInteractPerformed(InputAction.CallbackContext context)
-    {
-        if (isPlayerInRange)
-            interactTriggered = true;
+            interactAction.performed -= ctx => interactPressed = true;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -70,15 +51,15 @@ public class Room_Change_Interact : MonoBehaviour
 
     private void Update()
     {
-        if (isPlayerInRange && interactTriggered)
+        // Only process input once per press while player is inside trigger
+        if (isPlayerInRange && interactPressed)
         {
-            interactTriggered = false; // consume input
-
-            Debug.Log($"[Room_Change_Interact] Player interacted to change room to: {exitingTo}");
+            interactPressed = false; // consume input
+            Debug.Log($"Player interacted to change room to: {exitingTo}");
 
             if (player != null)
             {
-                Game_Events_Manager.Instance.RoomChange(exitingTo);
+                Player_Input_Controller.instance.DisablePlayerInput();
                 Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
             }
         }
