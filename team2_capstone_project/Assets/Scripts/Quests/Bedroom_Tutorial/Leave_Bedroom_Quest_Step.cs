@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
+public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
 {
-    Dialogue_Manager dm;
-
     // Start is called before the first frame update
     void OnEnable()
     {
         Game_Events_Manager.Instance.onRoomChange += LeaveBedroom;
-
-        dm = FindObjectOfType<Dialogue_Manager>();
 
         //DelayedInstructionStart();
 
@@ -27,11 +23,8 @@ public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
 
     private void Start()
     {
-        if (dm != null)
-        {
-            string fillerKey = $"Tutorial.Bedroom";
-            dm.PlayScene(fillerKey);
-        }
+        DelayedDialogue("Tutorial.Bedroom", 3);
+        
     }
 
     /// <summary>

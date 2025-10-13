@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Deprecated
+/// </summary>
 public class Tutorial_Quest_Step : Quest_Step
 {
     [Header("Child canvas object")]
@@ -13,6 +16,8 @@ public class Tutorial_Quest_Step : Quest_Step
     public string InstructionText = "Testing";
     public int InstructionWaitTime = 0;
     public int PopupWaitTime = 10;
+
+    private Dialogue_Manager dm;
 
     /// <summary>
     /// Call this to reset the tutorial canvas and begin a delay to display the instruction and image
