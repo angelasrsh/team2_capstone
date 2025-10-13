@@ -22,6 +22,7 @@ public class Pan : MonoBehaviour
   [SerializeField] private GameObject draggablePan; // reference to the pan that can be dragged around
   [SerializeField] private Ingredient_Data burntIngredient; // generic burnt ingredient to use
   private Pan_Controller panController;
+  private Color originalColor;
 
   [Header("Slider")]
   private Slider sliderComponent;
@@ -49,6 +50,7 @@ public class Pan : MonoBehaviour
     if (sliderComponent == null)
       Debug.LogError("[Pan]: No Slider component found on Slider GameObject!");
     // sliderComponent.interactable = false;
+    originalColor = ingrInPanImage.color;
     ResetAll();
     panController = draggablePan.GetComponent<Pan_Controller>();
     if (panController == null)
@@ -202,7 +204,7 @@ public class Pan : MonoBehaviour
     if (zoneImage == null)
       yield break;
 
-    Color originalColor = zoneImage.color;
+    Color origColor = zoneImage.color;
     Color flashColor = Color.white; // Flash to white
 
     int flashes = 3; // how many flashes
@@ -213,18 +215,18 @@ public class Pan : MonoBehaviour
       // flash in
       for (float t = 0; t < 1f; t += Time.deltaTime / flashSpeed)
       {
-        zoneImage.color = Color.Lerp(originalColor, flashColor, t);
+        zoneImage.color = Color.Lerp(origColor, flashColor, t);
         yield return null;
       }
       // flash out
       for (float t = 0; t < 1f; t += Time.deltaTime / flashSpeed)
       {
-        zoneImage.color = Color.Lerp(flashColor, originalColor, t);
+        zoneImage.color = Color.Lerp(flashColor, origColor, t);
         yield return null;
       }
     }
 
-    zoneImage.color = originalColor; // reset to original color
+    zoneImage.color = origColor; // reset to original color
   }
 
   /// <summary>
@@ -245,6 +247,8 @@ public class Pan : MonoBehaviour
     slider.SetActive(false);
     sliderActive = false;
     afterFirstCook = false;
+    ingrInPanImage.color = originalColor;
+    SetImageAlpha(ingrInPanImage, 1f);
   }
 
   /// <summary>
@@ -285,6 +289,7 @@ public class Pan : MonoBehaviour
     {
       ingrInPanImage.sprite = ingredient.Image;
     }
+
     // ingrInPanImage.preserveAspect = true;
 
     // SFX
@@ -409,7 +414,7 @@ public class Pan : MonoBehaviour
     else if (firstCookedState == CookedState.Burnt || secondCookedState == CookedState.Burnt)
       Ingredient_Inventory.Instance.AddResources(burntIngredient, 1);
     else
-      Ingredient_Inventory.Instance.AddResources(ingredientInPan, 1); // Fallback to raw ingredient (for now)
+      Ingredient_Inventory.Instance.AddResources(cookedIngredientData, 1); // Fallback to cooked ingredient (for now)
 
     // Reset pan for next use
     Invoke(nameof(ResetAll), 1f); // Delay reset to allow player to see result
@@ -434,6 +439,7 @@ public class Pan : MonoBehaviour
     draggablePan.SetActive(false);
     ingrInPanImage.gameObject.SetActive(true);
     sliderComponent.value = 0f;
+    Debug.Log("First cooked state: " + firstCookedState);
     if (firstCookedState == CookedState.Cooked || firstCookedState == CookedState.Overcooked || firstCookedState == CookedState.Almost)
     { // For now, treat Almost and Overcooked as Cooked
       ingrInPanImage.sprite = cookedIngredientData.Image;
@@ -441,6 +447,7 @@ public class Pan : MonoBehaviour
     }
     else if (firstCookedState == CookedState.Burnt)
     {
+      Debug.Log("Getting burnt???");
       ingrInPanImage.color = Color.black; // Burnt ingredient shown as blacked out image
       // ingrInPanImage.preserveAspect = false;
     }
@@ -449,7 +456,15 @@ public class Pan : MonoBehaviour
       ingrInPanImage.sprite = ingredientInPan.Image;
       // ingrInPanImage.preserveAspect = true;
     }
+    SetImageAlpha(ingrInPanImage, 1f);
     Invoke(nameof(StartSlider), 0.5f); // Small delay before starting second slider
+  }
+
+  private void SetImageAlpha(Image img, float alpha)
+  {
+    Color c = img.color;
+    c.a = alpha;
+    img.color = c;
   }
 
   public bool IsEmpty()
