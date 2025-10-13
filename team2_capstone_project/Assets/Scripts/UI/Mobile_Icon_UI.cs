@@ -28,17 +28,23 @@ public class Mobile_Icon_UI : MonoBehaviour
     private void Awake()
     {
         // Singleton pattern
-        instance = this;
 
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
+        instance = this;
         DontDestroyOnLoad(gameObject);
 
         // Hide automatically on non-mobile platforms
         bool simulateMobile = false;
+        if (simulateMobile == false && SystemInfo.deviceType != DeviceType.Handheld)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
         
         // #if UNITY_EDITOR
         //     simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
