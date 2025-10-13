@@ -6,7 +6,7 @@ using UnityEngine;
 public class Ingredient_Data : Item_Data
 {
   [Range(1.0f, 3.0f)] public int tier;
-  public float price;
+  public float price; // Idk if it's being used elsewhere, but shop will use this
 
   [Header("Spawn Settings")]
   [Range(0f, 1f)] public float rarityWeight = 1f;
@@ -79,7 +79,8 @@ public enum IngredientType
   French_Fries,
   Honey,
   Oil,
-  Burnt_Blob
+  Burnt_Blob,
+  Sliced_Gelatin
 }
 
 // public class CutLine

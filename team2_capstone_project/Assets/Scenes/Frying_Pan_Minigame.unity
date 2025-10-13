@@ -895,7 +895,7 @@ GameObject:
   m_Component:
   - component: {fileID: 310427856}
   - component: {fileID: 310427858}
-  - component: {fileID: 310427857}
+  - component: {fileID: 310427859}
   m_Layer: 5
   m_Name: Ingredient_In_Pan
   m_TagString: Untagged
@@ -923,7 +923,15 @@ RectTransform:
   m_AnchoredPosition: {x: 58, y: 0}
   m_SizeDelta: {x: -116, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &310427857
+--- !u!222 &310427858
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310427855}
+  m_CullTransparentMesh: 1
+--- !u!114 &310427859
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -937,7 +945,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -953,14 +961,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!222 &310427858
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 310427855}
-  m_CullTransparentMesh: 1
 --- !u!1 &440883222
 GameObject:
   m_ObjectHideFlags: 0
@@ -3574,7 +3574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   errorText: {fileID: 1910125450}
-  ingrInPanImage: {fileID: 310427857}
+  ingrInPanImage: {fileID: 310427859}
   inventoryCanvas: {fileID: 1344600040}
   dishInventoryCanvas: {fileID: 515588606}
   flipAnimation: {fileID: 2097445324}

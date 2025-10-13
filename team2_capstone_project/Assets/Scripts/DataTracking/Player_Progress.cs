@@ -10,6 +10,8 @@ public class Player_Progress : ScriptableObject
   [SerializeField] private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
   [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
   [SerializeField] private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
+  [SerializeField] private float startingMoney;
+  private float money;
   public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used )
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used )
   public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used )
@@ -30,6 +32,31 @@ public class Player_Progress : ScriptableObject
     UnlockIngredient(IngredientType.Uncut_Fermented_Eye);
     UnlockIngredient(IngredientType.Cut_Fogshroom);
     UnlockIngredient(IngredientType.Cut_Fermented_Eye);
+    money = startingMoney;
+  }
+
+  /// <summary>
+  /// Add amount to player's money.
+  /// </summary>
+  public void AddMoney(float amount)
+  {
+    money += amount;
+  }
+
+  /// <summary>
+  /// Subtract amount from player's money.
+  /// </summary>
+  public void SubtractMoney(float amount)
+  {
+    money -= amount;
+  }
+
+  /// <summary>
+  /// Used to get the current amount of money the player has.
+  /// </summary>
+  public float GetMoneyAmount()
+  {
+    return money;
   }
 
   #region Dishes

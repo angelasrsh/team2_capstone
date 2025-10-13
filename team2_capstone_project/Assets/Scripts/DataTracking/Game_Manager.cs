@@ -12,7 +12,7 @@ public class Game_Manager : MonoBehaviour
   // [SerializeField] public Foraging_Database foragingDatabase;
   [SerializeField] public Ingredient_Database ingredientDatabase;
   [SerializeField] public NPC_Database npcDatabase;
-  [SerializeField] private Player_Progress playerProgress;
+  [SerializeField] public Player_Progress playerProgress;
 
   [Header("Room Setup")]
   [SerializeField] private Room_Collection_Data roomCollection;
