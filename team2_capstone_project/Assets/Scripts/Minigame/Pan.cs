@@ -439,7 +439,6 @@ public class Pan : MonoBehaviour
     draggablePan.SetActive(false);
     ingrInPanImage.gameObject.SetActive(true);
     sliderComponent.value = 0f;
-    Debug.Log("First cooked state: " + firstCookedState);
     if (firstCookedState == CookedState.Cooked || firstCookedState == CookedState.Overcooked || firstCookedState == CookedState.Almost)
     { // For now, treat Almost and Overcooked as Cooked
       ingrInPanImage.sprite = cookedIngredientData.Image;
@@ -447,7 +446,6 @@ public class Pan : MonoBehaviour
     }
     else if (firstCookedState == CookedState.Burnt)
     {
-      Debug.Log("Getting burnt???");
       ingrInPanImage.color = Color.black; // Burnt ingredient shown as blacked out image
       // ingrInPanImage.preserveAspect = false;
     }
@@ -460,6 +458,10 @@ public class Pan : MonoBehaviour
     Invoke(nameof(StartSlider), 0.5f); // Small delay before starting second slider
   }
 
+  /// <summary>
+  /// Sets image alpha. Used whenever an image's color is changed because it seems to make it
+  /// completely transparent if alpha is not set.
+  /// </summary>
   private void SetImageAlpha(Image img, float alpha)
   {
     Color c = img.color;

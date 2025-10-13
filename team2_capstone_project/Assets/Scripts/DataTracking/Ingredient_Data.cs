@@ -79,7 +79,8 @@ public enum IngredientType
   French_Fries,
   Honey,
   Oil,
-  Burnt_Blob
+  Burnt_Blob,
+  Cut_Slime
 }
 
 // public class CutLine

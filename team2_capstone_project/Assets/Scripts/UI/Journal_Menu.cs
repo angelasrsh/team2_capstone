@@ -14,10 +14,14 @@ public class Journal_Menu : MonoBehaviour
   public static Journal_Menu Instance;
   private bool isPaused = false; // Currently will overlap pause menu, I think
   private bool haveTabsInitialized = false;
-  private Player_Progress playerProgress = Player_Progress.Instance;
-  private InputAction openJournalAction;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
+
+  [Header("Player Info")]
+  private Player_Progress playerProgress = Player_Progress.Instance;
+  private InputAction openJournalAction;
+  private InputAction closeJournalAction;
+  private PlayerInput playerInput;
 
   [Header("Databases")]
   private Dish_Database dishDatabase;
@@ -165,7 +169,8 @@ public class Journal_Menu : MonoBehaviour
       Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal input.");
       return;
     }
-    PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+    
+    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (playerInput == null)
     {
       Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal input.");
@@ -174,6 +179,7 @@ public class Journal_Menu : MonoBehaviour
 
     // Use the runtime (clone-safe) asset from that PlayerInput
     openJournalAction = playerInput.actions["OpenJournal"];
+    closeJournalAction = playerInput.actions.FindAction("CloseJournal", true);
 
     // Make sure the action is enabled
     openJournalAction.Enable();
@@ -190,16 +196,23 @@ public class Journal_Menu : MonoBehaviour
   {
     if (openJournalAction.WasPerformedThisFrame())
     {
-      if (isPaused)
-      {
-        ResumeGame();
-        Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
-      }
-      else
-      {
-        PauseGame();
-        Game_Events_Manager.Instance.JournalToggled(true);
-      }
+      // if (isPaused)
+      // {
+      //   ResumeGame();
+      //   Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
+      // }
+      // else
+      // {
+      PauseGame();
+      Game_Events_Manager.Instance.JournalToggled(true);
+      return;
+      // }
+    }
+
+    if (closeJournalAction.WasPerformedThisFrame())
+    {
+      ResumeGame();
+      Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
     }
   }
 
@@ -211,19 +224,21 @@ public class Journal_Menu : MonoBehaviour
     journalContents.SetActive(true);
     tabs.SetActive(true);
     isPaused = true;
+    playerInput.SwitchCurrentActionMap("UI");
   }
 
   public void ResumeGame(bool playSound = true)
   {
-      Debug.Log("Closing journal and resuming game...");
+    Debug.Log("Closing journal and resuming game...");
 
-      if (playSound)
-          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.3f);
+    if (playSound)
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.3f);
 
-      darkOverlay.SetActive(false);
-      journalContents.SetActive(false);
-      tabs.SetActive(false);
-      isPaused = false;
+    darkOverlay.SetActive(false);
+    journalContents.SetActive(false);
+    tabs.SetActive(false);
+    isPaused = false;
+    playerInput.SwitchCurrentActionMap("Player");
   }
 
   #region Recipe Tab Methods

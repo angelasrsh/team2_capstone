@@ -14,17 +14,28 @@ public class Shop : MonoBehaviour
   private bool shopOpen = false;
   private Player_Controller player;
   private InputAction interactAction;
+  private InputAction closeAction;
+  private PlayerInput playerInput;
   [SerializeField] private GameObject shopUI;
 
   private void Awake()
   {
-    var playerInput = FindObjectOfType<PlayerInput>();
+    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (playerInput != null)
     {
+      // From Player Input Map
       interactAction = playerInput.actions["Interact"];
-      if (interactAction != null)
-        interactAction.performed += ctx => interactPressed = true;
+
+      // From UI Input Map
+      closeAction = playerInput.actions.FindAction("CloseInteract", true);
     }
+
+    if (interactAction != null)
+      interactAction.performed += InteractPressed;
+
+    if (closeAction != null)
+      closeAction.performed += InteractPressed;
+    CloseShopUI();
   }
 
   private void Update()
@@ -48,7 +59,10 @@ public class Shop : MonoBehaviour
   private void OnDestroy()
   {
     if (interactAction != null)
-      interactAction.performed -= ctx => interactPressed = true;
+      interactAction.performed -= InteractPressed;
+
+    if (closeAction != null)
+      closeAction.performed -= InteractPressed;
   }
 
   private void OnTriggerEnter(Collider other)
@@ -69,15 +83,34 @@ public class Shop : MonoBehaviour
     }
   }
 
+  private void InteractPressed(InputAction.CallbackContext context)
+  {
+    if (isPlayerInRange)
+      interactPressed = true;
+    else
+      interactPressed = false;
+  }
+
   private void OpenShopUI()
   {
     shopUI.SetActive(true);
     shopOpen = true;
+
+    playerInput.SwitchCurrentActionMap("UI");
+
+    // Just in case cursor isn't movable/invisible for some reason
+    // Cursor.lockState = CursorLockMode.None;
+    // Cursor.visible = true;
   }
 
   private void CloseShopUI()
   {
     shopUI.SetActive(false);
     shopOpen = false;
+
+    playerInput.SwitchCurrentActionMap("Player");
+
+    // Cursor.lockState = CursorLockMode.Locked;
+    // Cursor.visible = false;
   }
 }

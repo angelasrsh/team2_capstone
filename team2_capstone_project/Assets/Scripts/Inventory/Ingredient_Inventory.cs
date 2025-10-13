@@ -192,6 +192,8 @@ public class Ingredient_Inventory : Inventory
         return "Cooked Patty";
       case IngredientType.Burnt_Blob:
         return "Burnt Blob";
+      case IngredientType.Cut_Slime:
+        return "Sliced Gelatin";
       default:
         return "";
     }
@@ -246,6 +248,8 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.Cooked_Patty;
       case "Burnt Blob":
         return IngredientType.Burnt_Blob;
+      case "Sliced Gelatin":
+        return IngredientType.Cut_Slime;
       default:
         return IngredientType.Null;
     }
