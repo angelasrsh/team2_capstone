@@ -181,10 +181,14 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
       return;
 
     // Move all falling ingredients down
-    foreach (GameObject obj in fallingIngredients)
+    for (int i = fallingIngredients.Count - 1; i >= 0; i--)
     {
+      GameObject obj = fallingIngredients[i];
       if (obj == null)
+      {
+        fallingIngredients.RemoveAt(i);
         continue;
+      }
 
       obj.transform.position += Vector3.down * fallSpeed * Time.deltaTime;
 
@@ -194,8 +198,9 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
       {
         ingredientsCaught++;
         Destroy(obj);
-        fallingIngredients.Remove(obj);
+        fallingIngredients.RemoveAt(i);
         // audio.PlaySound("Catch_Ingredient");
+
         if (ingredientsCaught >= ingredientsToCatch)
         {
           isFalling = false;
@@ -205,7 +210,7 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
       else if (obj.transform.position.y < -50f) // Off bottom of screen
       {
         Destroy(obj);
-        fallingIngredients.Remove(obj);
+        fallingIngredients.RemoveAt(i);
       }
     }
   }

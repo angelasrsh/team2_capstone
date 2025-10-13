@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: 03_Cheese
+  m_Name: 19_Sliced_Gelatin
   m_EditorClassIdentifier: 
-  Name: Cheese
+  Name: Sliced Gelatin
   Amount: 0
-  Image: {fileID: 21300000, guid: b647beadd4afcfa4aaa3703d672434df, type: 3}
+  Image: {fileID: 597166439, guid: 0bc07084128222645887207139a40350, type: 3}
   tier: 0
-  price: 20
+  price: 0
   rarityWeight: 1
   minSpawn: 0
-  maxSpawn: 0
+  maxSpawn: 5
   countsAs: []
-  ingredientType: 2
+  ingredientType: 20
   description: 
   CombinedCutPiecePrefab: {fileID: 0}
   cookThresholds:
@@ -30,8 +30,6 @@ MonoBehaviour:
     cookedEnd: 0
     overcookedEnd: 0
   CutIngredientImages: []
-  usedInDishes:
-  - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}
-  - {fileID: 11400000, guid: 27a4fa6f971425542bff05f741603d37, type: 2}
+  usedInDishes: []
   makesIngredient: []
   ingredientsNeeded: []

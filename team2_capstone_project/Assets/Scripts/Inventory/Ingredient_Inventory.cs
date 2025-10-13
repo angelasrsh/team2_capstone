@@ -156,42 +156,46 @@ public class Ingredient_Inventory : Inventory
   {
     switch (t)
     {
-      case IngredientType.Milk:
-        return "Milk";
-      case IngredientType.Cheese:
-        return "Cheese";
-      case IngredientType.Uncut_Fogshroom:
-        return "Uncut Fogshroom";
-      case IngredientType.Uncut_Fermented_Eye:
-        return "Uncut Fermented Eye";
-      case IngredientType.Slime_Gelatin:
-        return "Slime";
-      case IngredientType.Bone_Broth:
-        return "Bone Broth";
       case IngredientType.Bone:
         return "Bone";
+      case IngredientType.Bone_Broth:
+        return "Bone Broth";
+      case IngredientType.Bread:
+        return "Bread";
+      case IngredientType.Cheese:
+        return "Cheese";
+      case IngredientType.Cooked_Patty:
+        return "Cooked Patty";
       case IngredientType.Cut_Fermented_Eye:
         return "Cut Fermented Eye";
       case IngredientType.Cut_Fogshroom:
         return "Cut Fogshroom";
-      case IngredientType.Honey:
-        return "Honey";
-      case IngredientType.Uncut_Mandrake:
-        return "Uncut Mandrake";
       case IngredientType.Cut_Mandrake:
         return "Cut Mandrake";
       case IngredientType.French_Fries:
         return "French Fries";
+      case IngredientType.Honey:
+        return "Honey";
+      case IngredientType.Milk:
+        return "Milk";
       case IngredientType.Oil:
         return "Oil";
-      case IngredientType.Water:
-        return "Water";
+      case IngredientType.Slime_Gelatin:
+        return "Slime Gelatin";
       case IngredientType.Uncooked_Patty:
         return "Uncooked Patty";
-      case IngredientType.Cooked_Patty:
-        return "Cooked Patty";
+      case IngredientType.Uncut_Fermented_Eye:
+        return "Uncut Fermented Eye";
+      case IngredientType.Uncut_Fogshroom:
+        return "Uncut Fogshroom";
+      case IngredientType.Uncut_Mandrake:
+        return "Uncut Mandrake";
+      case IngredientType.Water:
+        return "Water";
       case IngredientType.Burnt_Blob:
         return "Burnt Blob";
+      case IngredientType.Sliced_Gelatin:
+        return "Sliced Gelatin";
       default:
         return "";
     }
@@ -210,42 +214,46 @@ public class Ingredient_Inventory : Inventory
 
     switch (d.Name)
     {
-      case "Milk":
-        return IngredientType.Milk;
-      case "Cheese":
-        return IngredientType.Cheese;
-      case "Uncut Fogshroom":
-        return IngredientType.Uncut_Fogshroom;
-      case "Uncut Fermented Eye":
-        return IngredientType.Uncut_Fermented_Eye;
-      case "Slime":
-        return IngredientType.Slime_Gelatin;
-      case "Bone Broth":
-        return IngredientType.Bone_Broth;
       case "Bone":
         return IngredientType.Bone;
+      case "Bone Broth":
+        return IngredientType.Bone_Broth;
+      case "Bread":
+        return IngredientType.Bread;
+      case "Cheese":
+        return IngredientType.Cheese;
+      case "Cooked Patty":
+        return IngredientType.Cooked_Patty;
       case "Cut Fermented Eye":
         return IngredientType.Cut_Fermented_Eye;
       case "Cut Fogshroom":
         return IngredientType.Cut_Fogshroom;
-      case "Honey":
-        return IngredientType.Honey;
-      case "Uncut Mandrake":
-        return IngredientType.Uncut_Mandrake;
       case "Cut Mandrake":
         return IngredientType.Cut_Mandrake;
       case "French Fries":
         return IngredientType.French_Fries;
+      case "Honey":
+        return IngredientType.Honey;
+      case "Milk":
+        return IngredientType.Milk;
       case "Oil":
         return IngredientType.Oil;
-      case "Water":
-        return IngredientType.Water;
+      case "Slime Gelatin":
+        return IngredientType.Slime_Gelatin;
       case "Uncooked Patty":
         return IngredientType.Uncooked_Patty;
-      case "Cooked Patty":
-        return IngredientType.Cooked_Patty;
+      case "Uncut Fermented Eye":
+        return IngredientType.Uncut_Fermented_Eye;
+      case "Uncut Fogshroom":
+        return IngredientType.Uncut_Fogshroom;
+      case "Uncut Mandrake":
+        return IngredientType.Uncut_Mandrake;
+      case "Water":
+        return IngredientType.Water;
       case "Burnt Blob":
         return IngredientType.Burnt_Blob;
+      case "Sliced Gelatin":
+        return IngredientType.Sliced_Gelatin;
       default:
         return IngredientType.Null;
     }
