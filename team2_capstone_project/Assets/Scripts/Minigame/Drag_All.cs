@@ -91,7 +91,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     Debug.Log("Components on " + gameObject.name + ":");
     foreach (Component comp in GetComponents<Component>())
     {
-      Debug.Log("- " + comp.GetType().Name);
+      // Debug.Log("- " + comp.GetType().Name);
     }
 
     if (audio == null)
