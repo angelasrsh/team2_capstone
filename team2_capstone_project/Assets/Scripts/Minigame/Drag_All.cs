@@ -193,14 +193,15 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
           Ingredient_Data ingredient_data_var;
-          
+          //check if theres nothing on the cutting board, the ingredient instance is actually an ingredient,
+          //and that there is a cut ingredient image for that ingredient
           if ((!cuttingBoardActive) && (Ingredient_Inventory.Instance.IngrEnumToData(ingredientType) != null)
                 && (((Ingredient_Data)(ParentSlot.stk.resource)).CutIngredientImages.Count() > 0))
           {
             //be able to remove the ingredient from its spot and decrease the count
             ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
-            DuplicateInventorySlot();
-            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+            DuplicateInventorySlot(); //show the ingredient picture after you take it off the inventory slot
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1); //decrease the number 
             
             if (resizeCanvas != null)
             {

@@ -134,13 +134,20 @@ public class Chop_Controller : MonoBehaviour
     {   
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
-            //
             //show the image of the cut stuff all 
-            // Transform parent = GameObject.FindAnyObjectByType<
-            // GameObject CombinedCutPiecePrefab = Instantiate(ingredient_data_var.CombinedCutPiecePrefab);
-            // CombinedCutPiecePrefab.SetActive(true);
-            // CombinedCutPiecePrefab.transform.SetParent("Canvas-MinigameElements");
-            // Debug.Log("Ingredient should be on cutting board now");
+            //parent canvas is called Canvas-CutGroup
+            Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+            Transform fCutTransform = parent.Find("F_Cut_Group"); // Use Transform.Find instead
+
+            if (fCutTransform != null)
+            {
+                fCutTransform.gameObject.SetActive(true);
+                Debug.Log("Ingredient should be on cutting board now");
+            }
+            else
+            {
+                Debug.LogError("F_Cut_Group not found as child of Canvas-CutGroup");
+            }
         }
     }
     private void InitializeCuttingLines()
