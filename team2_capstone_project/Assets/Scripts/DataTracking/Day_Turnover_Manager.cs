@@ -5,92 +5,93 @@ using UnityEngine;
 
 public class Day_Turnover_Manager : MonoBehaviour
 {
-    public static Day_Turnover_Manager Instance;
+  public static Day_Turnover_Manager Instance;
 
-    public enum WeekDay { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
-    public WeekDay CurrentDay { get; private set; } = WeekDay.Monday;
-    public enum TimeOfDay { Morning, Evening }
-    public TimeOfDay currentTimeOfDay = TimeOfDay.Morning;
+  public enum WeekDay { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+  public WeekDay CurrentDay { get; private set; } = WeekDay.Monday;
+  public enum TimeOfDay { Morning, Evening }
+  public TimeOfDay currentTimeOfDay = TimeOfDay.Morning;
 
-    // Dict for tracking dishes + customers served each day
-    private Dictionary<Dish_Data, int> dishesServed = new Dictionary<Dish_Data, int>();
-    private Dictionary<string, int> customersServed = new Dictionary<string, int>();
-    private int totalCurrencyEarned = 0;
+  // Dict for tracking dishes + customers served each day
+  private Dictionary<Dish_Data, int> dishesServed = new Dictionary<Dish_Data, int>();
+  private Dictionary<string, int> customersServed = new Dictionary<string, int>();
+  private int totalCurrencyEarned = 0;
 
-    public static event System.Action<Day_Summary_Data> OnDayEnded;
-    public static event System.Action OnDayStarted;
+  public static event System.Action<Day_Summary_Data> OnDayEnded;
+  public static event System.Action OnDayStarted;
 
 
-    private void Awake()
+  private void Awake()
+  {
+    if (Instance == null)
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else Destroy(gameObject);
+      Instance = this;
+      DontDestroyOnLoad(gameObject);
+    }
+    else Destroy(gameObject);
+  }
+
+  public void SetTimeOfDay(TimeOfDay newTime)
+  {
+    currentTimeOfDay = newTime;
+    Debug.Log("Time of day set to: " + newTime);
+  }
+
+  public void RecordDishServed(Dish_Data dish, int currencyGained, string customerName)
+  {
+    if (dish != null)
+    {
+      if (!dishesServed.ContainsKey(dish)) dishesServed[dish] = 0;
+      dishesServed[dish]++;
     }
 
-    public void SetTimeOfDay(TimeOfDay newTime)
+    if (!string.IsNullOrEmpty(customerName))
     {
-        currentTimeOfDay = newTime;
-        Debug.Log("Time of day set to: " + newTime);
+      if (!customersServed.ContainsKey(customerName)) customersServed[customerName] = 0;
+      customersServed[customerName]++;
     }
 
-    public void RecordDishServed(Dish_Data dish, int currencyGained, string customerName)
+    totalCurrencyEarned += currencyGained;
+    Game_Manager.Instance.playerProgress.AddMoney(currencyGained);
+  }
+
+  public void EndDay()
+  {
+    var nextDay = (WeekDay)(((int)CurrentDay + 1) % 7);
+
+    var summary = new Day_Summary_Data
     {
-        if (dish != null)
-        {
-            if (!dishesServed.ContainsKey(dish)) dishesServed[dish] = 0;
-            dishesServed[dish]++;
-        }
+      currentDay = CurrentDay,
+      nextDay = nextDay,
+      dishesServed = new Dictionary<Dish_Data, int>(dishesServed),
+      customersServed = new Dictionary<string, int>(customersServed),
+      totalCurrencyEarned = totalCurrencyEarned
+    };
 
-        if (!string.IsNullOrEmpty(customerName))
-        {
-            if (!customersServed.ContainsKey(customerName)) customersServed[customerName] = 0;
-            customersServed[customerName]++;
-        }
+    OnDayEnded?.Invoke(summary);
 
-        totalCurrencyEarned += currencyGained;
+    // reset tracking
+    dishesServed.Clear();
+    customersServed.Clear();
+    totalCurrencyEarned = 0;
+    CurrentDay = nextDay;
+    currentTimeOfDay = TimeOfDay.Morning;
+
+    if (Choose_Menu_Items.instance != null)
+    {
+      Choose_Menu_Items.instance.GenerateDailyPool();
+      Debug.Log($"Daily menu refreshed for {CurrentDay}.");
     }
 
-    public void EndDay()
+    // fire after reset
+    OnDayStarted?.Invoke();
+
+    // Show menu UI
+    Choose_Menu_UI ui = FindObjectOfType<Choose_Menu_UI>();
+    if (ui != null)
     {
-        var nextDay = (WeekDay)(((int)CurrentDay + 1) % 7);
-
-        var summary = new Day_Summary_Data
-        {
-            currentDay = CurrentDay,
-            nextDay = nextDay,
-            dishesServed = new Dictionary<Dish_Data, int>(dishesServed),
-            customersServed = new Dictionary<string, int>(customersServed),
-            totalCurrencyEarned = totalCurrencyEarned
-        };
-
-        OnDayEnded?.Invoke(summary);
-
-        // reset tracking
-        dishesServed.Clear();
-        customersServed.Clear();
-        totalCurrencyEarned = 0;
-        CurrentDay = nextDay;
-        currentTimeOfDay = TimeOfDay.Morning;
-
-        if (Choose_Menu_Items.instance != null)
-        {
-            Choose_Menu_Items.instance.GenerateDailyPool();
-            Debug.Log($"Daily menu refreshed for {CurrentDay}.");
-        }
-
-        // fire after reset
-        OnDayStarted?.Invoke();
-
-        // Show menu UI
-        Choose_Menu_UI ui = FindObjectOfType<Choose_Menu_UI>();
-        if (ui != null)
-        {
-            ui.gameObject.SetActive(true);
-        }
+      ui.gameObject.SetActive(true);
     }
+  }
 }
 

@@ -12,7 +12,7 @@ using System.Linq;
 public class Journal_Menu : MonoBehaviour
 {
   public static Journal_Menu Instance;
-  private bool isPaused = false; // Currently will overlap pause menu, I think
+  // private bool isPaused = false; // Currently will overlap pause menu, I think
   private bool haveTabsInitialized = false;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
@@ -223,7 +223,7 @@ public class Journal_Menu : MonoBehaviour
     darkOverlay.SetActive(true);
     journalContents.SetActive(true);
     tabs.SetActive(true);
-    isPaused = true;
+    // isPaused = true;
     playerInput.SwitchCurrentActionMap("UI");
   }
 
@@ -237,7 +237,7 @@ public class Journal_Menu : MonoBehaviour
     darkOverlay.SetActive(false);
     journalContents.SetActive(false);
     tabs.SetActive(false);
-    isPaused = false;
+    // isPaused = false;
     playerInput.SwitchCurrentActionMap("Player");
   }
 
@@ -261,7 +261,7 @@ public class Journal_Menu : MonoBehaviour
 
         // Check if dish is on daily menu
         if (dailyMenu != null && dailyMenu.GetSelectedDishes().Contains(dishData.dishType))
-            slot.SetItem(dishData, true, true);
+          slot.SetItem(dishData, true, true);
         else
           slot.SetItem(dishData, true, false);
       }
@@ -272,7 +272,7 @@ public class Journal_Menu : MonoBehaviour
       }
       else
       {
-        // Don't show empty slots if no more NPCs to show
+        // Don't show empty slots if no more dishes to show
         slot.ClearItem();
       }
 
@@ -319,7 +319,7 @@ public class Journal_Menu : MonoBehaviour
       }
       else
       {
-        // Don't show empty slots if no more NPCs to show
+        // Don't show empty slots if no more ingredients to show
         slot.ClearItem();
       }
 
@@ -567,6 +567,11 @@ public class Journal_Menu : MonoBehaviour
   }
   #endregion
 
+  private void PlayJournalTabSelectSound()
+  {
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.4f);
+  }
+
   [System.Serializable]
   public class JournalSlot
   {
@@ -635,10 +640,5 @@ public class Journal_Menu : MonoBehaviour
 
       Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.clickSFX, 0.8f);
     }
-  }
-  
-  private void PlayJournalTabSelectSound()
-  {
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.4f);
   }
 }
