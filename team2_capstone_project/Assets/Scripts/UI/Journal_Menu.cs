@@ -12,14 +12,15 @@ using System.Linq;
 public class Journal_Menu : MonoBehaviour
 {
   public static Journal_Menu Instance;
-  // private bool isPaused = false; // Currently will overlap pause menu, I think
+  private bool isPaused = false; 
   private bool haveTabsInitialized = false;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
 
   [Header("Player Info")]
   private Player_Progress playerProgress = Player_Progress.Instance;
-  private InputAction openJournalAction;
+  private InputAction openJournalActionPlayer;
+  private InputAction openJournalActionUI;
   private InputAction closeJournalAction;
   private PlayerInput playerInput;
 
@@ -152,8 +153,11 @@ public class Journal_Menu : MonoBehaviour
   private void OnDisable()
   {
     SceneManager.sceneLoaded -= OnSceneLoadedRebind;
-    if (openJournalAction != null)
-      openJournalAction.Disable();
+    if (openJournalActionPlayer != null)
+    {
+      openJournalActionPlayer.Disable();
+      openJournalActionUI.Disable();
+    }
   }
 
   private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
@@ -178,11 +182,13 @@ public class Journal_Menu : MonoBehaviour
     }
 
     // Use the runtime (clone-safe) asset from that PlayerInput
-    openJournalAction = playerInput.actions["OpenJournal"];
+    openJournalActionPlayer = playerInput.actions["OpenJournal"];
+    openJournalActionUI = playerInput.actions.FindActionMap("UI").FindAction("OpenJournal");
     closeJournalAction = playerInput.actions.FindAction("CloseJournal", true);
 
     // Make sure the action is enabled
-    openJournalAction.Enable();
+    openJournalActionPlayer.Enable();
+    // openJournalActionUI.Enable();
   }
 
   private void OnDestroy()
@@ -194,22 +200,15 @@ public class Journal_Menu : MonoBehaviour
   // Update is called once per frame
   private void Update()
   {
-    if (openJournalAction.WasPerformedThisFrame())
+    if (!Game_Manager.Instance.UIManager.pauseMenuOn && (openJournalActionPlayer.WasPerformedThisFrame() || (openJournalActionUI.WasPerformedThisFrame() && !isPaused)))
     {
-      // if (isPaused)
-      // {
-      //   ResumeGame();
-      //   Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
-      // }
-      // else
-      // {
       PauseGame();
       Game_Events_Manager.Instance.JournalToggled(true);
       return;
       // }
     }
 
-    if (closeJournalAction.WasPerformedThisFrame())
+    if (closeJournalAction.WasPerformedThisFrame() && isPaused)
     {
       ResumeGame();
       Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
@@ -223,8 +222,8 @@ public class Journal_Menu : MonoBehaviour
     darkOverlay.SetActive(true);
     journalContents.SetActive(true);
     tabs.SetActive(true);
-    // isPaused = true;
-    playerInput.SwitchCurrentActionMap("UI");
+    isPaused = true;
+    Game_Manager.Instance.UIManager.OpenUI();
   }
 
   public void ResumeGame(bool playSound = true)
@@ -237,8 +236,11 @@ public class Journal_Menu : MonoBehaviour
     darkOverlay.SetActive(false);
     journalContents.SetActive(false);
     tabs.SetActive(false);
-    // isPaused = false;
-    playerInput.SwitchCurrentActionMap("Player");
+    if (isPaused)
+    {
+      Game_Manager.Instance.UIManager.CloseUI();
+      isPaused = false;
+    }
   }
 
   #region Recipe Tab Methods

@@ -13,6 +13,7 @@ public class Game_Manager : MonoBehaviour
   [SerializeField] public Ingredient_Database ingredientDatabase;
   [SerializeField] public NPC_Database npcDatabase;
   [SerializeField] public Player_Progress playerProgress;
+  public UI_Manager UIManager;
 
   [Header("Room Setup")]
   [SerializeField] private Room_Collection_Data roomCollection;
@@ -43,9 +44,11 @@ public class Game_Manager : MonoBehaviour
 
     if (npcDatabase == null)
       Debug.LogError("[GameManager]: npcDatabase not set in inspector!");
-     
+
     if (ingredientDatabase == null)
       Debug.LogError("[GameManager]: ingredientDatabase not set in inspector!");
+
+    UIManager = gameObject.GetComponent<UI_Manager>();
 
     // starting unlocks are done in player_progress onEnable
     Debug.Log("[GameManager]: Player_Progress initialized. Starting dishes, ingredients, and npcs unlocked.");
