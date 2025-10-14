@@ -14,14 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: French Fries
   Amount: 0
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 65d99b6ee9e97f84494f38ceb0ff8bed, type: 3}
   tier: 0
   price: 0
   rarityWeight: 1
   minSpawn: 0
   maxSpawn: 0
   countsAs: []
+  ingredientType: 16
   description: 
+  CombinedCutPiecePrefab: {fileID: 0}
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
   CutIngredientImages: []
   usedInDishes:
   - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}
@@ -29,6 +36,7 @@ MonoBehaviour:
   ingredientsNeeded:
   - ingredient: {fileID: 11400000, guid: 0aa8b2ec7009f0f47b0a5de844279080, type: 2}
     amountRequired: 1
+    method: 0
   - ingredient: {fileID: 11400000, guid: 2b47a8b23b9ca654a88ea1a7a68b3cbc, type: 2}
     amountRequired: 1
-  ingredientType: 16
+    method: 0
