@@ -185,7 +185,7 @@ public class Chop_Controller : MonoBehaviour
                     Debug.Log("no chopline1");
                 }
                 cuttingLineInitialized = true;
-                // EvaluateChop();
+                EvaluateChop();
                 
             }else
             {
@@ -267,14 +267,18 @@ public class Chop_Controller : MonoBehaviour
     {
         if (ingredient_data_var.Name == "Uncut Fermented Eye" && cuttingLineInitialized)
         {
+            
             Transform parent = GameObject.Find("ChopLine").transform;
             RectTransform chopLine1R = parent.Find("CL1RedZone").GetComponent<RectTransform>(); // Use Transform.Find 
-            bool isOverlapping = Drag_All.IsOverlapping(k_script.knifeRectTransform, chopLine1R);
+            bool isOverlapping = false;
+            
+            isOverlapping = Drag_All.IsOverlapping(k_script.knifeRectTransform, chopLine1R);
+               
             //if its overlapping
             //start timer
             if (isOverlapping)
             {
-                k_script.SnapToLine();
+                k_script.knifeRectTransform.rotation = Quaternion.Euler(0,0,Mathf.Abs(chopLine1R.eulerAngles.z));
                 currentTime += Time.deltaTime;
                 
             }else
@@ -282,6 +286,7 @@ public class Chop_Controller : MonoBehaviour
                 if (currentTime >= 0.1f)
                 {//over this threshold to count as a full cut
                     //cut has been made
+                    Debug.Log("Cut has been made... starting timer");
                     firstCutDone = true;
                 } else
                 {
