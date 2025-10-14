@@ -10,7 +10,7 @@ using TMPro;
 public class Shop : MonoBehaviour
 {
   private bool isPlayerInRange = false;
-  private bool shopOpen = false;
+  private bool shopOpen = false; 
   private bool firstOpen;
   Player_Progress playerProgress;
   [SerializeField] private GameObject shopUI;
@@ -69,8 +69,11 @@ public class Shop : MonoBehaviour
 
   private void Update()
   {
+    if (!isPlayerInRange || !Game_Manager.Instance.UIManager.CanProcessInput())
+      return;
+      
     // Only process input if player is inside trigger and interact pressed once
-    if (isPlayerInRange && interactPressed)
+    if (interactAction.WasPerformedThisFrame() || closeAction.WasPerformedThisFrame())
     {
       interactPressed = false;
       Debug.Log("[Shop]: Player interacted with shop.");
@@ -79,7 +82,7 @@ public class Shop : MonoBehaviour
       {
         if (shopOpen)
           CloseShopUI();
-        else
+        else if (!Game_Manager.Instance.UIManager.pauseMenuOn)
           OpenShopUI();
       }
     }
@@ -124,10 +127,7 @@ public class Shop : MonoBehaviour
   {
     shopUI.SetActive(true);
     shopOpen = true;
-
-    playerInput.SwitchCurrentActionMap("UI");
-    // Cursor.lockState = CursorLockMode.None;
-    // Cursor.visible = true;
+    Game_Manager.Instance.UIManager.OpenUI();
 
     if (!firstOpen)
       shopkeeperText.text = otherOpenText;
@@ -136,11 +136,9 @@ public class Shop : MonoBehaviour
   private void CloseShopUI()
   {
     shopUI.SetActive(false);
+    if (shopOpen)
+      Game_Manager.Instance.UIManager.CloseUI();
     shopOpen = false;
-
-    playerInput.SwitchCurrentActionMap("Player");
-    // Cursor.lockState = CursorLockMode.Locked;
-    // Cursor.visible = false;
 
     if (firstOpen)
       firstOpen = false;
