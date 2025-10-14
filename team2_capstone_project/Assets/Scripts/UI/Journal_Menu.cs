@@ -392,7 +392,7 @@ public class Journal_Menu : MonoBehaviour
     detailsText.text = ingredientText;
 
     // Broadcast event for tutorial
-    Game_Events_Manager.Instance.ForageDetailsClick();
+    // Game_Events_Manager.Instance.ForageDetailsClick();
   }
   #endregion
 

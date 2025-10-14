@@ -13,6 +13,12 @@ namespace Grimoire
     {
         [Header("UI")]
         public GameObject InteractIcon;
+        // public event Action<float> OnHoldProgress;  // later for hold-to-interact UI timer
+
+        [Header("Interaction Settings")]
+        [SerializeField] protected float holdTime = 1f;
+        protected float holdTimer;
+        protected bool isHolding = false;
 
         protected bool playerInside = false;
         protected PlayerInput playerInput;
@@ -40,10 +46,6 @@ namespace Grimoire
             {
                 Debug.LogError("[Interactable_Object] No 'Interact' action found in PlayerInput!");
             }
-            else
-            {
-                Debug.Log("[Interactable_Object] Interact action found.");
-            }
         }
 
         protected virtual void OnTriggerEnter(Collider other)
@@ -55,8 +57,6 @@ namespace Grimoire
 
                 if (InteractIcon != null)
                     InteractIcon.SetActive(true);
-
-                Debug.Log($"[Interactable_Object] Player entered {name}");
             }
         }
 
@@ -69,8 +69,6 @@ namespace Grimoire
 
                 if (InteractIcon != null)
                     InteractIcon.SetActive(false);
-
-                Debug.Log($"[Interactable_Object] Player exited {name}");
             }
         }
 
@@ -79,10 +77,34 @@ namespace Grimoire
             if (!playerInside || interactAction == null)
                 return;
 
-            if (interactAction.triggered)
+            // Holding logic
+            if (interactAction.IsPressed())
             {
-                PerformInteract();
+                if (!isHolding)
+                {
+                    isHolding = true;
+                    holdTimer = 0f;
+                }
+
+                holdTimer += Time.deltaTime;
+
+                if (holdTimer >= holdTime)
+                {
+                    PerformInteract();
+                    ResetHold();
+                }
             }
+            else if (isHolding)
+            {
+                ResetHold();
+                // OnHoldProgress?.Invoke(holdTimer / holdTime);  // later for hold-to-interact UI timer
+            }
+        }
+
+        protected void ResetHold()
+        {
+            isHolding = false;
+            holdTimer = 0f;
         }
 
         public virtual void PerformInteract()
@@ -91,3 +113,4 @@ namespace Grimoire
         }
     }
 }
+
