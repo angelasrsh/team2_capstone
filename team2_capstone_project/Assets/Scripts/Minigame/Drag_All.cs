@@ -27,6 +27,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private static Cauldron cauldron; // Static reference to Cauldron script in scene
   private static bool waterAdded = false;
   private static Animator backgroundAnimator;
+  public static bool IsWaterAdded() => waterAdded;
+  public static void SetWaterAdded(bool val) => waterAdded = val;
+  public static Animator GetBackgroundAnimator() => backgroundAnimator;
 
   [Header("Chopping Minigame")]
   private Canvas canvas;
@@ -38,7 +41,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
   [Header("Frying Pan Minigame")]
   private static Pan pan; // Static reference to Pan script in scene
-
 
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
@@ -180,6 +182,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
           // Debug.Log("In RED");
           DuplicateInventorySlot();
+          
           if (!isOnPot)
           {
             cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
@@ -301,26 +304,65 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   /// </summary>
   public static void AddWaterToPot()
   {
-    if (waterAdded)
-    {
-      errorText.GetComponent<TMP_Text>().text = "Water already added. Cannot add more!";
-      errorText.SetActive(true);
-      cauldron.DisableErrorTextAfterDelay();
-      return;
-    }
+      if (waterAdded)
+      {
+          if (errorText != null)
+          {
+              errorText.GetComponent<TMP_Text>().text = "Water already added. Cannot add more!";
+              errorText.SetActive(true);
+              cauldron?.DisableErrorTextAfterDelay();
+          }
+          return;
+      }
 
-    Ingredient_Data water = Ingredient_Inventory.Instance.getWaterData();
-    Debug.Log("[Drag_All]: Added water to cauldron");
-    cauldron.AddToPot(water);
+      // Ensure cauldron reference exists
+      if (cauldron == null)
+          cauldron = Object.FindObjectOfType<Cauldron>();
 
-    if (backgroundAnimator != null)
-    {
-      backgroundAnimator.SetBool("hasWater", true);
-      backgroundAnimator.SetBool("empty", false);
-    }
-    waterAdded = true;
-    audioManager.PlayBubblingOnLoop();
+      if (cauldron == null)
+      {
+          Debug.LogWarning("[Drag_All]: No Cauldron found in scene!");
+          return;
+      }
+
+      // Ensure background animator exists
+      if (backgroundAnimator == null)
+      {
+          var bgCanvas = GameObject.Find("BackgroundCanvas");
+          if (bgCanvas != null)
+          {
+              var stirAnim = bgCanvas.transform.Find("Stirring_Animation");
+              if (stirAnim != null)
+                  backgroundAnimator = stirAnim.GetComponent<Animator>();
+          }
+      }
+
+      // Ensure water data exists
+      Ingredient_Data water = Ingredient_Inventory.Instance?.getWaterData();
+      if (water == null)
+      {
+          Debug.LogWarning("[Drag_All]: Water ingredient data not found!");
+          return;
+      }
+
+      // Perform add
+      Debug.Log("[Drag_All]: Added water to cauldron");
+      cauldron.AddToPot(water);
+
+      if (backgroundAnimator != null)
+      {
+          backgroundAnimator.SetBool("hasWater", true);
+          backgroundAnimator.SetBool("empty", false);
+      }
+      else
+      {
+          Debug.LogWarning("[Drag_All]: No background animator found — water animation won't show.");
+      }
+
+      waterAdded = true;
+      audioManager?.PlayBubblingOnLoop();
   }
+
 
   /// <summary>
   /// Once recipe is made, should call this method to reset water status and change

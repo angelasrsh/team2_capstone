@@ -210,5 +210,27 @@ public class Cauldron : MonoBehaviour
   {
     return ingredientInPot.Count == 0;
   }
+
+  public bool AddWater(Ingredient_Data water)
+  {
+      if (water == null)
+      {
+          Debug.LogWarning("[Cauldron] AddWater called with null water.");
+          return false;
+      }
+
+      // If already added, return false so caller can display error
+      if (Drag_All.IsWaterAdded())
+      {
+          Debug.Log("[Cauldron] Water already added.");
+          return false;
+      }
+
+      // Add water as an ingredient so recipe checks still see it
+      AddToPot(water);
+      Audio_Manager.instance?.PlayBubblingOnLoop();
+
+      return true;
+  }
   #endregion
 }
