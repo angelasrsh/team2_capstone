@@ -13,17 +13,28 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     public Room_Data.RoomID exitingTo;
 
     private Player_Controller player;
+    private InputAction interactAction;
     private bool confirmationActive = false;
     private InputAction pauseAction;
 
     private void Awake()
     {
         leaveResourceAreaCanvas.enabled = false;
+
+        var pic = FindObjectOfType<Player_Input_Controller>();
+        if (pic != null)
+        {
+            var input = pic.GetComponent<PlayerInput>();
+            if (input != null)
+            {
+                interactAction = input.actions["Interact"];
+            }
+        }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && interactAction.triggered)
         {
             // Show confirmation UI
             leaveResourceAreaCanvas.enabled = true;
