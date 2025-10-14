@@ -46,7 +46,7 @@ public class Pause_Menu : MonoBehaviour
     if (pauseAction != null)
       pauseAction.performed += ctx =>
       {
-        if (canPause)
+        if (canPause && Game_Manager.Instance.UIManager.openUICount == 0)
           PauseGame();
       };
     
@@ -66,7 +66,6 @@ public class Pause_Menu : MonoBehaviour
   public void SetCanPause(bool value)
   {
     canPause = value;
-
     if (!canPause && isPaused)
       ResumeGame(); // auto-resume if pause is forcibly disabled
   }
@@ -92,7 +91,8 @@ public class Pause_Menu : MonoBehaviour
 
     darkOverlay.SetActive(true);
     isPaused = true;
-    playerInput.SwitchCurrentActionMap("UI");
+    Game_Manager.Instance.UIManager.OpenUI();
+    Game_Manager.Instance.UIManager.PauseMenuState(true);
   }
 
   // Resume the game from the pause menu
@@ -103,8 +103,12 @@ public class Pause_Menu : MonoBehaviour
     Debug.Log("Resuming game...");
     menuBox.SetActive(false);
     darkOverlay.SetActive(false);
+    if (isPaused)
+    {
+      Game_Manager.Instance.UIManager.CloseUI();
+      Game_Manager.Instance.UIManager.PauseMenuState(false);
+    }
     isPaused = false;
-    playerInput.SwitchCurrentActionMap("Player");
   }
 
   // Quit the game from pause menu and return to the main menu
@@ -112,6 +116,8 @@ public class Pause_Menu : MonoBehaviour
   {
     Debug.Log("Quitting game...");
     playerInput.SwitchCurrentActionMap("Player");
+    Game_Manager.Instance.UIManager.PauseMenuState(false);
+    Game_Manager.Instance.UIManager.CloseUI();
     Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
   }
   
