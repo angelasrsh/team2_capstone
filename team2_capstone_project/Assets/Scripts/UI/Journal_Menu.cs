@@ -237,16 +237,21 @@ public class Journal_Menu : MonoBehaviour
 
       // Get current PlayerInput
       PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+    // Switch to the "Journal" input map
+    if (playerInput != null)
+    {
+      playerInput.SwitchCurrentActionMap("Journal");
+      flipLeftAction.Enable();
+      flipRightAction.Enable();
+      closeJournalAction.Enable();
+      clickAction.Enable();
+    }
       
-      // Switch to the "Journal" input map
-      if (playerInput != null)
-      {
-        playerInput.SwitchCurrentActionMap("Journal");
-        flipLeftAction.Enable();
-        flipRightAction.Enable();
-        closeJournalAction.Enable();
-        clickAction.Enable();
-      }
+    // Disable player movement  
+    Player_Controller player = FindObjectOfType<Player_Controller>();
+    if (player != null)
+        player.DisablePlayerMovement();
   }
 
   public void ResumeGame(bool playSound = true)
@@ -263,15 +268,20 @@ public class Journal_Menu : MonoBehaviour
        // Get current PlayerInput
       PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
 
-      // Switch back to Player map
-      if (playerInput != null)
-      {
-          flipLeftAction.Disable();
-          flipRightAction.Disable();
-          closeJournalAction.Disable();
-          clickAction.Disable();
-          playerInput.SwitchCurrentActionMap("Player");
-      }
+    // Switch back to Player map
+    if (playerInput != null)
+    {
+      flipLeftAction.Disable();
+      flipRightAction.Disable();
+      closeJournalAction.Disable();
+      clickAction.Disable();
+      playerInput.SwitchCurrentActionMap("Player");
+    }
+
+    // Enable player movement
+    Player_Controller player = FindObjectOfType<Player_Controller>();
+    if (player != null)
+        player.EnablePlayerMovement();
   }
 
   #region Recipe Tab Methods

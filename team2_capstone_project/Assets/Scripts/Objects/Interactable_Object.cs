@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace Grimoire
 {
@@ -33,14 +34,42 @@ namespace Grimoire
                     InteractIcon = icon.gameObject;
             }
 
-            playerInput = FindObjectOfType<PlayerInput>();
+            SceneManager.sceneLoaded += OnSceneLoadedRebind;
+        }
+
+        protected virtual void OnEnable()
+        {
+            TryBindInput();
+            SceneManager.sceneLoaded += OnSceneLoadedRebind;
+        }
+
+        protected virtual void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+        }
+
+        private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
+        {
+            TryBindInput();
+        }
+
+        protected virtual void TryBindInput()
+        {
+            playerInput = Game_Manager.Instance?.GetComponent<PlayerInput>();
             if (playerInput == null)
             {
-                Debug.LogError("[Interactable_Object] No PlayerInput found in scene!");
+                Debug.LogWarning($"[{name}] No PlayerInput found when trying to bind interact input.");
                 return;
             }
 
             interactAction = playerInput.actions["Interact"];
+            if (interactAction == null)
+            {
+                Debug.LogWarning($"[{name}] No 'Interact' action found in PlayerInput.");
+                return;
+            }
+
+            interactAction.Enable(); // Keep it always enabled
         }
 
         protected virtual void Update()
@@ -113,4 +142,3 @@ namespace Grimoire
         }
     }
 }
-
