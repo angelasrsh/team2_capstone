@@ -1,19 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 namespace Grimoire
 {
-    /// <summary>
-    /// Base class for any interactable world object (e.g., collectibles, doors, NPCs).
-    /// Detects when the player is in range and listens for the Interact input.
-    /// </summary>
     public class Interactable_Object : MonoBehaviour
     {
         [Header("UI")]
         public GameObject InteractIcon;
-        // public event Action<float> OnHoldProgress;  // later for hold-to-interact UI timer
 
         [Header("Interaction Settings")]
         [SerializeField] protected float holdTime = 1f;
@@ -24,6 +21,8 @@ namespace Grimoire
         protected PlayerInput playerInput;
         protected InputAction interactAction;
         protected Player_Controller player;
+
+        public static event Action<float> OnGlobalHoldProgress;  // event for UI fill
 
         protected virtual void Awake()
         {
@@ -42,10 +41,44 @@ namespace Grimoire
             }
 
             interactAction = playerInput.actions["Interact"];
-            if (interactAction == null)
+        }
+
+        protected virtual void Update()
+        {
+            if (!playerInside || interactAction == null)
+                return;
+
+            if (interactAction.IsPressed())
             {
-                Debug.LogError("[Interactable_Object] No 'Interact' action found in PlayerInput!");
+                if (!isHolding)
+                {
+                    isHolding = true;
+                    holdTimer = 0f;
+                }
+
+                holdTimer += Time.deltaTime;
+
+                float progress = Mathf.Clamp01(holdTimer / holdTime);
+                OnGlobalHoldProgress?.Invoke(progress);
+
+                if (holdTimer >= holdTime)
+                {
+                    PerformInteract();
+                    ResetHold();
+                    OnGlobalHoldProgress?.Invoke(0f); // reset fill
+                }
             }
+            else if (isHolding)
+            {
+                ResetHold();
+                OnGlobalHoldProgress?.Invoke(0f);
+            }
+        }
+
+        protected void ResetHold()
+        {
+            isHolding = false;
+            holdTimer = 0f;
         }
 
         protected virtual void OnTriggerEnter(Collider other)
@@ -69,47 +102,14 @@ namespace Grimoire
 
                 if (InteractIcon != null)
                     InteractIcon.SetActive(false);
+
+                OnGlobalHoldProgress?.Invoke(0f);
             }
-        }
-
-        protected virtual void Update()
-        {
-            if (!playerInside || interactAction == null)
-                return;
-
-            // Holding logic
-            if (interactAction.IsPressed())
-            {
-                if (!isHolding)
-                {
-                    isHolding = true;
-                    holdTimer = 0f;
-                }
-
-                holdTimer += Time.deltaTime;
-
-                if (holdTimer >= holdTime)
-                {
-                    PerformInteract();
-                    ResetHold();
-                }
-            }
-            else if (isHolding)
-            {
-                ResetHold();
-                // OnHoldProgress?.Invoke(holdTimer / holdTime);  // later for hold-to-interact UI timer
-            }
-        }
-
-        protected void ResetHold()
-        {
-            isHolding = false;
-            holdTimer = 0f;
         }
 
         public virtual void PerformInteract()
         {
-            Debug.Log($"[Interactable_Object] Player interacted with {name} (base)");
+            Debug.Log($"[Interactable_Object] Player interacted with {name}");
         }
     }
 }
