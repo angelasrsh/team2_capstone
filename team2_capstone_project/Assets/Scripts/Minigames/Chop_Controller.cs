@@ -183,17 +183,34 @@ public class Chop_Controller : MonoBehaviour
             {
                 Debug.LogError("Fog_Cut_Group not found as child of Canvas-CutGroup");
             }
-        } else if (ingredient_data_var.Name == "Uncut Ficklegourd")
+        }
+        else if (ingredient_data_var.Name == "Uncut Ficklegourd")
         {
             Transform fCutTransform = parent.Find("Fickle_Cut_Group"); // Use Transform.Find instead
             if (fCutTransform != null)
             {
                 fCutTransform.gameObject.SetActive(true);
+                fCutTransform.Find("Fkl_Uncut").gameObject.SetActive(false);
+
                 Debug.Log("Fickle_Cut_Group should be on cutting board now");
             }
             else
             {
                 Debug.LogError("Fickle_Cut_Group not found as child of Canvas-CutGroup");
+            }
+        }
+        else if (ingredient_data_var.Name == "Slime Gelatin")
+        {
+            Transform fCutTransform = parent.Find("Slime_Cut_Group"); // Use Transform.Find instead
+            if (fCutTransform != null)
+            {
+                fCutTransform.gameObject.SetActive(true);
+                fCutTransform.Find("Cut_Slime_R").gameObject.SetActive(true);
+                Debug.Log("Slime_Cut_Group should be on cutting board now");
+            }
+            else
+            {
+                Debug.LogError("Slime_Cut_Group not found as child of Canvas-CutGroup");
             }
         }
     }
@@ -277,7 +294,7 @@ public class Chop_Controller : MonoBehaviour
         }
         else if (ingredient_data_var.Name == "Uncut Ficklegourd")
         {
-             Transform chopLine1 = parent.Find("Fkl_CL1");
+            Transform chopLine1 = parent.Find("Fkl_CL1");
             Transform CLRZ = chopLine1.Find("CLRZFkl1");
             Transform chopLine2 = parent.Find("Fkl_CL2");
             Transform CLRZ2 = chopLine2.Find("CLRZFkl2");
@@ -303,6 +320,15 @@ public class Chop_Controller : MonoBehaviour
 
 
         }
+        else if (ingredient_data_var.Name == "Slime Gelatin")
+        {
+            Transform chopLine1 = parent.Find("Slime_CL");
+            Transform CLRZ = chopLine1.Find("CLRZSLIME");
+            chopLine1.gameObject.SetActive(true);
+            CLRZ.gameObject.SetActive(true);
+            cuttingLineInitialized = true;
+        }
+
     }
 
     private void ShowLine(int lineIndex)
@@ -323,6 +349,10 @@ public class Chop_Controller : MonoBehaviour
         }else if (ingredient_data_var.Name == "Uncut Ficklegourd")
         {
             parent.Find("Fkl_CL2").gameObject.SetActive(false);
+        }else if (ingredient_data_var.Name == "Slime Gelatin")
+        {
+            parent.Find("Slime_CL").gameObject.SetActive(false);
+            
         }
         currentState = CuttingState.Idle;
     }
@@ -370,7 +400,7 @@ public class Chop_Controller : MonoBehaviour
         RectTransform CLR = null;
         if (ingredient_data_var.Name == "Uncut Fermented Eye" && cuttingLineInitialized)
         {
-            
+
             if (cuts_left == 2)
             {
                 CL = GameObject.Find("ChopLine").transform;
@@ -393,7 +423,8 @@ public class Chop_Controller : MonoBehaviour
             CL = GameObject.Find("Shroom_CL1").transform;
             CLR = CL.Find("CLRZSh1").GetComponent<RectTransform>();
             isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
-        } else if (ingredient_data_var.Name == "Uncut Ficklegourd")
+        }
+        else if (ingredient_data_var.Name == "Uncut Ficklegourd")
         {
             if (cuts_left == 2)
             {
@@ -409,7 +440,13 @@ public class Chop_Controller : MonoBehaviour
                 isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
                 Debug.Log($"CL: {CL}, CLR: {CLR}, isOverlapping: {isOverlappingCLR}");
             }
-        }else
+        }else if (ingredient_data_var.Name == "Slime Gelatin")
+        {
+            CL = GameObject.Find("Slime_CL").transform;
+            CLR = CL.Find("CLRZSLIME").GetComponent<RectTransform>();
+            isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+        }
+        else
         {
             return;
         }
@@ -505,9 +542,14 @@ public class Chop_Controller : MonoBehaviour
                     {
                         // Piece 1 goes left, Piece 2 goes right
                         RectTransform[] leftSide = new RectTransform[] { ingredientPiece3, ingredientPiece2 };
-                        RectTransform[] rightSide = new RectTransform[] { ingredientPiece4};
+                        RectTransform[] rightSide = new RectTransform[] { ingredientPiece4 };
                         DetectSwipeMotion(leftSide, rightSide);
                     }
+                } else if (ingredient_data_var.Name == "Slime Gelatin")
+                {
+                    RectTransform[] leftSide = new RectTransform[] { ingredientPiece1 };
+                    RectTransform[] rightSide = new RectTransform[] { ingredientPiece2 };
+                    DetectSwipeMotion(leftSide, rightSide);
                 }
                     break;
 
@@ -548,6 +590,11 @@ public class Chop_Controller : MonoBehaviour
             ingredientPiece2 = fCutTransform.Find("Fkl_Cut_2").GetComponent<RectTransform>();
             ingredientPiece3 = fCutTransform.Find("Fkl_Cut_3").GetComponent<RectTransform>();
             ingredientPiece4 = fCutTransform.Find("Fkl_Cut_4").GetComponent<RectTransform>();
+        }else if (ingredient_data_var.Name == "Slime Gelatin"){
+            Transform fCutTransform = parent.Find("Slime_Cut_Group"); // Use Transform.Find instead
+
+            ingredientPiece1 = fCutTransform.Find("Cut_Slime_R").GetComponent<RectTransform>();
+            ingredientPiece2 = fCutTransform.Find("Cut_Slime_L").GetComponent<RectTransform>();
         }
 
         //set original positions
@@ -844,6 +891,10 @@ public class Chop_Controller : MonoBehaviour
             Transform parent = GameObject.Find("Canvas-CutGroup").transform;
             Transform cutGroup = GameObject.Find("Fickle_Cut_Group").transform;
             cutGroup.gameObject.SetActive(false);
+        }else if (ingredient_data_var.Name == "Slime Gelatin"){
+            Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+            Transform cutGroup = GameObject.Find("Slime_Cut_Group").transform; // Use Transform.Find instead
+            cutGroup.gameObject.SetActive(false);
         }
     }
     public void ChangeToCutPiece(Image imageComponent)
@@ -894,7 +945,8 @@ public class Chop_Controller : MonoBehaviour
                 return 52f; //TODO fix this hardcoded value;
             }
 
-        } else if (ingredient_data_var.Name == "Uncut Fogshroom")
+        }
+        else if (ingredient_data_var.Name == "Uncut Fogshroom")
         {
             Transform chopline = parent.Find("Shroom_CL1"); // Use Transform.Find 
             Transform CL1RedZone = chopline.Find("CLRZSh1"); // Use Transform.Find
@@ -902,15 +954,17 @@ public class Chop_Controller : MonoBehaviour
             // if(cuts_left == 3)
             {
                 return -76.149f; //TODO fix this hardcoded value
-            } 
-            
-        } else if (ingredient_data_var.Name == "Uncut Ficklegourd")
+            }
+
+        }
+        else if (ingredient_data_var.Name == "Uncut Ficklegourd")
         {
             if (cuts_left == 2)
             {
                 Transform chopline = parent.Find("Fkl_CL1"); // Use Transform.Find 
                 Transform CL1RedZone = chopline.Find("CLRZFkl1"); // Use Transform.Find
                 RZ = CL1RedZone;
+                return 360f;
             }
             else if (cuts_left == 1)
             {
@@ -918,8 +972,16 @@ public class Chop_Controller : MonoBehaviour
                 Transform CL2RedZone = chopline.Find("CLRZFkl2"); // Use Transform.Find 
                 RZ = CL2RedZone;
                 Debug.Log($"RZ.eulerAngles.z: {RZ.eulerAngles.z}");
-                return 52f; //TODO fix this hardcoded value;
+                return 360f; //TODO fix this hardcoded value;
             }
+        }
+        else if (ingredient_data_var.Name == "Slime Gelatin")
+        {
+            Transform chopline = parent.Find("Slime_CL"); // Use Transform.Find 
+            Transform CL2RedZone = chopline.Find("CLRZSLIME"); // Use Transform.Find 
+            RZ = CL2RedZone;
+            Debug.Log($"RZ.eulerAngles.z: {RZ.eulerAngles.z}");
+            return 360f; //TODO fix this hardcoded value;
         }
 
 
@@ -964,6 +1026,12 @@ public class Chop_Controller : MonoBehaviour
                 Transform CL2RedZone = chopline.Find("CLRZFkl2"); // Use Transform.Find 
                 RZ = CL2RedZone;
             }
+        }else if (ingredient_data_var.Name == "Slime Gelatin")
+        {
+            Transform chopline = parent.Find("Slime_CL"); // Use Transform.Find 
+            Transform CL2RedZone = chopline.Find("CLRZSLIME"); // Use Transform.Find 
+            RZ = CL2RedZone;
+            
         }
         
         return RZ;
