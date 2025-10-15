@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 577081843}
-  m_IndirectSpecularColor: {r: 0.4789548, g: 0.5946981, b: 0.5685922, a: 1}
+  m_IndirectSpecularColor: {r: 0.4796273, g: 0.595371, b: 0.56894094, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3674,6 +3674,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4670815767054866633, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
+      propertyPath: currentRoom
+      value: 
+      objectReference: {fileID: 11400000, guid: 1429ae69f90b10248a447d4969b1ef77, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
 --- !u!114 &499437481 stripped
@@ -4392,7 +4396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leaveResourceAreaCanvas: {fileID: 708894103}
   currentRoom: {fileID: 11400000, guid: 1429ae69f90b10248a447d4969b1ef77, type: 2}
-  exitingTo: 8
+  exitingTo: 9
 --- !u!136 &581511574
 CapsuleCollider:
   m_ObjectHideFlags: 0
