@@ -42,6 +42,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   [Header("Frying Pan Minigame")]
   private static Pan pan; // Static reference to Pan script in scene
 
+  [Header("Combine Minigame")]
+  private static Combine combine; // Static reference to Combine script in scene
+
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
   [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
@@ -51,11 +54,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private static bool audioTriggered = false;
 
   // Start is called before the first frame update
-  void Start()
+   void Start()
   {
-
     if (cauldron == null)
       cauldron = FindObjectOfType<Cauldron>();
+    
     ParentSlot = GetComponentInParent<Inventory_Slot>();
 
     // Find and set animator from animation background
@@ -67,11 +70,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
 
     // Find errorText from Ladle_Canvas
-    if (errorText == null && (SceneManager.GetActiveScene().name == "Cooking_Minigame" ||
-                              SceneManager.GetActiveScene().name == "Frying_Pan_Minigame"))
+    if (errorText == null && SceneManager.GetActiveScene().name == "Cooking_Minigame")
     {
-      Transform backgroundCanvas = GameObject.Find("BackgroundCanvas").transform;
-      errorText = backgroundCanvas.Find("Error_Text").gameObject;
+      Transform ladleCanvas = GameObject.Find("Ladle_Canvas").transform;
+      errorText = ladleCanvas.Find("Error_Text").gameObject;
     }
 
     GameObject red_zone_found = GameObject.Find("RedZone");
@@ -84,7 +86,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
     if (resizeCanvas_object != null)
       resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
-    else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
+    else
     {
       Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
     }
@@ -92,16 +94,17 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     rectTransform = GetComponent<RectTransform>();
 
     // Debug.Log("Components on " + gameObject.name + ":");
-    // foreach (Component comp in GetComponents<Component>())
-    // {
-    //   Debug.Log("- " + comp.GetType().Name);
-    // }
+    foreach (Component comp in GetComponents<Component>())
+    {
+      // Debug.Log("- " + comp.GetType().Name);
+    }
 
     if (audioManager == null)
       audioManager = Audio_Manager.instance;
-    
+    // Reducing restaurant music only for cauldron for now
     if (SceneManager.GetActiveScene().name == "Cooking_Minigame" && !audioTriggered)
     {
+      // audio.LowerRestaurantMusic();
       audioManager.StartFire();
       audioTriggered = true;
     }
@@ -116,6 +119,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Debug.LogError("Chop_Controller not found in scene!");
       }
     }
+    else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
+      pan ??= FindObjectOfType<Pan>();
+    else if (SceneManager.GetActiveScene().name == "Combine_Minigame")
+      combine ??= FindObjectOfType<Combine>();
   }
   public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
   {
@@ -136,6 +143,50 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     return rect1.Overlaps(rect2);
 
   }
+
+  public static bool IsOverlappingRotated(RectTransform rectA, RectTransform rectB)
+  {
+    if (rectA == null || rectB == null)
+      return false;
+
+    Vector3[] aCorners = new Vector3[4];
+    Vector3[] bCorners = new Vector3[4];
+    rectA.GetWorldCorners(aCorners);
+    rectB.GetWorldCorners(bCorners);
+
+    // Project on both rectangles’ axes (4 total)
+    return !(HasSeparatingAxis(aCorners, bCorners, 0) ||
+             HasSeparatingAxis(aCorners, bCorners, 1) ||
+             HasSeparatingAxis(bCorners, aCorners, 0) ||
+             HasSeparatingAxis(bCorners, aCorners, 1));
+  }
+
+  private static bool HasSeparatingAxis(Vector3[] a, Vector3[] b, int edgeIndex)
+  {
+    // Edge vector (2D)
+    Vector2 edge = (Vector2)(a[(edgeIndex + 1) % 4] - a[edgeIndex]);
+    Vector2 axis = new Vector2(-edge.y, edge.x).normalized;
+
+    // Project both rects onto the axis
+    Project(a, axis, out float minA, out float maxA);
+    Project(b, axis, out float minB, out float maxB);
+
+    // If there’s a gap, no overlap on this axis
+    return maxA < minB || maxB < minA;
+  }
+
+  private static void Project(Vector3[] verts, Vector2 axis, out float min, out float max)
+  {
+    float d = Vector2.Dot((Vector2)verts[0], axis);
+    min = max = d;
+    for (int i = 1; i < verts.Length; i++)
+    {
+      d = Vector2.Dot((Vector2)verts[i], axis);
+      if (d < min) min = d;
+      if (d > max) max = d;
+    }
+  }
+  
   public void OnBeginDrag(PointerEventData eventData)
   {
     // Debug.Log("started drag");
@@ -145,7 +196,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       errorText.GetComponent<TMP_Text>().text = "Cannot add more ingredients once you have started stirring!";
       Invoke(nameof(HideErrorText), 3);
       return;
-    } // move this to onEndDrag later
+    }
 
     if (canDrag)
     {
@@ -155,6 +206,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       ingrOriginalPos = rectTransform.position;
     }
   }
+
 
   public void OnDrag(PointerEventData eventData)
   {
@@ -174,6 +226,28 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       return;
     else
     {
+      if (SceneManager.GetActiveScene().name == "Combine_Minigame")
+      {
+        DuplicateInventorySlot();
+
+        // Combine doesn't use IsOverlapping in Drag_All
+        int overlappingZone = combine.IsOverARedZone();
+        bool added = false;
+        Debug.Log("[Combine]: overlapping zone: " + overlappingZone);
+        if (overlappingZone != -1)
+          added = combine.AddToTable((Ingredient_Data)(ParentSlot.stk.resource), overlappingZone);
+
+        if (added)
+        {
+          Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+          Destroy(gameObject);
+        }
+        else
+          rectTransform.position = ingrOriginalPos;
+
+        return;
+      }
+
       // Debug.Log("ended drag");
       transform.SetParent(parentAfterDrag);
       if (IsOverlapping(rectTransform, redZone))
@@ -182,7 +256,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         {
           // Debug.Log("In RED");
           DuplicateInventorySlot();
-          
           if (!isOnPot)
           {
             cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
@@ -195,15 +268,16 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
           Ingredient_Data ingredient_data_var;
-
+          //check if theres nothing on the cutting board, the ingredient instance is actually an ingredient,
+          //and that there is a cut ingredient image for that ingredient
           if ((!cuttingBoardActive) && (Ingredient_Inventory.Instance.IngrEnumToData(ingredientType) != null)
                 && (((Ingredient_Data)(ParentSlot.stk.resource)).CutIngredientImages.Count() > 0))
           {
             //be able to remove the ingredient from its spot and decrease the count
             ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
-            DuplicateInventorySlot();
-            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-
+            DuplicateInventorySlot(); //show the ingredient picture after you take it off the inventory slot
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1); //decrease the number 
+            
             if (resizeCanvas != null)
             {
               // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
@@ -216,7 +290,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
               //spawn the cut prefab
               chopScript.ShowIngredientPiecedTogether();
-            
+
             }
             cuttingBoardActive = true;
           }
@@ -228,17 +302,25 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
         else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
         {
-          pan ??= FindObjectOfType<Pan>();
+          // pan ??= FindObjectOfType<Pan>();
           DuplicateInventorySlot();
           if (pan.AddToPan((Ingredient_Data)(ParentSlot.stk.resource))) // Only remove ingredient if pan was empty and ingredient was actually added;
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-          
+
           // Start pan slider minigame
           pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
         }
       }
       else
       {
+        if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
+        {
+          if (isOnPot)
+          {
+            cauldron.RemoveFromPot((Ingredient_Data)(ParentSlot.stk.resource));
+            isOnPot = false;
+          }
+        }
         // Debug.Log("Not in RED, snapping back");
         rectTransform.position = ingrOriginalPos;
       }
