@@ -22,7 +22,11 @@ MonoBehaviour:
   maxSpawn: 5
   countsAs:
   - {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
-  ingredientType: 6
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
   description: Broth made from... bone.
   CutIngredientImages: []
   usedInDishes:
@@ -31,6 +35,10 @@ MonoBehaviour:
   ingredientsNeeded:
   - ingredient: {fileID: 11400000, guid: c5b2a46b578a60a468d0cb31729c2ab1, type: 2}
     amountRequired: 1
+    method: 0
   - ingredient: {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
     amountRequired: 1
-  ingredientType: 6
+    method: 0
+  ingredientType: 2
+  CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 0

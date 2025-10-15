@@ -21,10 +21,16 @@ MonoBehaviour:
   minSpawn: 3
   maxSpawn: 6
   countsAs: []
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
   description: Fermented eyeball from a fallen Eyedrake found in the Forest.
   CutIngredientImages: []
   usedInDishes: []
   makesIngredient: []
   ingredientsNeeded: []
-  ingredientType: 4
+  ingredientType: 15
   CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 0

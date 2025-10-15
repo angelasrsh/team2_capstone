@@ -72,16 +72,16 @@ public enum IngredientType
   Honey,
   Milk,
   Oil,
-  Slime_Gelatin,
+  Uncut_Slime,
   Uncooked_Patty,
   Uncut_Fermented_Eye,
   Uncut_Fogshroom,
   Uncut_Mandrake,
   Water,
   Burnt_Blob,
-  Sliced_Gelatin,
-  Uncut_Ficklegourd,
-  Cut_Ficklegourd
+  Cut_Slime,
+  Uncut_Fickle_Gourd,
+  Cut_Fickle_Gourd
 }
 
 // public class CutLine

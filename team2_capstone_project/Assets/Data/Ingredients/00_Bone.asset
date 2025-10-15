@@ -21,7 +21,11 @@ MonoBehaviour:
   minSpawn: 0
   maxSpawn: 2
   countsAs: []
-  ingredientType: 7
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
   description: Bone from an unknown animal corpse found in the Forest. It's probably
     edible?
   CutIngredientImages: []
@@ -31,4 +35,6 @@ MonoBehaviour:
     amountRequired: 1
     method: 1
   ingredientsNeeded: []
-  ingredientType: 7
+  ingredientType: 1
+  CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 0
