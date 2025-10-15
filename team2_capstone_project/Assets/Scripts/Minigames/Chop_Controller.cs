@@ -405,14 +405,15 @@ public class Chop_Controller : MonoBehaviour
             {
                 CL = GameObject.Find("ChopLine").transform;
                 CLR = CL.Find("CL1RedZone").GetComponent<RectTransform>();
-                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
-
+                // isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRectTransform, CLR);
             }
             else if (cuts_left == 1)
             {
                 CL = GameObject.Find("ChopLine2").transform;
                 CLR = CL.Find("CL2RedZone").GetComponent<RectTransform>();
-                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+                // isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRectTransform, CLR);
                 Debug.Log($"CL: {CL}, CLR: {CLR}, isOverlapping: {isOverlappingCLR}");
 
             }
@@ -422,7 +423,8 @@ public class Chop_Controller : MonoBehaviour
         {
             CL = GameObject.Find("Shroom_CL1").transform;
             CLR = CL.Find("CLRZSh1").GetComponent<RectTransform>();
-            isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+            // isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+            isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRectTransform, CLR);
         }
         else if (ingredient_data_var.Name == "Uncut Ficklegourd")
         {
@@ -430,21 +432,24 @@ public class Chop_Controller : MonoBehaviour
             {
                 CL = GameObject.Find("Fkl_CL1").transform;
                 CLR = CL.Find("CLRZFkl1").GetComponent<RectTransform>();
-                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+                // isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRectTransform, CLR);
 
             }
             else if (cuts_left == 1)
             {
                 CL = GameObject.Find("Fkl_CL2").transform;
                 CLR = CL.Find("CLRZFkl2").GetComponent<RectTransform>();
-                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+                // isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRectTransform, CLR);
                 Debug.Log($"CL: {CL}, CLR: {CLR}, isOverlapping: {isOverlappingCLR}");
             }
         }else if (ingredient_data_var.Name == "Slime Gelatin")
         {
             CL = GameObject.Find("Slime_CL").transform;
             CLR = CL.Find("CLRZSLIME").GetComponent<RectTransform>();
-            isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+            // isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+            isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRectTransform, CLR);
         }
         else
         {
@@ -467,8 +472,9 @@ public class Chop_Controller : MonoBehaviour
             if (currentTime >= 0.1f)
             {//over this threshold to count as a full cut
                 //cut has been made
-                Debug.Log("Cut has been made... starting timer");
+                // Debug.Log("Cut has been made... starting timer");
                 firstCutDone = true;
+                // k_script.knifeImage.raycastTarget = true;
             } else
             {
                 currentTime = 0; //reset timer
@@ -838,8 +844,7 @@ public class Chop_Controller : MonoBehaviour
         if (ingredient_data_var != null && ingredient_data_var.makesIngredient.Count > 0)
         {
             Debug.Log("Adding ingredient: " + ingredient_data_var.makesIngredient[0].ingredient.Name);
-            Ingredient_Inventory.Instance.AddResources(
-            Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient), 1);
+            Ingredient_Inventory.Instance.AddResources(ingredient_data_var.makesIngredient[0].ingredient.ingredientType, 1);
         }
 
 

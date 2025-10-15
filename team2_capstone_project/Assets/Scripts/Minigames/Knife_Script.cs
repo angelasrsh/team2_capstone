@@ -7,8 +7,6 @@ using UnityEngine.UIElements;
 using UnityEngine.UI;
 using System; //for actions
 
-
-
 public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     [Header("Sprites")]
@@ -25,7 +23,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 
     [Header("State")]
-    private UnityEngine.UI.Image knifeImage;
+    public UnityEngine.UI.Image knifeImage;
     public Vector3 currKnifePosition;
     private bool isSnapped = false;
     private Vector3 snappedPosition;
@@ -51,7 +49,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         }
         parentAfterDrag = transform.parent;
         knife_is_being_dragged = true;
-        isSnapped = false;
+        // isSnapped = false;
 
         OnDragStart?.Invoke();// shows the cutting lines
         Debug.Log("[Knife_Script] OndragStart Invoked");
@@ -83,19 +81,18 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         //         null, // Use null for overlay canvas, or your canvas camera
         //         out Vector2 localMousePos
         //     );
-            
+
         //     // Lock movement to only the local Y axis (vertical in rotated space)
         //     // Keep the X position fixed to the red zone's center
         //     Vector2 constrainedLocalPos = new Vector2(0, localMousePos.y);
-            
+
         //     // Convert back to world/canvas position
         //     Vector3 worldPos = CL1R.TransformPoint(constrainedLocalPos);
 
         //     // Apply to knife position
         //     knifeRectTransform.position = worldPos;
-            
-            
-        // } else
+        // }
+        // else
         {
             transform.position = Input.mousePosition;
         }
@@ -110,6 +107,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         if (isSnapped == true) //keep in current position
         {
             Debug.Log("Knife released while snapped!");
+            knifeImage.raycastTarget = false;
             OnDragEnd?.Invoke();
             // DON'T reset position or rotation here - knife stays on the line
             return;
@@ -127,6 +125,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         transform.rotation = firstOriginalRotation;
         transform.SetParent(parentAfterDrag);
         isSnapped = false;
+        knifeImage.raycastTarget = true;
         
         // Swap back to original sprite
         if (originalSprite != null && knifeImage != null)

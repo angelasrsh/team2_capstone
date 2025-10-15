@@ -195,7 +195,7 @@ public class Ingredient_Inventory : Inventory
       case IngredientType.Burnt_Blob:
         return "Burnt Blob";
       case IngredientType.Cut_Slime:
-        return "Sliced Gelatin";
+        return "Cut Slime";
       case IngredientType.Cut_Ficklegourd:
         return "Cut Ficklegourd";
       case IngredientType.Uncut_Ficklegourd:
@@ -256,7 +256,7 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.Water;
       case "Burnt Blob":
         return IngredientType.Burnt_Blob;
-      case "Sliced Gelatin":
+      case "Cut Slime":
         return IngredientType.Cut_Slime;
       case "Cut Ficklegourd":
         return IngredientType.Cut_Ficklegourd;
