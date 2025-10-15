@@ -39,6 +39,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   [Header("Frying Pan Minigame")]
   private static Pan pan; // Static reference to Pan script in scene
 
+  [Header("Combine Minigame")]
+  private static Combine combine; // Static reference to Combine script in scene
+
 
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
@@ -51,9 +54,9 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   // Start is called before the first frame update
   void Start()
   {
-
     if (cauldron == null)
       cauldron = FindObjectOfType<Cauldron>();
+    
     ParentSlot = GetComponentInParent<Inventory_Slot>();
 
     // Find and set animator from animation background
@@ -114,6 +117,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Debug.LogError("Chop_Controller not found in scene!");
       }
     }
+    else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
+      pan ??= FindObjectOfType<Pan>();
+    else if (SceneManager.GetActiveScene().name == "Combine_Minigame")
+      combine ??= FindObjectOfType<Combine>();
   }
   public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
   {
@@ -172,6 +179,28 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       return;
     else
     {
+      if (SceneManager.GetActiveScene().name == "Combine_Minigame")
+      {
+        DuplicateInventorySlot();
+
+        // Combine doesn't use IsOverlapping in Drag_All
+        int overlappingZone = combine.IsOverARedZone();
+        bool added = false;
+        Debug.Log("[Combine]: overlapping zone: " + overlappingZone);
+        if (overlappingZone != -1)
+          added = combine.AddToTable((Ingredient_Data)(ParentSlot.stk.resource), overlappingZone);
+
+        if (added)
+        {
+          Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+          Destroy(gameObject);
+        }
+        else
+          rectTransform.position = ingrOriginalPos;
+
+        return;
+      }
+
       // Debug.Log("ended drag");
       transform.SetParent(parentAfterDrag);
       if (IsOverlapping(rectTransform, redZone))
@@ -213,7 +242,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
               //spawn the cut prefab
               chopScript.ShowIngredientPiecedTogether();
-            
+
             }
             cuttingBoardActive = true;
           }
@@ -225,11 +254,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
         else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
         {
-          pan ??= FindObjectOfType<Pan>();
+          // pan ??= FindObjectOfType<Pan>();
           DuplicateInventorySlot();
           if (pan.AddToPan((Ingredient_Data)(ParentSlot.stk.resource))) // Only remove ingredient if pan was empty and ingredient was actually added;
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-          
+
           // Start pan slider minigame
           pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
         }

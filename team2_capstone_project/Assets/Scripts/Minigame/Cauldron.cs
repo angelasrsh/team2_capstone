@@ -53,7 +53,7 @@ public class Cauldron : MonoBehaviour
       potentialDish = dish;
       foreach (var req in dish.ingredientQuantities)
       {
-        if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
+        if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] != req.amountRequired)
         {
           potentialDish = null;
           break;
@@ -79,7 +79,7 @@ public class Cauldron : MonoBehaviour
         potentialIngredient = ingredient.ingredient;
         foreach (var req in potentialIngredient.ingredientsNeeded)
         {
-          if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] < req.amountRequired)
+          if (!ingredientInPot.ContainsKey(req.ingredient) || ingredientInPot[req.ingredient] != req.amountRequired)
           {
             potentialIngredient = null;
             break;
