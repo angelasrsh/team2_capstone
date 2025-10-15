@@ -7,7 +7,7 @@ public class Get_Customer_Order_Quest_Step : Tutorial_Quest_Step
     void OnEnable()
     {
         Game_Events_Manager.Instance.onGetOrder += GetCustomerOrder;
-        DelayedInstructionStart();
+        // DelayedInstructionStart();
     }
 
     // Unsubscribe to clean up

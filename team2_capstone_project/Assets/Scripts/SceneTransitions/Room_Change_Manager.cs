@@ -88,16 +88,17 @@ public class Room_Change_Manager : MonoBehaviour
     // Set time of day (and override if needed)
     if (Day_Turnover_Manager.Instance != null)
     {
-      if (exit.overrideTimeOfDay)
-      {
-        Day_Turnover_Manager.Instance.SetTimeOfDay(exit.overrideValue);
-      }
-      else
-      {
-        // fallback: target room could have a default if you want
-        Debug.Log($"No time override for this exit. Using whatever state already exists: {Day_Turnover_Manager.Instance.currentTimeOfDay}");
-      }
+        if (exit.overrideTimeOfDay)
+        {
+            Day_Turnover_Manager.Instance.SetTimeOfDay(exit.overrideValue);
+        }
+        else
+        {
+            // fallback: target room could have a default if you want
+            Debug.Log($"No time override for this exit. Using whatever state already exists: {Day_Turnover_Manager.Instance.currentTimeOfDay}");
+        }
     }
+    Game_Events_Manager.Instance.RoomChange(currentRoomID, exitingTo);
     StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
   }
 

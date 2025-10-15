@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Open_Journal_Quest_Step : Dialogue_Quest_Step
 {
-    [SerializeField] private string textKey;
-
     void OnEnable()
     {
         Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
@@ -24,10 +22,10 @@ public class Open_Journal_Quest_Step : Dialogue_Quest_Step
         // If PC, choose key that refers to the keybind instead of the icon
         if (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile)
         {
-            DelayedDialogue("Tutorial.Journal_PC", 3);
+            DelayedDialogue(3, 0, false);
         } else
         {
-            DelayedDialogue("Tutorial.Journal_Mobile", 3);
+            DelayedDialogue(3, 0, false);
         }
     }
 
