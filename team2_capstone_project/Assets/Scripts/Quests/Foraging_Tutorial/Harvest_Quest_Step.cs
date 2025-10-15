@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Harvest_Quest_Step : Tutorial_Quest_Step
+public class Harvest_Quest_Step : Dialogue_Quest_Step
 {
 
 
@@ -10,9 +10,6 @@ public class Harvest_Quest_Step : Tutorial_Quest_Step
     {
         Game_Events_Manager.Instance.onResourceAdd += Harvest;
 
-        DelayedInstructionStart();
-
-        // Immediately complete if player already has harvested something
         
     }
 
@@ -20,6 +17,8 @@ public class Harvest_Quest_Step : Tutorial_Quest_Step
     {
         if (Ingredient_Inventory.Instance.InventoryStacks.Length > 0)
             FinishQuestStep();
+        else
+            DelayedDialogue(0, 0, false);
     }
 
     // Unsubscribe to clean up

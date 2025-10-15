@@ -26,7 +26,7 @@ public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
 
     private void BeginDialogue(List<Dish_Data.Dishes> list)
     {
-        DelayedDialogue(3, 0, false);
+        DelayedDialogue(0, 0, false);
     }
     
 

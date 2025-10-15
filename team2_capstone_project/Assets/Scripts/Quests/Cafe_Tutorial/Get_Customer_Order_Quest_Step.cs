@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Get_Customer_Order_Quest_Step : Tutorial_Quest_Step
+public class Get_Customer_Order_Quest_Step : Dialogue_Quest_Step
 {
     void OnEnable()
     {

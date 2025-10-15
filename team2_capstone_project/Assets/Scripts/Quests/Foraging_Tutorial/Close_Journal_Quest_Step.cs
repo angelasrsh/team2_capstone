@@ -7,12 +7,12 @@ using UnityEngine;
 /// TODO: Would be nice to track if this happened in the past before the player got here.
 /// Maybe put most of these on one quest step? Makes linear dialogue harder, though.
 /// </summary>
-public class Close_Journal_Quest_Step : Tutorial_Quest_Step
+public class Close_Journal_Quest_Step : Dialogue_Quest_Step
 {
     void OnEnable()
     {
         Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
-        DelayedInstructionStart();
+        DelayedDialogue(0, 0, false);
     }
 
     // Unsubscribe to clean up

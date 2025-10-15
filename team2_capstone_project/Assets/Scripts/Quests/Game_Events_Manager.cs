@@ -180,6 +180,12 @@ public class Game_Events_Manager : MonoBehaviour
             onRoomChange(currentRoom, exitingTo);
     }
 
+    public event Action<bool> onSetExitsBlocked;
+    public void SetExitsBlocked(bool isBlocked)
+    {
+        onSetExitsBlocked?.Invoke(isBlocked);
+    }
+
     #endregion
 
     /////////// CAFE INTERACTION EVENTS /////////

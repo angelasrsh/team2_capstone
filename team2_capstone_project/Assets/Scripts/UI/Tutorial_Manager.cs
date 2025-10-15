@@ -87,6 +87,8 @@ public class Tutorial_Manager : MonoBehaviour
 
         // For detecting when we enter a room and need to start a tutorial
         SceneManager.sceneLoaded += CheckStartTutorial;
+
+        CheckStartTutorial(SceneManager.GetActiveScene());
     }
 
     /// <summary>
@@ -95,7 +97,7 @@ public class Tutorial_Manager : MonoBehaviour
     /// Add new tutorials using the instructions in Tutorial_Manager.
     /// </summary>
     /// <param name="roomID"> room being entered </param>
-    private void CheckStartTutorial(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+    private void CheckStartTutorial(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode = LoadSceneMode.Single)
     {
         // Don't auto-start tutorials if tutorials aren't enabled
 #if !TUTORIAL_ENABLE
@@ -148,6 +150,7 @@ public class Tutorial_Manager : MonoBehaviour
     {
         // If we are tracking this quest's state, update our tutorial state dictionary
         if (RoomTutorialMap.ContainsValue(q.Info))
+        {
             QuestIDQuestStateMap[q.Info.id] = q.state;
     }
 

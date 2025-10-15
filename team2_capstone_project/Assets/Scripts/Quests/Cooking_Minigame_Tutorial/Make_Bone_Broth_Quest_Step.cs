@@ -7,7 +7,6 @@ public class Make_Bone_Broth_Quest_Step : Tutorial_Quest_Step
     void OnEnable()
     {
         Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
-        DelayedInstructionStart();
     }
 
     // Unsubscribe to clean up

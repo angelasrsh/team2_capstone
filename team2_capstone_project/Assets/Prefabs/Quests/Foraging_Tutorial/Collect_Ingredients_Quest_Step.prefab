@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6200707804114755666}
-  - component: {fileID: -5492430371141047974}
+  - component: {fileID: 2723393054659639611}
   m_Layer: 0
-  m_Name: Close_Inventory_Quest_Step
+  m_Name: Collect_Ingredients_Quest_Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-5492430371141047974
+--- !u!114 &2723393054659639611
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,10 +41,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7026085292084513843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9490d758a551d384ebea0c5385e30aeb, type: 3}
+  m_Script: {fileID: 11500000, guid: e1caaf1b4207934449520c2dfd9a5791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textKey: Journal.Close_Inventory_Mobile
-  textKeyPC: Journal.Close_Inventory_PC
+  textKey: Journal.Collect_Ingredients
+  textKeyPC: 
   InstructionWaitTime: 0
   PopupWaitTime: 10
+  RequiredIngredients:
+  - {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
+  - {fileID: 11400000, guid: 97586fec84298c7489d081880a485db5, type: 2}
+  - {fileID: 11400000, guid: 2191f4af9672c914c834159dbf61834f, type: 2}
+  ItemCounts: 020000000200000002000000

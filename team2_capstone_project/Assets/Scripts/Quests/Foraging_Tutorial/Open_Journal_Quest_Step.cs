@@ -18,15 +18,8 @@ public class Open_Journal_Quest_Step : Dialogue_Quest_Step
 
     private void Start()
     {
+        DelayedDialogue(0, 0, false);
 
-        // If PC, choose key that refers to the keybind instead of the icon
-        if (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile)
-        {
-            DelayedDialogue(3, 0, false);
-        } else
-        {
-            DelayedDialogue(3, 0, false);
-        }
     }
 
 

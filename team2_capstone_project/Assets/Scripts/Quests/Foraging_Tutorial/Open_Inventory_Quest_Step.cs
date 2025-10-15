@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Open_Inventory_Quest_Step : Tutorial_Quest_Step
+public class Open_Inventory_Quest_Step : Dialogue_Quest_Step
 {
     void OnEnable()
     {
         Game_Events_Manager.Instance.onInventoryToggle += InventoryOpened;
-        DelayedInstructionStart();
         
     }
 
@@ -15,6 +14,11 @@ public class Open_Inventory_Quest_Step : Tutorial_Quest_Step
     void OnDisable()
     {
         Game_Events_Manager.Instance.onInventoryToggle -= InventoryOpened;
+    }
+
+    void Start()
+    {
+        DelayedDialogue(0, 0, false);
     }
 
 

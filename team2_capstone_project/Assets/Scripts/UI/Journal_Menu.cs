@@ -280,8 +280,12 @@ public class Journal_Menu : MonoBehaviour
 
     // Enable player movement
     Player_Controller player = FindObjectOfType<Player_Controller>();
-    if (player != null)
-        player.EnablePlayerMovement();
+        if (player != null)
+            player.EnablePlayerMovement();
+
+
+    // Broadcast to game manager
+    Game_Events_Manager.Instance.JournalToggled(false);
   }
 
   #region Recipe Tab Methods
@@ -333,6 +337,7 @@ public class Journal_Menu : MonoBehaviour
     recipeImage.preserveAspect = true;
     icon.sprite = dishData.Image;
     icon.preserveAspect = true;
+    Game_Events_Manager.Instance.DishDetailsClick(dishData);
   }
   #endregion
 
