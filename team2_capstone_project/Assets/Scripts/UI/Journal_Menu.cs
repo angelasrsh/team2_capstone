@@ -98,9 +98,9 @@ public class Journal_Menu : MonoBehaviour
     npcDatabase = Game_Manager.Instance.npcDatabase;
 
     allDishes = Game_Manager.Instance.dishDatabase.dishes;
-    // allIngredients = Game_Manager.Instance.ingredientDatabase.rawForagables;
+    allIngredients = Game_Manager.Instance.ingredientDatabase.rawForagables;
     // If wanting to use all ingredients list instead of showing only the raw foragable ones:
-    allIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
+    // allIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
     allNPCs = Game_Manager.Instance.npcDatabase.allNPCs;
 
     tabMaxPages = new Dictionary<Tabs, int>()
@@ -305,19 +305,42 @@ public class Journal_Menu : MonoBehaviour
     int startIndex = (currentPage - 1) * objectsPerPage;
     int index = startIndex + currGridCell;
 
-    // Populate with unlocked dishes if needed
+    // Using all ingredients list
+    // while (currGridCell < objectsPerPage)
+    // {
+    //   JournalSlot slot = slots[currGridCell];
+    //   if (index < unlockedIngredients.Count)
+    //   {
+    //     Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
+    //     slot.SetItem(ingredientData, true, false);
+    //   }
+    //   else if (index < allIngredients.Count)
+    //   {
+    //     // Show locked ingredients only if there are still more ingredients in the database
+    //     slot.SetItem(null, false, false);
+    //   }
+    //   else
+    //   {
+    //     // Don't show empty slots if no more ingredients to show
+    //     slot.ClearItem();
+    //   }
+
+    //   index++;
+    //   currGridCell++;
+    // }
+
+    // using just foragables
     while (currGridCell < objectsPerPage)
     {
       JournalSlot slot = slots[currGridCell];
-      if (index < unlockedIngredients.Count)
+      if (index < allIngredients.Count)
       {
-        Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
-        slot.SetItem(ingredientData, true, false);
-      }
-      else if (index < allIngredients.Count)
-      {
-        // Show locked ingredients only if there are still more ingredients in the database
-        slot.SetItem(null, false, false);
+        Ingredient_Data ingredientData = allIngredients[index];
+        bool isUnlocked = unlockedIngredients.Contains(ingredientData.ingredientType);
+        if(isUnlocked)
+          slot.SetItem(ingredientData, true, false);
+        else // Show locked ingredients only if there are still more ingredients in the database
+          slot.SetItem(null, false, false);
       }
       else
       {
