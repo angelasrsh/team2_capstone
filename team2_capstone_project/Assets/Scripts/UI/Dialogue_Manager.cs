@@ -17,6 +17,7 @@ public class Dialogue_Manager : MonoBehaviour
 
     [Header("Auto-Advancing Dialog Settings")]
     public bool autoAdvanceDialog = false; // Enable auto mode
+    public bool autoEndDialogue = false; // Enable auto on dialogue close on end
     public float autoAdvanceDelay = 2.5f;  // Time between lines
 
     [Header("Character Data")]
@@ -186,6 +187,7 @@ public class Dialogue_Manager : MonoBehaviour
 
         if (dialogQueue.Count > 0)
         {
+            uiManager.ClearText();
             string dialogLine = dialogQueue.Dequeue();
 
             // Parse dialog line -> text {Emotion}
@@ -232,7 +234,8 @@ public class Dialogue_Manager : MonoBehaviour
         }
         else
         {
-            EndDialog();
+            if (autoEndDialogue)
+                EndDialog();
         }
     }
     #endregion
@@ -277,6 +280,7 @@ public class Dialogue_Manager : MonoBehaviour
 
         if (dialogQueue.Count > 0)
         {
+            uiManager.ClearText();
             string dialogLine = dialogQueue.Dequeue();
 
             // Ignore braces; use forced emotion
@@ -317,7 +321,8 @@ public class Dialogue_Manager : MonoBehaviour
         }
         else
         {
-            EndDialog();
+            if (autoEndDialogue)
+                EndDialog();
         }
     }
     #endregion
@@ -327,7 +332,6 @@ public class Dialogue_Manager : MonoBehaviour
     {
         yield return new WaitUntil(() => uiManager.textTyping == false);
         yield return new WaitForSeconds(autoAdvanceDelay);
-        uiManager.ClearText();
         PlayNextDialog();
     }
 
