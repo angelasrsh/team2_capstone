@@ -13,18 +13,21 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
   [SerializeField] private Image backgroundImage;         // Background image
   [SerializeField] private Sprite emptyCauldron;          // Normal background
   [SerializeField] private GameObject errorText;          // Cannot stir without ingredients in cauldron
+  [SerializeField] private Slider stirProgressBar;
+  private Coroutine stirProgressRoutine;
 
   [Header("Settings")]
   [SerializeField] private float stirDuration;
   [SerializeField] private float pointerMoveThreshold = 0.1f;
-
+  [SerializeField] private float idleThreshold = 0.2f; // how long the mouse must stop before actually stopping stir
+  private bool isMoving = false;
+  private float idleTime = 0f;
   private Cauldron cauldron;
   private bool isDragging = false;
   private bool isStirring = false;
   private float accumulatedStirTime = 0f;
   private Vector3 lastPointerPos;
   private Vector3 ladleOriginalPos;
-
   private Image ladleImage; // reference to the ladle’s Image component
   private Audio_Manager audioManager;
 
@@ -44,10 +47,6 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       Debug.LogError("[Stir_Controller]: No audio manager instance received from Drag_All!");
   }
 
-  private bool isMoving = false;
-  private float idleTime = 0f;
-  [SerializeField] private float idleThreshold = 0.2f; // how long the mouse must stop before stopping audio
-
   private void Update()
   {
     if (!isStirring || !isDragging)
@@ -57,43 +56,36 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     if (pointerDelta.magnitude > pointerMoveThreshold)
     {
-        accumulatedStirTime += Time.deltaTime;
-        idleTime = 0f;
+      accumulatedStirTime += Time.deltaTime;
+      idleTime = 0f;
 
-        if (!isMoving)
-        {
-            isMoving = true;
-            audioManager.PlayStirringOnLoop();
+      if (!isMoving)
+      {
+        isMoving = true;
+        audioManager.PlayStirringOnLoop();
+      }
 
-            if (cauldron != null)
-            {
-                cauldron.SetPlayerStirring(true);
-                cauldron.ResumeStirring();
-            }
-        }
+      if (stirProgressBar != null)
+      {
+        float progress = Mathf.Clamp01(accumulatedStirTime / Mathf.Max(0.0001f, stirDuration));
+        stirProgressBar.value = progress;
+      }
 
-        if (backgroundAnimator != null)
-            backgroundAnimator.speed = 1f;
+      if (backgroundAnimator != null)
+        backgroundAnimator.speed = 1f;
     }
-
     else
     {
-        idleTime += Time.deltaTime;
+      idleTime += Time.deltaTime;
 
-        if (idleTime > idleThreshold && isMoving)
-        {
-            isMoving = false;
-            audioManager.StopStirring();
+      if (idleTime > idleThreshold && isMoving)
+      {
+        isMoving = false;
+        audioManager.StopStirring();
 
-            if (cauldron != null)
-            {
-                cauldron.SetPlayerStirring(false);
-                cauldron.PauseStirring(); // pause only
-            }
-
-            if (backgroundAnimator != null)
-                backgroundAnimator.speed = 0f;
-        }
+        if (backgroundAnimator != null)
+          backgroundAnimator.speed = 0f;
+      }
     }
 
     if (accumulatedStirTime >= stirDuration)
@@ -145,21 +137,12 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       isStirring = false;
       audioManager.StopStirring();
 
-      if (cauldron != null)
-      {
-          // tell cauldron the player stopped moving
-          cauldron.SetPlayerStirring(false);
-
-          // stop the stirring coroutine / preserve paused state
-          cauldron.StopStirringCompletely();
-      }
-
       if (backgroundAnimator != null)
-          backgroundAnimator.SetBool("isStirring", false);
+        backgroundAnimator.SetBool("isStirring", false);
 
       transform.position = ladleOriginalPos;
       if (ladleImage != null)
-          ladleImage.enabled = true;
+        ladleImage.enabled = true;
   }
 
   private void HideErrorText() => errorText.SetActive(false);
@@ -176,8 +159,11 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     if (backgroundAnimator != null)
       backgroundAnimator.SetBool("isStirring", true);
 
+    if (stirProgressBar != null)
+      stirProgressBar.gameObject.SetActive(true);
+
     if (cauldron != null)
-      cauldron.StartStirring(stirDuration);
+      cauldron.StartStirring();
   }
 
   private void FinishStirring()
@@ -186,12 +172,30 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     accumulatedStirTime = 0f;
     isDragging = false;
 
+    // Reset progress bar UI
+    if (stirProgressBar != null)
+    {
+      stirProgressBar.value = 0f;
+      stirProgressBar.gameObject.SetActive(false);
+    }
+
+    // stop any running progress coroutine
+    if (stirProgressRoutine != null)
+    {
+      StopCoroutine(stirProgressRoutine);
+      stirProgressRoutine = null;
+    }
+
+    // ensure UI shows full then hide
+    if (stirProgressBar != null)
+    {
+      stirProgressBar.value = 1f;
+      stirProgressBar.gameObject.SetActive(false); // hide after completion
+    }
+
     transform.position = ladleOriginalPos;
     if (ladleImage != null)
       ladleImage.enabled = true;
-
-    if (cauldron != null)
-      cauldron.FinishedStir();
 
     if (backgroundAnimator != null)
       backgroundAnimator.SetBool("isStirring", false);
@@ -199,5 +203,8 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     Drag_All.ResetWaterStatus();
     audioManager.StopStirring();
     audioManager.StopBubbling();
+
+    if (cauldron != null)
+      cauldron.Invoke(nameof(cauldron.FinishedStir), 0.05f);
   }
 }

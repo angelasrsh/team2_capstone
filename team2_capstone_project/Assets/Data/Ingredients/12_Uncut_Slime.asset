@@ -30,9 +30,11 @@ MonoBehaviour:
   CutIngredientImages:
   - {fileID: 546551281, guid: 0bc07084128222645887207139a40350, type: 3}
   - {fileID: 1779945805, guid: 0bc07084128222645887207139a40350, type: 3}
-  usedInDishes:
-  - {fileID: 11400000, guid: dc41864eb9c4b804a86902d1e1e68ee7, type: 2}
-  makesIngredient: []
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: 5e89dfe331c2b104d869c0d93d371939, type: 2}
+    amountRequired: 1
+    method: 2
   ingredientsNeeded: []
   ingredientType: 13
   CombinedCutPiecePrefab: {fileID: 0}
