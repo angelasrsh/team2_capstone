@@ -32,7 +32,6 @@ public class Shop : MonoBehaviour
   private InputAction interactAction;
   private InputAction closeAction;
   private PlayerInput playerInput;
-  private bool interactPressed = false;
 
   private void Awake()
   {
@@ -55,12 +54,6 @@ public class Shop : MonoBehaviour
       interactAction = playerInput.actions["Interact"]; // From Player Input Map
       closeAction = playerInput.actions.FindAction("CloseInteract", true); // From UI Input Map
     }
-
-    if (interactAction != null)
-      interactAction.performed += InteractPressed;
-
-    if (closeAction != null)
-      closeAction.performed += InteractPressed;
     
     CloseShopUI();
     CreateShopItemCards();
@@ -69,32 +62,23 @@ public class Shop : MonoBehaviour
 
   private void Update()
   {
-    if (!isPlayerInRange || !Game_Manager.Instance.UIManager.CanProcessInput())
+    if (!isPlayerInRange || !Game_Manager.Instance.UIManager.CanProcessInput() || player == null)
       return;
-      
-    // Only process input if player is inside trigger and interact pressed once
-    if (interactAction.WasPerformedThisFrame() || closeAction.WasPerformedThisFrame())
-    {
-      interactPressed = false;
-      Debug.Log("[Shop]: Player interacted with shop.");
 
-      if (player != null)
-      {
-        if (shopOpen)
-          CloseShopUI();
-        else if (!Game_Manager.Instance.UIManager.pauseMenuOn)
-          OpenShopUI();
-      }
+    // Only process input if player is inside trigger and interact pressed once
+    if (interactAction.WasPerformedThisFrame())
+    {
+      Debug.Log("[Shop]: Player opened shop.");
+      if (!Game_Manager.Instance.UIManager.pauseMenuOn)
+        OpenShopUI();
     }
+    else if (closeAction.WasPerformedThisFrame() && shopOpen)
+      CloseShopUI();
   }
 
   private void OnDestroy()
   {
-    if (interactAction != null)
-      interactAction.performed -= InteractPressed;
-
-    if (closeAction != null)
-      closeAction.performed -= InteractPressed;
+    //
   }
 
   private void OnTriggerEnter(Collider other)
@@ -113,14 +97,6 @@ public class Shop : MonoBehaviour
       isPlayerInRange = false;
       player = null;
     }
-  }
-
-  private void InteractPressed(InputAction.CallbackContext context)
-  {
-    if (isPlayerInRange)
-      interactPressed = true;
-    else
-      interactPressed = false;
   }
 
   private void OpenShopUI()
