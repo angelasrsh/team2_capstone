@@ -21,14 +21,12 @@ MonoBehaviour:
   minSpawn: 0
   maxSpawn: 0
   countsAs: []
-  ingredientType: 11
-  description: 
-  CombinedCutPiecePrefab: {fileID: 0}
   cookThresholds:
     rawEnd: 0.45
     almostEnd: 0.6
     cookedEnd: 0.7
     overcookedEnd: 0.8
+  description: 
   CutIngredientImages: []
   usedInDishes: []
   makesIngredient:
@@ -36,3 +34,6 @@ MonoBehaviour:
     amountRequired: 1
     method: 3
   ingredientsNeeded: []
+  ingredientType: 14
+  CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 0
