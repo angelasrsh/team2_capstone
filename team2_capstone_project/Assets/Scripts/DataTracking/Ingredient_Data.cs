@@ -6,7 +6,7 @@ using UnityEngine;
 public class Ingredient_Data : Item_Data
 {
   [Range(1.0f, 3.0f)] public int tier;
-  public float price; // Idk if it's being used elsewhere, but shop will use this
+  public float price;
 
   [Header("Spawn Settings")]
   [Range(0f, 1f)] public float rarityWeight = 1f;
@@ -17,45 +17,15 @@ public class Ingredient_Data : Item_Data
   // mainly used to count processed variants (e.g. chopped) as their base ingredient
   // used to tracking ingredient requirements for dishes in Journal_Menu
   public List<Ingredient_Data> countsAs;
-  public IngredientType ingredientType;
-  public string description;
-  public GameObject CombinedCutPiecePrefab;
-  public CookThresholds cookThresholds; // null if not fryable
 
-  [Header("Lists")]
+  public string description;
   public Sprite[] CutIngredientImages;
   public List<Dish_Data> usedInDishes;
   public List<Ingredient_Requirement> makesIngredient; // e.g. 1 bone used to make bone broth
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
-}
-
-[System.Serializable]
-public class Ingredient_Requirement
-{
-  public Ingredient_Data ingredient;
-  public int amountRequired;
-  public Recipe method; // how this ingredient is made (i.e., chop, fry, cauldron, combine)    
-}
-
-[System.Serializable]
-public class CookThresholds
-{
-  [Range(0f, 1f)] public float rawEnd;        // End of raw zone
-  [Range(0f, 1f)] public float almostEnd;     // End of almost cooked zone
-  [Range(0f, 1f)] public float cookedEnd;     // End of cooked zone (perfect)
-  [Range(0f, 1f)] public float overcookedEnd; // End of overcooked zone
-  // Burnt zone automatically goes from overcookedEnd to 1
-
-  /// <summary>
-  /// Ensures the thresholds are in ascending order between 0 and 1.
-  /// </summary>
-  public void ClampValues()
-  {
-    rawEnd = Mathf.Clamp01(rawEnd);
-    almostEnd = Mathf.Clamp(almostEnd, rawEnd, 1f);
-    cookedEnd = Mathf.Clamp(cookedEnd, almostEnd, 1f);
-    overcookedEnd = Mathf.Clamp(overcookedEnd, cookedEnd, 1f);
-  }
+  public IngredientType ingredientType;
+  public GameObject CombinedCutPiecePrefab;
+  public int cutsRequired;
 }
 
 public enum IngredientType
@@ -78,9 +48,7 @@ public enum IngredientType
   Cut_Mandrake,
   French_Fries,
   Honey,
-  Oil,
-  Burnt_Blob,
-  Sliced_Gelatin
+  Oil
 }
 
 // public class CutLine
