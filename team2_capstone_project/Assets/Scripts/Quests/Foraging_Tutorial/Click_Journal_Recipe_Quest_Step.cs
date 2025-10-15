@@ -9,14 +9,14 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     void OnEnable()
     {
         Game_Events_Manager.Instance.onDishDetailsClick += RecipeClick;
-        Game_Events_Manager.Instance.onEndDialogBox += endQuest;
+        // Game_Events_Manager.Instance.onEndDialogBox += endQuest;
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
         Game_Events_Manager.Instance.onDishDetailsClick -= RecipeClick;
-        Game_Events_Manager.Instance.onEndDialogBox -= endQuest;
+        // Game_Events_Manager.Instance.onEndDialogBox -= endQuest;
     }
 
     private void Start()
@@ -28,11 +28,12 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     private void RecipeClick(Dish_Data dishData)
     {
         if (dishData == DishToMake)
-            clicked = true; // Finish and destroy this object
+            FinishQuestStep();
+            // clicked = true; // Finish and destroy this object
     }
 
-    private void endQuest()
-    {
-        FinishQuestStep();
-    }
+    // private void endQuest()
+    // {
+    //     FinishQuestStep();
+    // }
 }

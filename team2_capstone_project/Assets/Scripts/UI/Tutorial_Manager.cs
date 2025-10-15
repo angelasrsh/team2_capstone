@@ -152,6 +152,7 @@ public class Tutorial_Manager : MonoBehaviour
         if (RoomTutorialMap.ContainsValue(q.Info))
         {
             QuestIDQuestStateMap[q.Info.id] = q.state;
+        }
     }
 
     /// <summary>
