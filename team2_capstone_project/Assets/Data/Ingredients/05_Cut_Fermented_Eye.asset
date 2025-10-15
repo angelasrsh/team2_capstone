@@ -28,12 +28,13 @@ MonoBehaviour:
     overcookedEnd: 0
   description: 
   CutIngredientImages: []
-  usedInDishes: []
-  makesIngredient:
-  - ingredient: {fileID: 11400000}
+  usedInDishes:
+  - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
+  makesIngredient: []
+  ingredientsNeeded:
+  - ingredient: {fileID: 11400000, guid: 2191f4af9672c914c834159dbf61834f, type: 2}
     amountRequired: 1
-    method: 0
-  ingredientsNeeded: []
+    method: 2
   ingredientType: 7
   CombinedCutPiecePrefab: {fileID: 546484759057031243, guid: b2b84b08a39d4fa4bb7645b10a113c22, type: 3}
   cutsRequired: 0

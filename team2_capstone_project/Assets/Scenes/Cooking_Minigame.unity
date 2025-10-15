@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.30692166, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -237,8 +237,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2061893960}
-  m_RootOrder: 6
+  m_Father: {fileID: 252280887}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.31, y: 0.03}
   m_AnchorMax: {x: 0.7, y: 0.1}
@@ -452,7 +452,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].amount
@@ -467,9 +467,13 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[3].amount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].resource
       value: 
-      objectReference: {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
+      objectReference: {fileID: 11400000, guid: 55ef2e90d6ee21745bcc07d91b3435a2, type: 2}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[1].resource
       value: 
@@ -478,6 +482,10 @@ PrefabInstance:
       propertyPath: <InventoryStacks>k__BackingField.Array.data[2].resource
       value: 
       objectReference: {fileID: 11400000, guid: 94f50ff3d8b4a1844aaea6bb5b9ce7b9, type: 2}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[3].resource
+      value: 
+      objectReference: {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].stackLimit
       value: 20
@@ -950,6 +958,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1438677062}
+  - {fileID: 134926292}
   m_Father: {fileID: 0}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7825,6 +7834,7 @@ MonoBehaviour:
   backgroundImage: {fileID: 2101758928}
   emptyCauldron: {fileID: 21300000, guid: 1d11142c5b05c0b4586ce118acfb3c64, type: 3}
   errorText: {fileID: 134926291}
+  stirProgressBar: {fileID: 489197218}
   stirDuration: 5
   pointerMoveThreshold: 0.1
   idleThreshold: 0.2
@@ -13862,7 +13872,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   errorText: {fileID: 134926291}
-  stirProgressBar: {fileID: 489197218}
 --- !u!4 &1916992238
 Transform:
   m_ObjectHideFlags: 0
@@ -13992,7 +14001,6 @@ RectTransform:
   - {fileID: 309643355}
   - {fileID: 1112362732}
   - {fileID: 1738293651}
-  - {fileID: 134926292}
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
