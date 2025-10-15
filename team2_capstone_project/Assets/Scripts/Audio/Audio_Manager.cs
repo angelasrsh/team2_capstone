@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Grimoire
 {
@@ -14,6 +15,13 @@ namespace Grimoire
     private AudioSource ambientSource;
     private AudioSource footstepsSource;
     [SerializeField] private int sfxPoolSize = 8;
+
+    [Header("Audio Mixer Routing")]
+    [SerializeField] private AudioMixer masterMixer;
+    [SerializeField] private AudioMixerGroup musicGroup;
+    [SerializeField] private AudioMixerGroup ambientGroup;
+    [SerializeField] private AudioMixerGroup sfxGroup;
+    [SerializeField] private AudioMixerGroup footstepsGroup;
 
     [Header("SFX Clips")]
     public AudioClip pickupSFX;
@@ -70,31 +78,39 @@ namespace Grimoire
       // --------------------------
       sfxSources = new List<AudioSource>(sfxPoolSize);
 
+      // Inside Awake(), after adding your sources
+
       for (int i = 0; i < sfxPoolSize; i++)
       {
-        AudioSource src = gameObject.AddComponent<AudioSource>();
-        src.playOnAwake = false;
-        sfxSources.Add(src);
+          AudioSource src = gameObject.AddComponent<AudioSource>();
+          src.playOnAwake = false;
+          src.outputAudioMixerGroup = sfxGroup; // 👈 Route SFX pool
+          sfxSources.Add(src);
       }
 
-      // Ambient gets its own dedicated source
+      // Ambient
       ambientSource = gameObject.AddComponent<AudioSource>();
       ambientSource.loop = true;
+      ambientSource.outputAudioMixerGroup = ambientGroup;
 
-      // Dedicated sources for stirring, bubbling, fire
+      // Stirring, Bubbling, Fire (cauldron)
       stirringSource = gameObject.AddComponent<AudioSource>();
       stirringSource.loop = true;
+      stirringSource.outputAudioMixerGroup = sfxGroup;
 
       bubblingSource = gameObject.AddComponent<AudioSource>();
       bubblingSource.loop = true;
+      bubblingSource.outputAudioMixerGroup = sfxGroup;
 
       fireAmbientSource = gameObject.AddComponent<AudioSource>();
       fireAmbientSource.loop = true;
+      fireAmbientSource.outputAudioMixerGroup = ambientGroup;
 
-      // Dedicated source for footsteps
+      // Footsteps
       footstepsSource = gameObject.AddComponent<AudioSource>();
       footstepsSource.loop = false;
       footstepsSource.playOnAwake = false;
+      footstepsSource.outputAudioMixerGroup = footstepsGroup;
     }
 
     // -----------------------------------------------------------------------

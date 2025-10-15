@@ -6,6 +6,7 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(BoxCollider))]
@@ -33,19 +34,62 @@ public class Customer_Controller : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Transform spriteTransform;
 
-    void Awake()
+    private void OnEnable()
     {
-        agent = GetComponent<NavMeshAgent>();
+        SceneManager.sceneLoaded += OnSceneLoadedRebind;
+        TryBindInput();
+    }
 
-        // Interact action
-        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
-        if (pic != null)
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+    }
+
+    private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
+    {
+        TryBindInput();
+    }
+
+    private void TryBindInput()
+    {
+        PlayerInput playerInput = null;
+
+        // Preferred: get from Game_Manager
+        if (Game_Manager.Instance != null)
+            playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+        // Fallback: find from Player_Input_Controller
+        if (playerInput == null)
         {
-            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+            var pic = FindObjectOfType<Player_Input_Controller>();
+            if (pic != null)
+                playerInput = pic.GetComponent<PlayerInput>();
         }
 
-        // Animation components
+        if (playerInput == null)
+        {
+            Debug.LogWarning("[Customer_Controller] No PlayerInput found to bind actions.");
+            return;
+        }
+
+        interactAction = playerInput.actions["Interact"];
+        if (interactAction == null)
+        {
+            Debug.LogWarning("[Customer_Controller] Could not find 'Interact' action in PlayerInput!");
+        }
+        else
+        {
+            interactAction.Enable();
+        }
+
+        Debug.Log("[Customer_Controller] Input bound successfully.");
+    }
+
+    private void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
         spriteTransform = transform.Find("Sprite");
+
         if (spriteTransform != null)
         {
             spriteRenderer = spriteTransform.GetComponent<SpriteRenderer>();

@@ -49,22 +49,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sfxPoolSize: 4
+  masterMixer: {fileID: 24100000, guid: b43b7ca07bb8c8346bd6fd6f32f53169, type: 2}
+  musicGroup: {fileID: -3011042621760253244, guid: b43b7ca07bb8c8346bd6fd6f32f53169, type: 2}
+  ambientGroup: {fileID: 2291864361201926839, guid: b43b7ca07bb8c8346bd6fd6f32f53169, type: 2}
+  sfxGroup: {fileID: 7527212433189195850, guid: b43b7ca07bb8c8346bd6fd6f32f53169, type: 2}
+  footstepsGroup: {fileID: -113514981525752259, guid: b43b7ca07bb8c8346bd6fd6f32f53169, type: 2}
   pickupSFX: {fileID: 8300000, guid: 3e172351759f4c74798cc3e963e567b2, type: 3}
-  clickSFX: {fileID: 8300000, guid: f96bac186fd5de24ab4eb5323e1059ec, type: 3}
+  clickSFX: {fileID: 8300000, guid: 3e77b16a768c2a743b919427c608bba9, type: 3}
   goodDishMade: {fileID: 8300000, guid: 4e804d91fb7399a40b1871258d99ffd8, type: 3}
   textSound: {fileID: 8300000, guid: 5656e9bcdb4af7e408ef02d75434e3dd, type: 3}
   menuOpen: {fileID: 8300000, guid: d2d5486a4bb46c6439d22a44b386316e, type: 3}
   menuClose: {fileID: 8300000, guid: d2d5486a4bb46c6439d22a44b386316e, type: 3}
   bookClose: {fileID: 8300000, guid: d96d20d566c0ad34185eee2286f93f1d, type: 3}
   doorBell: {fileID: 8300000, guid: 710a29dd72a79a843aac3530d9140768, type: 3}
-  firstAreaWalkingSFX: {fileID: 8300000, guid: c3247558f377a4a40be58ab5452af4dc, type: 3}
+  firstAreaWalkingSFX: {fileID: 8300000, guid: 0adf1b2acb18685488e02b666ab7e350, type: 3}
   sparkle: {fileID: 8300000, guid: 0344b26d2341c1541ad78cc12d9c721c, type: 3}
   errorBuzz: {fileID: 8300000, guid: 0413eb136c0f8974995051069913668f, type: 3}
   bagPutIn: {fileID: 8300000, guid: 53dddb2010b3d0f4ba3c82bbcea907d9, type: 3}
   bagOpen: {fileID: 8300000, guid: c222ac9b37973e24f8d9c62a021f0835, type: 3}
   bagClose: {fileID: 8300000, guid: 93c09e7b057f4f046b726113a8e9f985, type: 3}
   pageTurn: {fileID: 8300000, guid: ed5b3334bc938884094c6f01de912c3b, type: 3}
-  bookOpen: {fileID: 8300000, guid: 73a4992c935aa9a409e5dd64ec00cf6a, type: 3}
+  bookOpen: {fileID: 8300000, guid: 6cdba97fad291544c9255f4f953a3c23, type: 3}
   goToBed: {fileID: 8300000, guid: 876fbeb638f8c044faddabb7ea7f4ce3, type: 3}
   getUpFromBed: {fileID: 8300000, guid: 5edc4cca733bc9e4cb38c9cbf2c3c1bc, type: 3}
   openDoor: {fileID: 8300000, guid: 3d36c07609657cd43b020af0a2790a44, type: 3}
