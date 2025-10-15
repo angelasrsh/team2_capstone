@@ -17,6 +17,11 @@ public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
         SceneManager.sceneLoaded -= onSceneLoaded;
     }
 
+    void Start()
+    {
+        DelayedDialogue(0, 0);
+    }
+
 
     private void onSceneLoaded(Scene scene, LoadSceneMode mode)
     {
