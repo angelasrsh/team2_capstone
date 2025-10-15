@@ -80,8 +80,8 @@ public enum IngredientType
   Water,
   Burnt_Blob,
   Cut_Slime,
-  Uncut_Fickle_Gourd,
-  Cut_Fickle_Gourd
+  Uncut_Ficklegourd,
+  Cut_Ficklegourd
 }
 
 // public class CutLine

@@ -196,10 +196,10 @@ public class Ingredient_Inventory : Inventory
         return "Burnt Blob";
       case IngredientType.Cut_Slime:
         return "Sliced Gelatin";
-      case IngredientType.Cut_Fickle_Gourd:
-        return "Cut Fickle Gourd";
-      case IngredientType.Uncut_Fickle_Gourd:
-        return "Uncut Fickle Gourd";
+      case IngredientType.Cut_Ficklegourd:
+        return "Cut Ficklegourd";
+      case IngredientType.Uncut_Ficklegourd:
+        return "Uncut Ficklegourd";
       default:
         return "";
     }
@@ -258,10 +258,10 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.Burnt_Blob;
       case "Sliced Gelatin":
         return IngredientType.Cut_Slime;
-      case "Cut Fickle Gourd":
-        return IngredientType.Cut_Fickle_Gourd;
-      case "Uncut Fickle Gourd":
-        return IngredientType.Uncut_Fickle_Gourd;
+      case "Cut Ficklegourd":
+        return IngredientType.Cut_Ficklegourd;
+      case "Uncut Ficklegourd":
+        return IngredientType.Uncut_Ficklegourd;
       default:
         return IngredientType.Null;
     }
