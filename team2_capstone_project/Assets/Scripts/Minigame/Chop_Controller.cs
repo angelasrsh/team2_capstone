@@ -67,10 +67,28 @@ public class Chop_Controller : MonoBehaviour
 
     [Header("Swipe Detection")]
     private Vector2 swipeStartPos;
+    private Vector2 lastSwipePos;
     private bool isDetectingSwipe = false;
-    public float swipeThreshold = 50f; // Minimum distance for valid swipe
-    public float swipeAngleTolerance = 30f; // Degrees of tolerance for swipe direction
+    public float swipeThreshold = 50f;
+    public float swipeAngleTolerance = 30f;
 
+    // New variables for back-and-forth detection
+    private int swipeDirectionChanges = 0;
+    private Vector2 lastSwipeDirection;
+    private float totalSwipeDistance = 0f;
+    public float requiredSwipeDistance = 300f; // Total distance needed to complete cut
+    public float splitSpeed = 0.5f; // How fast pieces move apart per swipe distance unit
+
+
+    
+    private Vector3 piece1StartPos;
+    private Vector3 piece2StartPos;
+    private Vector3 piece1TargetOffset;
+    private Vector3 piece2TargetOffset;
+
+    // References to your ingredient pieces (assign in Inspector or find them)
+    public RectTransform ingredientPiece1;
+    public RectTransform ingredientPiece2;
     public UILineRenderer lineRenderer;
 
 
@@ -91,7 +109,6 @@ public class Chop_Controller : MonoBehaviour
     /// </summary>
     private void ShowCuttingLines()
     {
-
         if (currentCuttingLines != null)
         {
             Destroy(currentCuttingLines);
@@ -103,7 +120,7 @@ public class Chop_Controller : MonoBehaviour
 
         // if (lineRenderer != null)
         {
-            Debug.Log("LineRenderer is not null");
+            // Debug.Log("LineRenderer is not null");
 
             InitializeCuttingLines();
                  // Show the first line
@@ -128,21 +145,25 @@ public class Chop_Controller : MonoBehaviour
         //line 3: (12.1,50.6), (261.5, 75.1)
 
     }
-
+    public int cuts_left = 0;
     //shows the ingredient made from pieces pieced together
     public void ShowIngredientPiecedTogether()
     {
         //show the image of the cut stuff all 
         //parent canvas is called Canvas-CutGroup
         Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+        cuts_left = ingredient_data_var.cutsRequired;
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
+            
             //show the image of the cut stuff all 
             Transform fCutTransform = parent.Find("F_Cut_Group"); // Use Transform.Find instead
 
             if (fCutTransform != null)
             {
                 fCutTransform.gameObject.SetActive(true);
+                ingredientPiece1 = fCutTransform.Find("Fermented_Eye_Cut_1").GetComponent<RectTransform>();
+                ingredientPiece2 = fCutTransform.Find("Fermented_Eye_Cut_2").GetComponent<RectTransform>();
                 Debug.Log("F_Cut_Group should be on cutting board now");
             }
             else
@@ -168,28 +189,28 @@ public class Chop_Controller : MonoBehaviour
     private void InitializeCuttingLines()
     {
         allCuttingLines.Clear();
-        currentLineIndex = 0;
         Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
         cuttingLineInitialized = false;
+        
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
-            if (!firstCutDone && !secondCutDone)
+            if (cuts_left == 2) //first cutline
             {//initialize the first cut line for uncut fermented Eye
                 Transform chopLine1 = parent.Find("ChopLine"); // Use Transform.Find instead
                 chopLine1.gameObject.SetActive(true);
-                if (chopLine1 != null)
-                {
-                    Debug.Log("found chopline1");
-                } else
-                {
-                    Debug.Log("no chopline1");
-                }
+                Transform CLRZ = chopLine1.Find("CL1RedZone");
+                CLRZ.gameObject.SetActive(true);
                 cuttingLineInitialized = true;
-                EvaluateChop();
-                
-            }else
+                                
+            }else if (cuts_left == 1) //find second cut
             {
-                Debug.LogWarning("firstcutDone is done");
+                Debug.LogWarning("firstcutDone is done..starting second cut");
+                Transform chopLine2 = parent.Find("ChopLine"); // Use Transform.Find instead
+                chopLine2.gameObject.SetActive(true);
+                Transform CLRZ = chopLine2.Find("CL2RedZone");
+                CLRZ.gameObject.SetActive(true);
+                currentLineIndex = 2; 
+                cuttingLineInitialized = true;
             }
         }
         else if (ingredient_data_var.Name == "Uncut Fogshroom")
@@ -263,22 +284,25 @@ public class Chop_Controller : MonoBehaviour
         // Debug.Log("[Chp_Cntrller] ingredient_data_var = " + ingredient_data_var);
 
     }
+    public bool isOverlappingCL1R = false;
+
     private void EvaluateChop()
     {
         if (ingredient_data_var.Name == "Uncut Fermented Eye" && cuttingLineInitialized)
         {
+            Transform CL = GameObject.Find("ChopLine").transform;
+            RectTransform CL1R = CL.Find("CL1RedZone").GetComponent<RectTransform>(); 
             
-            Transform parent = GameObject.Find("ChopLine").transform;
-            RectTransform chopLine1R = parent.Find("CL1RedZone").GetComponent<RectTransform>(); // Use Transform.Find 
-            bool isOverlapping = false;
-            
-            isOverlapping = Drag_All.IsOverlapping(k_script.knifeRectTransform, chopLine1R);
-               
+            isOverlappingCL1R = Drag_All.IsOverlapping(k_script.knifeRect, CL1R);
+            // Create a small rect at mouse position
+            Vector3 mpos = k_script.knifeRect.transform.localPosition;
             //if its overlapping
             //start timer
-            if (isOverlapping)
+            if (isOverlappingCL1R)
             {
-                k_script.knifeRectTransform.rotation = Quaternion.Euler(0,0,Mathf.Abs(chopLine1R.eulerAngles.z));
+                Debug.Log($"Knife is Overlapping C1LR at Position: {mpos}");
+                k_script.SnapToLine();
+                
                 currentTime += Time.deltaTime;
                 
             }else
@@ -293,35 +317,36 @@ public class Chop_Controller : MonoBehaviour
                     currentTime = 0; //reset timer
                 }
             }
+        }else
+        {
+            return;
         }
     }
     private float currentTime = 0f;
     void Update()
     {
         if (!hasIngredientData) return; //if there isnt something on the cutting board
-            GameObject red_zone_found = GameObject.Find("RedZoneForKnife");
-        if (red_zone_found != null)
-            redZoneForKnife = red_zone_found.GetComponent<RectTransform>();
-        else
-        {
-            Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
-        }
-        
-
-
-
+        //     GameObject red_zone_found = GameObject.Find("RedZoneForKnife");
+        // if (red_zone_found != null)
+        //     redZoneForKnife = red_zone_found.GetComponent<RectTransform>();
+        // else
+        // {
+        //     Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
+        // }
             // State machine for cutting process
             switch (currentState)
             {
-                case CuttingState.ShowingLine:
+            case CuttingState.ShowingLine:
                     // Waiting for player to pick up knife
+                    EvaluateChop();
                     break;
 
                 case CuttingState.KnifeSnapped:
                     // Knife is snapped to line, waiting for player to release
                     break;
 
-                case CuttingState.WaitingForSwipe:
+            case CuttingState.WaitingForSwipe:
+                // Debug.Log("In Wating for Swip state");
                     DetectSwipeMotion();
                     break;
 
@@ -333,13 +358,13 @@ public class Chop_Controller : MonoBehaviour
 
     }
 
-    private void HandleKnifeDragStart()
-    {
-        if (currentState == CuttingState.Idle && hasIngredientData)
-        {
-            ShowCuttingLines();
-        }
-    }
+    // private void HandleKnifeDragStart()
+    // {
+    //     if (currentState == CuttingState.Idle && hasIngredientData)
+    //     {
+    //         ShowCuttingLines();
+    //     }
+    // }
     private void HandleKnifeSnapped()
     {
         if (currentState == CuttingState.ShowingLine)
@@ -361,37 +386,117 @@ public class Chop_Controller : MonoBehaviour
     }
 
 
+
+
+
     private void DetectSwipeMotion()
     {
+        // Debug.Log("In detectSwipeMotion state!");
         // Start detecting swipe when mouse button is pressed
         if (Input.GetMouseButtonDown(0) && !isDetectingSwipe)
         {
             swipeStartPos = Input.mousePosition;
+            lastSwipePos = swipeStartPos;
             isDetectingSwipe = true;
-        }
+            swipeDirectionChanges = 0;
+            totalSwipeDistance = 0f;
+            lastSwipeDirection = Vector2.zero;
 
-        // Check swipe while dragging
-        if (Input.GetMouseButton(0) && isDetectingSwipe)
-        {
-            Vector2 currentPos = Input.mousePosition;
-            Vector2 swipeDelta = currentPos - swipeStartPos;
-
-            if (swipeDelta.magnitude > swipeThreshold)
+            // Store initial positions of pieces
+            if (ingredientPiece1 != null && ingredientPiece2 != null)
             {
-                // Check if swipe direction matches cutting line direction
-                if (IsSwipeDirectionValid(swipeDelta))
-                {
-                    Debug.Log("Valid swipe detected!");
-                    isDetectingSwipe = false;
-                    currentState = CuttingState.SwipeComplete;
-                }
+                piece1StartPos = ingredientPiece1.localPosition;
+                piece2StartPos = ingredientPiece2.localPosition;
+
+                // Calculate split directions (perpendicular to cutting line)
+                float lineRotation = GetLineRotation();
+                Vector2 perpendicular = Quaternion.Euler(0, 0, lineRotation + 90f) * Vector2.up;
+
+                // Set target offsets for pieces (they move in opposite directions)
+                piece1TargetOffset = perpendicular * 30f; // Adjust distance as needed
+                piece2TargetOffset = -perpendicular * 30f;
             }
         }
 
+        // Check swipe while dragging
+        if (k_script.knife_is_being_dragged && isDetectingSwipe)
+        {
+            Vector2 currentPos = Input.mousePosition;
+            Vector2 swipeDelta = currentPos - lastSwipePos;
+
+            // Only process if there's meaningful movement
+            if (swipeDelta.magnitude > 2f)
+            {
+                // Check if swipe direction matches cutting line direction (back and forth)
+                // if (IsSwipeDirectionValid(swipeDelta))
+                {
+                    Vector2 currentDirection = swipeDelta.normalized;
+
+                    // Detect direction change (back and forth motion)
+                    if (lastSwipeDirection != Vector2.zero)
+                    {
+                        float directionDot = Vector2.Dot(currentDirection, lastSwipeDirection);
+
+                        // If direction reversed (dot product < 0), count it as a direction change
+                        if (directionDot < -0.5f)
+                        {
+                            swipeDirectionChanges++;
+                            Debug.Log($"Direction change detected! Total changes: {swipeDirectionChanges}");
+                        }
+                    }
+
+                    // Accumulate swipe distance
+                    totalSwipeDistance += swipeDelta.magnitude;
+
+                    // Gradually move pieces apart based on swipe progress
+                    float splitProgress = Mathf.Clamp01(totalSwipeDistance / requiredSwipeDistance);
+
+                    if (ingredientPiece1 != null && ingredientPiece2 != null)
+                    {
+                        ingredientPiece1.localPosition = Vector3.Lerp(
+                            piece1StartPos,
+                            piece1StartPos + piece1TargetOffset,
+                            splitProgress
+                        );
+
+                        ingredientPiece2.localPosition = Vector3.Lerp(
+                            piece2StartPos,
+                            piece2StartPos + piece2TargetOffset,
+                            splitProgress
+                        );
+                    }
+
+                    lastSwipeDirection = currentDirection;
+
+                    // Check if cut is complete (enough back-and-forth motion AND distance)
+                    if (swipeDirectionChanges >= 2 && totalSwipeDistance >= requiredSwipeDistance)
+                    {
+                        Debug.Log("Valid cut detected! Swipes: " + swipeDirectionChanges +
+                                ", Distance: " + totalSwipeDistance);
+                        isDetectingSwipe = false;
+                        currentLineIndex -= 1;
+                        currentState = CuttingState.SwipeComplete;
+                    }
+                }
+
+                lastSwipePos = currentPos;
+            }
+        }
         // Reset if mouse released without valid swipe
         if (Input.GetMouseButtonUp(0) && isDetectingSwipe)
         {
             isDetectingSwipe = false;
+
+            // Snap pieces back if cut wasn't completed
+            if (totalSwipeDistance < requiredSwipeDistance)
+            {
+                Debug.Log("Cut incomplete, resetting pieces");
+                if (ingredientPiece1 != null && ingredientPiece2 != null)
+                {
+                    ingredientPiece1.localPosition = piece1StartPos;
+                    ingredientPiece2.localPosition = piece2StartPos;
+                }
+            }
         }
     }
 
@@ -503,15 +608,21 @@ public class Chop_Controller : MonoBehaviour
         return Vector2.Distance(p, closest);
     }
 
-    public float GetLineRotation() //TODO: check this because the rotation is not working
+    public float GetLineRotation()
     {
-        if (currentLinePoints != null && currentLinePoints.Count >= 2)
-        {
-            Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
-            Transform chopLine1R = parent.Find("CL1RedZone"); // Use Transform.Find 
-            float rotation = chopLine1R.eulerAngles.z;
-            return Mathf.Abs(rotation);
-        }
-        return 0f;
+        Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
+        Transform chopline = parent.Find("ChopLine"); // Use Transform.Find 
+        Transform CL1RedZone = chopline.Find("CL1RedZone"); // Use Transform.Find 
+
+        float rotation = CL1RedZone.eulerAngles.z;
+        return Mathf.Abs(rotation);
+    }
+    
+    public Transform GetRedZone()
+    {
+        Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
+        Transform chopline = parent.Find("ChopLine"); // Use Transform.Find 
+        Transform CL1RedZone = chopline.Find("CL1RedZone"); // Use Transform.Find 
+        return CL1RedZone;
     }
 }

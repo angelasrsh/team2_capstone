@@ -58,19 +58,41 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     public void OnDrag(PointerEventData eventData)
     {
-        // If knife is already snapped, don't allow movement
+        RectTransform CL1R = chop_script.GetRedZone().GetComponent<RectTransform>();
+
         if (isSnapped)
         {
-            return;
+            // Get mouse position in screen space
+            Vector2 mousePos = Input.mousePosition;
+            // Convert to local space relative to the red zone (rotated coordinate system)
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                CL1R,
+                mousePos,
+                null, // Use null for overlay canvas, or your canvas camera
+                out Vector2 localMousePos
+            );
+            
+            // Lock movement to only the local Y axis (vertical in rotated space)
+            // Keep the X position fixed to the red zone's center
+            Vector2 constrainedLocalPos = new Vector2(0, localMousePos.y);
+            
+            // Convert back to world/canvas position
+            Vector3 worldPos = CL1R.TransformPoint(constrainedLocalPos);
+
+            // Apply to knife position
+            knifeRectTransform.position = worldPos;
+            
+        } else
+        {
+            transform.position = Input.mousePosition;
         }
-        // SnapToLine();
-        transform.position = Input.mousePosition;
+        knife_is_being_dragged = true;
+        
 
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        knife_is_being_dragged = false;
 
         if (isSnapped == true) //keep in current position
         {
@@ -82,6 +104,8 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         ReturnToOriginalPosition();
 
         OnDragEnd?.Invoke();
+        knife_is_being_dragged = false;
+
     }
 
     public void ReturnToOriginalPosition()
@@ -142,9 +166,9 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     void Update()
     {
-        kPoint = knifeRect.transform.position; // get knife Point position
+        kPoint = knifeRect.transform.localPosition; // get knife Point position
 
-        currKnifePosition = transform.position;
+        currKnifePosition = transform.localPosition;
     }
 
     public void SnapToLine()
@@ -157,19 +181,14 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
             return;
         }
 
-
         // Calculate line rotation
         float lineRotation = chop_script.GetLineRotation();
-
         // Snap knife to line
         snappedRotation = lineRotation;
-
         // Apply rotation (align knife with line)
-        transform.localRotation = Quaternion.Euler(0, 0, lineRotation);
-
+        transform.localRotation = Quaternion.Euler(0, 0, snappedRotation);
         isSnapped = true;
-
-        Debug.Log($"Knife snapped! Position: {snappedPosition}, Rotation: {lineRotation}");
+        Debug.Log($"Knife snapped! Position: {snappedPosition}, Rotation: {snappedRotation}");
 
         // Invoke snapped event
         OnKnifeSnapped?.Invoke();

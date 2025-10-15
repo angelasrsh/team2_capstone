@@ -25,6 +25,7 @@ public class Ingredient_Data : Item_Data
   public List<Ingredient_Requirement> ingredientsNeeded; // ingredients needed to make this ingredient
   public IngredientType ingredientType;
   public GameObject CombinedCutPiecePrefab;
+  public int cutsRequired;
 }
 
 public enum IngredientType
