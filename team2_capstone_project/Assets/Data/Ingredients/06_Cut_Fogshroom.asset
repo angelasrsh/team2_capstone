@@ -32,7 +32,10 @@ MonoBehaviour:
   usedInDishes:
   - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
   makesIngredient: []
-  ingredientsNeeded: []
+  ingredientsNeeded:
+  - ingredient: {fileID: 11400000, guid: 97586fec84298c7489d081880a485db5, type: 2}
+    amountRequired: 1
+    method: 2
   ingredientType: 6
   CombinedCutPiecePrefab: {fileID: 0}
   cutsRequired: 0
