@@ -21,7 +21,11 @@ MonoBehaviour:
   minSpawn: 0
   maxSpawn: 0
   countsAs: []
-  ingredientType: 10
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
   description: Just water... Unless...?
   CutIngredientImages: []
   usedInDishes: []
@@ -30,4 +34,6 @@ MonoBehaviour:
     amountRequired: 1
     method: 1
   ingredientsNeeded: []
-  ingredientType: 10
+  ingredientType: 18
+  CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 0
