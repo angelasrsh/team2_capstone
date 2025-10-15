@@ -158,7 +158,6 @@ public class Chop_Controller : MonoBehaviour
         cuts_left = ingredient_data_var.cutsRequired; //this one changes
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
-            
             //show the image of the cut stuff all 
             Transform fCutTransform = parent.Find("F_Cut_Group"); // Use Transform.Find instead
 
