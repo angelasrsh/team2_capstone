@@ -25,10 +25,10 @@ public class Dialogue_Quest_Step : Quest_Step
     /// <param name="key"></param>
     /// <param name="delayStart">  Seconds to wait before displaying; default 0 </param>
     /// <param name="delayEnd"> Seconds to wait before hiding. Text will remain on screen until user action if delayHide is 0 or unused </param>
-    protected void DelayedDialogue(string key, float delayStart = 0, float delayEnd = 0)
+    protected void DelayedDialogue(string key, float delayStart = 0, float delayEnd = 0, bool disablePlayerInput = true)
     {
         // Wait for delayStart, then show text and textbox, then disappear
-        StartCoroutine(displayTextDelayed(key, delayStart, delayEnd));
+        StartCoroutine(displayTextDelayed(key, delayStart, delayEnd, disablePlayerInput));
 
     }
 
@@ -42,7 +42,7 @@ public class Dialogue_Quest_Step : Quest_Step
     /// <param name="delayStart"></param>
     /// <param name="delayHide"> Input 0 to never hide </param>
     /// <returns></returns>
-    IEnumerator displayTextDelayed(string key, float delayStart, float delayHide)
+    IEnumerator displayTextDelayed(string key, float delayStart, float delayHide, bool disablePlayerInput = true)
     {
         dm = FindObjectOfType<Dialogue_Manager>();
 
@@ -50,7 +50,7 @@ public class Dialogue_Quest_Step : Quest_Step
 
         if (dm != null)
         {
-            dm.PlayScene(key);
+            dm.PlayScene(key, disablePlayerInput);
         }
         else
         {

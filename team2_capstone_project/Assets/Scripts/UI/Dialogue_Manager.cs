@@ -157,11 +157,11 @@ public class Dialogue_Manager : MonoBehaviour
     /// Starts a dialog sequence from the given key.
     /// Parses emotions from {Braces} in lines if present.
     /// </summary>
-    public void PlayScene(string aDialogKey)
+    public void PlayScene(string aDialogKey, bool disablePlayerInput = true)
     {
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0) 
         {
-            PlayNextDialog();
+            PlayNextDialog(disablePlayerInput);
             return;
         }
 
@@ -175,13 +175,13 @@ public class Dialogue_Manager : MonoBehaviour
         }
         completedDialogKeys.Add(aDialogKey); 
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
-        PlayNextDialog();
+        PlayNextDialog(disablePlayerInput);
     }
 
     /// <summary>
     /// Plays the next line of dialog, parsing emotion from the text itself.
     /// </summary>
-    public void PlayNextDialog()
+    public void PlayNextDialog(bool disablePlayerInput = true)
     {
         if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
 
@@ -225,11 +225,11 @@ public class Dialogue_Manager : MonoBehaviour
                 }
             }
 
-            uiManager.ShowText(dialogText);
+            uiManager.ShowText(dialogText, disablePlayerInput);
 
             if (autoAdvanceDialog)
             {
-                StartCoroutine(AutoAdvanceNextLine());
+                StartCoroutine(AutoAdvanceNextLine(disablePlayerInput));
             }
         }
         else
@@ -245,7 +245,7 @@ public class Dialogue_Manager : MonoBehaviour
     /// Starts a dialog sequence from the given key, but forces the portrait to a given emotion.
     /// Useful for reactions to liked/disliked/neutral dishes.
     /// </summary>
-    public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion)
+    public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
     {
         // Tell Game events manager so we don't overlap the dialogue box
         Game_Events_Manager.Instance.BeginDialogueBox();
@@ -267,14 +267,14 @@ public class Dialogue_Manager : MonoBehaviour
         }
 
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
-        PlayNextDialog(forcedEmotion);
+        PlayNextDialog(forcedEmotion, disablePlayerInput);
     }
 
 
     /// <summary>
     /// Plays the next line of dialog, forcing a specific emotion (ignores {Braces} in text).
     /// </summary>
-    public void PlayNextDialog(CustomerData.EmotionPortrait.Emotion forcedEmotion)
+    public void PlayNextDialog(CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
     {
         if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
 
@@ -312,11 +312,11 @@ public class Dialogue_Manager : MonoBehaviour
                 }
             }
 
-            uiManager.ShowText(dialogText);
+            uiManager.ShowText(dialogText, disablePlayerInput);
 
             if (autoAdvanceDialog)
             {
-                StartCoroutine(AutoAdvanceNextLine());
+                StartCoroutine(AutoAdvanceNextLine(disablePlayerInput));
             }
         }
         else
@@ -328,11 +328,11 @@ public class Dialogue_Manager : MonoBehaviour
     #endregion
 
     #region Helpers
-    public IEnumerator AutoAdvanceNextLine()
+    public IEnumerator AutoAdvanceNextLine(bool disablePlayerInput = true)
     {
         yield return new WaitUntil(() => uiManager.textTyping == false);
         yield return new WaitForSeconds(autoAdvanceDelay);
-        PlayNextDialog();
+        PlayNextDialog(disablePlayerInput);
     }
 
     public void EndDialog()

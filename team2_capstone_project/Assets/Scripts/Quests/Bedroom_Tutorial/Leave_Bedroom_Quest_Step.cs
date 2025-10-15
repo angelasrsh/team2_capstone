@@ -23,7 +23,7 @@ public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
 
     private void Start()
     {
-        DelayedDialogue("Journal.Bedroom", 3);
+        DelayedDialogue("Journal.Bedroom", 3, 0, false);
         
     }
 
