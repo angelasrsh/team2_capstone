@@ -4103,7 +4103,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 20
+      value: 27
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_NeverAutoSwitchControlSchemes
@@ -4130,6 +4130,34 @@ PrefabInstance:
       value: 0b55d02f-6679-46aa-ad99-f1f47a44e275
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_ActionId
+      value: 7ff54938-2f6c-41d7-95b0-d6b8e3cb5ec3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_ActionId
+      value: 3c38461f-6e7f-4e41-b4c2-8cb3ce5d9384
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[22].m_ActionId
+      value: 5f1f050a-fc4f-4cd4-82f6-02c6a4193113
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[23].m_ActionId
+      value: 95ddfac6-8522-4ffc-86ee-548674177959
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[24].m_ActionId
+      value: 2ff50e60-428f-4fd5-b9a5-abba57a2a022
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[25].m_ActionId
+      value: 6e048e03-5bf5-46e2-ae19-589066e5c2f1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[26].m_ActionId
+      value: 1c7ea608-d748-4af5-af41-7ab075b926a7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_ActionName
       value: Player/CloseInventory[/Touchscreen/delta]
       objectReference: {fileID: 0}
@@ -4148,6 +4176,34 @@ PrefabInstance:
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_ActionEvents.Array.data[19].m_ActionName
       value: Journal/CloseJournal[/Keyboard/j,/Keyboard/escape]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_ActionName
+      value: Player/EndDialog[/Simulated Touchscreen/primaryTouch/tap]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_ActionName
+      value: UI/CloseInteract[/Keyboard/escape,/Keyboard/e]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[22].m_ActionName
+      value: UI/CloseJournal[/Keyboard/j]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[23].m_ActionName
+      value: UI/CloseRegular[/Keyboard/escape]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[24].m_ActionName
+      value: UI/OpenJournal[/Keyboard/j]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[25].m_ActionName
+      value: UI/OpenInventory[/Keyboard/i]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
+      propertyPath: m_ActionEvents.Array.data[26].m_ActionName
+      value: UI/Pause[/Keyboard/escape]
       objectReference: {fileID: 0}
     - target: {fileID: 3085461530528901281, guid: 12c02fefef9590848804314437e70191, type: 3}
       propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.size

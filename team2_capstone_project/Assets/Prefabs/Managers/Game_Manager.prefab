@@ -180,6 +180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  openUICount: 0
+  pauseMenuOn: 0
+  uiInputCooldownDuration: 0.25
 --- !u!114 &4060353126230224005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,6 +320,26 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 1c7ea608-d748-4af5-af41-7ab075b926a7
     m_ActionName: UI/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7ff54938-2f6c-41d7-95b0-d6b8e3cb5ec3
+    m_ActionName: Player/EndDialog[/Simulated Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 253ced77-a953-48d3-8d7c-8c818a96bc7d
+    m_ActionName: Journal/Click[/Keyboard/e,/Mouse/leftButton,/Simulated Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 64bab8b5-f68f-4017-9c08-2aaa07432d03
+    m_ActionName: Journal/FlipLeft[/Keyboard/a,/Keyboard/leftArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 65fd1754-d588-4b1d-9c9c-5635e4c2b81d
+    m_ActionName: Journal/FlipRight[/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0b55d02f-6679-46aa-ad99-f1f47a44e275
+    m_ActionName: Journal/CloseJournal[/Keyboard/j,/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
