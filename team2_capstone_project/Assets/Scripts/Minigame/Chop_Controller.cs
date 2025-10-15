@@ -119,10 +119,10 @@ public class Chop_Controller : MonoBehaviour
     /// </summary>
     private void ShowCuttingLines()
     {
-        if (currentCuttingLines != null)
-        {
-            Destroy(currentCuttingLines);
-        }
+        // if (currentCuttingLines != null)
+        // {
+        //     Destroy(currentCuttingLines);
+        // }
 
         // cuttingLinesParent = GameObject.Find("Canvas-MinigameElements").transform;
         // currentCuttingLines = Instantiate(uiLineRendererPrefab, cuttingLinesParent);
@@ -145,15 +145,6 @@ public class Chop_Controller : MonoBehaviour
         //     Debug.LogError("LineRenderer not set");
         // }
 
-        //cut Fermented Eye coordinates
-        //point 1: x = 0, y = 36.03
-        //point 2: x = 268.4, y = 300
-
-        //cut fogshroom
-        //line 1: (0.64,166.9), (300, 217.7)
-        //line 2: (0.64,166.9),(81.8,121,1), (186.5,104), (280.4,134.3)
-        //line 3: (12.1,50.6), (261.5, 75.1)
-
     }
     public int cuts_left = 0;
     //shows the ingredient made from pieces pieced together
@@ -174,11 +165,6 @@ public class Chop_Controller : MonoBehaviour
             if (fCutTransform != null)
             {
                 fCutTransform.gameObject.SetActive(true);
-                //store original pieces positions
-
-
-                // ingredientPiece1 = fCutTransform.Find("Fermented_Eye_Cut_1").GetComponent<RectTransform>();
-                // ingredientPiece2 = fCutTransform.Find("Fermented_Eye_Cut_2").GetComponent<RectTransform>();
                 Debug.Log("F_Cut_Group should be on cutting board now");
             }
             else
@@ -196,14 +182,14 @@ public class Chop_Controller : MonoBehaviour
             }
             else
             {
-                Debug.LogError("F_Cut_Group not found as child of Canvas-CutGroup");
+                Debug.LogError("Fog_Cut_Group not found as child of Canvas-CutGroup");
             }
         }
     }
     private bool cuttingLineInitialized = false;
     private void InitializeCuttingLines()
     {
-        allCuttingLines.Clear();
+        // allCuttingLines.Clear();
         Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
         cuttingLineInitialized = false;
         
@@ -213,9 +199,6 @@ public class Chop_Controller : MonoBehaviour
             Transform CLRZ = chopLine1.Find("CL1RedZone");
             Transform chopLine2 = parent.Find("ChopLine2");
             Transform CLRZ2 = chopLine2.Find("CL2RedZone");
-            
-            
-
 
             if (cuts_left == 2) //first cutline
             {//initialize the first cut line for uncut fermented Eye
@@ -237,18 +220,48 @@ public class Chop_Controller : MonoBehaviour
         }
         else if (ingredient_data_var.Name == "Uncut Fogshroom")
         {
-            // Line 1
-            allCuttingLines.Add(new List<Vector2>
+            Transform Shroom_CL1 = parent.Find("Shroom_CL1");
+            Transform CLRZSh1 = Shroom_CL1.Find("CLRZSh1");
+
+            // Get the UILineRenderer component
+            UILineRenderer lineRenderer = Shroom_CL1.GetComponent<UILineRenderer>();
+
+
+            if (cuts_left == 3) //first cutline
             {
-                new Vector2(0.64f, 166.9f),
-                new Vector2(300f, 217.7f)
-            });
-            // Line 2 (example - adjust as needed)
-            allCuttingLines.Add(new List<Vector2>
-            {
-                new Vector2(12.1f, 50.6f),
-                new Vector2(261.5f, 75.1f)
-            });
+
+                Shroom_CL1.gameObject.SetActive(true);
+                CLRZSh1.gameObject.SetActive(true);
+                cuttingLineInitialized = true;
+
+            }
+            // else if (cuts_left == 2)
+            // {
+            //     // Set points for first cut (horizontal example)
+            //     lineRenderer.points = new List<Vector2>
+            //     {
+            //         new Vector2(0, -122.2f),    // Start point
+            //         new Vector2(497.3f, -61.9f)   // End point
+            //     };
+            //     // Update the red zone position too if needed
+            //     RectTransform redZoneRect = CLRZSh1.GetComponent<RectTransform>();
+            //     redZoneRect.anchoredPosition = new Vector2(0, -122.2f); // Adjust as needed
+            //     redZoneRect.rotation = Quaternion.Euler(0, 0, -76f); // Match line angle
+            // }
+            // else if (cuts_left == 1)
+            // {
+            //     lineRenderer.points = new List<Vector2>
+            //     {
+            //         new Vector2(0, -248.5f),    // Start point
+            //         new Vector2(497.3f, -172.8f)   // End point
+            //     };
+            //     // Update red zone for third cut
+            //     RectTransform redZoneRect = CLRZSh1.GetComponent<RectTransform>();
+            //     redZoneRect.anchoredPosition = new Vector2(0, -248.5f);
+            //     redZoneRect.rotation = Quaternion.Euler(0, 0, -76f);
+            // } 
+            // Force the line renderer to update visually
+            lineRenderer.SetVerticesDirty();
         }
     }
 
@@ -264,6 +277,9 @@ public class Chop_Controller : MonoBehaviour
         {
             parent.Find("ChopLine2").gameObject.SetActive(false);
             
+        } else if (ingredient_data_var.Name == "Uncut Fogshroom")
+        {
+            parent.Find("Shroom_CL1").gameObject.SetActive(false);
         }
         currentState = CuttingState.Idle;
     }
@@ -306,66 +322,77 @@ public class Chop_Controller : MonoBehaviour
 
     private void EvaluateChop()
     {
+        bool isOverlappingCLR = false;
+        Transform CL = null;
+        RectTransform CLR = null;
         if (ingredient_data_var.Name == "Uncut Fermented Eye" && cuttingLineInitialized)
         {
-            Transform CL = null;
-            RectTransform CLR = null;
-            bool isOverlappingCLR = false;
+            
             if (cuts_left == 2)
             {
                 CL = GameObject.Find("ChopLine").transform;
-                CLR = CL.Find("CL1RedZone").GetComponent<RectTransform>(); 
+                CLR = CL.Find("CL1RedZone").GetComponent<RectTransform>();
                 isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
 
-            } else if (cuts_left == 1) {
+            }
+            else if (cuts_left == 1)
+            {
                 CL = GameObject.Find("ChopLine2").transform;
                 CLR = CL.Find("CL2RedZone").GetComponent<RectTransform>();
                 isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
                 Debug.Log($"CL: {CL}, CLR: {CLR}, isOverlapping: {isOverlappingCLR}");
 
             }
-            
 
-            // Create a small rect at mouse position
-            Vector3 mpos = k_script.knifeRect.localPosition;
-            //if its overlapping
-            //start timer
-            if (isOverlappingCLR)
-            {
-                Debug.Log($"Knife is Overlapping C1LR at Position: {mpos}");
-                k_script.SnapToLine();
-                
-                currentTime += Time.deltaTime;
-                
-            }else
-            { //not overlapping
-                if (currentTime >= 0.1f)
-                {//over this threshold to count as a full cut
-                    //cut has been made
-                    Debug.Log("Cut has been made... starting timer");
-                    firstCutDone = true;
-                } else
-                {
-                    currentTime = 0; //reset timer
-                }
-            }
-        }else
+        }
+        else if (ingredient_data_var.Name == "Uncut Fogshroom" && cuttingLineInitialized)
+        {
+            CL = GameObject.Find("Shroom_CL1").transform;
+            CLR = CL.Find("CLRZSh1").GetComponent<RectTransform>();
+            isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
+        } else
         {
             return;
+        }
+        
+        // Create a small rect at mouse position
+        Vector3 mpos = k_script.knifeRect.localPosition;
+        //if its overlapping
+        //start timer
+        if (isOverlappingCLR)
+        {
+            Debug.Log($"Knife is Overlapping C1LR at Position: {mpos}");
+            k_script.SnapToLine();
+            
+            currentTime += Time.deltaTime;
+            
+        }else
+        { //not overlapping
+            if (currentTime >= 0.1f)
+            {//over this threshold to count as a full cut
+                //cut has been made
+                Debug.Log("Cut has been made... starting timer");
+                firstCutDone = true;
+            } else
+            {
+                currentTime = 0; //reset timer
+            }
         }
     }
     private float currentTime = 0f;
     void Update()
     {
-        if (!hasIngredientData) return; //if there isnt something on the cutting board
-                                        //     GameObject red_zone_found = GameObject.Find("RedZoneForKnife");
-                                        // if (red_zone_found != null)
-                                        //     redZoneForKnife = red_zone_found.GetComponent<RectTransform>();
-                                        // else
-                                        // {
-                                        //     Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
-                                        // }
-                                        // State machine for cutting process
+        if (!hasIngredientData) return; 
+        //if there isnt something on the cutting board
+        //     GameObject red_zone_found = GameObject.Find("RedZoneForKnife");
+        // if (red_zone_found != null)
+        //     redZoneForKnife = red_zone_found.GetComponent<RectTransform>();
+        // else
+        // {
+        //     Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
+        // }
+        
+        // State machine for cutting process
         switch (currentState)
         {
             case CuttingState.ShowingLine:
@@ -395,8 +422,17 @@ public class Chop_Controller : MonoBehaviour
                         RectTransform[] rightSide = new RectTransform[] { ingredientPiece1, ingredientPiece2 };
                         DetectSwipeMotion(leftSide, rightSide);
                     }
+                } else if (ingredient_data_var.Name == "Uncut Fogshroom")
+                {
+                    if (cuts_left == 3) // First cut: split all 4 pieces into 2 groups
+                    {
+                        // Pieces 1 & 2 go left, Pieces 3 & 4 go right
+                        RectTransform[] leftSide = new RectTransform[] { ingredientPiece1,ingredientPiece2};
+                        RectTransform[] rightSide = new RectTransform[] { ingredientPiece3, ingredientPiece4};
+                        DetectSwipeMotion(leftSide, rightSide);
+                    }
                 }
-                break;
+                    break;
 
             case CuttingState.SwipeComplete:
                 // Process the cut
@@ -408,21 +444,31 @@ public class Chop_Controller : MonoBehaviour
     
     private void SetIngredientPieces()
     {
+        Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
-            Transform parent = GameObject.Find("Canvas-CutGroup").transform;
             Transform fCutTransform = parent.Find("F_Cut_Group"); // Use Transform.Find instead
             ingredientPiece1 = fCutTransform.Find("Fermented_Eye_Cut_1").GetComponent<RectTransform>();
             ingredientPiece2 = fCutTransform.Find("Fermented_Eye_Cut_2").GetComponent<RectTransform>();
             ingredientPiece3 = fCutTransform.Find("Fermented_Eye_Cut_3").GetComponent<RectTransform>();
             ingredientPiece4 = fCutTransform.Find("Fermented_Eye_Cut_4").GetComponent<RectTransform>();
 
-            //set original positions
-            if (ingredientPiece1 != null) piece1OriginalPos = ingredientPiece1.localPosition;
-            if (ingredientPiece2 != null) piece2OriginalPos = ingredientPiece2.localPosition;
-            if (ingredientPiece3 != null) piece3OriginalPos = ingredientPiece3.localPosition;
-            if (ingredientPiece4 != null) piece4OriginalPos = ingredientPiece4.localPosition;
+
         }
+        else if (ingredient_data_var.Name == "Uncut Fogshroom")
+        {
+            Transform fCutTransform = parent.Find("Fog_Cut_Group"); // Use Transform.Find instead
+            ingredientPiece1 = fCutTransform.Find("Fogshroom_Cut_1").GetComponent<RectTransform>();
+            ingredientPiece2 = fCutTransform.Find("Fogshroom_Cut_2").GetComponent<RectTransform>();
+            ingredientPiece3 = fCutTransform.Find("Fogshroom_Cut_3").GetComponent<RectTransform>();
+            ingredientPiece4 = fCutTransform.Find("Fogshroom_Cut_4").GetComponent<RectTransform>();
+        }
+        //set original positions
+        if (ingredientPiece1 != null) piece1OriginalPos = ingredientPiece1.localPosition;
+        if (ingredientPiece2 != null) piece2OriginalPos = ingredientPiece2.localPosition;
+        if (ingredientPiece3 != null) piece3OriginalPos = ingredientPiece3.localPosition;
+        if (ingredientPiece4 != null) piece4OriginalPos = ingredientPiece4.localPosition;
     }
 
     // private void HandleKnifeDragStart()
@@ -475,7 +521,7 @@ public class Chop_Controller : MonoBehaviour
             // Store initial positions for ALL pieces
             if (leftSidePieces != null && rightSidePieces != null)
             {
-                // Store starting positions (you'll need arrays for this)
+                // Store starting positions 
                 leftPiecesStartPos = new Vector3[leftSidePieces.Length];
                 rightPiecesStartPos = new Vector3[rightSidePieces.Length];
 
@@ -495,8 +541,8 @@ public class Chop_Controller : MonoBehaviour
                 float lineRotation = GetLineRotation();
                 Vector2 perpendicular = Quaternion.Euler(0, 0, lineRotation + 90f) * Vector2.up;
 
-                leftSideOffset = perpendicular * 30f;
-                rightSideOffset = -perpendicular * 30f;
+                leftSideOffset = perpendicular * 15f;
+                rightSideOffset = -perpendicular * 15f;
             }
         }
 
@@ -611,7 +657,7 @@ public class Chop_Controller : MonoBehaviour
         currentState = CuttingState.ProcessingCut;
         
         Debug.Log($"Processing cut for line {cuts_left}");
-        
+
         // // Change sprite to cut version
         // Image imageComponent = ingredient_object.GetComponent<Image>();
         // if (imageComponent != null)
@@ -624,6 +670,10 @@ public class Chop_Controller : MonoBehaviour
 
         // Check if there are more lines to cut
         // currentLineIndex++;
+        if  (ingredient_data_var.Name == "Uncut Fogshroom")
+        {
+            cuts_left = 0; //TODO Delete this if statement, just shortening the number of cuts required
+        }
         if (cuts_left > 0) 
         {
             // Show next line after a short delay
@@ -682,7 +732,6 @@ public class Chop_Controller : MonoBehaviour
 
     private void ResetIngredientPiecesToOriginal()
     {
-        if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
             if (ingredientPiece1 != null) ingredientPiece1.localPosition = piece1OriginalPos;
             if (ingredientPiece2 != null) ingredientPiece2.localPosition = piece2OriginalPos;
@@ -698,6 +747,11 @@ public class Chop_Controller : MonoBehaviour
         {
             Transform parent = GameObject.Find("Canvas-CutGroup").transform;
             Transform cutGroup = GameObject.Find("F_Cut_Group").transform;
+            cutGroup.gameObject.SetActive(false);
+        } else if (ingredient_data_var.Name == "Uncut Fogshroom")
+        {
+            Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+            Transform cutGroup = GameObject.Find("Fog_Cut_Group").transform;
             cutGroup.gameObject.SetActive(false);
         }
     }
@@ -749,6 +803,16 @@ public class Chop_Controller : MonoBehaviour
                 return 52f; //TODO fix this hardcoded value;
             }
 
+        } else if (ingredient_data_var.Name == "Uncut Fogshroom")
+        {
+            Transform chopline = parent.Find("Shroom_CL1"); // Use Transform.Find 
+            Transform CL1RedZone = chopline.Find("CLRZSh1"); // Use Transform.Find
+            RZ = CL1RedZone;
+            // if(cuts_left == 3)
+            {
+                return -76.149f; //TODO fix this hardcoded value
+            } 
+            
         }
 
         float rotation = RZ.eulerAngles.z;
@@ -773,6 +837,11 @@ public class Chop_Controller : MonoBehaviour
                 RZ = CL2RedZone;
             }
             
+        } else if (ingredient_data_var.Name == "Uncut Fogshroom")
+        {
+            Transform chopline = parent.Find("Shroom_CL1"); // Use Transform.Find 
+            Transform CL1RedZone = chopline.Find("CLRZSh1"); // Use Transform.Find
+            RZ = CL1RedZone;
         }
         
         return RZ;
