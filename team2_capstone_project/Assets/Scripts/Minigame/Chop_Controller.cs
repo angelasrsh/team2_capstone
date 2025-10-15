@@ -152,7 +152,7 @@ public class Chop_Controller : MonoBehaviour
         //show the image of the cut stuff all 
         //parent canvas is called Canvas-CutGroup
         Transform parent = GameObject.Find("Canvas-CutGroup").transform;
-        cuts_left = ingredient_data_var.cutsRequired;
+        cuts_left = ingredient_data_var.cutsRequired; //this one changes
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
             
@@ -194,22 +194,27 @@ public class Chop_Controller : MonoBehaviour
         
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
+            Transform chopLine1 = parent.Find("ChopLine");
+            Transform CLRZ = chopLine1.Find("CL1RedZone");
+            Transform chopLine2 = parent.Find("ChopLine2"); 
+            Transform CLRZ2 = chopLine2.Find("CL2RedZone");
+
+
             if (cuts_left == 2) //first cutline
             {//initialize the first cut line for uncut fermented Eye
-                Transform chopLine1 = parent.Find("ChopLine"); // Use Transform.Find instead
                 chopLine1.gameObject.SetActive(true);
-                Transform CLRZ = chopLine1.Find("CL1RedZone");
                 CLRZ.gameObject.SetActive(true);
                 cuttingLineInitialized = true;
                                 
             }else if (cuts_left == 1) //find second cut
             {
+                //reset 
+                chopLine1.gameObject.SetActive(false);
+                CLRZ.gameObject.SetActive(false);
+
                 Debug.LogWarning("firstcutDone is done..starting second cut");
-                Transform chopLine2 = parent.Find("ChopLine"); // Use Transform.Find instead
                 chopLine2.gameObject.SetActive(true);
-                Transform CLRZ = chopLine2.Find("CL2RedZone");
-                CLRZ.gameObject.SetActive(true);
-                currentLineIndex = 2; 
+                CLRZ2.gameObject.SetActive(true);
                 cuttingLineInitialized = true;
             }
         }
@@ -232,12 +237,7 @@ public class Chop_Controller : MonoBehaviour
 
     private void ShowLine(int lineIndex)
     {
-        if (lineIndex < allCuttingLines.Count && lineRenderer != null)
-        {
-            currentLinePoints = allCuttingLines[lineIndex];
-            lineRenderer.points = currentLinePoints;
-            currentLineIndex = lineIndex;
-        }
+        ShowCuttingLines();
     }
 
     private void ClearCuttingLines()
@@ -290,15 +290,29 @@ public class Chop_Controller : MonoBehaviour
     {
         if (ingredient_data_var.Name == "Uncut Fermented Eye" && cuttingLineInitialized)
         {
-            Transform CL = GameObject.Find("ChopLine").transform;
-            RectTransform CL1R = CL.Find("CL1RedZone").GetComponent<RectTransform>(); 
+            Transform CL = null;
+            RectTransform CLR = null;
+            bool isOverlappingCLR = false;
+            if (cuts_left == 2)
+            {
+                CL = GameObject.Find("ChopLine").transform;
+                CLR = CL.Find("CL1RedZone").GetComponent<RectTransform>(); 
+                isOverlappingCLR = Drag_All.IsOverlapping(k_script.knifeRect, CLR);
+
+            } else if (cuts_left == 1) {
+                CL = GameObject.Find("ChopLine2").transform;
+                CLR = CL.Find("CL2RedZone").GetComponent<RectTransform>();
+                isOverlappingCLR = Drag_All.IsOverlapping(k_script.knifeRect, CLR);
+                Debug.Log($"CL: {CL}, CLR: {CLR}, isOverlapping: {isOverlappingCLR}");
+
+            }
             
-            isOverlappingCL1R = Drag_All.IsOverlapping(k_script.knifeRect, CL1R);
+
             // Create a small rect at mouse position
-            Vector3 mpos = k_script.knifeRect.transform.localPosition;
+            Vector3 mpos = k_script.knifeRect.localPosition;
             //if its overlapping
             //start timer
-            if (isOverlappingCL1R)
+            if (isOverlappingCLR)
             {
                 Debug.Log($"Knife is Overlapping C1LR at Position: {mpos}");
                 k_script.SnapToLine();
@@ -474,7 +488,8 @@ public class Chop_Controller : MonoBehaviour
                         Debug.Log("Valid cut detected! Swipes: " + swipeDirectionChanges +
                                 ", Distance: " + totalSwipeDistance);
                         isDetectingSwipe = false;
-                        currentLineIndex -= 1;
+                        cuts_left -= 1;
+                        Debug.Log($"Cuts left: {cuts_left}");
                         currentState = CuttingState.SwipeComplete;
                     }
                 }
@@ -521,24 +536,24 @@ public class Chop_Controller : MonoBehaviour
     {
         currentState = CuttingState.ProcessingCut;
         
-        Debug.Log($"Processing cut for line {currentLineIndex}");
+        Debug.Log($"Processing cut for line {cuts_left}");
         
-        // Change sprite to cut version
-        Image imageComponent = ingredient_object.GetComponent<Image>();
-        if (imageComponent != null)
-        {
-            ChangeToCutPiece(imageComponent);
-        }
+        // // Change sprite to cut version
+        // Image imageComponent = ingredient_object.GetComponent<Image>();
+        // if (imageComponent != null)
+        // {
+        //     ChangeToCutPiece(imageComponent);
+        // }
 
         // Move knife back to original position
         k_script.ReturnToOriginalPosition();
 
         // Check if there are more lines to cut
-        currentLineIndex++;
-        if (currentLineIndex < allCuttingLines.Count)
+        // currentLineIndex++;
+        if (cuts_left > 0) 
         {
             // Show next line after a short delay
-            StartCoroutine(ShowNextLineAfterDelay(0.5f));
+            StartCoroutine(ShowNextLineAfterDelay(0.75f));
         }
         else
         {
@@ -550,8 +565,8 @@ public class Chop_Controller : MonoBehaviour
     private IEnumerator ShowNextLineAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        ShowLine(currentLineIndex);
         currentState = CuttingState.ShowingLine;
+        ShowLine(currentLineIndex);
     }
 
     private IEnumerator CompleteAllCuts()
@@ -573,7 +588,7 @@ public class Chop_Controller : MonoBehaviour
         }
 
         // Clear cutting lines
-        ClearCuttingLines();
+        ClearCuttingLines();//TODO
         
         // Reset state
         Drag_All.cuttingBoardActive = false;
@@ -611,18 +626,50 @@ public class Chop_Controller : MonoBehaviour
     public float GetLineRotation()
     {
         Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
-        Transform chopline = parent.Find("ChopLine"); // Use Transform.Find 
-        Transform CL1RedZone = chopline.Find("CL1RedZone"); // Use Transform.Find 
+        Transform RZ = null;
+        if (ingredient_data_var.Name == "Uncut Fermented Eye")
+        {
+            if (cuts_left == 2)
+            {
+                Transform chopline = parent.Find("ChopLine"); // Use Transform.Find 
+                Transform CL1RedZone = chopline.Find("CL1RedZone"); // Use Transform.Find
+                RZ = CL1RedZone;
+            }
+            else if (cuts_left == 1)
+            {
+                Transform chopline = parent.Find("ChopLine2"); // Use Transform.Find 
+                Transform CL2RedZone = chopline.Find("CL2RedZone"); // Use Transform.Find 
+                RZ = CL2RedZone;
+            }
 
-        float rotation = CL1RedZone.eulerAngles.z;
+        }
+        
+        float rotation = RZ.eulerAngles.z;
         return Mathf.Abs(rotation);
     }
-    
+
     public Transform GetRedZone()
     {
         Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
-        Transform chopline = parent.Find("ChopLine"); // Use Transform.Find 
-        Transform CL1RedZone = chopline.Find("CL1RedZone"); // Use Transform.Find 
-        return CL1RedZone;
+        Transform RZ = null;
+        if (ingredient_data_var.Name == "Uncut Fermented Eye")
+        {
+            if (cuts_left == 2)
+            {
+                Transform chopline = parent.Find("ChopLine"); // Use Transform.Find 
+                Transform CL1RedZone = chopline.Find("CL1RedZone"); // Use Transform.Find
+                RZ = CL1RedZone; 
+            } else if (cuts_left == 1)
+            {
+                Transform chopline = parent.Find("ChopLine2"); // Use Transform.Find 
+                Transform CL2RedZone = chopline.Find("CL2RedZone"); // Use Transform.Find 
+                RZ = CL2RedZone;
+            }
+            
+        }
+        
+        return RZ;
     }
+    
+
 }

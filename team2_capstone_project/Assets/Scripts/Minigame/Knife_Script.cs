@@ -17,9 +17,12 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     [Header("Transform References")]
     private Vector3 knifeOrigPos;
+    private Vector3 firstKnifeOrigPos;
     public RectTransform knifeRectTransform;
     private Transform parentAfterDrag; //original parent of the drag
     private Quaternion originalRotation;
+    private Quaternion firstOriginalRotation;
+
 
     [Header("State")]
     private UnityEngine.UI.Image knifeImage;
@@ -39,7 +42,6 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        knifeOrigPos = knifeRectTransform.position;
         originalRotation = transform.rotation;
         knifeOrigPos = knifeRectTransform.anchoredPosition; // Use anchoredPosition for UI elements
 
@@ -59,9 +61,13 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     public void OnDrag(PointerEventData eventData)
     {
         RectTransform CL1R = chop_script.GetRedZone().GetComponent<RectTransform>();
-
+        if(CL1R != null)
+        {
+            Debug.Log($"CLR is {CL1R}");
+        }
         if (isSnapped)
         {
+            Debug.Log("Knife is on the line now");
             // Get mouse position in screen space
             Vector2 mousePos = Input.mousePosition;
             // Convert to local space relative to the red zone (rotated coordinate system)
@@ -110,8 +116,8 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     public void ReturnToOriginalPosition()
     {
-        knifeRectTransform.anchoredPosition = knifeOrigPos;
-        transform.rotation = originalRotation;
+        knifeRectTransform.anchoredPosition = firstKnifeOrigPos;
+        transform.rotation = firstOriginalRotation;
         transform.SetParent(parentAfterDrag);
         isSnapped = false;
         
@@ -139,6 +145,10 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         knifeImage = GetComponent<UnityEngine.UI.Image>();
         GameObject chop_script_obj = GameObject.Find("ChopController");
         chop_script = chop_script_obj.GetComponent<Chop_Controller>();
+
+        //store position and rotation
+        firstOriginalRotation = transform.rotation;
+        firstKnifeOrigPos = knifeRectTransform.anchoredPosition; // Use anchoredPosition for UI elements
 
         if (chop_script == null)
         {
