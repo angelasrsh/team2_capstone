@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 // using UnityEngine.UIElements;
 using System;
-using UnityEngine.InputSystem.LowLevel; //for actions
+using UnityEngine.InputSystem.LowLevel;
+using System.Numerics; //for actions
+using Quaternion = UnityEngine.Quaternion;  // Add this line
 
 
 
@@ -89,8 +93,14 @@ public class Chop_Controller : MonoBehaviour
     // References to your ingredient pieces (assign in Inspector or find them)
     public RectTransform ingredientPiece1;
     public RectTransform ingredientPiece2;
+    public RectTransform ingredientPiece3;
+    public RectTransform ingredientPiece4;
     public UILineRenderer lineRenderer;
 
+    private Vector3 piece1OriginalPos;
+    private Vector3 piece2OriginalPos;
+    private Vector3 piece3OriginalPos;
+    private Vector3 piece4OriginalPos;
 
     public Ingredient_Data SetIngredientData(Ingredient_Data ingredientData, GameObject ing_gameOb)
     {
@@ -152,6 +162,7 @@ public class Chop_Controller : MonoBehaviour
         //show the image of the cut stuff all 
         //parent canvas is called Canvas-CutGroup
         Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+
         cuts_left = ingredient_data_var.cutsRequired; //this one changes
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
@@ -162,8 +173,11 @@ public class Chop_Controller : MonoBehaviour
             if (fCutTransform != null)
             {
                 fCutTransform.gameObject.SetActive(true);
-                ingredientPiece1 = fCutTransform.Find("Fermented_Eye_Cut_1").GetComponent<RectTransform>();
-                ingredientPiece2 = fCutTransform.Find("Fermented_Eye_Cut_2").GetComponent<RectTransform>();
+                //store original pieces positions
+
+
+                // ingredientPiece1 = fCutTransform.Find("Fermented_Eye_Cut_1").GetComponent<RectTransform>();
+                // ingredientPiece2 = fCutTransform.Find("Fermented_Eye_Cut_2").GetComponent<RectTransform>();
                 Debug.Log("F_Cut_Group should be on cutting board now");
             }
             else
@@ -242,10 +256,10 @@ public class Chop_Controller : MonoBehaviour
 
     private void ClearCuttingLines()
     {
-        if (currentCuttingLines != null)
+        Transform parent = GameObject.Find("Canvas-MinigameElements").transform;
+        if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
-            Destroy(currentCuttingLines);
-            currentCuttingLines = null;
+            parent.Find("ChopLine2").gameObject.SetActive(false);
         }
         currentState = CuttingState.Idle;
     }
@@ -340,36 +354,72 @@ public class Chop_Controller : MonoBehaviour
     void Update()
     {
         if (!hasIngredientData) return; //if there isnt something on the cutting board
-        //     GameObject red_zone_found = GameObject.Find("RedZoneForKnife");
-        // if (red_zone_found != null)
-        //     redZoneForKnife = red_zone_found.GetComponent<RectTransform>();
-        // else
-        // {
-        //     Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
-        // }
-            // State machine for cutting process
-            switch (currentState)
-            {
+                                        //     GameObject red_zone_found = GameObject.Find("RedZoneForKnife");
+                                        // if (red_zone_found != null)
+                                        //     redZoneForKnife = red_zone_found.GetComponent<RectTransform>();
+                                        // else
+                                        // {
+                                        //     Debug.Log("[Chp_contrller] Could not find redZone4Knife!");
+                                        // }
+                                        // State machine for cutting process
+        switch (currentState)
+        {
             case CuttingState.ShowingLine:
-                    // Waiting for player to pick up knife
-                    EvaluateChop();
-                    break;
+                // Waiting for player to pick up knife
+                EvaluateChop();
+                break;
 
-                case CuttingState.KnifeSnapped:
-                    // Knife is snapped to line, waiting for player to release
-                    break;
+            case CuttingState.KnifeSnapped:
+                // Knife is snapped to line, waiting for player to release
+                break;
 
             case CuttingState.WaitingForSwipe:
                 // Debug.Log("In Wating for Swip state");
-                    DetectSwipeMotion();
-                    break;
+                if (ingredient_data_var.Name == "Uncut Fermented Eye")
+                {
+                    SetIngredientPieces();
+                    if (cuts_left == 2) // First cut: split all 4 pieces into 2 groups
+                    {
+                        // Pieces 1 & 2 go left, Pieces 3 & 4 go right
+                        RectTransform[] leftSide = new RectTransform[] { ingredientPiece1, ingredientPiece4 };
+                        RectTransform[] rightSide = new RectTransform[] { ingredientPiece2, ingredientPiece3 };
+                        DetectSwipeMotion(leftSide, rightSide);
+                    }
+                    else if (cuts_left == 1) // Second cut: split one half (e.g., pieces 1 & 2)
+                    {
+                        // Piece 1 goes left, Piece 2 goes right
+                        RectTransform[] leftSide = new RectTransform[] { ingredientPiece3, ingredientPiece4 };
+                        RectTransform[] rightSide = new RectTransform[] { ingredientPiece1, ingredientPiece2 };
+                        DetectSwipeMotion(leftSide, rightSide);
+                    }
+                }
+                break;
 
-                case CuttingState.SwipeComplete:
-                    // Process the cut
-                    ProcessCut();
-                    break;
-            }
+            case CuttingState.SwipeComplete:
+                // Process the cut
+                ProcessCut();
+                break;
+        }
 
+    }
+    
+    private void SetIngredientPieces()
+    {
+        if (ingredient_data_var.Name == "Uncut Fermented Eye")
+        {
+            Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+            Transform fCutTransform = parent.Find("F_Cut_Group"); // Use Transform.Find instead
+            ingredientPiece1 = fCutTransform.Find("Fermented_Eye_Cut_1").GetComponent<RectTransform>();
+            ingredientPiece2 = fCutTransform.Find("Fermented_Eye_Cut_2").GetComponent<RectTransform>();
+            ingredientPiece3 = fCutTransform.Find("Fermented_Eye_Cut_3").GetComponent<RectTransform>();
+            ingredientPiece4 = fCutTransform.Find("Fermented_Eye_Cut_4").GetComponent<RectTransform>();
+
+            //set original positions
+            if (ingredientPiece1 != null) piece1OriginalPos = ingredientPiece1.localPosition;
+            if (ingredientPiece2 != null) piece2OriginalPos = ingredientPiece2.localPosition;
+            if (ingredientPiece3 != null) piece3OriginalPos = ingredientPiece3.localPosition;
+            if (ingredientPiece4 != null) piece4OriginalPos = ingredientPiece4.localPosition;
+        }
     }
 
     // private void HandleKnifeDragStart()
@@ -400,10 +450,13 @@ public class Chop_Controller : MonoBehaviour
     }
 
 
+    // Add these class variables:
+    private Vector3[] leftPiecesStartPos;
+    private Vector3[] rightPiecesStartPos;
+    private Vector3 leftSideOffset;
+    private Vector3 rightSideOffset;
 
-
-
-    private void DetectSwipeMotion()
+    private void DetectSwipeMotion(RectTransform[] leftSidePieces, RectTransform[] rightSidePieces)
     {
         // Debug.Log("In detectSwipeMotion state!");
         // Start detecting swipe when mouse button is pressed
@@ -416,100 +469,118 @@ public class Chop_Controller : MonoBehaviour
             totalSwipeDistance = 0f;
             lastSwipeDirection = Vector2.zero;
 
-            // Store initial positions of pieces
-            if (ingredientPiece1 != null && ingredientPiece2 != null)
+            // Store initial positions for ALL pieces
+            if (leftSidePieces != null && rightSidePieces != null)
             {
-                piece1StartPos = ingredientPiece1.localPosition;
-                piece2StartPos = ingredientPiece2.localPosition;
+                // Store starting positions (you'll need arrays for this)
+                leftPiecesStartPos = new Vector3[leftSidePieces.Length];
+                rightPiecesStartPos = new Vector3[rightSidePieces.Length];
 
-                // Calculate split directions (perpendicular to cutting line)
+                for (int i = 0; i < leftSidePieces.Length; i++)
+                {
+                    if (leftSidePieces[i] != null)
+                        leftPiecesStartPos[i] = leftSidePieces[i].localPosition;
+                }
+
+                for (int i = 0; i < rightSidePieces.Length; i++)
+                {
+                    if (rightSidePieces[i] != null)
+                        rightPiecesStartPos[i] = rightSidePieces[i].localPosition;
+                }
+
+                // Calculate split directions
                 float lineRotation = GetLineRotation();
                 Vector2 perpendicular = Quaternion.Euler(0, 0, lineRotation + 90f) * Vector2.up;
 
-                // Set target offsets for pieces (they move in opposite directions)
-                piece1TargetOffset = perpendicular * 30f; // Adjust distance as needed
-                piece2TargetOffset = -perpendicular * 30f;
+                leftSideOffset = perpendicular * 30f;
+                rightSideOffset = -perpendicular * 30f;
             }
         }
 
-        // Check swipe while dragging
         if (k_script.knife_is_being_dragged && isDetectingSwipe)
         {
             Vector2 currentPos = Input.mousePosition;
             Vector2 swipeDelta = currentPos - lastSwipePos;
 
-            // Only process if there's meaningful movement
             if (swipeDelta.magnitude > 2f)
             {
-                // Check if swipe direction matches cutting line direction (back and forth)
-                // if (IsSwipeDirectionValid(swipeDelta))
+                Vector2 currentDirection = swipeDelta.normalized;
+
+                if (lastSwipeDirection != Vector2.zero)
                 {
-                    Vector2 currentDirection = swipeDelta.normalized;
+                    float directionDot = Vector2.Dot(currentDirection, lastSwipeDirection);
 
-                    // Detect direction change (back and forth motion)
-                    if (lastSwipeDirection != Vector2.zero)
+                    if (directionDot < -0.5f)
                     {
-                        float directionDot = Vector2.Dot(currentDirection, lastSwipeDirection);
-
-                        // If direction reversed (dot product < 0), count it as a direction change
-                        if (directionDot < -0.5f)
-                        {
-                            swipeDirectionChanges++;
-                            Debug.Log($"Direction change detected! Total changes: {swipeDirectionChanges}");
-                        }
+                        swipeDirectionChanges++;
+                        Debug.Log($"Direction change detected! Total changes: {swipeDirectionChanges}");
                     }
+                }
 
-                    // Accumulate swipe distance
-                    totalSwipeDistance += swipeDelta.magnitude;
+                totalSwipeDistance += swipeDelta.magnitude;
+                float splitProgress = Mathf.Clamp01(totalSwipeDistance / requiredSwipeDistance);
 
-                    // Gradually move pieces apart based on swipe progress
-                    float splitProgress = Mathf.Clamp01(totalSwipeDistance / requiredSwipeDistance);
-
-                    if (ingredientPiece1 != null && ingredientPiece2 != null)
+                // Move all left side pieces together
+                for (int i = 0; i < leftSidePieces.Length; i++)
+                {
+                    if (leftSidePieces[i] != null)
                     {
-                        ingredientPiece1.localPosition = Vector3.Lerp(
-                            piece1StartPos,
-                            piece1StartPos + piece1TargetOffset,
-                            splitProgress
-                        );
-
-                        ingredientPiece2.localPosition = Vector3.Lerp(
-                            piece2StartPos,
-                            piece2StartPos + piece2TargetOffset,
+                        leftSidePieces[i].localPosition = Vector3.Lerp(
+                            leftPiecesStartPos[i],
+                            leftPiecesStartPos[i] + leftSideOffset,
                             splitProgress
                         );
                     }
+                }
 
-                    lastSwipeDirection = currentDirection;
-
-                    // Check if cut is complete (enough back-and-forth motion AND distance)
-                    if (swipeDirectionChanges >= 2 && totalSwipeDistance >= requiredSwipeDistance)
+                // Move all right side pieces together
+                for (int i = 0; i < rightSidePieces.Length; i++)
+                {
+                    if (rightSidePieces[i] != null)
                     {
-                        Debug.Log("Valid cut detected! Swipes: " + swipeDirectionChanges +
-                                ", Distance: " + totalSwipeDistance);
-                        isDetectingSwipe = false;
-                        cuts_left -= 1;
-                        Debug.Log($"Cuts left: {cuts_left}");
-                        currentState = CuttingState.SwipeComplete;
+                        rightSidePieces[i].localPosition = Vector3.Lerp(
+                            rightPiecesStartPos[i],
+                            rightPiecesStartPos[i] + rightSideOffset,
+                            splitProgress
+                        );
                     }
+                }
+
+                lastSwipeDirection = currentDirection;
+
+                if (swipeDirectionChanges >= 2 && totalSwipeDistance >= requiredSwipeDistance)
+                {
+                    Debug.Log("Valid cut detected! Swipes: " + swipeDirectionChanges +
+                            ", Distance: " + totalSwipeDistance);
+                    isDetectingSwipe = false;
+                    cuts_left -= 1;
+                    Debug.Log($"Cuts left: {cuts_left}");
+                    currentState = CuttingState.SwipeComplete;
                 }
 
                 lastSwipePos = currentPos;
             }
         }
-        // Reset if mouse released without valid swipe
+
         if (Input.GetMouseButtonUp(0) && isDetectingSwipe)
         {
             isDetectingSwipe = false;
 
-            // Snap pieces back if cut wasn't completed
             if (totalSwipeDistance < requiredSwipeDistance)
             {
                 Debug.Log("Cut incomplete, resetting pieces");
-                if (ingredientPiece1 != null && ingredientPiece2 != null)
+                
+                // Reset all pieces
+                for (int i = 0; i < leftSidePieces.Length; i++)
                 {
-                    ingredientPiece1.localPosition = piece1StartPos;
-                    ingredientPiece2.localPosition = piece2StartPos;
+                    if (leftSidePieces[i] != null)
+                        leftSidePieces[i].localPosition = leftPiecesStartPos[i];
+                }
+
+                for (int i = 0; i < rightSidePieces.Length; i++)
+                {
+                    if (rightSidePieces[i] != null)
+                        rightSidePieces[i].localPosition = rightPiecesStartPos[i];
                 }
             }
         }
@@ -558,6 +629,11 @@ public class Chop_Controller : MonoBehaviour
         else
         {
             // All cuts complete - add ingredient to inventory
+            Debug.Log("All cuts complete");
+            ResetIngredientPiecesToOriginal();
+
+            // Clear cutting lines
+            ClearCuttingLines();//TODO
             StartCoroutine(CompleteAllCuts());
         }
     }
@@ -571,24 +647,27 @@ public class Chop_Controller : MonoBehaviour
 
     private IEnumerator CompleteAllCuts()
     {
-        yield return new WaitForSeconds(0.75f);
+        yield return new WaitForSeconds(1.5f);
 
         if (ingredient_data_var != null && ingredient_data_var.makesIngredient.Count > 0)
         {
             Debug.Log("Adding ingredient: " + ingredient_data_var.makesIngredient[0].ingredient.Name);
             Ingredient_Inventory.Instance.AddResources(
-                Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient), 1);
+            Ingredient_Inventory.Instance.IngrDataToEnum(ingredient_data_var.makesIngredient[0].ingredient), 1);
         }
+
+
 
         // Hide the ingredient
-        Image imageComponent = ingredient_object.GetComponent<Image>();
-        if (imageComponent != null)
-        {
-            imageComponent.enabled = false;
-        }
+        Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+        HideIngredientPieces();
+        // Image imageComponent = parent.GetComponent<Image>();
+        // if (imageComponent != null)
+        // {
+        //     imageComponent.enabled = false;
+        // }
 
-        // Clear cutting lines
-        ClearCuttingLines();//TODO
+
         
         // Reset state
         Drag_All.cuttingBoardActive = false;
@@ -596,10 +675,31 @@ public class Chop_Controller : MonoBehaviour
         currentState = CuttingState.Idle;
     }
 
+    private void ResetIngredientPiecesToOriginal()
+    {
+        if (ingredient_data_var.Name == "Uncut Fermented Eye")
+        {
+            if (ingredientPiece1 != null) ingredientPiece1.localPosition = piece1OriginalPos;
+            if (ingredientPiece2 != null) ingredientPiece2.localPosition = piece2OriginalPos;
+            if (ingredientPiece3 != null) ingredientPiece3.localPosition = piece3OriginalPos;
+            if (ingredientPiece4 != null) ingredientPiece4.localPosition = piece4OriginalPos;
+            
+            Debug.Log("Reset all ingredient pieces to original positions");
+        }
+    }
+    private void HideIngredientPieces()
+    {
+        if (ingredient_data_var.Name == "Uncut Fermented Eye")
+        {
+            Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+            Transform cutGroup = GameObject.Find("F_Cut_Group").transform;
+            cutGroup.gameObject.SetActive(false);
+        }
+    }
     public void ChangeToCutPiece(Image imageComponent)
     {
-        if (ingredient_data_var == null || 
-            ingredient_data_var.CutIngredientImages == null || 
+        if (ingredient_data_var == null ||
+            ingredient_data_var.CutIngredientImages == null ||
             ingredient_data_var.CutIngredientImages.Length == 0)
         {
             Debug.LogError("No cut images available!");
@@ -640,10 +740,12 @@ public class Chop_Controller : MonoBehaviour
                 Transform chopline = parent.Find("ChopLine2"); // Use Transform.Find 
                 Transform CL2RedZone = chopline.Find("CL2RedZone"); // Use Transform.Find 
                 RZ = CL2RedZone;
+                Debug.Log($"RZ.eulerAngles.z: {RZ.eulerAngles.z}");
+                return 52f; //TODO fix this hardcoded value;
             }
 
         }
-        
+
         float rotation = RZ.eulerAngles.z;
         return Mathf.Abs(rotation);
     }

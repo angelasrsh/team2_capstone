@@ -60,35 +60,42 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     public void OnDrag(PointerEventData eventData)
     {
-        RectTransform CL1R = chop_script.GetRedZone().GetComponent<RectTransform>();
+        RectTransform CL1R = null;
+        if(Drag_All.cuttingBoardActive)
+        {
+             CL1R = chop_script.GetRedZone().GetComponent<RectTransform>();
+        }
         if(CL1R != null)
         {
             Debug.Log($"CLR is {CL1R}");
         }
-        if (isSnapped)
-        {
-            Debug.Log("Knife is on the line now");
-            // Get mouse position in screen space
-            Vector2 mousePos = Input.mousePosition;
-            // Convert to local space relative to the red zone (rotated coordinate system)
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                CL1R,
-                mousePos,
-                null, // Use null for overlay canvas, or your canvas camera
-                out Vector2 localMousePos
-            );
+        // if (isSnapped) //constrain the knife to one axis 
+        // {
+        //     Debug.Log("Knife is on the line now");
+        //     // Get mouse position in screen space
+        //     Vector2 mousePos = Input.mousePosition;
+        //     // Get the knife's current rotation angle in degrees
+        //     float angle = knifeRectTransform.rotation.eulerAngles.z;
+        //     // Convert to local space relative to the red zone (rotated coordinate system)
+        //     RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        //         CL1R,
+        //         mousePos,
+        //         null, // Use null for overlay canvas, or your canvas camera
+        //         out Vector2 localMousePos
+        //     );
             
-            // Lock movement to only the local Y axis (vertical in rotated space)
-            // Keep the X position fixed to the red zone's center
-            Vector2 constrainedLocalPos = new Vector2(0, localMousePos.y);
+        //     // Lock movement to only the local Y axis (vertical in rotated space)
+        //     // Keep the X position fixed to the red zone's center
+        //     Vector2 constrainedLocalPos = new Vector2(0, localMousePos.y);
             
-            // Convert back to world/canvas position
-            Vector3 worldPos = CL1R.TransformPoint(constrainedLocalPos);
+        //     // Convert back to world/canvas position
+        //     Vector3 worldPos = CL1R.TransformPoint(constrainedLocalPos);
 
-            // Apply to knife position
-            knifeRectTransform.position = worldPos;
+        //     // Apply to knife position
+        //     knifeRectTransform.position = worldPos;
             
-        } else
+            
+        // } else
         {
             transform.position = Input.mousePosition;
         }
