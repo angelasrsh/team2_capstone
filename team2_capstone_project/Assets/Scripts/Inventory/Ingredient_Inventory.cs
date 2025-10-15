@@ -200,6 +200,8 @@ public class Ingredient_Inventory : Inventory
         return "Cut Ficklegourd";
       case IngredientType.Uncut_Ficklegourd:
         return "Uncut Ficklegourd";
+      case IngredientType.Cooked_Cut_Ficklegourd:
+        return "Cooked Ficklegourd";
       default:
         return "";
     }
@@ -262,6 +264,8 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.Cut_Ficklegourd;
       case "Uncut Ficklegourd":
         return IngredientType.Uncut_Ficklegourd;
+      case "Cooked Ficklegourd":
+        return IngredientType.Cooked_Cut_Ficklegourd;
       default:
         return IngredientType.Null;
     }

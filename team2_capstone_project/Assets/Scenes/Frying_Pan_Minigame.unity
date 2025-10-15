@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.30692166, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3648,7 +3648,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: c5b2a46b578a60a468d0cb31729c2ab1, type: 2}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.size
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].amount
@@ -3667,6 +3667,14 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[4].amount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[5].amount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].resource
       value: 
       objectReference: {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
@@ -3682,6 +3690,14 @@ PrefabInstance:
       propertyPath: <InventoryStacks>k__BackingField.Array.data[3].resource
       value: 
       objectReference: {fileID: 11400000, guid: 8b7cb872142e2234eb85044271bb059e, type: 2}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[4].resource
+      value: 
+      objectReference: {fileID: 11400000, guid: 5e89dfe331c2b104d869c0d93d371939, type: 2}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[5].resource
+      value: 
+      objectReference: {fileID: 11400000, guid: 2f2c941050fe36842acdb27d04b32b83, type: 2}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].stackLimit
       value: 20
