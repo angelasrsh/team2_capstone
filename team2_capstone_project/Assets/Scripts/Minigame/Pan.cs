@@ -18,6 +18,7 @@ public class Pan : MonoBehaviour
   [SerializeField] private GameObject inventoryCanvas; // reference to the inventory canvas
   [SerializeField] private GameObject dishInventoryCanvas; // reference to the dish inventory canvas
   [SerializeField] private GameObject flipAnimation; // reference to the flipping animation
+  [SerializeField] private Image ingredientInPanAnim; // reference to ingredient in pan under pan flip animation
   [SerializeField] private GameObject regularPan; // reference to the regular pan
   [SerializeField] private GameObject draggablePan; // reference to the pan that can be dragged around
   [SerializeField] private Ingredient_Data burntIngredient; // generic burnt ingredient to use
@@ -290,10 +291,12 @@ public class Pan : MonoBehaviour
     if (ingredientInPan.CutIngredientImages.Length > 0)
     {
       ingrInPanImage.sprite = ingredientInPan.CutIngredientImages[0];
+      ingredientInPanAnim.sprite = ingredientInPan.CutIngredientImages[0];
     }
     else
     {
       ingrInPanImage.sprite = ingredient.Image;
+      ingredientInPanAnim.sprite = ingredient.Image;
     }
 
     // ingrInPanImage.preserveAspect = true;
@@ -378,10 +381,8 @@ public class Pan : MonoBehaviour
     slider.SetActive(false);
     sliderBarImage.SetActive(false);
     flipAnimation.SetActive(true);
-
-    Animator anim = flipAnimation.GetComponent<Animator>();
-    anim.SetTrigger("Flip");
-    StartCoroutine(EndAnimation(anim));
+    ingredientInPanAnim.gameObject.SetActive(true);
+    flipAnimation.GetComponent<Animator>().SetTrigger("Flip");
 
     // Play sfx
     // Audio_Manager.instance.FinishCooking();
@@ -391,24 +392,15 @@ public class Pan : MonoBehaviour
   /// Waits for the flipping animation to finish before switching back to the draggable pan and starting
   /// the ingredient fall section.
   /// </summary>
-  private IEnumerator EndAnimation(Animator animator)
+  public IEnumerator EndAnimation()
   {
-    // Wait for the animation to actually start
-    yield return null;
-
-    // Get current animation info
-    AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(0);
-
-    // Wait for its duration and an extra pause
-    yield return new WaitForSeconds(info.length + 1.3f);
-
-    animator.Play("Idle");
-    animator.Update(0f); // Force update to apply the idle state immediately
+    ingredientInPanAnim.gameObject.SetActive(false);
+    yield return new WaitForSeconds(0.5f); // Small delay before switching to draggable pan
     flipAnimation.SetActive(false);
-
-    yield return new WaitForSeconds(0.5f); // Small delay before showing pan again
+    
+    // yield return new WaitForSeconds(0.5f); // Small delay before showing pan again
     draggablePan.SetActive(true);
-
+    
     yield return new WaitForSeconds(0.5f); // Small delay before starting ingredient fall section
     panController.StartIngredientFall();
   }
