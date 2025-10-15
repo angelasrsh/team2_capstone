@@ -12,25 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
   m_Name: 05_Cut_Fermented_Eye
   m_EditorClassIdentifier: 
-  Name: Cut Fermented Eye
+  Name: Uncut Fermented Eye
   Amount: 0
-  Image: {fileID: 3512557, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
+  Image: {fileID: 21300000, guid: 67c9bcd7a9f99c341b8481baff54fdf7, type: 3}
   tier: 0
   price: 0
-  rarityWeight: 0
-  minSpawn: 0
-  maxSpawn: 5
-  countsAs:
-  - {fileID: 11400000, guid: 80ee327079d59de41a2d38289dd89d6f, type: 2}
-  ingredientType: 8
-  description: Fermented eye... but cut
+  rarityWeight: 0.456
+  minSpawn: 3
+  maxSpawn: 6
+  countsAs: []
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
+  description: 
   CutIngredientImages:
-  - {fileID: -42076378, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
+  - {fileID: 3512557, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
   - {fileID: 1730087433, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
   - {fileID: -1591840382, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
   - {fileID: 923941717, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
-  usedInDishes:
-  - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
-  makesIngredient: []
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000}
+    amountRequired: 1
+    method: 0
   ingredientsNeeded: []
-  ingredientType: 8
+  ingredientType: 7
+  CombinedCutPiecePrefab: {fileID: 546484759057031243, guid: b2b84b08a39d4fa4bb7645b10a113c22, type: 3}
+  cutsRequired: 0
