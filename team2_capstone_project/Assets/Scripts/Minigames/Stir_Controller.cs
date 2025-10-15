@@ -57,32 +57,43 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     if (pointerDelta.magnitude > pointerMoveThreshold)
     {
-      accumulatedStirTime += Time.deltaTime;
-      idleTime = 0f; // reset idle timer
+        accumulatedStirTime += Time.deltaTime;
+        idleTime = 0f;
 
-      if (!isMoving)
-      {
-        // Just started moving → start audio
-        isMoving = true;
-        audioManager.PlayStirringOnLoop();
-      }
+        if (!isMoving)
+        {
+            isMoving = true;
+            audioManager.PlayStirringOnLoop();
 
-      if (backgroundAnimator != null)
-        backgroundAnimator.speed = 1f;
-    }
-    else
-    {
-      idleTime += Time.deltaTime;
-
-      if (idleTime > idleThreshold && isMoving)
-      {
-        // Only stop once after being idle for a while
-        isMoving = false;
-        audioManager.StopStirring();
+            if (cauldron != null)
+            {
+                cauldron.SetPlayerStirring(true);
+                cauldron.ResumeStirring();
+            }
+        }
 
         if (backgroundAnimator != null)
-          backgroundAnimator.speed = 0f;
-      }
+            backgroundAnimator.speed = 1f;
+    }
+
+    else
+    {
+        idleTime += Time.deltaTime;
+
+        if (idleTime > idleThreshold && isMoving)
+        {
+            isMoving = false;
+            audioManager.StopStirring();
+
+            if (cauldron != null)
+            {
+                cauldron.SetPlayerStirring(false);
+                cauldron.PauseStirring(); // pause only
+            }
+
+            if (backgroundAnimator != null)
+                backgroundAnimator.speed = 0f;
+        }
     }
 
     if (accumulatedStirTime >= stirDuration)
@@ -130,14 +141,25 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
   public void OnEndDrag(PointerEventData eventData)
   {
-    isDragging = false;
-    isStirring = false; // shouldn't stir if not dragging ladle
-    audioManager.StopStirring();
-    if (backgroundAnimator != null)
-      backgroundAnimator.SetBool("isStirring", false);
-    transform.position = ladleOriginalPos;
-    if (ladleImage != null)
-      ladleImage.enabled = true;
+      isDragging = false;
+      isStirring = false;
+      audioManager.StopStirring();
+
+      if (cauldron != null)
+      {
+          // tell cauldron the player stopped moving
+          cauldron.SetPlayerStirring(false);
+
+          // stop the stirring coroutine / preserve paused state
+          cauldron.StopStirringCompletely();
+      }
+
+      if (backgroundAnimator != null)
+          backgroundAnimator.SetBool("isStirring", false);
+
+      transform.position = ladleOriginalPos;
+      if (ladleImage != null)
+          ladleImage.enabled = true;
   }
 
   private void HideErrorText() => errorText.SetActive(false);
@@ -155,7 +177,7 @@ public class Stir_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, I
       backgroundAnimator.SetBool("isStirring", true);
 
     if (cauldron != null)
-      cauldron.StartStirring();
+      cauldron.StartStirring(stirDuration);
   }
 
   private void FinishStirring()
