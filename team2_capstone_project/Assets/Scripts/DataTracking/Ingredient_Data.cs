@@ -18,7 +18,7 @@ public class Ingredient_Data : Item_Data
   // mainly used to count processed variants (e.g. chopped) as their base ingredient
   // used to tracking ingredient requirements for dishes in Journal_Menu
   public List<Ingredient_Data> countsAs;
-
+  public CookThresholds cookThresholds; // null if not fryable
   public string description;
   public Sprite[] CutIngredientImages;
   public List<Dish_Data> usedInDishes;
@@ -36,27 +36,50 @@ public class Ingredient_Requirement
   public Recipe method;   
 }
 
+[System.Serializable]
+public class CookThresholds
+{
+  [Range(0f, 1f)] public float rawEnd;        // End of raw zone
+  [Range(0f, 1f)] public float almostEnd;     // End of almost cooked zone
+  [Range(0f, 1f)] public float cookedEnd;     // End of cooked zone (perfect)
+  [Range(0f, 1f)] public float overcookedEnd; // End of overcooked zone
+  // Burnt zone automatically goes from overcookedEnd to 1
+
+  /// <summary>
+  /// Ensures the thresholds are in ascending order between 0 and 1.
+  /// </summary>
+  public void ClampValues()
+  {
+    rawEnd = Mathf.Clamp01(rawEnd);
+    almostEnd = Mathf.Clamp(almostEnd, rawEnd, 1f);
+    cookedEnd = Mathf.Clamp(cookedEnd, almostEnd, 1f);
+    overcookedEnd = Mathf.Clamp(overcookedEnd, cookedEnd, 1f);
+  }
+}
+
 public enum IngredientType
 {
   Null,
-  Milk,
-  Cheese,
-  Uncut_Fogshroom,
-  Uncut_Fermented_Eye,
-  Uncut_Slime,
-  Bone_Broth,
   Bone,
-  Cut_Fermented_Eye,
-  Cut_Fogshroom,
-  Water,
-  Uncooked_Patty,
-  Cooked_Patty,
+  Bone_Broth,
   Bread,
-  Uncut_Mandrake,
+  Cheese,
+  Cooked_Patty,
+  Cut_Fogshroom,
+  Cut_Fermented_Eye,
   Cut_Mandrake,
   French_Fries,
   Honey,
+  Milk,
   Oil,
+  Slime_Gelatin,
+  Uncooked_Patty,
+  Uncut_Fermented_Eye,
+  Uncut_Fogshroom,
+  Uncut_Mandrake,
+  Water,
+  Burnt_Blob,
+  Sliced_Gelatin,
   Uncut_Ficklegourd,
   Cut_Ficklegourd
 }

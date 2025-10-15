@@ -24,7 +24,7 @@ public class Player_Progress : ScriptableObject
     // UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
     UnlockNPC(CustomerData.NPCs.Elf);
     UnlockNPC(CustomerData.NPCs.Phrog);
-    UnlockIngredient(IngredientType.Uncut_Slime);
+    UnlockIngredient(IngredientType.Slime_Gelatin);
     UnlockIngredient(IngredientType.Water);
     UnlockIngredient(IngredientType.Bone_Broth);
     UnlockIngredient(IngredientType.Bone);
