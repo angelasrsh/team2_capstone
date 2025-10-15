@@ -27,11 +27,16 @@ public class Pan : MonoBehaviour
   [Header("Slider")]
   private Slider sliderComponent;
   [SerializeField] private GameObject slider; // reference to the cooking slider
+  [SerializeField] private GameObject sliderBarImage;
   [SerializeField] private RectTransform rawRect;
   [SerializeField] private RectTransform almostRect;
   [SerializeField] private RectTransform cookedRect;
   [SerializeField] private RectTransform overcookedRect;
   [SerializeField] private RectTransform burntRect;
+  [SerializeField] private RectTransform rawEndLine;
+  [SerializeField] private RectTransform almostEndLine;
+  [SerializeField] private RectTransform cookedEndLine;
+  [SerializeField] private RectTransform overcookedEndLine;
   bool sliderActive = false;
   bool afterFirstCook = false;
 
@@ -158,7 +163,7 @@ public class Pan : MonoBehaviour
     {
       afterFirstCook = true;
       StartAnimation();
-      sliderComponent.value = 0f;
+      sliderComponent.value = 0.005f;
     }
     else
       CompleteCooking();
@@ -243,8 +248,9 @@ public class Pan : MonoBehaviour
     firstCookedState = CookedState.Raw;
     secondCookedState = CookedState.Raw;
     ingrInPanImage.gameObject.SetActive(false);
-    sliderComponent.value = 0;
+    sliderComponent.value = 0.005f;
     slider.SetActive(false);
+    sliderBarImage.SetActive(false);
     sliderActive = false;
     afterFirstCook = false;
     ingrInPanImage.color = originalColor;
@@ -303,6 +309,7 @@ public class Pan : MonoBehaviour
     inventoryCanvas.SetActive(false);
     dishInventoryCanvas.SetActive(false);
     slider.SetActive(true);
+    sliderBarImage.SetActive(true);
     UpdateSliderZones(ingredientInPan);
     panController.SetFallingIngredient(ingredientInPan);
     return true;
@@ -336,21 +343,25 @@ public class Pan : MonoBehaviour
     rawRect.anchorMin = new Vector2(0f, 0f);
     rawRect.anchorMax = new Vector2(rawEnd, 1f);
     rawRect.offsetMin = rawRect.offsetMax = Vector2.zero;
+    rawEndLine.anchorMin = new Vector2(rawEnd - 0.005f, 0f); // subtract 0.005 to be exactly halfway between curr and next zone
 
     // Almost cooked
     almostRect.anchorMin = new Vector2(rawEnd, 0f);
     almostRect.anchorMax = new Vector2(almostEnd, 1f);
     almostRect.offsetMin = almostRect.offsetMax = Vector2.zero;
+    almostEndLine.anchorMin = new Vector2(almostEnd - 0.005f, 0f);
 
     // Cooked
     cookedRect.anchorMin = new Vector2(almostEnd, 0f);
     cookedRect.anchorMax = new Vector2(cookedEnd, 1f);
     cookedRect.offsetMin = cookedRect.offsetMax = Vector2.zero;
+    cookedEndLine.anchorMin = new Vector2(cookedEnd - 0.005f, 0f);
 
     // Overcooked
     overcookedRect.anchorMin = new Vector2(cookedEnd, 0f);
     overcookedRect.anchorMax = new Vector2(overcookedEnd, 1f);
     overcookedRect.offsetMin = overcookedRect.offsetMax = Vector2.zero;
+    overcookedEndLine.anchorMin = new Vector2(overcookedEnd - 0.005f, 0f);
 
     // Burnt
     burntRect.anchorMin = new Vector2(overcookedEnd, 0f);
@@ -365,6 +376,7 @@ public class Pan : MonoBehaviour
   {
     regularPan.SetActive(false);
     slider.SetActive(false);
+    sliderBarImage.SetActive(false);
     flipAnimation.SetActive(true);
 
     Animator anim = flipAnimation.GetComponent<Animator>();
@@ -426,8 +438,9 @@ public class Pan : MonoBehaviour
   public void StartSlider()
   {
     slider.SetActive(true);
+    sliderBarImage.SetActive(true);
     sliderActive = true;
-    sliderComponent.value = 0f;
+    sliderComponent.value = 0.005f;
   }
 
   /// <summary>
@@ -438,7 +451,7 @@ public class Pan : MonoBehaviour
     regularPan.SetActive(true);
     draggablePan.SetActive(false);
     ingrInPanImage.gameObject.SetActive(true);
-    sliderComponent.value = 0f;
+    sliderComponent.value = 0.005f;
     if (firstCookedState == CookedState.Cooked || firstCookedState == CookedState.Overcooked || firstCookedState == CookedState.Almost)
     { // For now, treat Almost and Overcooked as Cooked
       ingrInPanImage.sprite = cookedIngredientData.Image;
