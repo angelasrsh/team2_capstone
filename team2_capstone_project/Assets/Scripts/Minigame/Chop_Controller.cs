@@ -162,6 +162,7 @@ public class Chop_Controller : MonoBehaviour
         //show the image of the cut stuff all 
         //parent canvas is called Canvas-CutGroup
         Transform parent = GameObject.Find("Canvas-CutGroup").transform;
+        SetIngredientPieces();
 
         cuts_left = ingredient_data_var.cutsRequired; //this one changes
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
@@ -210,8 +211,10 @@ public class Chop_Controller : MonoBehaviour
         {
             Transform chopLine1 = parent.Find("ChopLine");
             Transform CLRZ = chopLine1.Find("CL1RedZone");
-            Transform chopLine2 = parent.Find("ChopLine2"); 
+            Transform chopLine2 = parent.Find("ChopLine2");
             Transform CLRZ2 = chopLine2.Find("CL2RedZone");
+            
+            
 
 
             if (cuts_left == 2) //first cutline
@@ -260,6 +263,7 @@ public class Chop_Controller : MonoBehaviour
         if (ingredient_data_var.Name == "Uncut Fermented Eye")
         {
             parent.Find("ChopLine2").gameObject.SetActive(false);
+            
         }
         currentState = CuttingState.Idle;
     }
@@ -377,7 +381,6 @@ public class Chop_Controller : MonoBehaviour
                 // Debug.Log("In Wating for Swip state");
                 if (ingredient_data_var.Name == "Uncut Fermented Eye")
                 {
-                    SetIngredientPieces();
                     if (cuts_left == 2) // First cut: split all 4 pieces into 2 groups
                     {
                         // Pieces 1 & 2 go left, Pieces 3 & 4 go right
@@ -630,10 +633,10 @@ public class Chop_Controller : MonoBehaviour
         {
             // All cuts complete - add ingredient to inventory
             Debug.Log("All cuts complete");
-            ResetIngredientPiecesToOriginal();
 
             // Clear cutting lines
             ClearCuttingLines();//TODO
+
             StartCoroutine(CompleteAllCuts());
         }
     }
@@ -661,6 +664,8 @@ public class Chop_Controller : MonoBehaviour
         // Hide the ingredient
         Transform parent = GameObject.Find("Canvas-CutGroup").transform;
         HideIngredientPieces();
+        ResetIngredientPiecesToOriginal();
+
         // Image imageComponent = parent.GetComponent<Image>();
         // if (imageComponent != null)
         // {
