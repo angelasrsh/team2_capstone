@@ -7,7 +7,7 @@ public class Get_Customer_Order_Quest_Step : Dialogue_Quest_Step
     void OnEnable()
     {
         Game_Events_Manager.Instance.onGetOrder += GetCustomerOrder;
-        DelayedDialogue(0, 0);
+        DelayedDialogue(1, 0);
     }
 
     // Unsubscribe to clean up

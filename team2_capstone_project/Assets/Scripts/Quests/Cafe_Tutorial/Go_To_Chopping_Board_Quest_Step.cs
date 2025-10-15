@@ -8,6 +8,7 @@ public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
     void OnEnable()
     {
         SceneManager.sceneLoaded += onSceneLoaded;
+        DelayedDialogue(1, 0);
 
     }
 

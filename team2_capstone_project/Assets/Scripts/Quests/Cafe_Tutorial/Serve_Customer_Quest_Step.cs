@@ -11,7 +11,7 @@ public class Serve_Customer_Quest_Step : Dialogue_Quest_Step
         Game_Events_Manager.Instance.onServeCustomer += ServeCustomer;
         ticket = GameObject.Find("Temp_Recipe_Canvas").GetComponent<Canvas>();
 
-        DelayedDialogue(0, 0);
+        DelayedDialogue(1, 0);
     }
 
     // Unsubscribe to clean up
