@@ -18,6 +18,7 @@ public class Pan : MonoBehaviour
   [SerializeField] private GameObject inventoryCanvas; // reference to the inventory canvas
   [SerializeField] private GameObject dishInventoryCanvas; // reference to the dish inventory canvas
   [SerializeField] private GameObject flipAnimation; // reference to the flipping animation
+  [SerializeField] private Image ingredientInPanAnim; // reference to ingredient in pan under pan flip animation
   [SerializeField] private GameObject regularPan; // reference to the regular pan
   [SerializeField] private GameObject draggablePan; // reference to the pan that can be dragged around
   [SerializeField] private Ingredient_Data burntIngredient; // generic burnt ingredient to use
@@ -27,11 +28,16 @@ public class Pan : MonoBehaviour
   [Header("Slider")]
   private Slider sliderComponent;
   [SerializeField] private GameObject slider; // reference to the cooking slider
+  [SerializeField] private GameObject sliderBarImage;
   [SerializeField] private RectTransform rawRect;
   [SerializeField] private RectTransform almostRect;
   [SerializeField] private RectTransform cookedRect;
   [SerializeField] private RectTransform overcookedRect;
   [SerializeField] private RectTransform burntRect;
+  [SerializeField] private RectTransform rawEndLine;
+  [SerializeField] private RectTransform almostEndLine;
+  [SerializeField] private RectTransform cookedEndLine;
+  [SerializeField] private RectTransform overcookedEndLine;
   bool sliderActive = false;
   bool afterFirstCook = false;
 
@@ -158,7 +164,7 @@ public class Pan : MonoBehaviour
     {
       afterFirstCook = true;
       StartAnimation();
-      sliderComponent.value = 0f;
+      sliderComponent.value = 0.005f;
     }
     else
       CompleteCooking();
@@ -243,8 +249,9 @@ public class Pan : MonoBehaviour
     firstCookedState = CookedState.Raw;
     secondCookedState = CookedState.Raw;
     ingrInPanImage.gameObject.SetActive(false);
-    sliderComponent.value = 0;
+    sliderComponent.value = 0.005f;
     slider.SetActive(false);
+    sliderBarImage.SetActive(false);
     sliderActive = false;
     afterFirstCook = false;
     ingrInPanImage.color = originalColor;
@@ -284,10 +291,12 @@ public class Pan : MonoBehaviour
     if (ingredientInPan.CutIngredientImages.Length > 0)
     {
       ingrInPanImage.sprite = ingredientInPan.CutIngredientImages[0];
+      ingredientInPanAnim.sprite = ingredientInPan.CutIngredientImages[0];
     }
     else
     {
       ingrInPanImage.sprite = ingredient.Image;
+      ingredientInPanAnim.sprite = ingredient.Image;
     }
 
     // ingrInPanImage.preserveAspect = true;
@@ -303,6 +312,7 @@ public class Pan : MonoBehaviour
     inventoryCanvas.SetActive(false);
     dishInventoryCanvas.SetActive(false);
     slider.SetActive(true);
+    sliderBarImage.SetActive(true);
     UpdateSliderZones(ingredientInPan);
     panController.SetFallingIngredient(ingredientInPan);
     return true;
@@ -336,21 +346,25 @@ public class Pan : MonoBehaviour
     rawRect.anchorMin = new Vector2(0f, 0f);
     rawRect.anchorMax = new Vector2(rawEnd, 1f);
     rawRect.offsetMin = rawRect.offsetMax = Vector2.zero;
+    rawEndLine.anchorMin = new Vector2(rawEnd - 0.005f, 0f); // subtract 0.005 to be exactly halfway between curr and next zone
 
     // Almost cooked
     almostRect.anchorMin = new Vector2(rawEnd, 0f);
     almostRect.anchorMax = new Vector2(almostEnd, 1f);
     almostRect.offsetMin = almostRect.offsetMax = Vector2.zero;
+    almostEndLine.anchorMin = new Vector2(almostEnd - 0.005f, 0f);
 
     // Cooked
     cookedRect.anchorMin = new Vector2(almostEnd, 0f);
     cookedRect.anchorMax = new Vector2(cookedEnd, 1f);
     cookedRect.offsetMin = cookedRect.offsetMax = Vector2.zero;
+    cookedEndLine.anchorMin = new Vector2(cookedEnd - 0.005f, 0f);
 
     // Overcooked
     overcookedRect.anchorMin = new Vector2(cookedEnd, 0f);
     overcookedRect.anchorMax = new Vector2(overcookedEnd, 1f);
     overcookedRect.offsetMin = overcookedRect.offsetMax = Vector2.zero;
+    overcookedEndLine.anchorMin = new Vector2(overcookedEnd - 0.005f, 0f);
 
     // Burnt
     burntRect.anchorMin = new Vector2(overcookedEnd, 0f);
@@ -365,11 +379,10 @@ public class Pan : MonoBehaviour
   {
     regularPan.SetActive(false);
     slider.SetActive(false);
+    sliderBarImage.SetActive(false);
     flipAnimation.SetActive(true);
-
-    Animator anim = flipAnimation.GetComponent<Animator>();
-    anim.SetTrigger("Flip");
-    StartCoroutine(EndAnimation(anim));
+    ingredientInPanAnim.gameObject.SetActive(true);
+    flipAnimation.GetComponent<Animator>().SetTrigger("Flip");
 
     // Play sfx
     // Audio_Manager.instance.FinishCooking();
@@ -379,24 +392,15 @@ public class Pan : MonoBehaviour
   /// Waits for the flipping animation to finish before switching back to the draggable pan and starting
   /// the ingredient fall section.
   /// </summary>
-  private IEnumerator EndAnimation(Animator animator)
+  public IEnumerator EndAnimation()
   {
-    // Wait for the animation to actually start
-    yield return null;
-
-    // Get current animation info
-    AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(0);
-
-    // Wait for its duration and an extra pause
-    yield return new WaitForSeconds(info.length + 1.3f);
-
-    animator.Play("Idle");
-    animator.Update(0f); // Force update to apply the idle state immediately
+    ingredientInPanAnim.gameObject.SetActive(false);
+    yield return new WaitForSeconds(0.5f); // Small delay before switching to draggable pan
     flipAnimation.SetActive(false);
-
-    yield return new WaitForSeconds(0.5f); // Small delay before showing pan again
+    
+    // yield return new WaitForSeconds(0.5f); // Small delay before showing pan again
     draggablePan.SetActive(true);
-
+    
     yield return new WaitForSeconds(0.5f); // Small delay before starting ingredient fall section
     panController.StartIngredientFall();
   }
@@ -426,8 +430,9 @@ public class Pan : MonoBehaviour
   public void StartSlider()
   {
     slider.SetActive(true);
+    sliderBarImage.SetActive(true);
     sliderActive = true;
-    sliderComponent.value = 0f;
+    sliderComponent.value = 0.005f;
   }
 
   /// <summary>
@@ -438,7 +443,7 @@ public class Pan : MonoBehaviour
     regularPan.SetActive(true);
     draggablePan.SetActive(false);
     ingrInPanImage.gameObject.SetActive(true);
-    sliderComponent.value = 0f;
+    sliderComponent.value = 0.005f;
     if (firstCookedState == CookedState.Cooked || firstCookedState == CookedState.Overcooked || firstCookedState == CookedState.Almost)
     { // For now, treat Almost and Overcooked as Cooked
       ingrInPanImage.sprite = cookedIngredientData.Image;

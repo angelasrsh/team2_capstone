@@ -106,6 +106,7 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
   public void StartIngredientFall()
   {
     isFalling = true;
+    Debug.Log("Getting here");
     StartCoroutine(SpawnIngredients());
   }
 
