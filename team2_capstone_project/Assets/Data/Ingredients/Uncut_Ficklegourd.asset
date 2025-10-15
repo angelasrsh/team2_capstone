@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
+  m_Name: Uncut_Ficklegourd
+  m_EditorClassIdentifier: 
+  Name: Uncut Ficklegourd
+  Amount: 0
+  Image: {fileID: 21300000, guid: c4ad96960a9ef464294b5d1c36dc8cae, type: 3}
+  tier: 0
+  price: 0
+  rarityWeight: 0.733
+  minSpawn: 4
+  maxSpawn: 10
+  countsAs: []
+  description: ficklegourd
+  CutIngredientImages:
+  - {fileID: 496814554, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: 1616431135, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: 671773155, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: -840134852, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: -1345977730, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  usedInDishes:
+  - {fileID: 11400000, guid: 3fbcd05fd89c8684e8068a4df9504a46, type: 2}
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: 2f2c941050fe36842acdb27d04b32b83, type: 2}
+    amountRequired: 1
+  ingredientsNeeded: []
+  ingredientType: 17
+  CombinedCutPiecePrefab: {fileID: 2554059595863238616, guid: 51b9a68b443da6f45a11cc3a6c0f802b, type: 3}
+  cutsRequired: 2

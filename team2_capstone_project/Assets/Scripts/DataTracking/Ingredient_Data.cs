@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using OpenCover.Framework.Model;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Foraging/Ingredient", fileName = "NewIngredient")]
@@ -27,6 +28,13 @@ public class Ingredient_Data : Item_Data
   public GameObject CombinedCutPiecePrefab;
   public int cutsRequired;
 }
+[System.Serializable]
+public class Ingredient_Requirement
+{
+  public Ingredient_Data ingredient;
+  public int amountRequired;
+  public Recipe method;   
+}
 
 public enum IngredientType
 {
@@ -35,7 +43,7 @@ public enum IngredientType
   Cheese,
   Uncut_Fogshroom,
   Uncut_Fermented_Eye,
-  Slime_Gelatin,
+  Uncut_Slime,
   Bone_Broth,
   Bone,
   Cut_Fermented_Eye,
@@ -48,7 +56,9 @@ public enum IngredientType
   Cut_Mandrake,
   French_Fries,
   Honey,
-  Oil
+  Oil,
+  Uncut_Ficklegourd,
+  Cut_Ficklegourd
 }
 
 // public class CutLine

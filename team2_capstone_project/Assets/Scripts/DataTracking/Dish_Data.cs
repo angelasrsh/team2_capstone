@@ -10,16 +10,9 @@ public class Dish_Data : Item_Data
   // [TextArea] public string recipeInstructions;
   public Sprite recipeImage;
   public Dishes dishType;
-
-  public enum Recipe
-  {
-    None,
-    Stir,
-    Chop,
-    Toss,
-    Combine
-  }
   public Recipe recipe;
+
+
 
   public enum Dishes
   {
@@ -34,12 +27,14 @@ public class Dish_Data : Item_Data
   public List<Ingredient_Requirement> ingredientQuantities;
 }
 
-[System.Serializable]
-public class Ingredient_Requirement
-{
-  public Ingredient_Data ingredient; 
-  public int amountRequired;      
-}
+  public enum Recipe
+  {
+    None,
+    Stir,
+    Chop,
+    Toss,
+    Combine
+  }
 
 // Alternative for tracking isGoodDish bool and other runtime stuff
 // public class DishRuntimeData

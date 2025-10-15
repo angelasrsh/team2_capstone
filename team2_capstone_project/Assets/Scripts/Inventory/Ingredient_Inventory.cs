@@ -161,8 +161,12 @@ public class Ingredient_Inventory : Inventory
         return "Uncut Fogshroom";
       case IngredientType.Uncut_Fermented_Eye:
         return "Uncut Fermented Eye";
-      case IngredientType.Slime_Gelatin:
-        return "Slime";
+      case IngredientType.Uncut_Ficklegourd:
+        return "Uncut Ficklegourd";
+      case IngredientType.Cut_Ficklegourd:
+        return "Cut Ficklegourd";
+      case IngredientType.Uncut_Slime:
+        return "Uncut Slime";
       case IngredientType.Bone_Broth:
         return "Bone Broth";
       case IngredientType.Bone:
@@ -207,8 +211,12 @@ public class Ingredient_Inventory : Inventory
         return IngredientType.Uncut_Fogshroom;
       case "Uncut Fermented Eye":
         return IngredientType.Uncut_Fermented_Eye;
-      case "Slime":
-        return IngredientType.Slime_Gelatin;
+      case "Uncut Ficklegourd":
+        return IngredientType.Uncut_Ficklegourd;
+      case "Cut Ficklegourd":
+        return IngredientType.Cut_Ficklegourd;  
+      case "Uncut Slime":
+        return IngredientType.Uncut_Slime;
       case "Bone Broth":
         return IngredientType.Bone_Broth;
       case "Bone":
