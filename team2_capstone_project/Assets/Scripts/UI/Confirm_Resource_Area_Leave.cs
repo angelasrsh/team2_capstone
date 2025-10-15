@@ -14,52 +14,100 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     private Player_Controller player;
     private InputAction interactAction;
-    private bool confirmationActive = false;
     private InputAction pauseAction;
+    private bool confirmationActive = false;
 
     private void Awake()
     {
         leaveResourceAreaCanvas.enabled = false;
 
-        var pic = FindObjectOfType<Player_Input_Controller>();
-        if (pic != null)
+        // Subscribe to scene changes to rebind input
+        SceneManager.sceneLoaded += OnSceneLoadedRebind;
+
+        TryBindInput();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoadedRebind;
+        TryBindInput();
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+    }
+
+    private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
+    {
+        TryBindInput();
+    }
+
+    private void TryBindInput()
+    {
+        PlayerInput playerInput = null;
+
+        // Prefer Game_Manager if it holds PlayerInput
+        if (Game_Manager.Instance != null)
+            playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+        // Fallback to Player_Input_Controller if needed
+        if (playerInput == null)
         {
-            var input = pic.GetComponent<PlayerInput>();
-            if (input != null)
-            {
-                interactAction = input.actions["Interact"];
-            }
+            var pic = FindObjectOfType<Player_Input_Controller>();
+            if (pic != null)
+                playerInput = pic.GetComponent<PlayerInput>();
+        }
+
+        if (playerInput == null)
+        {
+            Debug.LogWarning("[Confirm_Resource_Area_Leave] No PlayerInput found in scene to bind actions.");
+            return;
+        }
+
+        // Bind Interact action
+        interactAction = playerInput.actions["Interact"];
+        if (interactAction == null)
+        {
+            Debug.LogWarning("[Confirm_Resource_Area_Leave] Could not find 'Interact' action in PlayerInput!");
+        }
+        else
+        {
+            interactAction.Enable();
+        }
+
+        // Bind Pause action (we’ll disable it when the confirmation opens)
+        pauseAction = playerInput.actions["Pause"];
+        if (pauseAction == null)
+        {
+            Debug.LogWarning("[Confirm_Resource_Area_Leave] Could not find 'Pause' action in PlayerInput!");
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player") && interactAction.triggered)
+        if (!other.CompareTag("Player") || interactAction == null)
+            return;
+
+        if (interactAction.triggered && !confirmationActive)
         {
-            // Show confirmation UI
-            leaveResourceAreaCanvas.enabled = true;
-            confirmationActive = true;
-
-            // Disable player movement and pausing while confirmation is up
-            player = other.GetComponent<Player_Controller>();
-            if (player != null)
-                player.DisablePlayerMovement();
-
-            Pause_Menu.instance.SetCanPause(false);
-
-            // Disable pause input action directly
-            var pic = FindObjectOfType<Player_Input_Controller>();
-            if (pic != null)
-            {
-                var input = pic.GetComponent<PlayerInput>();
-                if (input != null)
-                {
-                    pauseAction = input.actions["Pause"];
-                    if (pauseAction.enabled)
-                        pauseAction.Disable();
-                }
-            }
+            OpenConfirmation(other.GetComponent<Player_Controller>());
         }
+    }
+
+    private void OpenConfirmation(Player_Controller playerController)
+    {
+        leaveResourceAreaCanvas.enabled = true;
+        confirmationActive = true;
+
+        player = playerController;
+        if (player != null)
+            player.DisablePlayerMovement();
+
+        Pause_Menu.instance?.SetCanPause(false);
+
+        if (pauseAction != null && pauseAction.enabled)
+            pauseAction.Disable();
     }
 
     private void Update()
@@ -67,20 +115,19 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
         if (!confirmationActive)
             return;
 
-        // Handle key input only while confirmation UI is active
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        // Handle Enter and Escape for Yes/No
+        if (Keyboard.current != null)
         {
-            ClickYes();
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ClickNo();
+            if (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.numpadEnterKey.wasPressedThisFrame)
+                ClickYes();
+            else if (Keyboard.current.escapeKey.wasPressedThisFrame)
+                ClickNo();
         }
     }
 
     public void ClickYes()
     {
-        Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+        Room_Change_Manager.instance?.GoToRoom(currentRoom.roomID, exitingTo);
         CloseConfirmation();
     }
 
@@ -94,13 +141,17 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
         leaveResourceAreaCanvas.enabled = false;
         confirmationActive = false;
 
-        Pause_Menu.instance.SetCanPause(true);
+        Pause_Menu.instance?.SetCanPause(true);
 
         if (player != null)
             player.EnablePlayerMovement();
 
-        // Re-enable pause input after closing confirmation
         if (pauseAction != null && !pauseAction.enabled)
             pauseAction.Enable();
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoadedRebind;
     }
 }

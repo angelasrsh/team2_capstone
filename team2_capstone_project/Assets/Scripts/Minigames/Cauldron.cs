@@ -122,19 +122,26 @@ public class Cauldron : MonoBehaviour
             ingredientMade = matchedIngredient;
             Debug.Log("[Cauldron] Ingredient made: " + ingredientMade.Name);
             Ingredient_Inventory.Instance.AddResources(Ingredient_Inventory.Instance.IngrDataToEnum(ingredientMade), 1);
+
+            Completed_Dish_UI_Popup_Manager.instance?.ShowPopup($"{ingredientMade.Name} Created!", Color.white);
         }
         else if (matchedDish != null)
         {
             dishMade = matchedDish;
             Debug.Log("[Cauldron] Dish made: " + dishMade.Name);
             Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+
+            Completed_Dish_UI_Popup_Manager.instance?.ShowPopup($"{dishMade.Name} Created!", Color.red);
         }
         else
         {
             Debug.Log("[Cauldron] No recipe found with ingredients provided. Making bad dish.");
             dishMade = Game_Manager.Instance.dishDatabase.GetBadDish();
             Dish_Tool_Inventory.Instance.AddResources(dishMade, 1);
+
+            Completed_Dish_UI_Popup_Manager.instance?.ShowPopup("Failed dish...", Color.black);
         }
+
     }
 
     private IEnumerator ResetAfterDelay(float delay)
@@ -175,7 +182,7 @@ public class Cauldron : MonoBehaviour
     {
         currentStirDuration = totalDuration;
 
-        // If we previously completed, reset finished flag for a new stir
+        // If completed previously, reset finished flag for a new stir
         hasFinished = false;
 
         if (stirProgressRoutine == null)
@@ -216,7 +223,7 @@ public class Cauldron : MonoBehaviour
     public void StopStirringCompletely()
     {
         // Stop coroutine entirely and leave UI in the paused state,
-        // but do not re-enable UI if we've already finished.
+        // but do not re-enable UI if already finished 
         if (stirProgressRoutine != null)
         {
             StopCoroutine(stirProgressRoutine);
@@ -228,7 +235,7 @@ public class Cauldron : MonoBehaviour
 
         if (stirProgressBar != null && !hasFinished)
         {
-            // Keep whatever progress exists and show the bar as a paused state.
+            // Keep whatever progress exists and show the bar as a paused state
             stirProgressBar.value = Mathf.Clamp01(currentElapsedTime / Mathf.Max(0.0001f, currentStirDuration));
             stirProgressBar.gameObject.SetActive(true);
         }
@@ -260,7 +267,7 @@ public class Cauldron : MonoBehaviour
     }
 
     /// <summary>
-    /// Called once when progress reaches 100% (idempotent).
+    /// Called once when progress reaches 100%.
     /// </summary>
     public void FinishedStir()
     {
@@ -286,15 +293,9 @@ public class Cauldron : MonoBehaviour
             stirProgressBar.gameObject.SetActive(false); // hide after completion
         }
 
-        // IMPORTANT: Do NOT reset currentElapsedTime/currentStirDuration or clear ingredients here.
-        // The recipe check uses ingredientInPot and possible lists; clear after inventory update.
         Debug.Log("[Cauldron] FinishedStir: recipe complete, invoking CheckRecipeAndCreateDish()");
 
-        // Run recipe creation synchronously now (this will add to inventory)
         CheckRecipeAndCreateDish();
-
-        // After CheckRecipeAndCreateDish does the AddResources call(s), we can reset the cauldron.
-        // Use a short coroutine to allow Unity to process inventory/UI updates cleanly.
         StartCoroutine(ResetAfterDelay(0.05f));
     }
     #endregion
