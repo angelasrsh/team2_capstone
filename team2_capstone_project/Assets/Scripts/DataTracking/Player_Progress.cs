@@ -11,7 +11,9 @@ public class Player_Progress : ScriptableObject
   [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
   [SerializeField] private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
   [SerializeField] private float startingMoney;
-  private float money;
+  public event System.Action<float> OnMoneyChanged;
+  [HideInInspector] public float money;
+  
   public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used )
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used )
   public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used )
@@ -24,7 +26,7 @@ public class Player_Progress : ScriptableObject
     // UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
     UnlockNPC(CustomerData.NPCs.Elf);
     UnlockNPC(CustomerData.NPCs.Phrog);
-    UnlockIngredient(IngredientType.Slime_Gelatin);
+    UnlockIngredient(IngredientType.Uncut_Slime);
     UnlockIngredient(IngredientType.Water);
     UnlockIngredient(IngredientType.Bone_Broth);
     UnlockIngredient(IngredientType.Bone);
@@ -35,12 +37,15 @@ public class Player_Progress : ScriptableObject
     money = startingMoney;
   }
 
+
+  #region Money
   /// <summary>
   /// Add amount to player's money.
   /// </summary>
   public void AddMoney(float amount)
   {
     money += amount;
+    OnMoneyChanged?.Invoke(money);
   }
 
   /// <summary>
@@ -48,7 +53,8 @@ public class Player_Progress : ScriptableObject
   /// </summary>
   public void SubtractMoney(float amount)
   {
-    money -= amount;
+     money -= amount;
+     OnMoneyChanged?.Invoke(money);
   }
 
   /// <summary>
@@ -58,6 +64,8 @@ public class Player_Progress : ScriptableObject
   {
     return money;
   }
+  #endregion
+
 
   #region Dishes
   /// <summary>
@@ -84,17 +92,18 @@ public class Player_Progress : ScriptableObject
   public List<Dish_Data.Dishes> GetUnlockedDishes() => new List<Dish_Data.Dishes>(unlockedDishes);
   #endregion
 
+
   #region Ingredients
   /// <summary>
   /// Unlock an ingredient by Ingredient_Data
   /// </summary>
   public void UnlockIngredient(IngredientType ingr)
   {
-      if (unlockedIngredients.Add(ingr))
-      {
-          // Fire event only if a new ingredient was added
-          OnIngredientUnlocked?.Invoke();
-      }
+    if (unlockedIngredients.Add(ingr))
+    {
+      // Fire event only if a new ingredient was added
+      OnIngredientUnlocked?.Invoke();
+    }
   }
 
   /// <summary>
@@ -108,17 +117,18 @@ public class Player_Progress : ScriptableObject
   public List<IngredientType> GetUnlockedIngredients() => new List<IngredientType>(unlockedIngredients);
   #endregion
 
+
   #region NPCs
   /// <summary>
   /// Unlock an NPC by enum
   /// </summary>
   public void UnlockNPC(CustomerData.NPCs npc)
   {
-      if (unlockedNPCs.Add(npc))
-      {
-          // Fire event only if a new npc was added
-          OnNPCUnlocked?.Invoke();
-      }
+    if (unlockedNPCs.Add(npc))
+    {
+      // Fire event only if a new npc was added
+      OnNPCUnlocked?.Invoke();
+    }
   }
 
   /// <summary>
@@ -130,5 +140,6 @@ public class Player_Progress : ScriptableObject
   /// Get all unlocked NPCs as a list
   /// </summary>
   public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
+
   #endregion
 }

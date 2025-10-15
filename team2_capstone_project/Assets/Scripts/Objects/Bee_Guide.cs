@@ -7,7 +7,8 @@ public class Bee_Guide : MonoBehaviour
     [Header("Path Settings")]
     [SerializeField] private Transform[] waypoints;
     [SerializeField] private float stoppingDistance = 0.2f;
-    [SerializeField] private GameObject resourceToReveal;
+    [SerializeField] private GameObject resourceToShow;
+    [SerializeField] private GameObject actorToHide;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 7f;
@@ -101,10 +102,19 @@ public class Bee_Guide : MonoBehaviour
     {
         isActive = false;
 
-        if (resourceToReveal != null)
+        if (resourceToShow != null && actorToHide != null)
         {
-            resourceToReveal.SetActive(true);
-            Debug.Log("[BeeGuide] Resource activated and ready to forage!");
+            resourceToShow.SetActive(true);
+            actorToHide.SetActive(false);
+            Debug.Log("[BeeGuide] Resource activated and actor hidden.");
+        }
+        else if (resourceToShow == null)
+        {
+            Debug.LogWarning("[BeeGuide] Resource to show is not assigned.");
+        }
+        else if (actorToHide == null)
+        {
+            Debug.LogWarning("[BeeGuide] Actor to hide is not assigned.");
         }
     }
 

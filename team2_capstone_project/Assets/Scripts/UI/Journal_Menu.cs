@@ -12,17 +12,12 @@ using System.Linq;
 public class Journal_Menu : MonoBehaviour
 {
   public static Journal_Menu Instance;
-  private bool isPaused = false; 
+  private bool isPaused = false; // Currently will overlap pause menu, I think
   private bool haveTabsInitialized = false;
+  private Player_Progress playerProgress = Player_Progress.Instance;
+  private InputAction openJournalAction, closeJournalAction, flipLeftAction, flipRightAction, clickAction;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
-
-  [Header("Player Info")]
-  private Player_Progress playerProgress = Player_Progress.Instance;
-  private InputAction openJournalActionPlayer;
-  private InputAction openJournalActionUI;
-  private InputAction closeJournalAction;
-  private PlayerInput playerInput;
 
   [Header("Databases")]
   private Dish_Database dishDatabase;
@@ -54,6 +49,7 @@ public class Journal_Menu : MonoBehaviour
   [Header("UI References and Variables")]
   [SerializeField] public Sprite LockedIcon; // generic locked icon for locked items (just a question mark)
   private Tabs currentTab = Tabs.None;
+
   // Dictionary allows players to open to last page they had open in each tab
   private Dictionary<Tabs, int> tabCurrentPage = new Dictionary<Tabs, int>()
   {
@@ -98,9 +94,9 @@ public class Journal_Menu : MonoBehaviour
     npcDatabase = Game_Manager.Instance.npcDatabase;
 
     allDishes = Game_Manager.Instance.dishDatabase.dishes;
-    // allIngredients = Game_Manager.Instance.ingredientDatabase.rawForagables;
+    allIngredients = Game_Manager.Instance.ingredientDatabase.rawForagables;
     // If wanting to use all ingredients list instead of showing only the raw foragable ones:
-    allIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
+    // allIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
     allNPCs = Game_Manager.Instance.npcDatabase.allNPCs;
 
     tabMaxPages = new Dictionary<Tabs, int>()
@@ -113,12 +109,6 @@ public class Journal_Menu : MonoBehaviour
     darkOverlay = transform.GetChild(0).gameObject;
     journalContents = transform.GetChild(1).gameObject;
     tabs = transform.GetChild(2).gameObject;
-
-    // Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
-    // if (pic != null)
-    // {
-    //   openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
-    // }
 
     if (detailsText == null)
       Debug.LogError("[Journal_Menu]: detailsText not assigned in inspector!");
@@ -141,7 +131,7 @@ public class Journal_Menu : MonoBehaviour
 
     ShowDishTab(); // default to dish tab
     leftPagePanel.SetActive(false); // hide left page details at start
-    ResumeGame(false); // ensure journal is closed at start
+    StartCoroutine(DelayedHideJournal());
   }
 
   private void OnEnable()
@@ -153,11 +143,16 @@ public class Journal_Menu : MonoBehaviour
   private void OnDisable()
   {
     SceneManager.sceneLoaded -= OnSceneLoadedRebind;
-    if (openJournalActionPlayer != null)
-    {
-      openJournalActionPlayer.Disable();
-      openJournalActionUI.Disable();
-    }
+    if (openJournalAction != null)
+      openJournalAction.Disable();
+    if (closeJournalAction != null)
+      closeJournalAction.Disable();
+    if (flipLeftAction != null)
+      flipLeftAction.Disable();
+    if (flipRightAction != null)
+      flipRightAction.Disable();
+    if (clickAction != null)
+      clickAction.Disable();
   }
 
   private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
@@ -170,25 +165,35 @@ public class Journal_Menu : MonoBehaviour
     // Find the active PlayerInput in the scene (e.g. on Game_Manager)
     if (Game_Manager.Instance == null)
     {
-      Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal input.");
+      Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal inputs.");
       return;
     }
-    
-    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+    PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (playerInput == null)
     {
-      Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal input.");
+      Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal inputs.");
       return;
     }
 
-    // Use the runtime (clone-safe) asset from that PlayerInput
-    openJournalActionPlayer = playerInput.actions["OpenJournal"];
-    openJournalActionUI = playerInput.actions.FindActionMap("UI").FindAction("OpenJournal");
-    closeJournalAction = playerInput.actions.FindAction("CloseJournal", true);
+    // Bind the "OpenJournal" action (Player Map)
+    openJournalAction = playerInput.actions["OpenJournal"];
+    openJournalAction.Enable();
 
-    // Make sure the action is enabled
-    openJournalActionPlayer.Enable();
-    // openJournalActionUI.Enable();
+    // Bind Journal actions (Journal Map)
+    flipLeftAction = playerInput.actions["FlipLeft"];
+    flipRightAction = playerInput.actions["FlipRight"];
+    closeJournalAction = playerInput.actions["CloseJournal"];
+    clickAction = playerInput.actions["Click"];
+
+    flipLeftAction.performed += ctx => FlipToPrevious();
+    flipRightAction.performed += ctx => FlipToNext();
+    closeJournalAction.performed += ctx => ResumeGame();
+    // clickAction.performed += ctx => OnClick();
+
+    flipLeftAction.Disable();
+    flipRightAction.Disable();
+    closeJournalAction.Disable();
+    clickAction.Disable();
   }
 
   private void OnDestroy()
@@ -200,47 +205,83 @@ public class Journal_Menu : MonoBehaviour
   // Update is called once per frame
   private void Update()
   {
-    if (!Game_Manager.Instance.UIManager.pauseMenuOn && (openJournalActionPlayer.WasPerformedThisFrame() || (openJournalActionUI.WasPerformedThisFrame() && !isPaused)))
+    if (openJournalAction.WasPerformedThisFrame())
     {
-      PauseGame();
-      Game_Events_Manager.Instance.JournalToggled(true);
-      return;
-      // }
+      if (isPaused)
+      {
+        ResumeGame();
+        Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
+      }
+      else
+      {
+        PauseGame();
+        Game_Events_Manager.Instance.JournalToggled(true);
+      }
     }
+  }
 
-    if (closeJournalAction.WasPerformedThisFrame() && isPaused)
-    {
-      ResumeGame();
-      Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
-    }
+  private IEnumerator DelayedHideJournal()
+  {
+    yield return new WaitForEndOfFrame(); // wait one frame to avoid null references
+    ResumeGame(false); // don't play sound on initial hide
   }
 
   public void PauseGame()
   {
-    Debug.Log("Opening journal and pausing game...");
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 1f);
-    darkOverlay.SetActive(true);
-    journalContents.SetActive(true);
-    tabs.SetActive(true);
-    isPaused = true;
-    Game_Manager.Instance.UIManager.OpenUI();
+      Debug.Log("Opening journal and pausing game...");
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 0.75f);
+      darkOverlay.SetActive(true);
+      journalContents.SetActive(true);
+      tabs.SetActive(true);
+      isPaused = true;
+
+      // Get current PlayerInput
+      PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+    // Switch to the "Journal" input map
+    if (playerInput != null)
+    {
+      playerInput.SwitchCurrentActionMap("Journal");
+      flipLeftAction.Enable();
+      flipRightAction.Enable();
+      closeJournalAction.Enable();
+      clickAction.Enable();
+    }
+      
+    // Disable player movement  
+    Player_Controller player = FindObjectOfType<Player_Controller>();
+    if (player != null)
+        player.DisablePlayerMovement();
   }
 
   public void ResumeGame(bool playSound = true)
   {
-    Debug.Log("Closing journal and resuming game...");
+      Debug.Log("Closing journal and resuming game...");
+      if (playSound)
+          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.75f);
 
-    if (playSound)
-      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.3f);
-
-    darkOverlay.SetActive(false);
-    journalContents.SetActive(false);
-    tabs.SetActive(false);
-    if (isPaused)
-    {
-      Game_Manager.Instance.UIManager.CloseUI();
+      darkOverlay.SetActive(false);
+      journalContents.SetActive(false);
+      tabs.SetActive(false);
       isPaused = false;
+      
+       // Get current PlayerInput
+      PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+    // Switch back to Player map
+    if (playerInput != null)
+    {
+      flipLeftAction.Disable();
+      flipRightAction.Disable();
+      closeJournalAction.Disable();
+      clickAction.Disable();
+      playerInput.SwitchCurrentActionMap("Player");
     }
+
+    // Enable player movement
+    Player_Controller player = FindObjectOfType<Player_Controller>();
+    if (player != null)
+        player.EnablePlayerMovement();
   }
 
   #region Recipe Tab Methods
@@ -263,7 +304,7 @@ public class Journal_Menu : MonoBehaviour
 
         // Check if dish is on daily menu
         if (dailyMenu != null && dailyMenu.GetSelectedDishes().Contains(dishData.dishType))
-          slot.SetItem(dishData, true, true);
+            slot.SetItem(dishData, true, true);
         else
           slot.SetItem(dishData, true, false);
       }
@@ -274,7 +315,7 @@ public class Journal_Menu : MonoBehaviour
       }
       else
       {
-        // Don't show empty slots if no more dishes to show
+        // Don't show empty slots if no more NPCs to show
         slot.ClearItem();
       }
 
@@ -305,23 +346,46 @@ public class Journal_Menu : MonoBehaviour
     int startIndex = (currentPage - 1) * objectsPerPage;
     int index = startIndex + currGridCell;
 
-    // Populate with unlocked dishes if needed
+    // Using all ingredients list
+    // while (currGridCell < objectsPerPage)
+    // {
+    //   JournalSlot slot = slots[currGridCell];
+    //   if (index < unlockedIngredients.Count)
+    //   {
+    //     Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
+    //     slot.SetItem(ingredientData, true, false);
+    //   }
+    //   else if (index < allIngredients.Count)
+    //   {
+    //     // Show locked ingredients only if there are still more ingredients in the database
+    //     slot.SetItem(null, false, false);
+    //   }
+    //   else
+    //   {
+    //     // Don't show empty slots if no more ingredients to show
+    //     slot.ClearItem();
+    //   }
+
+    //   index++;
+    //   currGridCell++;
+    // }
+
+    // using just foragables
     while (currGridCell < objectsPerPage)
     {
       JournalSlot slot = slots[currGridCell];
-      if (index < unlockedIngredients.Count)
+      if (index < allIngredients.Count)
       {
-        Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
-        slot.SetItem(ingredientData, true, false);
-      }
-      else if (index < allIngredients.Count)
-      {
-        // Show locked ingredients only if there are still more ingredients in the database
-        slot.SetItem(null, false, false);
+        Ingredient_Data ingredientData = allIngredients[index];
+        bool isUnlocked = unlockedIngredients.Contains(ingredientData.ingredientType);
+        if(isUnlocked)
+          slot.SetItem(ingredientData, true, false);
+        else // Show locked ingredients only if there are still more ingredients in the database
+          slot.SetItem(null, false, false);
       }
       else
       {
-        // Don't show empty slots if no more ingredients to show
+        // Don't show empty slots if no more NPCs to show
         slot.ClearItem();
       }
 
@@ -360,7 +424,7 @@ public class Journal_Menu : MonoBehaviour
     // Assign once to text component
     detailsText.text = ingredientText;
 
-    // // Broadcast event for tutorial
+    // Broadcast event for tutorial
     // Game_Events_Manager.Instance.ForageDetailsClick();
   }
   #endregion
@@ -569,11 +633,6 @@ public class Journal_Menu : MonoBehaviour
   }
   #endregion
 
-  private void PlayJournalTabSelectSound()
-  {
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.4f);
-  }
-
   [System.Serializable]
   public class JournalSlot
   {
@@ -642,5 +701,10 @@ public class Journal_Menu : MonoBehaviour
 
       Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.clickSFX, 0.8f);
     }
+  }
+  
+  private void PlayJournalTabSelectSound()
+  {
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.4f);
   }
 }

@@ -7,16 +7,17 @@ public class Room_Data : ScriptableObject
 {
   public enum RoomID
   {
-      // room ID names must match scene names exactly
-      Main_Menu,
-      World_Map,
-      Restaurant,
-      Bedroom,
-      Cooking_Minigame,
-      Chopping_Minigame,
-      Frying_Pan_Minigame,
-      Foraging_Area_Whitebox,
-      Updated_Restaurant
+    // room ID names must match scene names exactly
+    Main_Menu,
+    World_Map,
+    Restaurant,
+    Bedroom,
+    Cooking_Minigame,
+    Chopping_Minigame,
+    Frying_Pan_Minigame,
+    Combine_Minigame,
+    Foraging_Area_Whitebox,
+    Updated_Restaurant
   }
 
   public enum SpawnPointID
@@ -25,6 +26,7 @@ public class Room_Data : ScriptableObject
     Cauldron,
     Cutting_Board,
     Frying_Pan,
+    Combine_Table
   }
 
   [Header("Room Info")]

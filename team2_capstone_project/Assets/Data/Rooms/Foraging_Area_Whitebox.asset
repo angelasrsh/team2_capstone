@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
   m_Name: Foraging_Area_Whitebox
   m_EditorClassIdentifier: 
-  roomID: 7
+  roomID: 8
   isOverworldScene: 1
-  music: {fileID: 8300000, guid: 63ffea455e01a0b4aa2dd721065bc703, type: 3}
+  music: {fileID: 8300000, guid: 5418322616f68f3429c1635520f8f5dc, type: 3}
   ambientSound: {fileID: 8300000, guid: f3f4445f1373f9c4ca71452facc20792, type: 3}
-  musicVolume: 0.45
+  musicVolume: 0.5
   ambientVolume: 0.68
   exits:
   - exitingTo: 0
@@ -24,13 +24,8 @@ MonoBehaviour:
     targetRoom: {fileID: 11400000, guid: 9196e552c6124a94696f1bdc553b82ec, type: 2}
     overrideTimeOfDay: 0
     overrideValue: 0
-  - exitingTo: 8
+  - exitingTo: 9
     spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
-    overrideTimeOfDay: 1
-    overrideValue: 1
-  - exitingTo: 2
-    spawnPointID: 0
-    targetRoom: {fileID: 11400000, guid: fefb8eb7638a8904aa2544370338bda9, type: 2}
     overrideTimeOfDay: 1
     overrideValue: 1

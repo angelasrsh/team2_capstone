@@ -180,7 +180,7 @@ public class Ingredient_Inventory : Inventory
         return "Milk";
       case IngredientType.Oil:
         return "Oil";
-      case IngredientType.Slime_Gelatin:
+      case IngredientType.Uncut_Slime:
         return "Slime Gelatin";
       case IngredientType.Uncooked_Patty:
         return "Uncooked Patty";
@@ -194,8 +194,12 @@ public class Ingredient_Inventory : Inventory
         return "Water";
       case IngredientType.Burnt_Blob:
         return "Burnt Blob";
-      case IngredientType.Sliced_Gelatin:
+      case IngredientType.Cut_Slime:
         return "Sliced Gelatin";
+      case IngredientType.Cut_Ficklegourd:
+        return "Cut Ficklegourd";
+      case IngredientType.Uncut_Ficklegourd:
+        return "Uncut Ficklegourd";
       default:
         return "";
     }
@@ -239,7 +243,7 @@ public class Ingredient_Inventory : Inventory
       case "Oil":
         return IngredientType.Oil;
       case "Slime Gelatin":
-        return IngredientType.Slime_Gelatin;
+        return IngredientType.Uncut_Slime;
       case "Uncooked Patty":
         return IngredientType.Uncooked_Patty;
       case "Uncut Fermented Eye":
@@ -253,7 +257,11 @@ public class Ingredient_Inventory : Inventory
       case "Burnt Blob":
         return IngredientType.Burnt_Blob;
       case "Sliced Gelatin":
-        return IngredientType.Sliced_Gelatin;
+        return IngredientType.Cut_Slime;
+      case "Cut Ficklegourd":
+        return IngredientType.Cut_Ficklegourd;
+      case "Uncut Ficklegourd":
+        return IngredientType.Uncut_Ficklegourd;
       default:
         return IngredientType.Null;
     }

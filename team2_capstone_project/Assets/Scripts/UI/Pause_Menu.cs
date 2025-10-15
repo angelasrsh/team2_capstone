@@ -7,124 +7,120 @@ using UnityEngine.InputSystem;
 
 public class Pause_Menu : MonoBehaviour
 {
-  public static Pause_Menu instance;
+    public static Pause_Menu instance;
 
-  [Header("UI Elements")]
-  public GameObject menuBox;
-  public GameObject darkOverlay;
+    [Header("UI Elements")]
+    public GameObject menuBox;
+    public GameObject darkOverlay;
 
-  [Header("Room Change Settings")]
-  public Room_Data currentRoom;
-  public Room_Data.RoomID exitingTo;
-  private bool isPaused = false;
-  [HideInInspector] public bool canPause = true;
+    [Header("Room Change Settings")]
+    public Room_Data currentRoom;
+    public Room_Data.RoomID exitingTo;
 
-  [Header("Player Input Info")]
-  private InputAction pauseAction;
-  private InputAction closeAction;
-  private PlayerInput playerInput;
+    private bool isPaused = false;
+    [HideInInspector] public bool canPause = true;
 
-  private void Awake()
-  {
-    instance = this;
-    HideMenu();
-  }
-  
-  private void Start()
-  {
-    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+    private PlayerInput playerInput;
+    private InputAction pauseAction;
 
-    if (playerInput == null)
+    private void Awake()
     {
-      Debug.Log("[Pause_Menu]: PlayerInput component not found on Game_Manager!");
-      return;
+        instance = this;
+        HideMenu();
     }
-    
-    pauseAction = playerInput.actions["Pause"];
-    closeAction = playerInput.actions.FindAction("CloseRegular", true);
 
-    if (pauseAction != null)
-      pauseAction.performed += ctx =>
-      {
-        if (canPause && Game_Manager.Instance.UIManager.openUICount == 0)
-          PauseGame();
-      };
-    
-    if (closeAction != null)
-      closeAction.performed += ctx => {
+    private void Start()
+    {
+        if (Game_Manager.Instance == null)
+        {
+            Debug.LogError("[Pause_Menu] No Game_Manager found.");
+            return;
+        }
+
+        playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+        if (playerInput == null)
+        {
+            Debug.LogError("[Pause_Menu] No PlayerInput component on Game_Manager.");
+            return;
+        }
+
+        // Bind pause action safely
+        pauseAction = playerInput.actions.FindAction("Pause", true);
+        if (pauseAction == null)
+        {
+            Debug.LogError("[Pause_Menu] Could not find 'Pause' action in PlayerInput actions.");
+            return;
+        }
+
+        pauseAction.Enable();
+        pauseAction.performed += OnPausePerformed;
+
+        Debug.Log("[Pause_Menu] Bound to Pause action. Current map: " + playerInput.currentActionMap.name);
+    }
+
+    private void OnPausePerformed(InputAction.CallbackContext ctx)
+    {
+        if (!canPause) return;
+
         if (isPaused)
-          ResumeGame();
-      };
-  }
-
-  private void Update()
-  {
-    if (!canPause)
-      return; // ignore pause if disabled
-  }
-
-  public void SetCanPause(bool value)
-  {
-    canPause = value;
-    if (!canPause && isPaused)
-      ResumeGame(); // auto-resume if pause is forcibly disabled
-  }
-
-  public void PauseGame()
-  {
-    Audio_Manager.instance.PlaySFX(Audio_Manager.instance.menuOpen);
-
-    Debug.Log("Pausing game...");
-
-    if (menuBox == null)
-    {
-      Debug.Log("Menubox is null?");
-      return;
+            ResumeGame();
+        else
+            PauseGame();
     }
 
-    menuBox.SetActive(true);
-    if (darkOverlay == null)
+    public void SetCanPause(bool value)
     {
-      Debug.Log("Dark Overlay is null?");
-      return;
+        canPause = value;
+
+        if (!canPause && isPaused)
+            ResumeGame(); // auto-resume if pause forcibly disabled
     }
 
-    darkOverlay.SetActive(true);
-    isPaused = true;
-    Game_Manager.Instance.UIManager.OpenUI();
-    Game_Manager.Instance.UIManager.PauseMenuState(true);
-  }
-
-  // Resume the game from the pause menu
-  public void ResumeGame()
-  {
-    Audio_Manager.instance.PlaySFX(Audio_Manager.instance.menuClose);
-
-    Debug.Log("Resuming game...");
-    menuBox.SetActive(false);
-    darkOverlay.SetActive(false);
-    if (isPaused)
+    public void PauseGame()
     {
-      Game_Manager.Instance.UIManager.CloseUI();
-      Game_Manager.Instance.UIManager.PauseMenuState(false);
-    }
-    isPaused = false;
-  }
+        Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.menuOpen);
 
-  // Quit the game from pause menu and return to the main menu
-  public void QuitGame()
-  {
-    Debug.Log("Quitting game...");
-    playerInput.SwitchCurrentActionMap("Player");
-    Game_Manager.Instance.UIManager.PauseMenuState(false);
-    Game_Manager.Instance.UIManager.CloseUI();
-    Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
-  }
-  
-  private void HideMenu()
-  {
-    menuBox.SetActive(false);
-    darkOverlay.SetActive(false);
-    isPaused = false;
-  }
+        Debug.Log("Pausing game...");
+        if (menuBox == null)
+            Debug.LogWarning("[Pause_Menu] menuBox is null!");
+        if (darkOverlay == null)
+            Debug.LogWarning("[Pause_Menu] darkOverlay is null!");
+
+        menuBox?.SetActive(true);
+        darkOverlay?.SetActive(true);
+        isPaused = true;
+
+        Time.timeScale = 0f;  // Pause game time
+    }
+
+    public void ResumeGame()
+    {
+        Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.menuClose);
+
+        Debug.Log("Resuming game...");
+        menuBox?.SetActive(false);
+        darkOverlay?.SetActive(false);
+        isPaused = false;
+
+        Time.timeScale = 1f;  // Resume game time
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("Quitting game...");
+        Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+    }
+
+    private void HideMenu()
+    {
+        menuBox?.SetActive(false);
+        darkOverlay?.SetActive(false);
+        isPaused = false;
+    }
+
+    private void OnDestroy()
+    {
+        if (pauseAction != null)
+            pauseAction.performed -= OnPausePerformed;
+    }
 }
