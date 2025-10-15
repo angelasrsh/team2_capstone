@@ -12,11 +12,17 @@ using System.Linq;
 public class Journal_Menu : MonoBehaviour
 {
   public static Journal_Menu Instance;
-  private bool isPaused = false; // Currently will overlap pause menu, I think
-  private Player_Progress playerProgress = Player_Progress.Instance;
-  private InputAction openJournalAction;
+  private bool isPaused = false; 
+  private bool haveTabsInitialized = false;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
+
+  [Header("Player Info")]
+  private Player_Progress playerProgress = Player_Progress.Instance;
+  private InputAction openJournalActionPlayer;
+  private InputAction openJournalActionUI;
+  private InputAction closeJournalAction;
+  private PlayerInput playerInput;
 
   [Header("Databases")]
   private Dish_Database dishDatabase;
@@ -92,9 +98,9 @@ public class Journal_Menu : MonoBehaviour
     npcDatabase = Game_Manager.Instance.npcDatabase;
 
     allDishes = Game_Manager.Instance.dishDatabase.dishes;
-    // allIngredients = Game_Manager.Instance.ingredientDatabase.rawForagables;
+    allIngredients = Game_Manager.Instance.ingredientDatabase.rawForagables;
     // If wanting to use all ingredients list instead of showing only the raw foragable ones:
-    allIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
+    // allIngredients = Game_Manager.Instance.ingredientDatabase.allIngredients;
     allNPCs = Game_Manager.Instance.npcDatabase.allNPCs;
 
     tabMaxPages = new Dictionary<Tabs, int>()
@@ -108,11 +114,11 @@ public class Journal_Menu : MonoBehaviour
     journalContents = transform.GetChild(1).gameObject;
     tabs = transform.GetChild(2).gameObject;
 
-    Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
-    if (pic != null)
-    {
-      openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
-    }
+    // Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+    // if (pic != null)
+    // {
+    //   openJournalAction = pic.GetComponent<PlayerInput>().actions["OpenJournal"];
+    // }
 
     if (detailsText == null)
       Debug.LogError("[Journal_Menu]: detailsText not assigned in inspector!");
@@ -135,7 +141,54 @@ public class Journal_Menu : MonoBehaviour
 
     ShowDishTab(); // default to dish tab
     leftPagePanel.SetActive(false); // hide left page details at start
-    ResumeGame(); // start with journal closed
+    ResumeGame(false); // ensure journal is closed at start
+  }
+
+  private void OnEnable()
+  {
+    SceneManager.sceneLoaded += OnSceneLoadedRebind;
+    TryBindInput();
+  }
+
+  private void OnDisable()
+  {
+    SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+    if (openJournalActionPlayer != null)
+    {
+      openJournalActionPlayer.Disable();
+      openJournalActionUI.Disable();
+    }
+  }
+
+  private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
+  {
+    TryBindInput();
+  }
+
+  private void TryBindInput()
+  {
+    // Find the active PlayerInput in the scene (e.g. on Game_Manager)
+    if (Game_Manager.Instance == null)
+    {
+      Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal input.");
+      return;
+    }
+    
+    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+    if (playerInput == null)
+    {
+      Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal input.");
+      return;
+    }
+
+    // Use the runtime (clone-safe) asset from that PlayerInput
+    openJournalActionPlayer = playerInput.actions["OpenJournal"];
+    openJournalActionUI = playerInput.actions.FindActionMap("UI").FindAction("OpenJournal");
+    closeJournalAction = playerInput.actions.FindAction("CloseJournal", true);
+
+    // Make sure the action is enabled
+    openJournalActionPlayer.Enable();
+    // openJournalActionUI.Enable();
   }
 
   private void OnDestroy()
@@ -145,42 +198,49 @@ public class Journal_Menu : MonoBehaviour
   }
 
   // Update is called once per frame
-  void Update()
+  private void Update()
   {
-    if (openJournalAction.WasPerformedThisFrame())
+    if (!Game_Manager.Instance.UIManager.pauseMenuOn && (openJournalActionPlayer.WasPerformedThisFrame() || (openJournalActionUI.WasPerformedThisFrame() && !isPaused)))
     {
-      if (isPaused)
-      {
-        ResumeGame();
-        Game_Events_Manager.Instance.JournalToggled(false); //this is being checked every time the journal is opened/closed. Might not be ideal
-      }
-      else
-      {
-        PauseGame();
-        Game_Events_Manager.Instance.JournalToggled(true);
-      }
+      PauseGame();
+      Game_Events_Manager.Instance.JournalToggled(true);
+      return;
+      // }
+    }
+
+    if (closeJournalAction.WasPerformedThisFrame() && isPaused)
+    {
+      ResumeGame();
+      Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
     }
   }
 
   public void PauseGame()
   {
     Debug.Log("Opening journal and pausing game...");
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 1f);
     darkOverlay.SetActive(true);
     journalContents.SetActive(true);
     tabs.SetActive(true);
     isPaused = true;
+    Game_Manager.Instance.UIManager.OpenUI();
   }
 
-  public void ResumeGame()
+  public void ResumeGame(bool playSound = true)
   {
     Debug.Log("Closing journal and resuming game...");
 
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose);
+    if (playSound)
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.3f);
 
     darkOverlay.SetActive(false);
     journalContents.SetActive(false);
     tabs.SetActive(false);
-    isPaused = false;
+    if (isPaused)
+    {
+      Game_Manager.Instance.UIManager.CloseUI();
+      isPaused = false;
+    }
   }
 
   #region Recipe Tab Methods
@@ -203,7 +263,7 @@ public class Journal_Menu : MonoBehaviour
 
         // Check if dish is on daily menu
         if (dailyMenu != null && dailyMenu.GetSelectedDishes().Contains(dishData.dishType))
-            slot.SetItem(dishData, true, true);
+          slot.SetItem(dishData, true, true);
         else
           slot.SetItem(dishData, true, false);
       }
@@ -214,7 +274,7 @@ public class Journal_Menu : MonoBehaviour
       }
       else
       {
-        // Don't show empty slots if no more NPCs to show
+        // Don't show empty slots if no more dishes to show
         slot.ClearItem();
       }
 
@@ -245,23 +305,46 @@ public class Journal_Menu : MonoBehaviour
     int startIndex = (currentPage - 1) * objectsPerPage;
     int index = startIndex + currGridCell;
 
-    // Populate with unlocked dishes if needed
+    // Using all ingredients list
+    // while (currGridCell < objectsPerPage)
+    // {
+    //   JournalSlot slot = slots[currGridCell];
+    //   if (index < unlockedIngredients.Count)
+    //   {
+    //     Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
+    //     slot.SetItem(ingredientData, true, false);
+    //   }
+    //   else if (index < allIngredients.Count)
+    //   {
+    //     // Show locked ingredients only if there are still more ingredients in the database
+    //     slot.SetItem(null, false, false);
+    //   }
+    //   else
+    //   {
+    //     // Don't show empty slots if no more ingredients to show
+    //     slot.ClearItem();
+    //   }
+
+    //   index++;
+    //   currGridCell++;
+    // }
+
+    // using just foragables
     while (currGridCell < objectsPerPage)
     {
       JournalSlot slot = slots[currGridCell];
-      if (index < unlockedIngredients.Count)
+      if (index < allIngredients.Count)
       {
-        Ingredient_Data ingredientData = ingredientDatabase.GetIngredient(unlockedIngredients[index]);
-        slot.SetItem(ingredientData, true, false);
-      }
-      else if (index < allIngredients.Count)
-      {
-        // Show locked ingredients only if there are still more ingredients in the database
-        slot.SetItem(null, false, false);
+        Ingredient_Data ingredientData = allIngredients[index];
+        bool isUnlocked = unlockedIngredients.Contains(ingredientData.ingredientType);
+        if(isUnlocked)
+          slot.SetItem(ingredientData, true, false);
+        else // Show locked ingredients only if there are still more ingredients in the database
+          slot.SetItem(null, false, false);
       }
       else
       {
-        // Don't show empty slots if no more NPCs to show
+        // Don't show empty slots if no more ingredients to show
         slot.ClearItem();
       }
 
@@ -300,8 +383,8 @@ public class Journal_Menu : MonoBehaviour
     // Assign once to text component
     detailsText.text = ingredientText;
 
-    // Broadcast event for tutorial
-    Game_Events_Manager.Instance.ForageDetailsClick();
+    // // Broadcast event for tutorial
+    // Game_Events_Manager.Instance.ForageDetailsClick();
   }
   #endregion
 
@@ -388,16 +471,24 @@ public class Journal_Menu : MonoBehaviour
   /// </summary>
   public void ShowDishTab()
   {
-    // Debug.Log("Showing Dish tab...");
-    detailsText.gameObject.SetActive(false);
-    affectionGauge.gameObject.SetActive(false);
-    recipeImage.gameObject.SetActive(true);
-    if (currentTab != Tabs.Dish) // only hide left page details when switching to dish tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to dish tab, since no dish selected yet
-      currentTab = Tabs.Dish;
-      FillRightPage();
-    }
+      detailsText.gameObject.SetActive(false);
+      affectionGauge.gameObject.SetActive(false);
+      recipeImage.gameObject.SetActive(true);
+
+      bool isSwitchingTabs = currentTab != Tabs.Dish;
+      if (isSwitchingTabs)
+      {
+          leftPagePanel.SetActive(false);
+          currentTab = Tabs.Dish;
+          FillRightPage();
+
+          // Only play sound if tabs have already been initialized once
+          if (haveTabsInitialized)
+              PlayJournalTabSelectSound();
+      }
+
+      // After first tab setup, mark as initialized
+      haveTabsInitialized = true;
   }
 
   /// <summary>
@@ -405,16 +496,22 @@ public class Journal_Menu : MonoBehaviour
   /// </summary>
   public void ShowIngredientTab()
   {
-    // Debug.Log("Showing Ingredient tab...");
-    detailsText.gameObject.SetActive(true);
-    affectionGauge.gameObject.SetActive(false);
-    recipeImage.gameObject.SetActive(false);
-    if (currentTab != Tabs.Ingredient) // only hide left page details when switching to ingredient tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to ingredient tab, since no ingredient selected yet
-      currentTab = Tabs.Ingredient;
-      FillRightPage();
-    }
+      detailsText.gameObject.SetActive(true);
+      affectionGauge.gameObject.SetActive(false);
+      recipeImage.gameObject.SetActive(false);
+
+      bool isSwitchingTabs = currentTab != Tabs.Ingredient;
+      if (isSwitchingTabs)
+      {
+          leftPagePanel.SetActive(false);
+          currentTab = Tabs.Ingredient;
+          FillRightPage();
+
+          if (haveTabsInitialized)
+              PlayJournalTabSelectSound();
+      }
+
+      haveTabsInitialized = true;
   }
 
   /// <summary>
@@ -423,15 +520,21 @@ public class Journal_Menu : MonoBehaviour
   /// </summary>
   public void ShowNPCTab()
   {
-    // Debug.Log("Showing NPC tab...");
-    detailsText.gameObject.SetActive(true);
-    recipeImage.gameObject.SetActive(false);
-    if (currentTab != Tabs.NPC) // only hide left page details when switching to npc tab from another tab
-    {
-      leftPagePanel.SetActive(false); // hide left page details when switching to npc tab, since no npc selected yet
-      currentTab = Tabs.NPC;
-      FillRightPage();
-    }
+      detailsText.gameObject.SetActive(true);
+      recipeImage.gameObject.SetActive(false);
+
+      bool isSwitchingTabs = currentTab != Tabs.NPC;
+      if (isSwitchingTabs)
+      {
+          leftPagePanel.SetActive(false);
+          currentTab = Tabs.NPC;
+          FillRightPage();
+
+          if (haveTabsInitialized)
+              PlayJournalTabSelectSound();
+      }
+
+      haveTabsInitialized = true;
   }
 
   /// <summary>
@@ -454,6 +557,8 @@ public class Journal_Menu : MonoBehaviour
   public void FlipToNext()
   {
     Debug.Log("Flipping to next page...");
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.pageFlip, 0.8f);
+
     if (tabCurrentPage[currentTab] < tabMaxPages[currentTab])
     {
       tabCurrentPage[currentTab] += 1;
@@ -472,6 +577,8 @@ public class Journal_Menu : MonoBehaviour
   public void FlipToPrevious()
   {
     Debug.Log("Flipping to previous page...");
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.pageFlip, 0.8f);
+
     if (tabCurrentPage[currentTab] > 1)
     {
       tabCurrentPage[currentTab] -= 1;
@@ -484,6 +591,11 @@ public class Journal_Menu : MonoBehaviour
     }
   }
   #endregion
+
+  private void PlayJournalTabSelectSound()
+  {
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.4f);
+  }
 
   [System.Serializable]
   public class JournalSlot
@@ -524,7 +636,7 @@ public class Journal_Menu : MonoBehaviour
       iconImage.preserveAspect = true;
 
       if (onDailyMenu)
-          starImage.gameObject.SetActive(true);
+        starImage.gameObject.SetActive(true);
       else
         starImage.gameObject.SetActive(false);
       starImage.preserveAspect = true;
@@ -550,6 +662,8 @@ public class Journal_Menu : MonoBehaviour
         Instance.DisplayIngredientDetails(ingredient);
       else if (currentItem is CustomerData npc)
         Instance.DisplayNPCDetails(npc);
+
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.clickSFX, 0.8f);
     }
   }
 }

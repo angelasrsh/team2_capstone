@@ -40,7 +40,7 @@ public class Dish_Item_Toggle : MonoBehaviour
         menu.RemoveDish(dishType);
 
       if (Audio_Manager.instance != null)
-        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX);
+        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX, 0.5f, 1f);
     }
     else
     {

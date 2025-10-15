@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Make_Blinding_Stew_Quest_Step : Quest_Step
+public class Make_Blinding_Stew_Quest_Step : Tutorial_Quest_Step
 {
     void OnEnable()
     {

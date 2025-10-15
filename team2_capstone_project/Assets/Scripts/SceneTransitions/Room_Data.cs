@@ -5,48 +5,51 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Rooms/Room", fileName = "NewRoom")]
 public class Room_Data : ScriptableObject
 {
-    public enum RoomID
-    {
-        // room ID names must match scene names exactly
-        Main_Menu,
-        World_Map,
-        Restaurant,
-        Bedroom,
-        Cooking_Minigame,
-        Chopping_Minigame,
-        Frying_Pan_Minigame,
-        Foraging_Area_Whitebox,
-        Updated_Restaurant
-    }
+  public enum RoomID
+  {
+    // room ID names must match scene names exactly
+    Main_Menu,
+    World_Map,
+    Restaurant,
+    Bedroom,
+    Cooking_Minigame,
+    Chopping_Minigame,
+    Frying_Pan_Minigame,
+    Combine_Minigame,
+    Foraging_Area_Whitebox,
+    Updated_Restaurant
+  }
 
-    public enum SpawnPointID
-    {
-        Default,
-        Cauldron,
-        Cutting_Board,
-    }
+  public enum SpawnPointID
+  {
+    Default,
+    Cauldron,
+    Cutting_Board,
+    Frying_Pan,
+    Combine_Table
+  }
 
-    [Header("Room Info")]
-    public RoomID roomID;
-    public bool isOverworldScene;
+  [Header("Room Info")]
+  public RoomID roomID;
+  public bool isOverworldScene;
 
-    [Header("Audio Settings")]
-    public AudioClip music;
-    public AudioClip ambientSound;
-    [Range(0f, 1f)] public float musicVolume = 1f;
-    [Range(0f, 1f)] public float ambientVolume = 1f;
+  [Header("Audio Settings")]
+  public AudioClip music;
+  public AudioClip ambientSound;
+  [Range(0f, 1f)] public float musicVolume = 1f;
+  [Range(0f, 1f)] public float ambientVolume = 1f;
 
-    [Header("Room Exits")]
-    public RoomExitOptions[] exits;
+  [Header("Room Exits")]
+  public RoomExitOptions[] exits;
 }
 
 [System.Serializable]
 public class RoomExitOptions
 {
-    public Room_Data.RoomID exitingTo;
-    public Room_Data.SpawnPointID spawnPointID;
-    public Room_Data targetRoom;
-    public bool overrideTimeOfDay;
-    public Day_Turnover_Manager.TimeOfDay overrideValue;
+  public Room_Data.RoomID exitingTo;
+  public Room_Data.SpawnPointID spawnPointID;
+  public Room_Data targetRoom;
+  public bool overrideTimeOfDay;
+  public Day_Turnover_Manager.TimeOfDay overrideValue;
 }
 

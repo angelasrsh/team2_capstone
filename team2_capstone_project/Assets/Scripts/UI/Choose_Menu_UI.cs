@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Grimoire;
 
 public class Choose_Menu_UI : MonoBehaviour
 {
@@ -114,6 +115,7 @@ public class Choose_Menu_UI : MonoBehaviour
         {
             Debug.Log("Continuing to resource gathering...");
 
+            Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX, 0.5f, 1f);
             menuBox.SetActive(false);
             darkOverlay.SetActive(false);
 
@@ -128,8 +130,20 @@ public class Choose_Menu_UI : MonoBehaviour
         else
         {
             Debug.Log("Please select at least one dish to continue.");
-            errorText.SetActive(true);
-            StartCoroutine(HideMessageAfterDelay(2f));
+            PlayErrorSound();
+
+            if (errorText == null && menuBox != null)
+            {
+                var found = menuBox.transform.Find("Error_Text");
+                if (found != null)
+                    errorText = found.gameObject;
+            }
+
+            if (errorText != null)
+            {
+                errorText.SetActive(true);
+                StartCoroutine(HideMessageAfterDelay(4f));
+            }
         }
     }
 
@@ -146,7 +160,8 @@ public class Choose_Menu_UI : MonoBehaviour
         {
             Debug.Log("You can only select up to 2 dishes!");
             errorText.SetActive(true);
-            StartCoroutine(HideMessageAfterDelay(2f));
+            PlayErrorSound();
+            StartCoroutine(HideMessageAfterDelay(4f));
             return;
         }
 
@@ -155,4 +170,9 @@ public class Choose_Menu_UI : MonoBehaviour
 
     public void RemoveDish(Dish_Data.Dishes dishType) =>
         Choose_Menu_Items.instance.RemoveDish(dishType);
+
+    private void PlayErrorSound()
+    {
+        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.errorBuzz, 0.09f, Random.Range(0.95f, 1.05f));
+    }
 }

@@ -21,20 +21,21 @@ public class Dish_Data : Item_Data
     Blinding_Stew,
     Honey_Jelly_Drink,
     Charcuterie_Board,
-    Boba_Milk_Drink
+    Boba_Milk_Drink,
+    Honey_Glazed_Eleonoras
   }
 
   public List<Ingredient_Requirement> ingredientQuantities;
 }
 
-  public enum Recipe
-  {
-    None,
-    Stir,
-    Chop,
-    Toss,
-    Combine
-  }
+public enum Recipe
+{
+  None,
+  Cauldron,
+  Chop,
+  Fry,
+  Combine
+}
 
 // Alternative for tracking isGoodDish bool and other runtime stuff
 // public class DishRuntimeData

@@ -16,10 +16,13 @@ public class Pause_Menu : MonoBehaviour
   [Header("Room Change Settings")]
   public Room_Data currentRoom;
   public Room_Data.RoomID exitingTo;
-
   private bool isPaused = false;
-  [HideInInspector] public bool canPause = true; 
+  [HideInInspector] public bool canPause = true;
+
+  [Header("Player Input Info")]
   private InputAction pauseAction;
+  private InputAction closeAction;
+  private PlayerInput playerInput;
 
   private void Awake()
   {
@@ -29,34 +32,42 @@ public class Pause_Menu : MonoBehaviour
   
   private void Start()
   {
-    Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
-    if (pic != null)
+    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+    if (playerInput == null)
     {
-      pauseAction = pic.GetComponent<PlayerInput>().actions["Pause"];
+      Debug.Log("[Pause_Menu]: PlayerInput component not found on Game_Manager!");
+      return;
     }
+    
+    pauseAction = playerInput.actions["Pause"];
+    closeAction = playerInput.actions.FindAction("CloseRegular", true);
 
     if (pauseAction != null)
-      pauseAction.performed += ctx => {
-          if (canPause) {
-              if (isPaused)
-                  ResumeGame();
-              else
-                  PauseGame();
-          }
+      pauseAction.performed += ctx =>
+      {
+        if (canPause && Game_Manager.Instance.UIManager.openUICount == 0)
+          PauseGame();
+      };
+    
+    if (closeAction != null)
+      closeAction.performed += ctx => {
+        if (isPaused)
+          ResumeGame();
       };
   }
 
   private void Update()
   {
-      if (!canPause) return; // ignore pause if disabled
+    if (!canPause)
+      return; // ignore pause if disabled
   }
 
   public void SetCanPause(bool value)
   {
-      canPause = value;
-
-      if (!canPause && isPaused)
-          ResumeGame(); // auto-resume if pause is forcibly disabled
+    canPause = value;
+    if (!canPause && isPaused)
+      ResumeGame(); // auto-resume if pause is forcibly disabled
   }
 
   public void PauseGame()
@@ -64,13 +75,24 @@ public class Pause_Menu : MonoBehaviour
     Audio_Manager.instance.PlaySFX(Audio_Manager.instance.menuOpen);
 
     Debug.Log("Pausing game...");
+
     if (menuBox == null)
+    {
       Debug.Log("Menubox is null?");
+      return;
+    }
+
     menuBox.SetActive(true);
     if (darkOverlay == null)
+    {
       Debug.Log("Dark Overlay is null?");
+      return;
+    }
+
     darkOverlay.SetActive(true);
     isPaused = true;
+    Game_Manager.Instance.UIManager.OpenUI();
+    Game_Manager.Instance.UIManager.PauseMenuState(true);
   }
 
   // Resume the game from the pause menu
@@ -81,6 +103,11 @@ public class Pause_Menu : MonoBehaviour
     Debug.Log("Resuming game...");
     menuBox.SetActive(false);
     darkOverlay.SetActive(false);
+    if (isPaused)
+    {
+      Game_Manager.Instance.UIManager.CloseUI();
+      Game_Manager.Instance.UIManager.PauseMenuState(false);
+    }
     isPaused = false;
   }
 
@@ -88,6 +115,9 @@ public class Pause_Menu : MonoBehaviour
   public void QuitGame()
   {
     Debug.Log("Quitting game...");
+    playerInput.SwitchCurrentActionMap("Player");
+    Game_Manager.Instance.UIManager.PauseMenuState(false);
+    Game_Manager.Instance.UIManager.CloseUI();
     Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
   }
   
