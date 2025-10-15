@@ -297,12 +297,12 @@ public class Chop_Controller : MonoBehaviour
             {
                 CL = GameObject.Find("ChopLine").transform;
                 CLR = CL.Find("CL1RedZone").GetComponent<RectTransform>(); 
-                isOverlappingCLR = Drag_All.IsOverlapping(k_script.knifeRect, CLR);
+                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
 
             } else if (cuts_left == 1) {
                 CL = GameObject.Find("ChopLine2").transform;
                 CLR = CL.Find("CL2RedZone").GetComponent<RectTransform>();
-                isOverlappingCLR = Drag_All.IsOverlapping(k_script.knifeRect, CLR);
+                isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
                 Debug.Log($"CL: {CL}, CLR: {CLR}, isOverlapping: {isOverlappingCLR}");
 
             }

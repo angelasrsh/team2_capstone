@@ -135,6 +135,50 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     return rect1.Overlaps(rect2);
 
   }
+
+  public static bool IsOverlappingRotated(RectTransform rectA, RectTransform rectB)
+  {
+    if (rectA == null || rectB == null)
+      return false;
+
+    Vector3[] aCorners = new Vector3[4];
+    Vector3[] bCorners = new Vector3[4];
+    rectA.GetWorldCorners(aCorners);
+    rectB.GetWorldCorners(bCorners);
+
+    // Project on both rectangles’ axes (4 total)
+    return !(HasSeparatingAxis(aCorners, bCorners, 0) ||
+             HasSeparatingAxis(aCorners, bCorners, 1) ||
+             HasSeparatingAxis(bCorners, aCorners, 0) ||
+             HasSeparatingAxis(bCorners, aCorners, 1));
+  }
+
+  private static bool HasSeparatingAxis(Vector3[] a, Vector3[] b, int edgeIndex)
+  {
+    // Edge vector (2D)
+    Vector2 edge = (Vector2)(a[(edgeIndex + 1) % 4] - a[edgeIndex]);
+    Vector2 axis = new Vector2(-edge.y, edge.x).normalized;
+
+    // Project both rects onto the axis
+    Project(a, axis, out float minA, out float maxA);
+    Project(b, axis, out float minB, out float maxB);
+
+    // If there’s a gap, no overlap on this axis
+    return maxA < minB || maxB < minA;
+  }
+
+  private static void Project(Vector3[] verts, Vector2 axis, out float min, out float max)
+  {
+    float d = Vector2.Dot((Vector2)verts[0], axis);
+    min = max = d;
+    for (int i = 1; i < verts.Length; i++)
+    {
+      d = Vector2.Dot((Vector2)verts[i], axis);
+      if (d < min) min = d;
+      if (d > max) max = d;
+    }
+  }
+  
   public void OnBeginDrag(PointerEventData eventData)
   {
     // Debug.Log("started drag");
