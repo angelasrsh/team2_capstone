@@ -6,6 +6,7 @@ using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TMPro;
 // using UnityEngine.UIElements;
 using System;
 using UnityEngine.InputSystem.LowLevel;
@@ -61,7 +62,10 @@ public class Chop_Controller : MonoBehaviour
     // private bool wasDragging = false;
 
     public List<Vector2> currentLinePoints;
-
+    [SerializeField] private TextMeshProUGUI temporary_Tutorial;
+    private bool firstSnap = true;
+    private bool firstCut = true;
+    private bool firstDrop = true;
 
     [Header("Cutting State")]
     public CuttingState currentState = CuttingState.Idle;
@@ -110,6 +114,7 @@ public class Chop_Controller : MonoBehaviour
         hasIngredientData = true;
 
         // Debug.Log("[Chp_ctrller] Received ingredient data: " + ingredient_data_var); //works
+        SetTutorialText("Drag and drop knife over line."); // DELETE LATER
         return ingredient_data_var;
     }
 
@@ -233,7 +238,6 @@ public class Chop_Controller : MonoBehaviour
                 chopLine1.gameObject.SetActive(true);
                 CLRZ.gameObject.SetActive(true);
                 cuttingLineInitialized = true;
-
             }
             else if (cuts_left == 1) //find second cut
             {
@@ -623,6 +627,11 @@ public class Chop_Controller : MonoBehaviour
         {
             currentState = CuttingState.KnifeSnapped;
             Debug.Log("Knife snapped to line!");
+            if (firstSnap)
+            {
+                SetTutorialText("Click and drag along the line back and forth until the line disappears.");
+                firstSnap = false;
+            }
         }
     }
 
@@ -825,7 +834,7 @@ public class Chop_Controller : MonoBehaviour
 
             // Clear cutting lines
             ClearCuttingLines();//TODO
-
+            HideErrorText();
             StartCoroutine(CompleteAllCuts());
         }
     }
@@ -1004,20 +1013,23 @@ public class Chop_Controller : MonoBehaviour
             {
                 Transform chopline = parent.Find("ChopLine"); // Use Transform.Find 
                 Transform CL1RedZone = chopline.Find("CL1RedZone"); // Use Transform.Find
-                RZ = CL1RedZone; 
-            } else if (cuts_left == 1)
+                RZ = CL1RedZone;
+            }
+            else if (cuts_left == 1)
             {
                 Transform chopline = parent.Find("ChopLine2"); // Use Transform.Find 
                 Transform CL2RedZone = chopline.Find("CL2RedZone"); // Use Transform.Find 
                 RZ = CL2RedZone;
             }
-            
-        } else if (ingredient_data_var.Name == "Uncut Fogshroom")
+
+        }
+        else if (ingredient_data_var.Name == "Uncut Fogshroom")
         {
             Transform chopline = parent.Find("Shroom_CL1"); // Use Transform.Find 
             Transform CL1RedZone = chopline.Find("CLRZSh1"); // Use Transform.Find
             RZ = CL1RedZone;
-        } else if (ingredient_data_var.Name == "Uncut Ficklegourd")
+        }
+        else if (ingredient_data_var.Name == "Uncut Ficklegourd")
         {
             if (cuts_left == 2)
             {
@@ -1031,16 +1043,27 @@ public class Chop_Controller : MonoBehaviour
                 Transform CL2RedZone = chopline.Find("CLRZFkl2"); // Use Transform.Find 
                 RZ = CL2RedZone;
             }
-        }else if (ingredient_data_var.Name == "Slime Gelatin")
+        }
+        else if (ingredient_data_var.Name == "Slime Gelatin")
         {
             Transform chopline = parent.Find("Slime_CL"); // Use Transform.Find 
             Transform CL2RedZone = chopline.Find("CLRZSLIME"); // Use Transform.Find 
             RZ = CL2RedZone;
-            
+
         }
-        
+
         return RZ;
     }
-    
 
+    // DELETE THIS LATER since it is temporary tutorial
+    public void SetTutorialText(string txt)
+    {
+        temporary_Tutorial.text = txt;
+        temporary_Tutorial.gameObject.SetActive(true);
+        // Invoke(nameof(HideErrorText), 2f);
+    }
+    private void HideErrorText()
+    {
+        temporary_Tutorial?.gameObject.SetActive(false);
+    }
 }

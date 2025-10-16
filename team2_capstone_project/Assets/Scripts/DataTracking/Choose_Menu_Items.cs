@@ -88,11 +88,11 @@ public class Choose_Menu_Items : MonoBehaviour
       return;
     }
 
-    if (dishesSelected.Count >= maxSelect)
-    {
-      Debug.LogWarning($"Cannot select more than {maxSelect} dishes!");
-      return;
-    }
+    // if (dishesSelected.Count >= maxSelect)
+    // {
+    //   Debug.LogWarning($"Cannot select more than {maxSelect} dishes!");
+    //   return;
+    // } commented out for now so that all dishes can be used in playtest!!
 
     dishesSelected.Add(dishType);
     Debug.Log($"{dishType} added. Total dishes: {dishesSelected.Count}");
