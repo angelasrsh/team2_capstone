@@ -12,13 +12,19 @@ public class Close_Journal_Quest_Step : Dialogue_Quest_Step
     void OnEnable()
     {
         Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
-        DelayedDialogue(0, 0, false);
+        DelayedDialogue(10, 0, false);
     }
 
     // Unsubscribe to clean up
     void OnDisable()
     {
         Game_Events_Manager.Instance.onJournalToggle -= JournalToggled;
+    }
+
+    void Start()
+    {
+        if (!Journal_Menu.Instance.isPaused) // Immediately end if journal is already closed
+            FinishQuestStep(); // Possible bug if player leaves game in-between and then returns
     }
 
 

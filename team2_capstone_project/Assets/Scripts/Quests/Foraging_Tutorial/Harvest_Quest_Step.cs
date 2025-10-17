@@ -15,7 +15,7 @@ public class Harvest_Quest_Step : Dialogue_Quest_Step
 
     void Start()
     {
-        if (Ingredient_Inventory.Instance.InventoryStacks.Length > 0)
+        if (Ingredient_Inventory.Instance.InventoryStacks.Length > 3)
             FinishQuestStep();
         else
             DelayedDialogue(0, 0, false);
@@ -29,8 +29,7 @@ public class Harvest_Quest_Step : Dialogue_Quest_Step
 
 
     private void Harvest(Ingredient_Data ing)
-    {
-        
+    {        
         FinishQuestStep(); // Finish and destroy this object 
             
     }

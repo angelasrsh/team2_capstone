@@ -57,7 +57,7 @@ public class Dialogue_Quest_Step : Quest_Step
     /// 
     /// </summary>
     /// <param name="key"></param>
-    /// <param name="delayStart">  Seconds to wait before displaying; default 0 </param>
+    /// <param name="delayStart">  Seconds to wait before displaying; default 0; doesn't do anything right now </param>
     /// <param name="delayEnd"> Seconds to wait before hiding. Text will remain on screen until user action if delayHide is 0 or unused </param>
     protected void DelayedDialogue(float delayStart = 0, float delayEnd = 0, bool disablePlayerInput = true, string text = "")
     {
