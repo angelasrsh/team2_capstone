@@ -16,6 +16,14 @@ public class Close_Inventory_Quest_Step : Dialogue_Quest_Step
         Game_Events_Manager.Instance.onInventoryToggle -= InventoryOpened;
     }
 
+    void Start()
+    {
+        if (Tutorial_Manager.Instance.hasClosedInventory)
+            FinishQuestStep();
+        else
+            DelayedDialogue(10, 0, false);
+    }
+
 
     private void InventoryOpened(bool isOpen)
     {

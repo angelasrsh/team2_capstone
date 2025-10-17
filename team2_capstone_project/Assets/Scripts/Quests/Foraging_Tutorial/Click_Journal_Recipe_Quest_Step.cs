@@ -7,6 +7,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     private bool journalHasBeenOpened = false;
     private bool recipeClicked = false;
     private bool journalHasBeenClosed = false;
+    private bool journalRecipeClickFirstDialogueComplete = false;
     private bool journalRecipeClickDialogueComplete = false;
     private bool journalRecipeClickDialogueStarted = false;
 
@@ -34,15 +35,19 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
 
     private void Start()
     {
-        DelayedDialogue(0, 0, false);
-        
+        DelayedDialogue(0, 0, false);        
     }
 
     private void onDialogComplete(string dialogKey)
     {
+        // So we don't start the next dialogue too soon
+        if (dialogKey == "Journal.Click_Journal_Recipe")
+            journalRecipeClickFirstDialogueComplete = true; 
         // Need to make sure player actually sees this instruction
         if (dialogKey == "Journal.Click_Journal_Recipe_Text")
             journalRecipeClickDialogueComplete = true;
+        
+
             
         checkPlayDialog();
     }
@@ -54,16 +59,19 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     {
         if (journalHasBeenOpened && !recipeClicked) // Opened journal but didn't click recipe
             DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe");
-        else if (recipeClicked && !journalRecipeClickDialogueStarted)
+        else if (recipeClicked && !journalRecipeClickDialogueStarted && journalRecipeClickFirstDialogueComplete)
         { // Opened journal and clicked recipe but didn't get instruction yet
             DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe_Text");
             journalRecipeClickDialogueStarted = true;
         }
-        else if (recipeClicked && !journalHasBeenClosed) // Did steps but journal is still open (give reminder)
-            DelayedDialogue(10, 0, false, "Journal.Close_Journal"); // Play in 10 secs (or not if quest is finished and destroyed)
-        
+        else if (recipeClicked && !journalHasBeenClosed && journalRecipeClickDialogueComplete) // Did steps and read dialogue but journal is still open
+            if (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile)
+                DelayedDialogue(10, 0, false, "Journal.Close_Journal_PC"); // Play in 10 secs (or not if quest is finished and destroyed)
+            else
+                DelayedDialogue(10, 0, false, "Journal.Close_Journal_Mobile"); // Play in 10 secs (or not if quest is finished and destroyed)
+
         if (journalRecipeClickDialogueComplete && journalHasBeenClosed && journalHasBeenOpened && recipeClicked)
-            FinishQuestStep();
+                FinishQuestStep();
 
     }
     

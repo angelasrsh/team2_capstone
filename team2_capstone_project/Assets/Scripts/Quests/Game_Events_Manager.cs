@@ -150,7 +150,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onQuestStateChange != null)
             onQuestStateChange(quest);
-        Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
+        // Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
     }
 
 

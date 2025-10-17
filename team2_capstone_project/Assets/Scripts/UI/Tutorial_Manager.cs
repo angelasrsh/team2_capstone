@@ -41,7 +41,6 @@ public class Tutorial_Manager : MonoBehaviour
     private Dictionary<String, Quest_Info_SO> RoomTutorialMap = new Dictionary<String, Quest_Info_SO>();
     private Dictionary<String, Quest_State> QuestIDQuestStateMap = new Dictionary<String, Quest_State>(); // Map quest IDs to quest states
 
-    //private int instructionIndex = 0;
 
     // Set variables
     private void Awake()
@@ -69,10 +68,8 @@ public class Tutorial_Manager : MonoBehaviour
         {
             QuestIDQuestStateMap[TutorialList[i].id] = Quest_State.REQUIREMENTS_NOT_MET;
             QuestIDQuestStateMap[TutorialList[i].id] = Quest_Manager.Instance.GetQuestByID(TutorialList[i].id).state;
-            Helpers.printLabeled(this, TutorialList[i].id + QuestIDQuestStateMap[TutorialList[i].id].ToString());
+            // Helpers.printLabeled(this, TutorialList[i].id + QuestIDQuestStateMap[TutorialList[i].id].ToString());
         }
-
-        Helpers.printLabeled(this, "");
             
 
     }
@@ -84,10 +81,24 @@ public class Tutorial_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
         Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
 
+        // State tracking for now
+        Game_Events_Manager.Instance.onInventoryToggle += InventoryToggle;
+
         // For detecting when we enter a room and need to start a tutorial
         SceneManager.sceneLoaded += CheckStartTutorial;
 
         CheckStartTutorial(SceneManager.GetActiveScene());
+    }
+
+    
+    // Clean up by unsubscribing
+    private void OnDisable()
+    {
+        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
+        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
+
+        // State tracking for now
+        Game_Events_Manager.Instance.onInventoryToggle += InventoryToggle;
     }
 
     /// <summary>
@@ -108,24 +119,16 @@ public class Tutorial_Manager : MonoBehaviour
             return;
 
         String tutorialID = RoomTutorialMap[scene.name].id;
-        Helpers.printLabeled(this, tutorialID);
-        Helpers.printLabeled(this, (QuestIDQuestStateMap.ContainsKey(tutorialID)).ToString() + (QuestIDQuestStateMap[tutorialID] == Quest_State.CAN_START).ToString());
 
         // If a tutorial exists and is ready to start, start it
         if (QuestIDQuestStateMap.ContainsKey(tutorialID) && QuestIDQuestStateMap[tutorialID] == Quest_State.CAN_START)
         {
             //Debug.Log($"[T_MAN] Auto-starting tutorial {tutorialID}");
             StartTutorial(tutorialID);
-            Helpers.printLabeled(this, "Starting" + tutorialID);
+            // Helpers.printLabeled(this, "Starting" + tutorialID);
         }
     }
 
-    // Clean up by unsubscribing
-    private void OnDisable()
-    {
-        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
-        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
-    }
 
     /// <summary>
     /// Begin the tutorial (any quest) specified by the ID.
@@ -167,5 +170,21 @@ public class Tutorial_Manager : MonoBehaviour
         //     setText(questInfoForCanvas.dialogueList[stepIndex]);
         // }
     }
+
+    #region State_Variables_For_Persistence_For_Now
+    /// State variables that are here until I have a better way of saving info
+
+    public bool hasOpenedInventory = false;
+    public bool hasClosedInventory = false;
+
+    private void InventoryToggle(bool isOpen)
+    {
+        if (isOpen)
+            hasOpenedInventory = true;
+        else if (hasOpenedInventory)
+            hasClosedInventory = false;
+    }
+    
+    #endregion
 
 }

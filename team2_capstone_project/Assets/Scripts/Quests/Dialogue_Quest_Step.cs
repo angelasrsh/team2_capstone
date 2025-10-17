@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 /// <summary>
-/// Quest step with functions to play dialogue
+/// Quest step with functions to play dialogue. Please call base.onEnable and base.onDisable!
 /// </summary>
 public class Dialogue_Quest_Step : Quest_Step
 {
@@ -21,19 +21,22 @@ public class Dialogue_Quest_Step : Quest_Step
     public bool QuestStepComplete { get; set; } = false;
 
     protected bool dialogueComplete { get; set; } = false;
+    
+    // private state variables
+    private bool postStepTextKeyDialogStarted = false;
 
 
     private Dialogue_Manager dm;
 
     virtual protected void OnEnable()
     {
-        Game_Events_Manager.Instance.onEndDialogBox += setDialogComplete;
+        Game_Events_Manager.Instance.onDialogueComplete += setDialogComplete;
         // Game_Events_Manager.Instance.onEndDialogBox += endQuest;
     }
 
     virtual protected void OnDisable()
     {
-        Game_Events_Manager.Instance.onEndDialogBox -= setDialogComplete;
+        Game_Events_Manager.Instance.onDialogueComplete -= setDialogComplete;
         // Game_Events_Manager.Instance.onEndDialogBox += endQuest;
     }
 
@@ -48,10 +51,16 @@ public class Dialogue_Quest_Step : Quest_Step
             dialogueComplete = true;
         else if (postStepTextKey == "" && (dialogKey == textKey || dialogKey == textKeyPC))
             dialogueComplete = true;
-
+        else if (postStepTextKey != "" && !postStepTextKeyDialogStarted)
+        {
+            DelayedDialogue(0, 0, false, postStepTextKey);
+            postStepTextKeyDialogStarted = true;
+        }
+       
         if (dialogueComplete && QuestStepComplete)
             FinishQuestStep();
     }
+    
 
     /// <summary>
     /// 

@@ -17,7 +17,6 @@ public class Ingredient_Inventory : Inventory
   public static Ingredient_Inventory Instance { get; private set; }
   [HideInInspector] public List<Ingredient_Data> AllIngredients;
     private Ingredient_Data water;
-    public int TotalIngCount = 0;
   public Dictionary<String, Ingredient_Data> IngredientDict = new Dictionary<string, Ingredient_Data>(); // Make private once we know it works
 
   new private void Awake()
@@ -133,6 +132,7 @@ public class Ingredient_Inventory : Inventory
 
     int amtRemoved = count - amtLeftToRemove;
     Debug.Log($"[Invtory] Removed {amtRemoved} {IngrEnumToData(type).Name}");
+    TotalIngCount -= amtRemoved;
     // Return however much was added
     return amtRemoved;
   }
