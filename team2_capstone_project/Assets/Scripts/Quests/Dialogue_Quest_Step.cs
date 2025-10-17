@@ -6,6 +6,7 @@ using UnityEngine;
 
 /// <summary>
 /// Quest step with functions to play dialogue. Please call base.onEnable and base.onDisable!
+/// And call DelayedDialogue to say something.
 /// </summary>
 public class Dialogue_Quest_Step : Quest_Step
 {

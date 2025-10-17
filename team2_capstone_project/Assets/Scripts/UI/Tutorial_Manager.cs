@@ -19,6 +19,9 @@ using UnityEngine.SceneManagement;
 /// When adding new tutorials, you must 
 ///     1) Add their S.O.s to the TutorialList in the Inspector
 ///     2) In the matching position, add the tutorial's room to the TutorialRoomIDs list in the Inspector
+///     3) Make sure the Quest is in the Quest Database
+///     4) Make sure the scene has a Quest_Manager, Tutorial_Manager, and Dialog_UI
+///     5) Create and add all quest step prefabs you want to the quest S.O.
 /// 
 /// </summary>
 public class Tutorial_Manager : MonoBehaviour

@@ -264,6 +264,15 @@ public class Game_Events_Manager : MonoBehaviour
 
     #endregion
 
+    #region Minigame_Events
+    public event Action<Ingredient_Data, int> onCombineAddToTable;
+    public void CombineAddToTable(Ingredient_Data ing, int type)
+    {
+        onCombineAddToTable?.Invoke(ing, type);
+    }
+
+    #endregion
+
     
 
 }
