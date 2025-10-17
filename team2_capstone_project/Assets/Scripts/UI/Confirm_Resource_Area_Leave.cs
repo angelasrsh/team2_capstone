@@ -21,7 +21,8 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     private void Awake()
     {
         leaveResourceAreaCanvas.enabled = false;
-        warningLeaveResourceAreaCanvas.enabled = false;
+        if (warningLeaveResourceAreaCanvas != null)
+            warningLeaveResourceAreaCanvas.enabled = false;
 
         // Subscribe to scene changes to rebind input
         SceneManager.sceneLoaded += OnSceneLoadedRebind;
@@ -99,7 +100,7 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     private void OpenConfirmation(Player_Controller playerController)
     {
-        if (!haveEnoughResources() && SceneManager.GetActiveScene().name == "Foraging_Area_Whitebox")
+        if (!haveEnoughResources() && SceneManager.GetActiveScene().name == "Foraging_Area_Whitebox" && warningLeaveResourceAreaCanvas != null)
             warningLeaveResourceAreaCanvas.enabled = true; // Maybe just set text later?
         else
             leaveResourceAreaCanvas.enabled = true;

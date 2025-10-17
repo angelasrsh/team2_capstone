@@ -8646,6 +8646,7 @@ GameObject:
   - component: {fileID: 3576415847633597228}
   - component: {fileID: 3576415847633597229}
   - component: {fileID: 3576415847633597230}
+  - component: {fileID: 3576415847633597233}
   m_Layer: 0
   m_Name: Room_Change_Trigger
   m_TagString: Untagged
@@ -8654,6 +8655,22 @@ GameObject:
   m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &3576415847633597232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3576415847633597231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc616c657303e54eaa6e5da1bb9debb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leaveResourceAreaCanvas: {fileID: 1897954955}
+  warningLeaveResourceAreaCanvas: {fileID: 0}
+  currentRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
+  exitingTo: 3
+--- !u!114 &3576415847633597233
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
