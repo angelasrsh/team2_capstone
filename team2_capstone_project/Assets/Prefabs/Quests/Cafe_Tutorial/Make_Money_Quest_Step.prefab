@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5619474904763338624}
   - component: {fileID: 6118315580192508429}
   m_Layer: 0
-  m_Name: Get_Money
+  m_Name: Make_Money_Quest_Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,10 +41,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1075450465120699693}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be3f2bc71bbfeed429fe46705a230657, type: 3}
+  m_Script: {fileID: 11500000, guid: 0580197645873f6468a2cdc6b38222ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textKey: Journal.Get_Money
+  textKey: Journal.Make_Money
   textKeyPC: 
+  postStepTextKey: 
   InstructionWaitTime: 0
   PopupWaitTime: 10

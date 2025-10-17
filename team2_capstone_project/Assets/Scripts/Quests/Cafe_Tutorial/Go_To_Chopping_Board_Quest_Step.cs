@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Need to update this
+/// </summary>
 public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
 {
+    public Item_Data checkfor; //temp
     void OnEnable()
     {
         SceneManager.sceneLoaded += onSceneLoaded;
-        DelayedDialogue(1, 0);
+        base.OnEnable();
 
     }
 
@@ -16,6 +20,7 @@ public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
     void OnDisable()
     {
         SceneManager.sceneLoaded -= onSceneLoaded;
+        base.OnDisable();
     }
 
     void Start()
@@ -26,8 +31,8 @@ public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
 
     private void onSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Chopping_Minigame")
+        if (scene.name == "Updated_Restaurant" && Dish_Tool_Inventory.Instance.HasItem(checkfor))
             FinishQuestStep();
-            
+
     }
 }
