@@ -214,58 +214,63 @@ public class Customer_Controller : MonoBehaviour
     {
         var dailyMenu = Choose_Menu_Items.instance?.GetSelectedDishes();
         List<Dish_Data> dailyMenuDishes = new List<Dish_Data>();
-        List<Dish_Data> favoriteDishes = new List<Dish_Data>();
-        List<Dish_Data> neutralDishes = new List<Dish_Data>();
+        // List<Dish_Data> favoriteDishes = new List<Dish_Data>();
+        // List<Dish_Data> neutralDishes = new List<Dish_Data>();
 
         if (dailyMenu != null)
         {
             foreach (var dishEnum in dailyMenu)
             {
                 Dish_Data dish = Game_Manager.Instance.dishDatabase.GetDish(dishEnum);
-                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                    dailyMenuDishes.Add(dish);
+                // if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+                dailyMenuDishes.Add(dish);
             }
+            return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
         }
-
-        if (data.favoriteDishes != null)
+        else
         {
-            foreach (var dish in data.favoriteDishes)
-                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                    favoriteDishes.Add(dish);
+            List<Dish_Data> allDishes = Game_Manager.Instance.dishDatabase.GetAllDishes();
+            return allDishes[UnityEngine.Random.Range(0, allDishes.Count)];
         }
+        // if (data.favoriteDishes != null)
+        // {
+        //     foreach (var dish in data.favoriteDishes)
+        //         if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+        //             favoriteDishes.Add(dish);
+        // }
 
-        if (data.neutralDishes != null)
-        {
-            foreach (var dish in data.neutralDishes)
-                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                    neutralDishes.Add(dish);
-        }
+        // if (data.neutralDishes != null)
+        // {
+        //     foreach (var dish in data.neutralDishes)
+        //         if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+        //             neutralDishes.Add(dish);
+        // }
 
         // Weighted roll
-        int roll = UnityEngine.Random.Range(0, 100);
+        // int roll = UnityEngine.Random.Range(0, 100);
 
-        if (roll < 70 && dailyMenuDishes.Count > 0)
-            return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
-        else if (roll < 90 && favoriteDishes.Count > 0)
-            return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
-        else if (neutralDishes.Count > 0)
-            return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
+        // if (roll < 70 && dailyMenuDishes.Count > 0)
+        //     return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
+        // else if (roll < 90 && favoriteDishes.Count > 0)
+        //     return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
+        // else if (neutralDishes.Count > 0)
+        //     return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
 
-        // Final fallback: pick *any cookable dish* from the menu
-        var allCookable = new List<Dish_Data>();
-        foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes())
-        {
-            if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                allCookable.Add(dish);
-        }
+        // // Final fallback: pick *any cookable dish* from the menu
+        // var allCookable = new List<Dish_Data>();
+        // foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes())
+        // {
+        //     if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+        //         allCookable.Add(dish);
+        // }
 
-        if (allCookable.Count > 0)
-            return allCookable[UnityEngine.Random.Range(0, allCookable.Count)];
+        // if (allCookable.Count > 0)
+        //     return allCookable[UnityEngine.Random.Range(0, allCookable.Count)];
 
-        // Nuclear fallback: no cookable dishes, pick random (to avoid nulls)
-        Debug.LogWarning($"[Customer_Controller] {data.customerName} found no cookable dishes. Picking truly random.");
-        var allDishes = Game_Manager.Instance.dishDatabase.GetAllDishes();
-        return allDishes.Count > 0 ? allDishes[UnityEngine.Random.Range(0, allDishes.Count)] : null;
+        // // Nuclear fallback: no cookable dishes, pick random (to avoid nulls)
+        // Debug.LogWarning($"[Customer_Controller] {data.customerName} found no cookable dishes. Picking truly random.");
+        // var allDishes = Game_Manager.Instance.dishDatabase.GetAllDishes();
+        // return allDishes.Count > 0 ? allDishes[UnityEngine.Random.Range(0, allDishes.Count)] : null;
     }
 
 
@@ -306,7 +311,7 @@ public class Customer_Controller : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             playerInRange = true;
-            Debug.Log("Player in range of customer");
+            // Debug.Log("Player in range of customer");
         }
     }
 
@@ -315,7 +320,7 @@ public class Customer_Controller : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             playerInRange = false;
-            Debug.Log("Player out of range of customer");
+            // Debug.Log("Player out of range of customer");
         }
     }
 
@@ -490,6 +495,13 @@ public class Customer_Controller : MonoBehaviour
     #region State Management
     public Customer_State GetState()
     {
+        Debug.Log("[Customer_Controller]: customer: " + data.customerName + " being saved.");
+        if (requestedDish == null)
+            Debug.Log("[Customer_Controller]: requested dish is null");
+        else
+            Debug.Log("[Customer_Controller]: requested dish: " + requestedDish.name + " being saved.");
+        Debug.Log("[Customer_Controller]: hasRequestedDish: " + hasRequestedDish + ".");
+        Debug.Log("[Customer_Controller]: served: " + (requestedDish == null && hasRequestedDish) + ".");
         return new Customer_State
         {
             customerName = data.customerName,
@@ -510,9 +522,10 @@ public class Customer_Controller : MonoBehaviour
         Dish_Data found = null;
 
         // Look in all known arrays
-        foreach (var dish in data.favoriteDishes) if (dish.name == dishName) found = dish;
-        foreach (var dish in data.neutralDishes) if (dish.name == dishName) found = dish;
-        foreach (var dish in data.dislikedDishes) if (dish.name == dishName) found = dish;
+        // foreach (var dish in data.favoriteDishes) if (dish.name == dishName) found = dish;
+        // foreach (var dish in data.neutralDishes) if (dish.name == dishName) found = dish;
+        // foreach (var dish in data.dislikedDishes) if (dish.name == dishName) found = dish;
+        foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes()) if (dish.name == dishName) found = dish;
 
         if (found != null)
         {
