@@ -278,78 +278,85 @@ public class Ingredient_Inventory : Inventory
 
   }
 
-  /// <summary>
-  /// Get the corresponding Ingredient_Data scriptable object for a given IngredientType enum.
-  /// 
-  /// Requires that the Ingredient_Inventory AllIngredientsList is up to date!
-  /// 
-  /// Must be better ways to do this but for now, this is the best I've got.
-  /// </summary>
-  /// <param name="t"> Ingredient enum </param>
-  /// <returns> Reference to a corresponding Ingredient_Data scriptable object </returns>
-  public Ingredient_Data IngrEnumToData(IngredientType t)
-  {
-    String name = IngrEnumToName(t);
-    if (IngredientDict.ContainsKey(name))
-      return IngredientDict[IngrEnumToName(t)];
-    else
-      Debug.LogWarning($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
-    return null;
-  }
-  #endregion
+    /// <summary>
+    /// Get the corresponding Ingredient_Data scriptable object for a given IngredientType enum.
+    /// 
+    /// Requires that the Ingredient_Inventory AllIngredientsList is up to date!
+    /// 
+    /// Must be better ways to do this but for now, this is the best I've got.
+    /// </summary>
+    /// <param name="t"> Ingredient enum </param>
+    /// <returns> Reference to a corresponding Ingredient_Data scriptable object </returns>
+    public Ingredient_Data IngrEnumToData(IngredientType t)
+    {
+        String name = IngrEnumToName(t);
+        if (IngredientDict.ContainsKey(name))
+            return IngredientDict[IngrEnumToName(t)];
+        else
+            Debug.LogWarning($"[Ingr_Intry] {IngrEnumToName(t)} not found in ingredient dictionary");
+        return null;
+    }
+    #endregion
 
-  /// <summary>
-  /// get the total count of a specific ingredient in the inventory by name
-  /// used for checking if we have enough ingredients to make a dish in Journal_Menu
-  /// </summary>
-  /// <param name="ingredientName"></param>
-  /// <returns></returns>
-  // public int GetItemCount(string ingredientName)
-  // {
-  //   int total = 0;
-  //   foreach (Item_Stack stack in InventoryStacks)
-  //   {
-  //     if (stack != null && stack.resource != null && stack.resource.Name == ingredientName)
-  //     {
-  //       total += stack.amount;
-  //     }
-  //   }
-  //   return total;
-  // }
+    /// <summary>
+    /// get the total count of a specific ingredient in the inventory by name
+    /// used for checking if we have enough ingredients to make a dish in Journal_Menu
+    /// </summary>
+    /// <param name="ingredientName"></param>
+    /// <returns></returns>
+    // public int GetItemCount(string ingredientName)
+    // {
+    //   int total = 0;
+    //   foreach (Item_Stack stack in InventoryStacks)
+    //   {
+    //     if (stack != null && stack.resource != null && stack.resource.Name == ingredientName)
+    //     {
+    //       total += stack.amount;
+    //     }
+    //   }
+    //   return total;
+    // }
 
-  public int GetItemCount(Ingredient_Data ingredient)
-  {
-      int total = 0;
+    public int GetItemCount(IngredientType type)
+    {
+        Ingredient_Data data = IngrEnumToData(type);
+        return GetItemCount(data);
+    }
 
-      foreach (Item_Stack stack in InventoryStacks)
-      {
-          if (stack == null || stack.resource == null) continue;
+    /// Return the number of ingredients of that type in the inventory
+    public int GetItemCount(Ingredient_Data ingredient)
+    {
+        int total = 0;
 
-          // Direct match
-          if (stack.resource == ingredient)
-          {
-              total += stack.amount;
-              continue;
-          }
+        foreach (Item_Stack stack in InventoryStacks)
+        {
+            if (stack == null || stack.resource == null) continue;
 
-          // Check "countsAs" from the inventory item side
-          if (stack.resource is Ingredient_Data invIngredient)
-          {
-              if (invIngredient.countsAs != null && invIngredient.countsAs.Contains(ingredient))
-              {
-                  total += stack.amount;
-                  continue;
-              }
-          }
+            // Direct match
+            if (stack.resource == ingredient)
+            {
+                total += stack.amount;
+                continue;
+            }
 
-          // also check "countsAs" from the ingredient side
-          if (ingredient.countsAs != null && ingredient.countsAs.Contains(stack.resource as Ingredient_Data))
-          {
-              total += stack.amount;
-          }
-      }
-      return total;
-  }
+            // Check "countsAs" from the inventory item side
+            if (stack.resource is Ingredient_Data invIngredient)
+            {
+                if (invIngredient.countsAs != null && invIngredient.countsAs.Contains(ingredient))
+                {
+                    total += stack.amount;
+                    continue;
+                }
+            }
+
+            // also check "countsAs" from the ingredient side
+            if (ingredient.countsAs != null && ingredient.countsAs.Contains(stack.resource as Ingredient_Data))
+            {
+                total += stack.amount;
+            }
+        }
+        return total;
+    }
 
   /// <returns>Water's ingredient data</returns>
   public Ingredient_Data getWaterData()
