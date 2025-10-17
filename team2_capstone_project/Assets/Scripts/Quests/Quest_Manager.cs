@@ -58,6 +58,8 @@ public class Quest_Manager : MonoBehaviour
 
         SceneManager.sceneLoaded += CheckPauseQuests;
 
+        UnlockQuests();
+
 
     }
 
@@ -100,7 +102,10 @@ public class Quest_Manager : MonoBehaviour
         return meetsRequirements;
     }
 
-    private void Update()
+    /// <summary>
+    /// Check all quests in the database and set the state to CAN_START if requirements have been met
+    /// </summary>
+    public void UnlockQuests()
     {
         foreach (Quest q in questMap.Values)
         {
@@ -111,7 +116,7 @@ public class Quest_Manager : MonoBehaviour
 
     private void StartQuest(string id)
     {
-        Debug.Log($"[Q_MAN] started quest {id}");
+        // Debug.Log($"[Q_MAN] started quest {id}");
         Quest quest = GetQuestByID(id);
         quest.InstantiateCurrentQuestStep(this.transform);
         ChangeQuestState(quest.Info.id, Quest_State.IN_PROGRESS);
@@ -119,7 +124,7 @@ public class Quest_Manager : MonoBehaviour
 
     private void AdvanceQuest(string id)
     {
-        Debug.Log($"Q_MAN advanced quest {id}");
+        // Debug.Log($"Q_MAN advanced quest {id}");
         Quest quest = GetQuestByID(id);
         quest.MoveToNextStep();
         if (quest.CurrentStepExists())
@@ -134,7 +139,7 @@ public class Quest_Manager : MonoBehaviour
     /// <param name="id"></param>
     private void FinishQuest(string id)
     {
-        Debug.Log($"Q_MAN finished quest {id}");
+        // Debug.Log($"Q_MAN finished quest {id}");
         Quest quest = GetQuestByID(id);
         // claim rewards if applicable
         ChangeQuestState(quest.Info.id, Quest_State.FINISHED);
@@ -149,7 +154,7 @@ public class Quest_Manager : MonoBehaviour
     {
         Quest quest = GetQuestByID(id);
         ChangeQuestState(id, quest.state); // Re-broadcast quest with the same state (only step has changed)
-        Debug.Log($"[Q_MAN] Quest Step Change {id} {quest.state} to step {stepIndex}");
+        // Debug.Log($"[Q_MAN] Quest Step Change {id} {quest.state} to step {stepIndex}");
     }
 
     /// <summary>

@@ -23,9 +23,6 @@ public class Player_Progress : ScriptableObject
     Instance = this;
     // Initialize with default unlocks if needed
     UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-    UnlockDish(Dish_Data.Dishes.Honey_Jelly_Drink);
-    UnlockDish(Dish_Data.Dishes.Honey_Glazed_Eleonoras);
-    UnlockDish(Dish_Data.Dishes.Boba_Milk_Drink);
     // UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
     UnlockNPC(CustomerData.NPCs.Elf);
     UnlockNPC(CustomerData.NPCs.Phrog);

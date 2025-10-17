@@ -150,7 +150,7 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onQuestStateChange != null)
             onQuestStateChange(quest);
-        Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
+        // Debug.Log($"[G_E_M] Changing state of quest {quest.Info.id} to {quest.state}");
     }
 
 
@@ -180,10 +180,16 @@ public class Game_Events_Manager : MonoBehaviour
             onRoomChange(currentRoom, exitingTo);
     }
 
+    public event Action<bool> onSetExitsBlocked;
+    public void SetExitsBlocked(bool isBlocked)
+    {
+        onSetExitsBlocked?.Invoke(isBlocked);
+    }
+
     #endregion
 
-    /////////// CAFE INTERACTION EVENTS /////////
-    #region Cafe Interaction Events
+    /////////// INTERACTION EVENTS /////////
+    #region Interaction Events
     public event Action onGetOrder;
     public void GetOrder()
     {
@@ -198,19 +204,31 @@ public class Game_Events_Manager : MonoBehaviour
             onServeCustomer();
     }
 
-    public event Action onBeginDialogBox;
-    public void BeginDialogueBox()
+    
+    public event Action<string> onBeginDialogBox;
+    public void BeginDialogueBox(string dialogKey)
     {
         if (onBeginDialogBox != null)
-            onBeginDialogBox();
+            onBeginDialogBox(dialogKey);
     }
 
-    public event Action onEndDialogBox;
-    public void EndDialogBox()
+    // When dialogue box is closed
+    public event Action<string> onEndDialogBox;
+    public void EndDialogBox(string dialogKey)
     {
         if (onEndDialogBox != null)
-            onEndDialogBox();
+            onEndDialogBox(dialogKey);
     }
+
+    /// <summary>
+    /// Last dialogue is played but the box isn't necessarily closed yet
+    /// </summary>
+    public event Action<string> onDialogueComplete;
+    public void DialogueComplete(string dialogKey)
+    {
+        onDialogueComplete?.Invoke(dialogKey);
+    }
+    
     #endregion
 
 
@@ -242,6 +260,15 @@ public class Game_Events_Manager : MonoBehaviour
     {
         if (onDishRemove != null)
             onDishRemove(dish);
+    }
+
+    #endregion
+
+    #region Minigame_Events
+    public event Action<Ingredient_Data, int> onCombineAddToTable;
+    public void CombineAddToTable(Ingredient_Data ing, int type)
+    {
+        onCombineAddToTable?.Invoke(ing, type);
     }
 
     #endregion

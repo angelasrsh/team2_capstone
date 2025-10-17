@@ -40,6 +40,9 @@ public class Inventory : MonoBehaviour
 
   [field: SerializeField] public Item_Stack[] InventoryStacks { get; protected set; }
 
+    // Count total amount of items
+    public int TotalIngCount = 0;
+
   /// <summary>
   /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
   /// </summary>
@@ -117,13 +120,16 @@ public class Inventory : MonoBehaviour
 
     // Broadcast to other listening events
     if (type is Ingredient_Data ing)
-      Game_Events_Manager.Instance.ResourceAdd(ing);
+        Game_Events_Manager.Instance.ResourceAdd(ing);
     else if (type is Dish_Data dish)
-      Game_Events_Manager.Instance.DishAdd(dish);
+        Game_Events_Manager.Instance.DishAdd(dish);
 
+
+    int amtAdded = count - amtLeftToAdd;
+    TotalIngCount += amtAdded;
     updateInventory();
-    Debug.Log($"[Inventory] Added {count - amtLeftToAdd} {type.Name}");
-    return count - amtLeftToAdd; // Return how many items were actually added
+    Debug.Log($"[Inventory] Added {amtAdded} {type.Name}");
+    return amtAdded; // Return how many items were actually added
   }
 
   /// <summary>
@@ -159,10 +165,12 @@ public class Inventory : MonoBehaviour
     else if (type is Dish_Data)
       Game_Events_Manager.Instance.DishRemove((Dish_Data)type);
 
-    updateInventory(); // Remove empty elements
-    Debug.Log($"[Invtory] Removed {count - amtLeftToRemove} {type.Name}");
+    int amtRemoved = count - amtLeftToRemove;
+    TotalIngCount += amtRemoved;
+        updateInventory(); // Remove empty elements
+    Debug.Log($"[Invtory] Removed {amtRemoved} {type.Name}");
     // Return however much was added
-    return count - amtLeftToRemove;
+    return amtRemoved;
   }
 
   /// <summary>

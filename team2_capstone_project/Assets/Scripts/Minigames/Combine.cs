@@ -176,10 +176,11 @@ public class Combine : MonoBehaviour
     ingredientImages[zone].gameObject.SetActive(true);
 
     if (howManyOfEach.ContainsKey(ing.ingredientType))
-      howManyOfEach[ing.ingredientType]++;
+        howManyOfEach[ing.ingredientType]++;
     else
-      howManyOfEach[ing.ingredientType] = 1;
-      
+        howManyOfEach[ing.ingredientType] = 1;
+
+    Game_Events_Manager.Instance.CombineAddToTable(ing, zone);
     return true;
   }
 
