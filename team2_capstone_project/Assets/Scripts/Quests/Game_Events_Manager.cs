@@ -204,18 +204,18 @@ public class Game_Events_Manager : MonoBehaviour
             onServeCustomer();
     }
 
-    public event Action onBeginDialogBox;
-    public void BeginDialogueBox()
+    public event Action<string> onBeginDialogBox;
+    public void BeginDialogueBox(string dialogKey)
     {
         if (onBeginDialogBox != null)
-            onBeginDialogBox();
+            onBeginDialogBox(dialogKey);
     }
 
-    public event Action onEndDialogBox;
-    public void EndDialogBox()
+    public event Action<string> onEndDialogBox;
+    public void EndDialogBox(string dialogKey)
     {
         if (onEndDialogBox != null)
-            onEndDialogBox();
+            onEndDialogBox(dialogKey);
     }
     #endregion
 

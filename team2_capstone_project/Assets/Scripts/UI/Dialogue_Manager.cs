@@ -159,6 +159,8 @@ public class Dialogue_Manager : MonoBehaviour
     /// </summary>
     public void PlayScene(string aDialogKey, bool disablePlayerInput = true)
     {
+        Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
+
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0) 
         {
             PlayNextDialog(disablePlayerInput);
@@ -248,7 +250,7 @@ public class Dialogue_Manager : MonoBehaviour
     public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
     {
         // Tell Game events manager so we don't overlap the dialogue box
-        Game_Events_Manager.Instance.BeginDialogueBox();
+        Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
         if (dialogQueue.Count > 0)
         {
@@ -346,7 +348,7 @@ public class Dialogue_Manager : MonoBehaviour
         Player_Input_Controller.instance.EnablePlayerInput();
 
         onDialogComplete?.Invoke();
-        Game_Events_Manager.Instance.EndDialogBox(); // Could probably merge with above
+        Game_Events_Manager.Instance.EndDialogBox(myDialogKey); // Could probably merge with above
     }
 
     public void ResetDialogForKey(string aDialogKey)
