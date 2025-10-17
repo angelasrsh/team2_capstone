@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: 09_Honey
+  m_Name: 22_Cooked_Cut_Ficklegourd
   m_EditorClassIdentifier: 
-  Name: Honey
+  Name: Cooked Ficklegourd
   Amount: 0
-  Image: {fileID: 21300000, guid: 2dd07f3c61c57dd479461f736157a5a7, type: 3}
+  Image: {fileID: 21300000, guid: 45c5f08a384347c45aff58122825546d, type: 3}
   tier: 0
   price: 0
   rarityWeight: 1
@@ -26,13 +26,15 @@ MonoBehaviour:
     almostEnd: 0
     cookedEnd: 0
     overcookedEnd: 0
-  description: Sweet.
+  description: 
   CutIngredientImages: []
   usedInDishes:
-  - {fileID: 11400000, guid: dc41864eb9c4b804a86902d1e1e68ee7, type: 2}
   - {fileID: 11400000, guid: 6027772cc3743e64d9acc12d85d3db55, type: 2}
   makesIngredient: []
-  ingredientsNeeded: []
-  ingredientType: 10
+  ingredientsNeeded:
+  - ingredient: {fileID: 11400000, guid: 2f2c941050fe36842acdb27d04b32b83, type: 2}
+    amountRequired: 1
+    method: 3
+  ingredientType: 23
   CombinedCutPiecePrefab: {fileID: 0}
   cutsRequired: 0

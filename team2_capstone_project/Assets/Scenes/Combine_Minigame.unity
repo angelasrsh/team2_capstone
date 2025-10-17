@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.30692166, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 42727592}
   - component: {fileID: 42727591}
   m_Layer: 0
-  m_Name: Ingredient (1)
+  m_Name: Ingredient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -287,7 +287,7 @@ GameObject:
   - component: {fileID: 63462330}
   - component: {fileID: 63462329}
   m_Layer: 0
-  m_Name: Ingredient (5)
+  m_Name: Ingredient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1355,7 +1355,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: c5b2a46b578a60a468d0cb31729c2ab1, type: 2}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.size
-      value: 3
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].amount
@@ -1374,6 +1374,18 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[4].amount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[5].amount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[6].amount
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].resource
       value: 
       objectReference: {fileID: 11400000, guid: 55ef2e90d6ee21745bcc07d91b3435a2, type: 2}
@@ -1388,7 +1400,19 @@ PrefabInstance:
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[3].resource
       value: 
-      objectReference: {fileID: 11400000, guid: 8b7cb872142e2234eb85044271bb059e, type: 2}
+      objectReference: {fileID: 11400000, guid: f29135cfafbe8f941a8be52d30fdd332, type: 2}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[4].resource
+      value: 
+      objectReference: {fileID: 11400000, guid: 9a13c31c8f305da4ea7ecd939a11a9fa, type: 2}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[5].resource
+      value: 
+      objectReference: {fileID: 11400000, guid: a1fc02a5ceb6c64459efb513a16d993e, type: 2}
+    - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
+      propertyPath: <InventoryStacks>k__BackingField.Array.data[6].resource
+      value: 
+      objectReference: {fileID: 11400000, guid: 5e89dfe331c2b104d869c0d93d371939, type: 2}
     - target: {fileID: 7687544807885682484, guid: c153fa6b9a67e454e97fbd518e6b9fff, type: 3}
       propertyPath: <InventoryStacks>k__BackingField.Array.data[0].stackLimit
       value: 20
@@ -4246,7 +4270,7 @@ GameObject:
   - component: {fileID: 1309112477}
   - component: {fileID: 1309112476}
   m_Layer: 0
-  m_Name: Ingredient (4)
+  m_Name: Ingredient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4419,7 +4443,7 @@ GameObject:
   - component: {fileID: 1411093098}
   - component: {fileID: 1411093097}
   m_Layer: 0
-  m_Name: Ingredient (3)
+  m_Name: Ingredient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5427,7 +5451,7 @@ GameObject:
   - component: {fileID: 1679727129}
   - component: {fileID: 1679727128}
   m_Layer: 0
-  m_Name: Ingredient (2)
+  m_Name: Ingredient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -90,7 +90,7 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     if (fallingIngredientData.CutIngredientImages.Length > 0)
     {
       listOfSprites = new List<Sprite>(fallingIngredientData.CutIngredientImages);
-      ingredientsToCatch = listOfSprites.Count; // Set how many to catch based on number of images
+      ingredientsToCatch = listOfSprites.Count - 1; // Set how many to catch based on number of images
     }
     else
     {
@@ -115,9 +115,11 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
   /// </summary>
   private IEnumerator SpawnIngredients()
   {
-    while (isFalling && fallingIngredients.Count < ingredientsToCatch)
+    int count = 0;
+    while (isFalling && count < ingredientsToCatch)
     {
       SpawnOneIngredient();
+      count++;
       yield return new WaitForSeconds(spawnInterval);
     }
   }
@@ -139,7 +141,11 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     Image img = ingredientObj.AddComponent<Image>();
     if (listOfSprites.Count > 0)
     {
-      int randomIndex = Random.Range(0, listOfSprites.Count);
+      int randomIndex = Random.Range(1, listOfSprites.Count);
+      if (listOfSprites.Count == 1)
+      {
+          randomIndex = Random.Range(0, listOfSprites.Count);
+      }
       img.sprite = listOfSprites[randomIndex];
       listOfSprites.RemoveAt(randomIndex); // Remove to avoid repeats
     }

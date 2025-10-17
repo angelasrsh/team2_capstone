@@ -81,7 +81,7 @@ public class End_Day : MonoBehaviour
 
     private void FindTimeofDay()
     {
-        leaveTrigger = FindObjectOfType<Room_Change_Trigger>();
+        leaveTrigger = FindObjectOfType<Room_Change_Trigger>(true);
         if (leaveTrigger == null)
         {
             Debug.LogWarning("[End_Day] No Room_Change_Trigger found in scene.");
@@ -113,7 +113,10 @@ public class End_Day : MonoBehaviour
                 Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.goToBed, 0.35f);
 
                 if (leaveTrigger != null)
+                {
+                    // Debug.Log("[End_Day]: re-enabled leave trigger");
                     leaveTrigger.gameObject.SetActive(true); // Re-enable for next morning
+                }
             }
             else
             {

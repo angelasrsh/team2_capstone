@@ -234,12 +234,13 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         int overlappingZone = combine.IsOverARedZone();
         bool added = false;
         Debug.Log("[Combine]: overlapping zone: " + overlappingZone);
+        Ingredient_Data ingr = (Ingredient_Data)(ParentSlot.stk.resource);
         if (overlappingZone != -1)
-          added = combine.AddToTable((Ingredient_Data)(ParentSlot.stk.resource), overlappingZone);
+          added = combine.AddToTable(ingr, overlappingZone);
 
         if (added)
         {
-          Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
+          Ingredient_Inventory.Instance.RemoveResources(ingr.ingredientType, 1);
           Destroy(gameObject);
         }
         else

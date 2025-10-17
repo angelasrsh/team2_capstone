@@ -108,6 +108,7 @@ public class Pause_Menu : MonoBehaviour
     public void QuitGame()
     {
         Debug.Log("Quitting game...");
+        ResumeGame();
         Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
     }
 

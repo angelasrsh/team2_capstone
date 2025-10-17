@@ -57,7 +57,7 @@ public class Room_Change_Manager : MonoBehaviour
         }
 
         // Save state if leaving Restaurant
-        if (currentRoomID == Room_Data.RoomID.Restaurant)
+        if (currentRoomID == Room_Data.RoomID.Updated_Restaurant)
         {
             if (Restaurant_State.Instance != null)
             {

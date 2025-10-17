@@ -66,12 +66,8 @@ public class Shop : MonoBehaviour
       return;
 
     // Only process input if player is inside trigger and interact pressed once
-    if (interactAction.WasPerformedThisFrame())
-    {
-      Debug.Log("[Shop]: Player opened shop.");
-      if (!Game_Manager.Instance.UIManager.pauseMenuOn)
-        OpenShopUI();
-    }
+    if (interactAction.WasPerformedThisFrame() && !Game_Manager.Instance.UIManager.pauseMenuOn && !shopOpen)
+      OpenShopUI();
     else if (closeAction.WasPerformedThisFrame() && shopOpen)
       CloseShopUI();
   }
