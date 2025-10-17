@@ -1,0 +1,347 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6958590387895689390
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6958590387895689388}
+  - component: {fileID: 7322542354820229773}
+  - component: {fileID: 3461038497445604444}
+  - component: {fileID: 4670473249970048115}
+  - component: {fileID: 1934729213419131961}
+  - component: {fileID: 6642626054669146854}
+  - component: {fileID: 3228094000564085673}
+  - component: {fileID: 6113680877637856580}
+  - component: {fileID: 6958590387895689391}
+  - component: {fileID: 2041556558690807774}
+  - component: {fileID: 7704440638169076200}
+  - component: {fileID: 4060353126230224005}
+  - component: {fileID: 3085461530528901281}
+  m_Layer: 0
+  m_Name: Game_Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6958590387895689388
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 13, z: -20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7322542354820229773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b62b3275ceb3e349ae84693ae596bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dishDatabase: {fileID: 11400000, guid: 88a1998f93d89d64c9f529370030ca97, type: 2}
+  ingredientDatabase: {fileID: 11400000, guid: 49c484858a049574198ee921da5f23bf, type: 2}
+  npcDatabase: {fileID: 11400000, guid: 333fe90f2a2e96c42a4bfbb80d1f23be, type: 2}
+  playerProgress: {fileID: 11400000, guid: f2c59ef6e9041524e924df3048a855ee, type: 2}
+  UIManager: {fileID: 0}
+  roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
+--- !u!114 &3461038497445604444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad32d86200f0294fa69c866f4c349dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4670473249970048115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b425ab2cc5f3b644989ed7ec3145638e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentTimeOfDay: 0
+--- !u!114 &1934729213419131961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a57e46d005b64a4e9fb7c9c20f52657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LikedDishAffection: 25
+  NeutralDishAffection: 5
+  DislikedDishAffection: -5
+--- !u!114 &6642626054669146854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f8d960e5bb27348ad4b3e662100aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minPoolSize: 3
+  maxPoolSize: 5
+  minSelect: 1
+  maxSelect: 2
+  minCustomersForDay: 2
+  maxCustomersForDay: 4
+--- !u!114 &3228094000564085673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9858dd33a8c2dd4fa636e5f6c8937fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6113680877637856580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8e931fb93e6166488041f32efb5ca34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customers: []
+--- !u!114 &6958590387895689391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9225e40e04ded924ca684807d1084283, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2041556558690807774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7704440638169076200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openUICount: 0
+  pauseMenuOn: 0
+  uiInputCooldownDuration: 0.25
+--- !u!114 &4060353126230224005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4863f5829f01d940ad4abacf41e2985, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3085461530528901281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 0d7e8c4650b32cf4e9c75be7d1fcb46d, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 66bcfc7a-586b-4da0-87dd-685b39c43f96
+    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a8a5c2da-0bdf-452a-9690-fb77d33dc1ad
+    m_ActionName: Player/Interact[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3ee9e59f-6197-4cc7-92b9-fd8c4091f96a
+    m_ActionName: Player/OpenInventory[/Keyboard/i]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8446317409846020747, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
+        m_TargetAssemblyTypeName: Journal_Menu, Assembly-CSharp
+        m_MethodName: ToggleJournal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 035e4233-577e-4b6f-b6af-165d36de10d4
+    m_ActionName: Player/OpenJournal[/Keyboard/j]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 04bd35dc-c41a-4476-976d-198601565cc5
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 2fe2afb7-ccea-481a-88f9-a3084dbec22b
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9aa7bfdc-e624-48de-991d-a5b35c326ad0
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ad75faac-4afc-4be1-b626-e6607448f801
+    m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4e9fa738-8daf-45ee-928a-b411affe6dba
+    m_ActionName: UI/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a8cc0cd2-fc47-4836-b005-45e1e3b443d5
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 773d4193-c544-46a5-a804-302e1d5aa11b
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3d023bba-ec4c-48c8-be61-6b1528aaec02
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 85a9d864-8018-41ac-85a0-5b0ae08c8646
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4d43735f-d1ed-47f0-8abd-64e0112b3321
+    m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 931df43f-574e-4d29-a14c-dbb309981b28
+    m_ActionName: Player/CloseInventory[/Touchscreen/delta]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3dfbe87f-9958-4807-b7ef-b3411f18cecb
+    m_ActionName: Player/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3c38461f-6e7f-4e41-b4c2-8cb3ce5d9384
+    m_ActionName: UI/CloseInteract[/Keyboard/escape,/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5f1f050a-fc4f-4cd4-82f6-02c6a4193113
+    m_ActionName: UI/CloseJournal[/Keyboard/j]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 95ddfac6-8522-4ffc-86ee-548674177959
+    m_ActionName: UI/CloseRegular[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 2ff50e60-428f-4fd5-b9a5-abba57a2a022
+    m_ActionName: UI/OpenJournal[/Keyboard/j]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6e048e03-5bf5-46e2-ae19-589066e5c2f1
+    m_ActionName: UI/OpenInventory[/Keyboard/i]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1c7ea608-d748-4af5-af41-7ab075b926a7
+    m_ActionName: UI/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7ff54938-2f6c-41d7-95b0-d6b8e3cb5ec3
+    m_ActionName: Player/EndDialog[/Simulated Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 253ced77-a953-48d3-8d7c-8c818a96bc7d
+    m_ActionName: Journal/Click[/Keyboard/e,/Mouse/leftButton,/Simulated Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 64bab8b5-f68f-4017-9c08-2aaa07432d03
+    m_ActionName: Journal/FlipLeft[/Keyboard/a,/Keyboard/leftArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 65fd1754-d588-4b1d-9c9c-5635e4c2b81d
+    m_ActionName: Journal/FlipRight[/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0b55d02f-6679-46aa-ad99-f1f47a44e275
+    m_ActionName: Journal/CloseJournal[/Keyboard/j,/Keyboard/escape]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}

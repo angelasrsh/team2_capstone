@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
+  m_Name: Main_Menu
+  m_EditorClassIdentifier: 
+  roomID: 0
+  isOverworldScene: 0
+  music: {fileID: 8300000, guid: dca1cc2e9f421424c92295c1e373c7ca, type: 3}
+  ambientSound: {fileID: 8300000, guid: f3f4445f1373f9c4ca71452facc20792, type: 3}
+  musicVolume: 0.718
+  ambientVolume: 0.25
+  exits:
+  - exitingTo: 3
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 2087315a944dcc7459fafc7060a208b9, type: 2}
+    overrideTimeOfDay: 1
+    overrideValue: 0

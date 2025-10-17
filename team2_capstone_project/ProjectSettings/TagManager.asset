@@ -16,7 +16,7 @@ TagManager:
   - Ingredients
   - Walls
   - Objects
-  - 
+  - GroundMask
   - 
   - 
   - 
@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Ground
+    uniqueID: 3501629125
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
@@ -50,4 +53,7 @@ TagManager:
     locked: 0
   - name: Decorations
     uniqueID: 2989506497
+    locked: 0
+  - name: Player
+    uniqueID: 4139649789
     locked: 0

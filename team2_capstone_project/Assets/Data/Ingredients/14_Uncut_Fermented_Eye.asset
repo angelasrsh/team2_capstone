@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
+  m_Name: 14_Uncut_Fermented_Eye
+  m_EditorClassIdentifier: 
+  Name: Uncut Fermented Eye
+  Amount: 0
+  Image: {fileID: 21300000, guid: 67c9bcd7a9f99c341b8481baff54fdf7, type: 3}
+  tier: 0
+  price: 0
+  rarityWeight: 1
+  minSpawn: 3
+  maxSpawn: 6
+  countsAs: []
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
+  description: Fermented eyeball from a fallen Eyedrake found in the Forest.
+  CutIngredientImages:
+  - {fileID: -42076378, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
+  - {fileID: 1730087433, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
+  - {fileID: -1591840382, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
+  - {fileID: 923941717, guid: a75d8b7a04c21ef43a9458ac230e89b4, type: 3}
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: 42342020c85c8354b946a340f7ad1b8b, type: 2}
+    amountRequired: 1
+    method: 2
+  ingredientsNeeded: []
+  ingredientType: 15
+  CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 2

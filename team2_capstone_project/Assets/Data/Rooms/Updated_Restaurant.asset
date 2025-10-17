@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
+  m_Name: Updated_Restaurant
+  m_EditorClassIdentifier: 
+  roomID: 9
+  isOverworldScene: 1
+  music: {fileID: 8300000, guid: 80eb8acaf53a78542a2136c1112118bf, type: 3}
+  ambientSound: {fileID: 8300000, guid: 4698755a6a1076a4fb97e2d57ace7328, type: 3}
+  musicVolume: 0.452
+  ambientVolume: 0.745
+  exits:
+  - exitingTo: 4
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: a159dab37fcf1d147bf5c9048279229f, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0
+  - exitingTo: 5
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 71013e09509e4064fa8e0ebc6c69b844, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0
+  - exitingTo: 0
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 9196e552c6124a94696f1bdc553b82ec, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0
+  - exitingTo: 3
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 2087315a944dcc7459fafc7060a208b9, type: 2}
+    overrideTimeOfDay: 1
+    overrideValue: 1
+  - exitingTo: 6
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: be8fe1eacc40f6c4081b931d3d46bfa3, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 1
+  - exitingTo: 7
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 7b64c11b2e5c60941bf4c2a71cb8db04, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 1

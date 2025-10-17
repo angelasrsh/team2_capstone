@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
+  m_Name: Cooking_Minigame
+  m_EditorClassIdentifier: 
+  roomID: 4
+  isOverworldScene: 0
+  music: {fileID: 8300000, guid: 80eb8acaf53a78542a2136c1112118bf, type: 3}
+  ambientSound: {fileID: 0}
+  musicVolume: 0.1
+  ambientVolume: 1
+  exits:
+  - exitingTo: 9
+    spawnPointID: 1
+    targetRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 1
+  - exitingTo: 0
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 9196e552c6124a94696f1bdc553b82ec, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0

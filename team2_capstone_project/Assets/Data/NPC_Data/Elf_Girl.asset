@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9984a113d3db8934cbed6028d499cb5e, type: 3}
+  m_Name: Elf_Girl
+  m_EditorClassIdentifier: 
+  npcID: 2
+  customerName: Asper Agis
+  overworldSprite: {fileID: -269341268, guid: febe13723a3197f4c9d192a29ef04f32, type: 3}
+  walkAnimatorController: {fileID: 9100000, guid: 8cec6d587f4642a46adcfd66db986571, type: 2}
+  datable: 1
+  lore: 'Asper is a High Elf, an elf noble. '
+  dialogClipSound: {fileID: 8300000, guid: 5656e9bcdb4af7e408ef02d75434e3dd, type: 3}
+  pitchMin: 0.7
+  pitchMax: 0.8
+  textSpeed: 0.023
+  defaultPortrait: {fileID: 21300000, guid: db7d876cb04ddc1488b3b3f4290f6030, type: 3}
+  emotionPortraitList:
+  - emotion: 0
+    portrait: {fileID: 21300000, guid: 91bcec56ec57d5c43807ca8a74459993, type: 3}
+  - emotion: 5
+    portrait: {fileID: 21300000, guid: db7d876cb04ddc1488b3b3f4290f6030, type: 3}
+  - emotion: 3
+    portrait: {fileID: 21300000, guid: da9c5c2ecef9b0549916da19fa9421f0, type: 3}
+  favoriteDishes:
+  - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
+  neutralDishes: []
+  dislikedDishes:
+  - {fileID: 11400000, guid: c64e5753c27a7f1499958a0f420b36b8, type: 2}
