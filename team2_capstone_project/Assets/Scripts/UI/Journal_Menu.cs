@@ -193,8 +193,10 @@ public class Journal_Menu : MonoBehaviour
     closeJournalAction = playerInput.actions["CloseJournal"];
     clickAction = playerInput.actions["ClickJournal"];
 
-    flipLeftAction.performed += ctx => FlipToPrevious();
-    flipRightAction.performed += ctx => FlipToNext();
+    if (flipLeftAction != null)
+      flipLeftAction.performed += ctx => FlipToPrevious();
+    if (flipRightAction != null)
+      flipRightAction.performed += ctx => FlipToNext();
     // closeJournalAction.performed += ctx => ResumeGame();
     // clickAction.performed += ctx => OnClick();
 
@@ -209,8 +211,10 @@ public class Journal_Menu : MonoBehaviour
   {
     SceneManager.sceneLoaded -= OnSceneLoaded;
     Choose_Menu_Items.OnMenuSelectedNoParams -= PopulateDishes;
-    flipLeftAction.performed -= ctx => FlipToPrevious();
-    flipRightAction.performed -= ctx => FlipToNext();
+    if (flipLeftAction != null)
+      flipLeftAction.performed -= ctx => FlipToPrevious();
+    if (flipRightAction != null)
+      flipRightAction.performed -= ctx => FlipToNext();
   }
 
   // Update is called once per frame

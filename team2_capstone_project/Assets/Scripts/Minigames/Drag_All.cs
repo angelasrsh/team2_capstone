@@ -228,6 +228,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
       if (SceneManager.GetActiveScene().name == "Combine_Minigame")
       {
+        if (combine == null) // this has to be using the if
+          combine = FindObjectOfType<Combine>();
         DuplicateInventorySlot();
 
         // Combine doesn't use IsOverlapping in Drag_All
@@ -256,6 +258,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
         {
           // Debug.Log("In RED");
+          if (cauldron == null) // this has to be using the if
+            cauldron = FindObjectOfType<Cauldron>();
           DuplicateInventorySlot();
           if (!isOnPot)
           {
@@ -303,13 +307,15 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
         else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
         {
-          // pan ??= FindObjectOfType<Pan>();
+          if (pan == null) // this has to be using the if
+            pan = FindObjectOfType<Pan>();
           DuplicateInventorySlot();
           if (pan.AddToPan((Ingredient_Data)(ParentSlot.stk.resource))) // Only remove ingredient if pan was empty and ingredient was actually added;
+          {
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-
-          // Start pan slider minigame
-          pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
+            // Start pan slider minigame
+            pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
+          }
         }
       }
       else

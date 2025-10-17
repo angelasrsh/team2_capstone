@@ -11,7 +11,7 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 {
   [Header("References")]
   private RectTransform panRedZone; // Pan's red zone RectTransform (used for drop detection)
-  [SerializeField] private GameObject errorText; // For any messages to the player
+  [SerializeField] private TextMeshProUGUI errorText; // For any messages to the player
   [SerializeField] private Pan pan;
   private Image panImage; // reference to the pan's Image component
   // private Audio_Manager audio;
@@ -22,12 +22,13 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
   private float maxY = 300f;
 
   [Header("Ingredient Fall Settings")]
-  private float spawnInterval = 1f;
-  private float fallSpeed = 200f; // pixels per second
+  private float spawnInterval = 1.5f;
+  private float fallSpeed = 400f; // pixels per second
   private Ingredient_Data fallingIngredientData;
   private List<Sprite> listOfSprites; // All possible sprites for the falling ingredient
   private List<GameObject> fallingIngredients; // current falling sprites
   private bool isFalling = false;
+  private bool allIngredientsFell = false;
   private int ingredientsCaught = 0;
   private int ingredientsToCatch; // Number of ingredients to catch before ending fall section
 
@@ -106,7 +107,7 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
   public void StartIngredientFall()
   {
     isFalling = true;
-    Debug.Log("Getting here");
+    ingredientsCaught = 0;
     StartCoroutine(SpawnIngredients());
   }
 
@@ -122,6 +123,10 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
       count++;
       yield return new WaitForSeconds(spawnInterval);
     }
+
+    // wait until all falling ingredients are done falling
+    yield return new WaitUntil(() => fallingIngredients.Count == 0);
+    allIngredientsFell = true;
   }
 
   /// <summary>
@@ -144,7 +149,7 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
       int randomIndex = Random.Range(1, listOfSprites.Count);
       if (listOfSprites.Count == 1)
       {
-          randomIndex = Random.Range(0, listOfSprites.Count);
+        randomIndex = Random.Range(0, listOfSprites.Count);
       }
       img.sprite = listOfSprites[randomIndex];
       listOfSprites.RemoveAt(randomIndex); // Remove to avoid repeats
@@ -154,6 +159,7 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
       Debug.LogError("[Pan_Controller]: No sprites available for falling ingredient!");
       img.sprite = fallingIngredientData.Image; // Fallback to main image
     }
+    img.preserveAspect = true;
     fallingIngredients.Add(ingredientObj);
   }
 
@@ -207,12 +213,6 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         Destroy(obj);
         fallingIngredients.RemoveAt(i);
         // audio.PlaySound("Catch_Ingredient");
-
-        if (ingredientsCaught >= ingredientsToCatch)
-        {
-          isFalling = false;
-          pan.Invoke(nameof(pan.StartSecondSlider), 1f);
-        }
       }
       else if (obj.transform.position.y < -50f) // Off bottom of screen
       {
@@ -220,7 +220,25 @@ public class Pan_Controller : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         fallingIngredients.RemoveAt(i);
       }
     }
+
+    if (allIngredientsFell)
+    {
+      if (ingredientsCaught * 1f < ingredientsToCatch * 0.5f) // restart fall
+      {
+        errorText.text = "Less than half caught. Starting again.";
+        errorText.gameObject.SetActive(true);
+        Invoke(nameof(HideErrorText), 2f);
+        SetFallingIngredient(fallingIngredientData);
+        StartIngredientFall();
+      }
+      else
+      {
+        pan.Invoke(nameof(pan.StartSecondSlider), 1f);
+        isFalling = false;
+      }
+      allIngredientsFell = false;
+    }
   }
 
-  private void HideErrorText() => errorText.SetActive(false);
+  private void HideErrorText() => errorText.gameObject.SetActive(false);
 }
