@@ -71,6 +71,7 @@ public class CustomerData : ScriptableObject
         None,
         Phrog,
         Elf,
-        Satyr
+        Satyr,
+        Journal
     }
 }

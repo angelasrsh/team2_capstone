@@ -61,9 +61,10 @@ public class Dialog_UI_Manager : MonoBehaviour
         textBoxText.text = "";
     }
 
-    public void ShowText(string aText)
+    public void ShowText(string aText, bool disablePlayerInput = true)
     {
-        Player_Input_Controller.instance.DisablePlayerInput();
+        if (disablePlayerInput)
+            Player_Input_Controller.instance.DisablePlayerInput();
         textBoxCanavasGroup.alpha = 1;
         // textBoxAnimation.Open();
         StartCoroutine(AddOneCharEnumerator(aText));

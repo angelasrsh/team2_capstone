@@ -171,7 +171,7 @@ public class Affection_System : MonoBehaviour
     /// <summary>
     /// If a customerdata is saved in nextCutsceneCustomer, see if you can play an event for that customer
     /// </summary>
-    public void TryPlayNextEvent()
+    public void TryPlayNextEvent(string dialogKey)
     {
         // Nothing saved
         if (nextCutsceneCustomer == null)

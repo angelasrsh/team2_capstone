@@ -3,81 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Enter_Restaurant_Quest_Step : Tutorial_Quest_Step
+public class Enter_Restaurant_Quest_Step : Dialogue_Quest_Step
 {
 
-    [Header("Items to collect")]
-    public Ingredient_Data[] RequiredIngredients;
-    public int[] ItemCounts;
-
+    // Start is called before the first frame update
     void OnEnable()
     {
-        SceneManager.sceneLoaded += onSceneLoaded;
-        Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
+        Game_Events_Manager.Instance.onRoomChange += EnterRestaurant;
+        // make sure to nblock area
+        DelayedDialogue(0, 0, false);
 
-
-        if (ItemCounts.Length != RequiredIngredients.Length)
-            Debug.Log($"{GetType().Name} on {gameObject.name} Error: Please ensure there is a required count for every item");
-
-
-        DelayedInstructionStart();
-      
     }
 
-
-    // Open door to exit immediately if the player already has the necessary ingredients
-    private void Start()
-    {
-        checkRequirementsMet();
-    }
-
-    // Unsubscribe to clean up
+    // Update is called once per frame
     void OnDisable()
     {
-        SceneManager.sceneLoaded -= onSceneLoaded;
-        Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
+        Game_Events_Manager.Instance.onRoomChange -= EnterRestaurant;
+
     }
-    
-    private void ResourceAdd(Ingredient_Data ing)
+
+    void Start()
     {
-        // Check if all required items have been collected
-        checkRequirementsMet();
-            
+        Game_Events_Manager.Instance.SetExitsBlocked(false);
     }
+
+
 
     /// <summary>
-    /// Helper function that checks if the player has all the ingredients listed in this quest step's
-    /// required ingredients list. If so, it sends a message (which is used to allow the player to progress by
-    /// deactivating the door blocker)
+    /// End quest when player exits to a non-main-menu scene
     /// </summary>
-    private void checkRequirementsMet()
+    /// <param name="currentRoom"> RoomID of the room being left </param>
+    /// <param name="exitingTo"> RoomID of the room being entered </param>
+    void EnterRestaurant(Room_Data.RoomID currentRoom, Room_Data.RoomID exitingTo)
     {
-        // Check if all required items have been collected
-        bool hasAllItems = true;
-        for (int i = 0; i < RequiredIngredients.Length; i++)
-        {
-            if (Ingredient_Inventory.Instance.GetItemCount(RequiredIngredients[i]) < ItemCounts[i])
-            {
-                hasAllItems = false;
-                break;
-            }
-
-        }
-
-        if (hasAllItems)
-        {
-            Game_Events_Manager.Instance.HarvestRequirementsMet();
-        }
-    }
-
-    /// <summary>
-    /// Called on scene load to end the quest if the player enters the restaurant scene
-    /// </summary>
-    ///<param name="scene">Scene being entered</param>
-    /// <param name="mode"></param>
-    private void onSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name == "Restaurant")
+        if (currentRoom == Room_Data.RoomID.Foraging_Area_Whitebox && (exitingTo != Room_Data.RoomID.Restaurant))
             FinishQuestStep();
 
     }
