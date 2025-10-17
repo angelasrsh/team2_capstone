@@ -15,6 +15,11 @@ public class Make_Bone_Broth_Quest_Step : Dialogue_Quest_Step
         Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
     }
 
+    void Start()
+    {
+        DelayedDialogue(0, 0, false);
+    }
+
 
     private void ResourceAdd(Ingredient_Data ingredient)
     {
