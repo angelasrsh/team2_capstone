@@ -188,8 +188,8 @@ public class Game_Events_Manager : MonoBehaviour
 
     #endregion
 
-    /////////// CAFE INTERACTION EVENTS /////////
-    #region Cafe Interaction Events
+    /////////// INTERACTION EVENTS /////////
+    #region Interaction Events
     public event Action onGetOrder;
     public void GetOrder()
     {
@@ -204,6 +204,7 @@ public class Game_Events_Manager : MonoBehaviour
             onServeCustomer();
     }
 
+    
     public event Action<string> onBeginDialogBox;
     public void BeginDialogueBox(string dialogKey)
     {
@@ -211,12 +212,23 @@ public class Game_Events_Manager : MonoBehaviour
             onBeginDialogBox(dialogKey);
     }
 
+    // When dialogue box is closed
     public event Action<string> onEndDialogBox;
     public void EndDialogBox(string dialogKey)
     {
         if (onEndDialogBox != null)
             onEndDialogBox(dialogKey);
     }
+
+    /// <summary>
+    /// Last dialogue is played but the box isn't necessarily closed yet
+    /// </summary>
+    public event Action<string> onDialogueComplete;
+    public void DialogueComplete(string dialogKey)
+    {
+        onDialogueComplete?.Invoke(dialogKey);
+    }
+    
     #endregion
 
 

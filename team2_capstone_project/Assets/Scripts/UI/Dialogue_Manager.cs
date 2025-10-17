@@ -238,6 +238,8 @@ public class Dialogue_Manager : MonoBehaviour
         {
             if (autoEndDialogue)
                 EndDialog();
+
+            Game_Events_Manager.Instance.DialogueComplete(myDialogKey);
         }
     }
     #endregion
@@ -325,6 +327,8 @@ public class Dialogue_Manager : MonoBehaviour
         {
             if (autoEndDialogue)
                 EndDialog();
+
+            Game_Events_Manager.Instance.DialogueComplete(myDialogKey);
         }
     }
     #endregion

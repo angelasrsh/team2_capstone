@@ -16,7 +16,8 @@ public class Ingredient_Inventory : Inventory
 {
   public static Ingredient_Inventory Instance { get; private set; }
   [HideInInspector] public List<Ingredient_Data> AllIngredients;
-  private Ingredient_Data water;
+    private Ingredient_Data water;
+    public int TotalIngCount = 0;
   public Dictionary<String, Ingredient_Data> IngredientDict = new Dictionary<string, Ingredient_Data>(); // Make private once we know it works
 
   new private void Awake()
@@ -86,12 +87,15 @@ public class Ingredient_Inventory : Inventory
       }
     }
 
-    // Broadcast to listening events
-    Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
+        // Broadcast to listening events
+        Game_Events_Manager.Instance.ResourceAdd(IngrEnumToData(type));
+
+        int amtAdded = count - amtLeftToAdd;
 
     updateInventory();
-    Debug.Log($"[Invtory] Added {count - amtLeftToAdd} {IngrEnumToData(type).Name}");
-    return count - amtLeftToAdd; // Return how many items were actually added
+    Debug.Log($"[Invtory] Added {amtAdded} {IngrEnumToData(type).Name}");
+    TotalIngCount += (amtAdded);
+    return amtAdded; // Return how many items were actually added
   }
 
   /// <summary>
@@ -125,10 +129,12 @@ public class Ingredient_Inventory : Inventory
     // Broadcast to listening events
     Game_Events_Manager.Instance.ResourceRemove(IngrEnumToData(type));
 
-    updateInventory(); // Remove empty elements
-    Debug.Log($"[Invtory] Removed {count - amtLeftToRemove} {IngrEnumToData(type).Name}");
+        updateInventory(); // Remove empty elements
+
+    int amtRemoved = count - amtLeftToRemove;
+    Debug.Log($"[Invtory] Removed {amtRemoved} {IngrEnumToData(type).Name}");
     // Return however much was added
-    return count - amtLeftToRemove;
+    return amtRemoved;
   }
 
   public bool CanMakeDish(Dish_Data dish)

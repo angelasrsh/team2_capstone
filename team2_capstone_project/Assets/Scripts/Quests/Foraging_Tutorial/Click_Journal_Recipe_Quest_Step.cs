@@ -15,7 +15,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     {
         Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
         Game_Events_Manager.Instance.onDishDetailsClick += RecipeClick;
-        Game_Events_Manager.Instance.onEndDialogBox += onDialogComplete;
+        Game_Events_Manager.Instance.onDialogueComplete += onDialogComplete;
         // Game_Events_Manager.Instance.onEndDialogBox += endQuest;
 
         base.OnEnable();
@@ -26,7 +26,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     {
         Game_Events_Manager.Instance.onJournalToggle -= JournalToggled;
         Game_Events_Manager.Instance.onDishDetailsClick -= RecipeClick;
-        Game_Events_Manager.Instance.onEndDialogBox -= onDialogComplete;
+        Game_Events_Manager.Instance.onDialogueComplete -= onDialogComplete;
         // Game_Events_Manager.Instance.onEndDialogBox -= endQuest;
 
         base.OnDisable();
@@ -79,7 +79,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     {
         if (isOpen)
             journalHasBeenOpened = true; // Finish and destroy this object
-        else
+        else if (journalHasBeenOpened && !isOpen)
             journalHasBeenClosed = true;
 
         checkPlayDialog();
