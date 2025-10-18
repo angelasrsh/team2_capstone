@@ -424,7 +424,7 @@ public class Chop_Controller : MonoBehaviour
             CLR = CL.Find("CLRZSh1").GetComponent<RectTransform>();
             isOverlappingCLR = Drag_All.IsOverlappingRotated(k_script.knifeRect, CLR);
         }
-        else if (ingredient_data_var.Name == "Uncut Ficklegourd")
+        else if (ingredient_data_var.Name == "Uncut Ficklegourd" && cuttingLineInitialized)
         {
             if (cuts_left == 2)
             {
