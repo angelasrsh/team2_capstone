@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations;
 using UnityEngine.SceneManagement;
+using Grimoire;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(BoxCollider))]
@@ -364,6 +365,7 @@ public class Customer_Controller : MonoBehaviour
         dishInventory.RemoveSelectedSlot();
 
         Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
+        Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.orderServed, 0.75f);
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
         // Record dish served, money earned, and customer served for day summary

@@ -48,6 +48,7 @@ namespace Grimoire
     public AudioClip pageFlip;
     public AudioClip journalTabSelect;
     public AudioClip teleport;
+    public AudioClip orderServed;
 
     [Header("Cauldron Specific")]
     public AudioClip addingOneIngredient;
