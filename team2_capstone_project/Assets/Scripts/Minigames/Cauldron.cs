@@ -195,7 +195,7 @@ public class Cauldron : MonoBehaviour
       Audio_Manager.instance.AddOneIngredient();
     }
 
-    if (numIngredients == 0)
+    if (numIngredients == 1)
     {
       possibleDishes = new List<Dish_Data>(ingredient.usedInDishes);
       possibleIngredients = new List<Ingredient_Requirement>(ingredient.makesIngredient);
