@@ -99,7 +99,8 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     private void OpenConfirmation(Player_Controller playerController)
     {
-        leaveResourceAreaCanvas.GetComponent<Leave_Resource_Area_Canvas_Script>().SetText();
+        if (SceneManager.GetActiveScene().name == "foraging_area_whitebox")
+            leaveResourceAreaCanvas.GetComponent<Leave_Resource_Area_Canvas_Script>().SetText();
             
         leaveResourceAreaCanvas.enabled = true;
         confirmationActive = true;
