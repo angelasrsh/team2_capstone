@@ -12,7 +12,7 @@ using System.Linq;
 public class Journal_Menu : MonoBehaviour
 {
   public static Journal_Menu Instance;
-  private bool isPaused = false;
+  public bool isPaused = false;
   private bool haveTabsInitialized = false;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
@@ -51,7 +51,7 @@ public class Journal_Menu : MonoBehaviour
 
   [Header("UI References and Variables")]
   [SerializeField] public Sprite LockedIcon; // generic locked icon for locked items (just a question mark)
-  private Tabs currentTab = Tabs.None;
+  public Tabs currentTab { get; private set; } = Tabs.None;
 
   // Dictionary allows players to open to last page they had open in each tab
   private Dictionary<Tabs, int> tabCurrentPage = new Dictionary<Tabs, int>()
@@ -287,6 +287,15 @@ public class Journal_Menu : MonoBehaviour
       clickAction.Disable();
       // playerInput.SwitchCurrentActionMap("Player");
     }
+
+    // Enable player movement
+    Player_Controller player = FindObjectOfType<Player_Controller>();
+        if (player != null)
+            player.EnablePlayerMovement();
+
+
+    // Broadcast to game manager
+    Game_Events_Manager.Instance.JournalToggled(false);
   }
 
   #region Recipe Tab Methods
@@ -338,6 +347,7 @@ public class Journal_Menu : MonoBehaviour
     recipeImage.preserveAspect = true;
     icon.sprite = dishData.Image;
     icon.preserveAspect = true;
+    Game_Events_Manager.Instance.DishDetailsClick(dishData);
   }
   #endregion
 

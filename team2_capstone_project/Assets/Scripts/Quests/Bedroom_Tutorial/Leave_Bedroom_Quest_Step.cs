@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
+public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
 {
+    
     // Start is called before the first frame update
     void OnEnable()
     {
         Game_Events_Manager.Instance.onRoomChange += LeaveBedroom;
+        Choose_Menu_Items.OnDailyMenuSelected += BeginDialogue;
 
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
-        if (dm != null)
-        {
-            string fillerKey = $"Tutorial.Bedroom";
-            dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
-        }
-
-        DelayedInstructionStart();
-
+        //DelayedInstructionStart();
 
     }
 
@@ -26,8 +20,16 @@ public class Leave_Bedroom_Quest_Step : Tutorial_Quest_Step
     void OnDisable()
     {
         Game_Events_Manager.Instance.onRoomChange -= LeaveBedroom;
+        Choose_Menu_Items.OnDailyMenuSelected -= BeginDialogue;
 
     }
+
+    private void BeginDialogue(List<Dish_Data.Dishes> list)
+    {
+        DelayedDialogue(0, 0, false);
+    }
+    
+
 
     /// <summary>
     /// End quest when player exits to a non-main-menu scene

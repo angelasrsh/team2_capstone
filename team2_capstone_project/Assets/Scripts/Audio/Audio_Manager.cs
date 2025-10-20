@@ -47,6 +47,7 @@ namespace Grimoire
     public AudioClip lockedGateOpen;
     public AudioClip pageFlip;
     public AudioClip journalTabSelect;
+    public AudioClip teleport;
 
     [Header("Cauldron Specific")]
     public AudioClip addingOneIngredient;
