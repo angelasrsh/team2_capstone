@@ -88,6 +88,7 @@ public class Pause_Menu : MonoBehaviour
 
         menuBox?.SetActive(true);
         darkOverlay?.SetActive(true);
+        UI_Manager.Instance.PauseMenuState(true);
         isPaused = true;
 
         Time.timeScale = 0f;  // Pause game time
@@ -101,6 +102,7 @@ public class Pause_Menu : MonoBehaviour
         menuBox?.SetActive(false);
         darkOverlay?.SetActive(false);
         isPaused = false;
+        UI_Manager.Instance.PauseMenuState(false);
 
         Time.timeScale = 1f;  // Resume game time
     }
