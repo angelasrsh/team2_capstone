@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6588261171708616800}
   - component: {fileID: 6588261171708616806}
+  - component: {fileID: 1024545068533999181}
   m_Layer: 9
   m_Name: Foraged_Bone
   m_TagString: Untagged
@@ -47,6 +48,18 @@ CapsuleCollider:
   m_Height: 5.4777637
   m_Direction: 1
   m_Center: {x: 0.044915255, y: -0.06290082, z: -0.05946555}
+--- !u!114 &1024545068533999181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588261171708616801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 182caf5bb92bf7843822cdc627e677b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6588261170994282186
 PrefabInstance:
   m_ObjectHideFlags: 0

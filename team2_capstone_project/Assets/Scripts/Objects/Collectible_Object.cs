@@ -11,6 +11,9 @@ public class Collectible_Object : Interactable_Object
 
     public void Initialize(Ingredient_Data newData)
     {
+        Camera mainCamera = Camera.main;
+        transform.rotation = mainCamera.transform.rotation;
+            
         data = newData;
 
         if (spriteRenderer != null && data != null && data.Image != null)

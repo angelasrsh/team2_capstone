@@ -10,9 +10,15 @@ namespace Grimoire
         [SerializeField] private Ingredient_Data ingredientData;
         [SerializeField] private Forageable_Data forageableData;
         [SerializeField] private GameObject foragedVariant; 
-        [SerializeField] private bool destroyOnForage = false;  
+        [SerializeField] private bool destroyOnForage = false;
 
         private bool isForaged = false;
+        
+        private void Start()
+        {
+            Camera mainCamera = Camera.main;
+            transform.rotation = mainCamera.transform.rotation;
+        }
 
         public override void PerformInteract()
         {

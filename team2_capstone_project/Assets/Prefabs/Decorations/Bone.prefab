@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 7245441066456534655}
   - component: {fileID: 7245441066456534649}
   - component: {fileID: 7381745503506318950}
+  - component: {fileID: -6069346885191505126}
   - component: {fileID: 2440682005475669276}
   m_Layer: 9
   m_Name: Bone
@@ -147,10 +148,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InteractIcon: {fileID: 2494537745656058659}
+  holdTime: 1
   ingredientData: {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
   forageableData: {fileID: 11400000, guid: 02850ab2c97646943ac2c38a09b6e2d9, type: 2}
   foragedVariant: {fileID: 6588261171708616801, guid: 2ee75f9da008eb1418f5a0bf62c2df3a, type: 3}
   destroyOnForage: 0
+--- !u!114 &-6069346885191505126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7245441066456534654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 182caf5bb92bf7843822cdc627e677b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &2440682005475669276
 BoxCollider:
   m_ObjectHideFlags: 0

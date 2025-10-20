@@ -41,6 +41,10 @@ public class Pickup_Item : MonoBehaviour
     /// <param name="ingredient"></param>
     public void Initialize(Ingredient_Data ingredient)
     {
+
+        Camera mainCamera = Camera.main;
+        transform.rotation = mainCamera.transform.rotation;
+        
         data = ingredient;
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         rb = GetComponent<Rigidbody>();
