@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -700,7 +700,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163356, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_RootOrder
-      value: 21
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163356, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1382,7 +1382,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 22
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &728387421
 PrefabInstance:
@@ -4007,7 +4007,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2035282242}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cecb51508c422ff4b97e6a7548308bda, type: 3}
+  m_Script: {fileID: 11500000, guid: ad1fee530dac6d94589f4e77495782b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1432446357}
@@ -4037,6 +4037,7 @@ MonoBehaviour:
   firstCutDone: 0
   secondCutDone: 0
   isOverlappingCL1R: 0
+  ingredientConfigs: []
 --- !u!4 &2035282244
 Transform:
   m_ObjectHideFlags: 0
