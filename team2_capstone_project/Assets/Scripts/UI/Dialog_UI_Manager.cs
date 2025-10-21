@@ -96,7 +96,7 @@ public class Dialog_UI_Manager : MonoBehaviour
                 textBoxText.text += aText[i];
 
                 Audio_Manager.instance?.PlaySFX(currentDialogSound, 1f, Random.Range(currentLowRange, currentHighRange));
-                Debug.Log($"Playing sound: {currentDialogSound} | AudioManager instance: {Audio_Manager.instance}");
+                // Debug.Log($"Playing sound: {currentDialogSound} | AudioManager instance: {Audio_Manager.instance}");
                 yield return new WaitForSeconds(currentTypingSpeed);  // Typing delay/speed
             }
 
@@ -140,7 +140,7 @@ public class Dialog_UI_Manager : MonoBehaviour
     #region Dialog Sound Settings
     public void SetDialogSound(AudioClip clip)
     {
-        Debug.Log($"UI Manager received clip: {clip}");
+        // Debug.Log($"UI Manager received clip: {clip}");
         currentDialogSound = clip;
     }
 

@@ -59,10 +59,6 @@ public class Player_Controller : MonoBehaviour
 
     private void Awake()
     {
-        // rb = GetComponent<Rigidbody>();
-        // if (rb != null && rb.interpolation == RigidbodyInterpolation.None)
-        //     rb.interpolation = RigidbodyInterpolation.Interpolate;
-
         controller = GetComponent<CharacterController>();
         playerInput = FindObjectOfType<PlayerInput>();
         if (playerInput == null)
@@ -188,10 +184,7 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-    public bool IsMoving()
-    {
-        return movement.magnitude > 0.1f;
-    }
+    public bool IsMoving() => movement.magnitude > 0.1f;
 
     public void DisablePlayerMovement()
     {
@@ -230,9 +223,5 @@ public class Player_Controller : MonoBehaviour
     /// Tell the GameEventsManager that this action occurred.
     /// GameEvents wants to know this for the sake of the tutorial.
     /// </summary>
-    private void onMove(InputAction.CallbackContext context)
-    {
-        // Debug.Log("[P_C] Player is moving");
-        Game_Events_Manager.Instance.PlayerMoved();
-    }
+    private void onMove(InputAction.CallbackContext context) => Game_Events_Manager.Instance?.PlayerMoved();
 }
