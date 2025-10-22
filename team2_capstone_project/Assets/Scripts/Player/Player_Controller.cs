@@ -12,6 +12,20 @@ public class Player_Controller : MonoBehaviour
     public float acceleration = 10f;
     public float deceleration = 15f;
 
+    [Header("Stamina Sprint")]
+    public float sprintMultiplier = 1.8f;      
+    public float maxStamina = 5f;  // seconds spent sprinting
+    public float staminaRechargeDelay = 3f;  // seconds to wait before starting recharge
+    public float staminaRechargeRate = 1f;  // stamina per second recharged
+    [SerializeField] private Player_Stamina_UI staminaUI;
+
+    // Internal stamina variables
+    private float currentStamina;
+    private bool isSprinting = false;
+    private bool isRecharging = false;
+
+    [Header("Mobile Input Deadzones")]
+
     [Tooltip("Deadzone to ENTER movement (larger).")]
     [Range(0f, 0.5f)]
     public float deadzoneEnter = 0.12f;
@@ -41,13 +55,12 @@ public class Player_Controller : MonoBehaviour
 
     // Input System
     private PlayerInput playerInput;
-    private InputAction moveAction, interactAction, openInventoryAction, openJournalAction;
+    private InputAction moveAction, interactAction, openInventoryAction, openJournalAction, sprintAction;
 
     // Room tracking 
     [HideInInspector] public Room_Data currentRoom;
 
-    // Internal
-    private Rigidbody rb;
+    // Internal movement vars
     private Vector2 rawInput = Vector2.zero;
     private Vector2 targetInput = Vector2.zero;
     private Vector2 smoothInput = Vector2.zero;
@@ -71,9 +84,14 @@ public class Player_Controller : MonoBehaviour
         interactAction = playerInput.actions["Interact"];
         openInventoryAction = playerInput.actions["OpenInventory"];
         openJournalAction = playerInput.actions["OpenJournal"];
+        sprintAction = playerInput.actions["Sprint"];
 
         if (moveAction != null)
             moveAction.performed += onMove;
+
+        // Initialize stamina
+        currentStamina = maxStamina;
+        SendStaminaProgress();  
 
         // Detect if platform = mobile
         onMobile = Application.isMobilePlatform;
@@ -98,6 +116,7 @@ public class Player_Controller : MonoBehaviour
     private void Update()
     {
         Vector2 raw = moveAction.ReadValue<Vector2>();
+        HandleSprint();
 
         if (onMobile)
         {
@@ -152,8 +171,13 @@ public class Player_Controller : MonoBehaviour
         if (move.sqrMagnitude > 1f)
             move.Normalize();
 
+
+        // --- Sprinting ---
+        float speed = moveSpeed * (isSprinting ? sprintMultiplier : 1f);
+
+
         // --- Acceleration / Deceleration --- //
-        Vector3 targetVelocity = move * moveSpeed;
+        Vector3 targetVelocity = move * speed;
 
         float rate = (move.sqrMagnitude > 0.01f) ? acceleration : deceleration;
         currentMoveVelocity = Vector3.MoveTowards(currentMoveVelocity, targetVelocity, rate * Time.fixedDeltaTime);
@@ -161,6 +185,7 @@ public class Player_Controller : MonoBehaviour
         // Combine movement + gravity
         Vector3 finalMove = currentMoveVelocity + velocity;
         controller.Move(finalMove * Time.fixedDeltaTime);
+
 
         // --- Extra slope sticking (for going down slopes) ---
         if (isGrounded)
@@ -186,6 +211,70 @@ public class Player_Controller : MonoBehaviour
 
     public bool IsMoving() => movement.magnitude > 0.1f;
 
+    /// <summary>
+    /// Called by the input action when the player moves.
+    /// Tell the GameEventsManager that this action occurred.
+    /// GameEvents wants to know this for the sake of the tutorial.
+    /// </summary>
+    private void onMove(InputAction.CallbackContext context) => Game_Events_Manager.Instance?.PlayerMoved();
+
+    #region Stamina Sprint
+    private void HandleSprint()
+    {
+        bool sprintHeld = sprintAction.ReadValue<float>() > 0.5f;
+
+        if (sprintHeld && currentStamina > 0 && !isRecharging)
+        {
+            isSprinting = true;
+            Debug.Log("Sprinting");
+            currentStamina -= Time.deltaTime;
+
+            if (currentStamina <= 0)
+            {
+                currentStamina = 0;
+                StartCoroutine(RechargeStamina());
+            }
+        }
+        else
+        {
+            isSprinting = false;
+
+            if (currentStamina < maxStamina && !isRecharging)
+            {
+                StartCoroutine(RechargeStamina());
+            }
+        }
+
+        SendStaminaProgress();
+    }
+
+    private IEnumerator RechargeStamina()
+    {
+        if (isRecharging) yield break;
+
+        isRecharging = true;
+        yield return new WaitForSeconds(staminaRechargeDelay);
+
+        while (currentStamina < maxStamina)
+        {
+            currentStamina += Time.deltaTime * staminaRechargeRate;
+            SendStaminaProgress();
+            yield return null;
+        }
+
+        currentStamina = maxStamina;
+        isRecharging = false;
+        SendStaminaProgress();
+    }
+
+    private void SendStaminaProgress()
+    {
+        float progress = currentStamina / maxStamina;
+        staminaUI?.SetStamina(progress);
+    }
+    #endregion
+
+    #region Various Helpers
     public void DisablePlayerMovement()
     {
         movementLocked = true;
@@ -217,11 +306,5 @@ public class Player_Controller : MonoBehaviour
             Debug.LogWarning($"Room not found: {newRoomID}");
         }
     }
-
-    /// <summary>
-    /// Called by the input action when the player moves.
-    /// Tell the GameEventsManager that this action occurred.
-    /// GameEvents wants to know this for the sake of the tutorial.
-    /// </summary>
-    private void onMove(InputAction.CallbackContext context) => Game_Events_Manager.Instance?.PlayerMoved();
+    #endregion
 }
