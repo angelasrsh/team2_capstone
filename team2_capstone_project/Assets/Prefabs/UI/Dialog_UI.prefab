@@ -513,9 +513,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogFile: {fileID: 4900000, guid: a6534ce45819f0f418c4aebf888f41f2, type: 3}
   uiManager: {fileID: 8320050664616803454}
-  autoAdvanceDialog: 1
+  autoAdvanceDialog: 0
   autoEndDialogue: 0
-  autoAdvanceDelay: 2.5
+  autoAdvanceDelay: 3
   customerDataList:
   - {fileID: 11400000, guid: 6948a6b7da01dc545b67fe99a9a71dc1, type: 2}
   - {fileID: 11400000, guid: 135398e50e07f6c4ca66ad3835c5958e, type: 2}
@@ -538,6 +538,7 @@ MonoBehaviour:
   lowRandomRange: 0.55
   highRandomRange: 0.75
   textTypingSpeed: 0.02
+  fastForwardMultiplier: 0.2
   characterPortraitImage: {fileID: 8320050662869239361}
   textTyping: 0
 --- !u!223 &8320050664616803441

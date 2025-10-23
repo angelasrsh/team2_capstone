@@ -25,7 +25,7 @@ public class Customer_Controller : MonoBehaviour
     private Dish_Data requestedDish;
     private Inventory playerInventory;
     private bool playerInRange = false;
-    private InputAction interactAction;
+    private InputAction talkAction;
     private bool hasSatDown = false;
     private bool hasRequestedDish = false;
     public event Action<string> OnCustomerLeft;
@@ -73,15 +73,11 @@ public class Customer_Controller : MonoBehaviour
             return;
         }
 
-        interactAction = playerInput.actions["Interact"];
-        if (interactAction == null)
-        {
-            Debug.LogWarning("[Customer_Controller] Could not find 'Interact' action in PlayerInput!");
-        }
+        talkAction = playerInput.actions["Talk"];
+        if (talkAction == null)
+            Debug.LogWarning("[Customer_Controller] Could not find 'Talk' action in PlayerInput!");
         else
-        {
-            interactAction.Enable();
-        }
+            talkAction.Enable();
 
         Debug.Log("[Customer_Controller] Input bound successfully.");
     }
@@ -142,7 +138,7 @@ public class Customer_Controller : MonoBehaviour
     {
         if (playerInRange)
         {
-            if (interactAction.WasPerformedThisFrame() && playerInventory != null)
+            if (talkAction.WasPerformedThisFrame() && playerInventory != null)
             {
                 if (hasSatDown && !hasRequestedDish)
                 {

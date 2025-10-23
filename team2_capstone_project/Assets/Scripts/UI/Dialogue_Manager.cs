@@ -9,7 +9,7 @@ using Grimoire;
 
 public class Dialogue_Manager : MonoBehaviour
 {
-    [Header("Components (Add here)")]
+    [Header("Components")]
     public TextAsset dialogFile;
     public Dialog_UI_Manager uiManager;
     public System.Action onDialogComplete;
@@ -33,7 +33,7 @@ public class Dialogue_Manager : MonoBehaviour
     private string myDialogKey;
     [HideInInspector] public enum DialogueState { Normal, Waiting }
     [HideInInspector] public DialogueState currentState = DialogueState.Normal;
-    private InputAction interactAction;
+    private InputAction talkAction;
 
     // Components    
     private Player_Controller playerOverworld;
@@ -46,7 +46,7 @@ public class Dialogue_Manager : MonoBehaviour
         Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
         if (pic != null)
         {
-            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+            talkAction = pic.GetComponent<PlayerInput>().actions["Talk"];
         }
 
         foreach (var customer in customerDataList)
@@ -68,9 +68,23 @@ public class Dialogue_Manager : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && dialogQueue.Count == 0 && !uiManager.textTyping)
+        if (talkAction == null) return;
+
+        if (talkAction.triggered)
         {
-            EndDialog();
+            // If still typing, skip to full line
+            if (uiManager.textTyping)
+            {
+                uiManager.SkipCurrentLineInstant();
+            }
+            else if (dialogQueue.Count > 0)
+            {
+                PlayNextDialog();
+            }
+            else
+            {
+                EndDialog();
+            }
         }
     }
 
