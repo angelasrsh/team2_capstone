@@ -49,6 +49,14 @@ namespace Grimoire
     public AudioClip teleport;
     public AudioClip orderServed;
 
+    [Header("Footstep Clips")]
+    public AudioClip grassLeftFootstep; 
+    public AudioClip grassRightFootstep;
+    public AudioClip woodLeftFootstep;
+    public AudioClip woodRightFootstep;
+    public AudioClip stoneLeftFootstep; 
+    public AudioClip stoneRightFootstep;
+
     [Header("Cauldron Specific")]
     public AudioClip addingOneIngredient;
     public AudioClip addingMultiIngredients;

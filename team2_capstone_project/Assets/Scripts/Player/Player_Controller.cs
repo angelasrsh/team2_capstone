@@ -17,7 +17,7 @@ public class Player_Controller : MonoBehaviour
     public float maxStamina = 5f;  // seconds spent sprinting
     public float staminaRechargeDelay = 3f;  // seconds to wait before starting recharge
     public float staminaRechargeRate = 1f;  // stamina per second recharged
-    [SerializeField] private Player_Stamina_UI staminaUI;
+    private Player_Stamina_UI staminaUI;
 
     // Internal stamina variables
     private float currentStamina;
@@ -49,11 +49,12 @@ public class Player_Controller : MonoBehaviour
     public LayerMask groundMask = ~0;
 
     [HideInInspector] public Vector2 movement;
+    [HideInInspector] public CharacterController controller;
     private bool movementLocked = false;
     private Vector3 velocity;
     private Vector3 currentMoveVelocity;
     private bool isGrounded;
-    [HideInInspector] public CharacterController controller;
+    [HideInInspector] public string currentSurface = "Grass";
 
     // Input System
     private PlayerInput playerInput;
@@ -93,10 +94,19 @@ public class Player_Controller : MonoBehaviour
 
         // Initialize stamina
         currentStamina = maxStamina;
-        SendStaminaProgress();  
+        SendStaminaProgress();
 
         // Detect if platform = mobile
         onMobile = Application.isMobilePlatform;
+    }
+
+    private void Start()
+    {
+        if (staminaUI == null)
+            staminaUI = FindObjectOfType<Player_Stamina_UI>();
+
+        if (staminaUI != null)
+            staminaUI.SetStamina(currentStamina / maxStamina);
     }
 
     private void OnDestroy()
@@ -192,6 +202,8 @@ public class Player_Controller : MonoBehaviour
         // --- Extra slope sticking (for going down slopes) ---
         if (isGrounded)
         {
+            DetectSurface();
+
             // Cast slightly below player
             if (Physics.Raycast(transform.position + Vector3.up * 0.1f,
                 Vector3.down,
@@ -212,6 +224,27 @@ public class Player_Controller : MonoBehaviour
     }
 
     public bool IsMoving() => movement.magnitude > 0.1f;
+
+    private void DetectSurface()
+    {
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down,
+            out RaycastHit hit, groundCheckDistance + 0.3f, groundMask))
+        {
+            if (hit.collider.CompareTag("Grass"))
+                currentSurface = "Grass";
+            else if (hit.collider.CompareTag("Wood"))
+                currentSurface = "Wood";
+            else if (hit.collider.CompareTag("Stone"))
+                currentSurface = "Stone";
+            else
+                currentSurface = "Default";
+        }
+        else
+        {
+            Debug.LogWarning("Player ground surface detection raycast did not hit any ground.");
+        }
+    }
+
 
     /// <summary>
     /// Called by the input action when the player moves.
@@ -274,8 +307,10 @@ public class Player_Controller : MonoBehaviour
 
     private void SendStaminaProgress()
     {
+        if (staminaUI == null) return;
+
         float progress = currentStamina / maxStamina;
-        staminaUI?.SetStamina(progress);
+        staminaUI.SetStamina(progress);
     }
 
     public bool IsSprinting() => isSprinting;

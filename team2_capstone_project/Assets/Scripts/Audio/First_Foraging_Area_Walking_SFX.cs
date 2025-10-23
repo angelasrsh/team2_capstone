@@ -5,17 +5,9 @@ using Grimoire;
 public class First_Foraging_Area_Walking_SFX : MonoBehaviour
 {
     private Player_Controller player;
-
-    [Header("Footstep Clips")]
-    public AudioClip leftFootSFX;
-    public AudioClip rightFootSFX;
-
-    [Header("Step Timing (seconds)")]
-    public float walkStepInterval = 0.5f;
-    public float sprintStepInterval = 0.3f;
-
+    private bool playLeft = true;
     private float stepTimer = 0f;
-    private bool isLeftStep = true;
+    public float baseStepRate = 0.5f;
 
     private void Start()
     {
@@ -24,30 +16,39 @@ public class First_Foraging_Area_Walking_SFX : MonoBehaviour
 
     private void Update()
     {
-        if (player == null || !player.IsMoving() || !player.controller.isGrounded)
+        if (player == null) return;
+
+        if (player.IsMoving() && player.controller.isGrounded)
         {
-            stepTimer = 0f;
-            return;
+            float stepInterval = baseStepRate / (player.isSprinting ? player.sprintMultiplier : 1f);
+            stepTimer += Time.deltaTime;
+
+            if (stepTimer >= stepInterval)
+            {
+                PlayFootstep();
+                stepTimer = 0f;
+            }
+        }
+    }
+
+    private void PlayFootstep()
+    {
+        AudioClip clip = null;
+
+        switch (player.currentSurface)
+        {
+            case "Wood":
+                clip = playLeft ? Audio_Manager.instance.woodLeftFootstep : Audio_Manager.instance.woodRightFootstep;
+                break;
+            case "Stone":
+                clip = playLeft ? Audio_Manager.instance.stoneLeftFootstep : Audio_Manager.instance.stoneRightFootstep;
+                break;
+            default:
+                clip = playLeft ? Audio_Manager.instance.grassLeftFootstep : Audio_Manager.instance.grassRightFootstep;
+                break;
         }
 
-        // Count down to next step
-        stepTimer -= Time.deltaTime;
-
-        if (stepTimer <= 0f)
-        {
-            // Choose clip
-            AudioClip stepClip = isLeftStep ? leftFootSFX : rightFootSFX;
-
-            // Slight random pitch variation for realism
-            float pitch = Random.Range(0.9f, 1.1f);
-            Audio_Manager.instance.PlaySFX(stepClip, 0.15f, pitch);
-
-            // Alternate and reset timer
-            isLeftStep = !isLeftStep;
-            float interval = player.IsSprinting() ? sprintStepInterval : walkStepInterval;
-            interval *= Random.Range(0.9f, 1.1f);
-
-            stepTimer = interval;
-        }
+        Audio_Manager.instance.PlaySFX(clip, 0.15f, Random.Range(0.9f, 1.1f));
+        playLeft = !playLeft;
     }
 }
