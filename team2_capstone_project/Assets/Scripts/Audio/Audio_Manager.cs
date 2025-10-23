@@ -32,7 +32,6 @@ namespace Grimoire
     public AudioClip menuClose;
     public AudioClip bookClose;
     public AudioClip doorBell;
-    public AudioClip firstAreaWalkingSFX;
     public AudioClip sparkle;
     public AudioClip errorBuzz;
     public AudioClip bagPutIn;
@@ -149,11 +148,6 @@ namespace Grimoire
         src.volume = Mathf.Clamp01(volume);
         src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
         src.Play();
-    }
-
-    public void ForestWalk()
-    {
-      PlaySFX(firstAreaWalkingSFX, 0.1f, Random.Range(0.9f, 1.1f));
     }
 
     public void StopAllSFX()

@@ -39,6 +39,8 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+        if (interactAction != null)
+        interactAction.performed -= OnInteractPerformed;
     }
 
     private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
@@ -87,15 +89,38 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player") || interactAction == null)
-            return;
+        if (!other.CompareTag("Player")) return;
 
-        if (interactAction.triggered && !confirmationActive)
+        player = other.GetComponent<Player_Controller>();
+
+        // Enable the action listener when inside the trigger
+        if (interactAction != null)
         {
-            OpenConfirmation(other.GetComponent<Player_Controller>());
+            interactAction.performed += OnInteractPerformed;
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        // Remove listener when player leaves
+        if (interactAction != null)
+        {
+            interactAction.performed -= OnInteractPerformed;
+        }
+
+        player = null;
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext ctx)
+    {
+        if (confirmationActive) return;
+        if (player == null) return;
+
+        OpenConfirmation(player);
     }
 
     private void OpenConfirmation(Player_Controller playerController)

@@ -21,8 +21,10 @@ public class Player_Controller : MonoBehaviour
 
     // Internal stamina variables
     private float currentStamina;
-    private bool isSprinting = false;
-    private bool isRecharging = false;
+    [HideInInspector] public bool isSprinting = false;
+    private bool staminaWasFull = true; // track full state for SFX trigger
+    private bool staminaDepleted = false;
+    private float rechargeTimer = 0f;
 
     [Header("Mobile Input Deadzones")]
 
@@ -51,7 +53,7 @@ public class Player_Controller : MonoBehaviour
     private Vector3 velocity;
     private Vector3 currentMoveVelocity;
     private bool isGrounded;
-    private CharacterController controller;
+    [HideInInspector] public CharacterController controller;
 
     // Input System
     private PlayerInput playerInput;
@@ -222,48 +224,51 @@ public class Player_Controller : MonoBehaviour
     private void HandleSprint()
     {
         bool sprintHeld = sprintAction.ReadValue<float>() > 0.5f;
+        bool isMoving = movement.sqrMagnitude > 0.01f;
 
-        if (sprintHeld && currentStamina > 0 && !isRecharging)
+        // --- Sprint conditions ---
+        if (sprintHeld && isMoving && !staminaDepleted && currentStamina > 0f)
         {
             isSprinting = true;
-            Debug.Log("Sprinting");
             currentStamina -= Time.deltaTime;
+            currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
 
-            if (currentStamina <= 0)
+            if (Mathf.Approximately(currentStamina, 0f))
             {
-                currentStamina = 0;
-                StartCoroutine(RechargeStamina());
+                // Out of stamina — stop sprinting
+                staminaDepleted = true;
+                isSprinting = false;
+                rechargeTimer = 0f;
             }
         }
         else
         {
             isSprinting = false;
+        }
 
-            if (currentStamina < maxStamina && !isRecharging)
+        // --- Recharge logic ---
+        if (!isSprinting && currentStamina < maxStamina)
+        {
+            // Count delay if depleted
+            if (staminaDepleted)
             {
-                StartCoroutine(RechargeStamina());
+                rechargeTimer += Time.deltaTime;
+                if (rechargeTimer >= staminaRechargeDelay)
+                    staminaDepleted = false;
+            }
+
+            // Start recharging only if delay elapsed
+            if (!staminaDepleted)
+            {
+                currentStamina += Time.deltaTime * staminaRechargeRate;
+                currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
             }
         }
 
-        SendStaminaProgress();
-    }
+        // --- Track & UI ---
+        bool staminaFullNow = Mathf.Approximately(currentStamina, maxStamina);
+        staminaWasFull = staminaFullNow;
 
-    private IEnumerator RechargeStamina()
-    {
-        if (isRecharging) yield break;
-
-        isRecharging = true;
-        yield return new WaitForSeconds(staminaRechargeDelay);
-
-        while (currentStamina < maxStamina)
-        {
-            currentStamina += Time.deltaTime * staminaRechargeRate;
-            SendStaminaProgress();
-            yield return null;
-        }
-
-        currentStamina = maxStamina;
-        isRecharging = false;
         SendStaminaProgress();
     }
 
@@ -272,7 +277,10 @@ public class Player_Controller : MonoBehaviour
         float progress = currentStamina / maxStamina;
         staminaUI?.SetStamina(progress);
     }
+
+    public bool IsSprinting() => isSprinting;
     #endregion
+
 
     #region Various Helpers
     public void DisablePlayerMovement()
