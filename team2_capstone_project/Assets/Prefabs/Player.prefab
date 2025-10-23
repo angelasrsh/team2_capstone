@@ -129,6 +129,37 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!1 &9070790180090156064
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4912905649400095999}
+  m_Layer: 0
+  m_Name: DustCloudPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4912905649400095999
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9070790180090156064}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.25, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9083165254151032959}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9083165254151032945
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,6 +170,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9083165254151032959}
   - component: {fileID: 9083165254151032947}
+  - component: {fileID: 8879946327239463668}
   - component: {fileID: 9083165254151032944}
   - component: {fileID: 1176785172000826261}
   - component: {fileID: 8043455314699639965}
@@ -162,6 +194,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4831092431593206564}
+  - {fileID: 4912905649400095999}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -196,6 +229,22 @@ MonoBehaviour:
     m_Bits: 1024
   movement: {x: 0, y: 0}
   currentRoom: {fileID: 0}
+--- !u!114 &8879946327239463668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9083165254151032945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce8dffc6592f1fa41aa3a54f10050e7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dustPrefab: {fileID: 5996382558274736736, guid: 7658752cff6e4c64b8d9a5f5c0b66447, type: 3}
+  dustSpawnPoint: {fileID: 4912905649400095999}
+  spawnInterval: 0.2
+  minSpeed: 0.1
 --- !u!212 &9083165254151032944
 SpriteRenderer:
   m_ObjectHideFlags: 0
