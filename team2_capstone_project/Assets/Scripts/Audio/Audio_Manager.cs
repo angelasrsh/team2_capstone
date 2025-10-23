@@ -244,7 +244,7 @@ namespace Grimoire
 
     public void AddOneIngredient()
     {
-      float randomPitch = Random.Range(0.8f, 1.2f);
+      float randomPitch = Random.Range(0.95f, 1.35f);
       PlaySFX(addingOneIngredient, 0.5f, randomPitch);
     }
 

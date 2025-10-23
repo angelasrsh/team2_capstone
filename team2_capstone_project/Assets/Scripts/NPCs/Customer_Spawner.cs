@@ -22,6 +22,7 @@ public class Customer_Spawner : MonoBehaviour
     // Track which customers are currently present this evening
     private HashSet<string> uniqueCustomersPresent = new HashSet<string>();
     private List<CustomerData> validCustomers = new List<CustomerData>();
+    public static event System.Action<int> OnCustomerCountChanged;
 
     private void OnEnable()
     {
@@ -150,6 +151,9 @@ public class Customer_Spawner : MonoBehaviour
         customer.Init(chosen, seat, Dish_Tool_Inventory.Instance);
         customer.OnCustomerLeft += HandleCustomerLeft;
 
+        // Notify listeners (like your Dish_Sound_Handler)
+        OnCustomerCountChanged?.Invoke(GetCurrentCustomerCount());
+
         Debug.Log($"Spawned customer: {chosen.customerName}");
     }
 
@@ -158,6 +162,14 @@ public class Customer_Spawner : MonoBehaviour
         CustomerData data = FindCustomerData(customerName);
         if (data != null && data.datable)
             uniqueCustomersPresent.Remove(customerName);
+
+        OnCustomerCountChanged?.Invoke(GetCurrentCustomerCount());
+    }
+
+    // Helper function
+    private int GetCurrentCustomerCount()
+    {
+        return FindObjectsOfType<Customer_Controller>().Length;
     }
 
     public void StartNewDay()

@@ -222,20 +222,22 @@ public class Inventory : MonoBehaviour
   /// Generic functions to initialize the inventory with some sort of Inventory stack
   /// </summary>
   /// <typeparam name="T"> must be of or child of Item_Stack type</typeparam>
-  protected void InitializeInventoryStacks<T>() where T : Item_Stack
+  protected void InitializeInventoryStacks<T>() where T : Item_Stack, new()
   {
-    if (InventoryStacks == null)
-      InventoryStacks = new T[InventorySizeLimit];
-    else if (InventoryStacks.Length != InventorySizeLimit)
-    {
-      Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
-      InventoryStacks = new T[InventorySizeLimit];
-
-      for (int i = 0; i < temp.Length; i++) // copy over elements
+      if (InventoryStacks == null)
       {
-        InventoryStacks[i] = temp[i]; // Todo: Item_Stacks are trying to go into dish_tool_stacks and that's not great
+          InventoryStacks = new Item_Stack[InventorySizeLimit];
       }
-    }
+      else if (InventoryStacks.Length != InventorySizeLimit)
+      {
+          Item_Stack[] temp = InventoryStacks;
+          InventoryStacks = new Item_Stack[InventorySizeLimit];
+
+          for (int i = 0; i < Mathf.Min(temp.Length, InventoryStacks.Length); i++)
+          {
+              InventoryStacks[i] = temp[i];
+          }
+      }
   }
 }
 

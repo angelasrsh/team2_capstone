@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Coffee.UIExtensions;
 using Grimoire;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,11 @@ public class Cauldron : MonoBehaviour
     private List<Dish_Data> possibleDishes; // not a deep copy, but clearing this won't affect original list in Ingredient_Data
     private List<Ingredient_Requirement> possibleIngredients;
     [SerializeField] private GameObject errorText;
+
+    [Header("Water UI Particles")]
+    public CanvasGroup waterCanvasGroup;
+    public UIParticle waterParticle1;
+    public UIParticle waterParticle2;
 
     private Dish_Data dishMade;
     private Ingredient_Data ingredientMade;
@@ -180,6 +186,10 @@ public class Cauldron : MonoBehaviour
         else
         {
             Audio_Manager.instance.AddOneIngredient();
+            if (waterParticle1 != null && waterParticle2 != null)
+            {
+                StartCoroutine(ShowWaterParticlesCoroutine());
+            }
         }
 
         if (ingredientInPot.Count == 1)
@@ -228,6 +238,19 @@ public class Cauldron : MonoBehaviour
         AddToPot(water);
         Audio_Manager.instance?.PlayBubblingOnLoop();
         return true;
+    }
+
+    private IEnumerator ShowWaterParticlesCoroutine()
+    {
+        waterCanvasGroup.alpha = 1f;
+        waterParticle1.Play();
+        waterParticle2.Play();
+
+        yield return new WaitForSeconds(1f);
+        
+        waterCanvasGroup.alpha = 0f;
+        waterParticle1.Stop();
+        waterParticle2.Stop();
     }
     #endregion
 }
