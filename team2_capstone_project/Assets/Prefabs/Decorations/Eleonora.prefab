@@ -10,14 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1885341892772831872}
   - component: {fileID: 1885341892772831878}
-  - component: {fileID: 1790132858692348569}
+  - component: {fileID: 1441067090258628715}
   - component: {fileID: 6879782171290687971}
   m_Layer: 9
   m_Name: Eleonora
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1885341892772831872
 Transform:
@@ -50,7 +50,7 @@ CapsuleCollider:
   m_Height: 8.960873
   m_Direction: 1
   m_Center: {x: 1.8008866, y: 0.094189815, z: -3.4234428}
---- !u!114 &1790132858692348569
+--- !u!114 &1441067090258628715
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1885341892772831873}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74955dfc2d4a84649b10fe26db432d25, type: 3}
+  m_Script: {fileID: 11500000, guid: d4ec696021a2f034a8bb2b1a243ae89f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   InteractIcon: {fileID: 6645218384137584604}
@@ -68,6 +68,17 @@ MonoBehaviour:
   forageableData: {fileID: 11400000, guid: ec315524d8863a04d9c8e5ece93b34c2, type: 2}
   foragedVariant: {fileID: 4308610490772557367, guid: 61b9e59860faee749b50e7da9862a0b4, type: 3}
   destroyOnForage: 0
+  collectiblePrefab: {fileID: 1088024667546536706, guid: 4573b14342a88944aa4aa296cedcad16, type: 3}
+  gourdIngredientData: {fileID: 11400000, guid: babe1113605a7fa469981f3cacc4bf58, type: 2}
+  gourdCount: 3
+  dropArea: {x: 4.96, y: 0.56, z: -5.12}
+  dropOffset: {x: -0.26, y: 1.84, z: 12.69}
+  minSeparation: 0.6
+  overlapCheckRadius: 0.15
+  maxSpawnAttempts: 6
+  collisionCheckMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!65 &6879782171290687971
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -180,7 +191,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6371072139706284000
 Transform:
