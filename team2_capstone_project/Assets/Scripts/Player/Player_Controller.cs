@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Grimoire;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 // [RequireComponent(typeof(Rigidbody))]
 public class Player_Controller : MonoBehaviour
@@ -77,32 +78,15 @@ public class Player_Controller : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
-        playerInput = FindObjectOfType<PlayerInput>();
-        if (playerInput == null)
-        {
-            Debug.LogError("[Player_Controller] No PlayerInput found in scene. Make sure a PlayerInput component exists (GameManager).", this);
-            return;
-        }
-
-        moveAction = playerInput.actions["Move"];
-        interactAction = playerInput.actions["Interact"];
-        openInventoryAction = playerInput.actions["OpenInventory"];
-        openJournalAction = playerInput.actions["OpenJournal"];
-        sprintAction = playerInput.actions["Sprint"];
-
-        if (moveAction != null)
-            moveAction.performed += onMove;
-
-        // Initialize stamina
         currentStamina = maxStamina;
         SendStaminaProgress();
-
-        // Detect if platform = mobile
         onMobile = Application.isMobilePlatform;
     }
 
     private void Start()
     {
+        TryBindInput();
+
         if (staminaUI == null)
             staminaUI = FindObjectOfType<Player_Stamina_UI>();
 
@@ -112,20 +96,69 @@ public class Player_Controller : MonoBehaviour
         sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
     }
 
-    private void OnDestroy()
+    private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
+    private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        TryBindInput();
+
+        if (staminaUI == null)
+            staminaUI = FindObjectOfType<Player_Stamina_UI>();
+
+        if (staminaUI != null)
+            staminaUI.SetStamina(currentStamina / maxStamina);
+
+        sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
+    }
+
+    private void TryBindInput()
+    {
+        var input = FindObjectOfType<PlayerInput>();
+        if (input == null)
+        {
+            Debug.LogWarning("[Player_Controller] No PlayerInput found yet — will retry next frame.");
+            StartCoroutine(WaitAndBindInput());
+            return;
+        }
+
+        BindInputActions(input);
+    }
+
+    private IEnumerator WaitAndBindInput()
+    {
+        yield return null; // wait one frame for PlayerInput to spawn
+        var input = FindObjectOfType<PlayerInput>();
+        if (input != null)
+            BindInputActions(input);
+    }
+
+    private void BindInputActions(PlayerInput input)
+    {
+        if (input == null || input.actions == null)
+        {
+            Debug.LogWarning("[Player_Controller] Tried to bind inputs but PlayerInput or its actions are null.");
+            return;
+        }
+
+        // Unsubscribe previous bindings safely
         if (moveAction != null)
             moveAction.performed -= onMove;
-    }
 
-    private void OnEnable()
-    {
-        if (moveAction != null) moveAction.Enable();
-    }
+        playerInput = input;
 
-    private void OnDisable()
-    {
-        if (moveAction != null) moveAction.Disable();
+        moveAction = playerInput.actions["Move"];
+        sprintAction = playerInput.actions["Sprint"];
+
+        moveAction?.Enable();
+        sprintAction?.Enable();
+
+        if (moveAction != null)
+            moveAction.performed += onMove;
+
+        playerInput.onActionTriggered -= HandleGlobalInputTriggered;
+        playerInput.onActionTriggered += HandleGlobalInputTriggered;
+
+        Debug.Log("[Player_Controller] Input actions bound successfully in scene: " + SceneManager.GetActiveScene().name);
     }
 
     private void Update()
@@ -359,6 +392,20 @@ public class Player_Controller : MonoBehaviour
         else
         {
             Debug.LogWarning($"Room not found: {newRoomID}");
+        }
+    }
+
+    private void HandleGlobalInputTriggered(InputAction.CallbackContext ctx)
+    {
+        // Get reference to PlayerInput if lost during scene load
+        if (playerInput == null)
+        {
+            PlayerInput input = FindObjectOfType<PlayerInput>();
+            if (input != null && input.actions != null)
+            {
+                Debug.Log("[Player_Controller] Reacquiring PlayerInput after scene load...");
+                BindInputActions(input);
+            }
         }
     }
     #endregion
