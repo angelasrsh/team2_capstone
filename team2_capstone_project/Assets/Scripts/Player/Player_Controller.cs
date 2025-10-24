@@ -18,6 +18,7 @@ public class Player_Controller : MonoBehaviour
     public float staminaRechargeDelay = 3f;  // seconds to wait before starting recharge
     public float staminaRechargeRate = 1f;  // stamina per second recharged
     private Player_Stamina_UI staminaUI;
+    private Impact_Lines_UI sprintImpactLinesUI;
 
     // Internal stamina variables
     private float currentStamina;
@@ -107,6 +108,8 @@ public class Player_Controller : MonoBehaviour
 
         if (staminaUI != null)
             staminaUI.SetStamina(currentStamina / maxStamina);
+
+        sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
     }
 
     private void OnDestroy()
@@ -129,6 +132,15 @@ public class Player_Controller : MonoBehaviour
     {
         Vector2 raw = moveAction.ReadValue<Vector2>();
         HandleSprint();
+
+        // --- Sprint Lines Control ---
+        if (sprintImpactLinesUI != null)
+        {
+            if (isSprinting && IsMoving())
+                sprintImpactLinesUI.ShowLines();
+            else
+                sprintImpactLinesUI.HideLines();
+        }
 
         if (onMobile)
         {
