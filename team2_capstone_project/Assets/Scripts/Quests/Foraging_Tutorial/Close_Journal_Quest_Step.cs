@@ -9,14 +9,13 @@ using UnityEngine;
 /// </summary>
 public class Close_Journal_Quest_Step : Dialogue_Quest_Step
 {
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
         DelayedDialogue(10, 0, false);
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onJournalToggle -= JournalToggled;
     }
@@ -26,7 +25,6 @@ public class Close_Journal_Quest_Step : Dialogue_Quest_Step
         if (!Journal_Menu.Instance.isPaused) // Immediately end if journal is already closed
             FinishQuestStep(); // Possible bug if player leaves game in-between and then returns
     }
-
 
     private void JournalToggled(bool isOpen)
     {

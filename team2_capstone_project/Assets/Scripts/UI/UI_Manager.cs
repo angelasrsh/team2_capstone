@@ -31,6 +31,12 @@ public class UI_Manager : MonoBehaviour
             Debug.Log("[UI_Manager]: Player Input is null!");
     }
 
+    private void OnEnable()
+    {
+        if (playerInput == null)
+            playerInput = Game_Manager.Instance?.GetComponent<PlayerInput>();
+    }
+
     public bool CanProcessInput()
     {
         return inputCooldown <= 0f;

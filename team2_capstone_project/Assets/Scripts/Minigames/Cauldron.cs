@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using Grimoire;
 using UnityEngine;
 using UnityEngine.UI;
+using Coffee.UIExtensions;
 using TMPro;
+using Unity.VisualScripting;
 
 public class Cauldron : MonoBehaviour
 {
+  [Header("Water UI Particles")]
+  public CanvasGroup waterCanvasGroup;
+  public UIParticle waterParticle1;
+  public UIParticle waterParticle2;
+
   private Dictionary<Ingredient_Data, int> ingredientInPot = new Dictionary<Ingredient_Data, int>();
   private List<Dish_Data> possibleDishes; // not a deep copy, but clearing this won't affect original list in Ingredient_Data
   private List<Ingredient_Requirement> possibleIngredients;
@@ -188,11 +195,12 @@ public class Cauldron : MonoBehaviour
 
     if (ingredient.Name == "Water")
     {
-      Audio_Manager.instance.AddWater();
+        Audio_Manager.instance.AddWater();
     }
     else
     {
-      Audio_Manager.instance.AddOneIngredient();
+        Audio_Manager.instance.AddOneIngredient();
+        StartCoroutine(ShowWaterParticlesCoroutine());
     }
 
     if (numIngredients == 1)
@@ -211,37 +219,52 @@ public class Cauldron : MonoBehaviour
     return true;
   }
 
-  // public void RemoveFromPot(Ingredient_Data ingredient)
-  // {
-  //   if (ingredientInPot.ContainsKey(ingredient))
-  //   {
-  //     ingredientInPot[ingredient]--;
-  //     if (ingredientInPot[ingredient] <= 0)
-  //       ingredientInPot.Remove(ingredient);
-  //   }
+  public void RemoveFromPot(Ingredient_Data ingredient)
+  {
+    if (ingredientInPot.ContainsKey(ingredient))
+    {
+      ingredientInPot[ingredient]--;
+      if (ingredientInPot[ingredient] <= 0)
+        ingredientInPot.Remove(ingredient);
+    }
 
-  //   Debug.Log("Ingredients in pot: " + ingredientInPot.Count);
-  // }
+    Debug.Log("Ingredients in pot: " + ingredientInPot.Count);
+  }
 
   public bool IsEmpty() => ingredientInPot.Count == 0;
 
-  public bool AddWater(Ingredient_Data water)
-  {
-    if (water == null)
+    public bool AddWater(Ingredient_Data water)
     {
-      Debug.LogWarning("[Cauldron] AddWater called with null water.");
-      return false;
-    }
+        if (water == null)
+        {
+            Debug.LogWarning("[Cauldron] AddWater called with null water.");
+            return false;
+        }
 
-    if (Drag_All.IsWaterAdded())
+        if (Drag_All.IsWaterAdded())
+        {
+            Debug.Log("[Cauldron] Water already added.");
+            return false;
+        }
+
+        AddToPot(water);
+        Audio_Manager.instance?.PlayBubblingOnLoop();
+        return true;
+    }
+  
+    private IEnumerator ShowWaterParticlesCoroutine()
     {
-      Debug.Log("[Cauldron] Water already added.");
-      return false;
-    }
+        waterCanvasGroup.alpha = 1f;
+        waterParticle1.Play();
+        waterParticle2.Play();
 
-    AddToPot(water);
-    Audio_Manager.instance?.PlayBubblingOnLoop();
-    return true;
-  }
-  #endregion
+        yield return new WaitForSeconds(1f);
+        
+        waterCanvasGroup.alpha = 0f;
+        waterParticle1.Stop();
+        waterParticle2.Stop();
+    }
+    #endregion
 }
+
+

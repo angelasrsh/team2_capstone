@@ -7,28 +7,21 @@ using UnityEngine;
 /// </summary>
 public class Frying_Instruction_Quest_Step : Dialogue_Quest_Step
 {
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onResourceRemove += Cook;
-
-
     }
     
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onResourceRemove -= Cook;
-
-        
     }
     
-    // Start is called before the first frame update
     void Start()
     {
         DelayedDialogue(0, 7, false);
-        
     }
 
-    // Update is called once per frame
     void Cook(Ingredient_Data ing)
     {
         FinishQuestStep();

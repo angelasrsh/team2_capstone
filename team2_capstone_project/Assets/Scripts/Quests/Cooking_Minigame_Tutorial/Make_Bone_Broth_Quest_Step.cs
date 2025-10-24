@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Make_Bone_Broth_Quest_Step : Dialogue_Quest_Step
 {
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
     }
@@ -19,7 +18,6 @@ public class Make_Bone_Broth_Quest_Step : Dialogue_Quest_Step
     {
         DelayedDialogue(0, 0, false);
     }
-
 
     private void ResourceAdd(Ingredient_Data ingredient)
     {

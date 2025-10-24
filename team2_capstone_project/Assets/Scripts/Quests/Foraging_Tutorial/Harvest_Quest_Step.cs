@@ -6,11 +6,14 @@ public class Harvest_Quest_Step : Dialogue_Quest_Step
 {
 
 
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onResourceAdd += Harvest;
+    }
 
-        
+    protected override void OnDisable()
+    {
+        Game_Events_Manager.Instance.onResourceAdd -= Harvest;
     }
 
     void Start()
@@ -20,13 +23,6 @@ public class Harvest_Quest_Step : Dialogue_Quest_Step
         else
             DelayedDialogue(0, 0, false);
     }
-
-    // Unsubscribe to clean up
-    void OnDisable()
-    {
-        Game_Events_Manager.Instance.onResourceAdd -= Harvest;
-    }
-
 
     private void Harvest(Ingredient_Data ing)
     {        

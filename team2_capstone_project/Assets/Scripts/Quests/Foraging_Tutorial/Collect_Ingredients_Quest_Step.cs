@@ -10,7 +10,7 @@ public class Collect_Ingredients_Quest_Step : Dialogue_Quest_Step
     public Ingredient_Data[] RequiredIngredients;
     public int[] ItemCounts;
 
-    void OnEnable()
+    protected override void OnEnable()
     {
         SceneManager.sceneLoaded += onSceneLoaded;
         Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
@@ -20,22 +20,18 @@ public class Collect_Ingredients_Quest_Step : Dialogue_Quest_Step
             Debug.Log($"{GetType().Name} on {gameObject.name} Error: Please ensure there is a required count for every item");
 
         DelayedDialogue(0, 0, false);
-
-      
     }
-
+    
+    protected override void OnDisable()
+    {
+        SceneManager.sceneLoaded -= onSceneLoaded;
+        Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
+    }
 
     // Open door to exit immediately if the player already has the necessary ingredients
     private void Start()
     {
         checkRequirementsMet();
-    }
-
-    // Unsubscribe to clean up
-    void OnDisable()
-    {
-        SceneManager.sceneLoaded -= onSceneLoaded;
-        Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
     }
     
     private void ResourceAdd(Ingredient_Data ing)
@@ -61,7 +57,6 @@ public class Collect_Ingredients_Quest_Step : Dialogue_Quest_Step
                 hasAllItems = false;
                 break;
             }
-
         }
 
         if (hasAllItems)
