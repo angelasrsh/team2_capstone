@@ -150,8 +150,6 @@ public class Customer_Spawner : MonoBehaviour
         Audio_Manager.instance.PlayDoorbell();
         customer.Init(chosen, seat, Dish_Tool_Inventory.Instance);
         customer.OnCustomerLeft += HandleCustomerLeft;
-
-        // Notify listeners (like your Dish_Sound_Handler)
         OnCustomerCountChanged?.Invoke(GetCurrentCustomerCount());
 
         Debug.Log($"Spawned customer: {chosen.customerName}");
@@ -172,8 +170,5 @@ public class Customer_Spawner : MonoBehaviour
         return FindObjectsOfType<Customer_Controller>().Length;
     }
 
-    public void StartNewDay()
-    {
-        uniqueCustomersPresent.Clear();
-    }
+    public void StartNewDay() => uniqueCustomersPresent.Clear();
 }

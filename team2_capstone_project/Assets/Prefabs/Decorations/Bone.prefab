@@ -112,7 +112,7 @@ Transform:
   m_GameObject: {fileID: 7245441066456534654}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -17.47434, y: 62.158024, z: -13.062071}
-  m_LocalScale: {x: 1.7895972, y: 1.7895972, z: 1.7895972}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2795739685192522527}
@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InteractIcon: {fileID: 2494537745656058659}
+  holdTime: 1
   ingredientData: {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
   forageableData: {fileID: 11400000, guid: 02850ab2c97646943ac2c38a09b6e2d9, type: 2}
   foragedVariant: {fileID: 6588261171708616801, guid: 2ee75f9da008eb1418f5a0bf62c2df3a, type: 3}

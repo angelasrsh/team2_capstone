@@ -6,10 +6,19 @@ using UnityEngine;
 public class Player_Progress : ScriptableObject
 {
   public static Player_Progress Instance;
+
+  // Default unlocks at game start
+  [Header("Default Unlocks")]
+  [SerializeField] private Dish_Data.Dishes[] defaultDishes;
+  [SerializeField] private CustomerData.NPCs[] defaultNPCs;
+  [SerializeField] private IngredientType[] defaultIngredients;
+
   // HashSet ensures no duplicates and fast lookups
   [SerializeField] private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
   [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
   [SerializeField] private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
+
+  // Money vars
   [SerializeField] private float startingMoney;
   public event System.Action<float> OnMoneyChanged;
   [HideInInspector] public float money;
@@ -18,29 +27,52 @@ public class Player_Progress : ScriptableObject
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used )
   public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used )
 
+  /// <summary>
+  /// Data to unlock at game start
+  /// </summary>
   private void OnEnable()
   {
     Instance = this;
-    // Initialize with default unlocks if needed
-    UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-    // UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
-    UnlockNPC(CustomerData.NPCs.Elf);
-    UnlockNPC(CustomerData.NPCs.Phrog);
-    UnlockIngredient(IngredientType.Uncut_Slime);
-    UnlockIngredient(IngredientType.Cut_Slime);
-    UnlockIngredient(IngredientType.Water);
-    UnlockIngredient(IngredientType.Bone_Broth);
-    UnlockIngredient(IngredientType.Bone);
-    UnlockIngredient(IngredientType.Uncut_Fogshroom);
-    UnlockIngredient(IngredientType.Uncut_Fermented_Eye);
-    UnlockIngredient(IngredientType.Cut_Fogshroom);
-    UnlockIngredient(IngredientType.Cut_Fermented_Eye);
-    UnlockIngredient(IngredientType.Milk);
-    UnlockIngredient(IngredientType.Honey);
-    UnlockIngredient(IngredientType.Cut_Ficklegourd);
-    UnlockIngredient(IngredientType.Cooked_Cut_Ficklegourd);
+    InitializeDefaults();
     money = startingMoney;
   }
+
+  private void InitializeDefaults()
+  {
+    foreach (var d in defaultDishes) UnlockDish(d);
+    foreach (var n in defaultNPCs) UnlockNPC(n);
+    foreach (var i in defaultIngredients) UnlockIngredient(i);
+  }
+
+
+  #region Getters and Setters for Save Data
+  public PlayerProgressData GetSaveData()
+  {
+    return new PlayerProgressData
+    {
+      money = money,
+      unlockedDishes = new List<Dish_Data.Dishes>(unlockedDishes),
+      unlockedNPCs = new List<CustomerData.NPCs>(unlockedNPCs),
+      unlockedIngredients = new List<IngredientType>(unlockedIngredients)
+    };
+  }
+
+  public void LoadFromSaveData(PlayerProgressData data)
+  {
+    if (data == null)
+    {
+      Debug.LogWarning("PlayerProgressData is null, loading defaults.");
+      return;
+    }
+
+    unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
+    unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
+    unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
+    money = data.money;
+
+    OnMoneyChanged?.Invoke(money);  // update currency UI
+  }
+  #endregion
 
 
   #region Money
@@ -83,6 +115,7 @@ public class Player_Progress : ScriptableObject
     {
       // Fire event only if a new dish was added
       OnDishUnlocked?.Invoke();
+      Save_Manager.instance?.SaveGameData();  // auto-save on new dish unlock
     }
   }
 
@@ -147,4 +180,13 @@ public class Player_Progress : ScriptableObject
   public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
 
   #endregion
+}
+
+[System.Serializable]
+public class PlayerProgressData
+{
+    public List<Dish_Data.Dishes> unlockedDishes = new List<Dish_Data.Dishes>();
+    public List<CustomerData.NPCs> unlockedNPCs = new List<CustomerData.NPCs>();
+    public List<IngredientType> unlockedIngredients = new List<IngredientType>();
+    public float money;
 }
