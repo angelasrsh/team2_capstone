@@ -140,7 +140,7 @@ public class Combine : MonoBehaviour
 
     foreach (Ingredient_Requirement req in dish.ingredientQuantities)
     {
-      if (howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
+      if (!howManyOfEach.ContainsKey(req.ingredient.ingredientType) || howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
         return false;
     }
 
@@ -154,7 +154,7 @@ public class Combine : MonoBehaviour
 
     foreach (Ingredient_Requirement req in candidate.ingredientsNeeded)
     {
-      if (howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
+      if (!howManyOfEach.ContainsKey(req.ingredient.ingredientType) || howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
         return false;
     }
 

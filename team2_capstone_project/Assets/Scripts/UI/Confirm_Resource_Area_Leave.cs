@@ -4,12 +4,13 @@ using Grimoire;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using TMPro;
+using Unity.VisualScripting;
 
 public class Confirm_Resource_Area_Leave : MonoBehaviour
 {
     [Header("References")]
     public Canvas leaveResourceAreaCanvas;
-    public Canvas warningLeaveResourceAreaCanvas;
     public Room_Data currentRoom;
     public Room_Data.RoomID exitingTo;
 
@@ -21,8 +22,6 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     private void Awake()
     {
         leaveResourceAreaCanvas.enabled = false;
-        if (warningLeaveResourceAreaCanvas != null)
-            warningLeaveResourceAreaCanvas.enabled = false;
 
         // Subscribe to scene changes to rebind input
         SceneManager.sceneLoaded += OnSceneLoadedRebind;
@@ -125,11 +124,10 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     private void OpenConfirmation(Player_Controller playerController)
     {
-        if (!haveEnoughResources() && SceneManager.GetActiveScene().name == "Foraging_Area_Whitebox" && warningLeaveResourceAreaCanvas != null)
-            warningLeaveResourceAreaCanvas.enabled = true; // Maybe just set text later?
-        else
-            leaveResourceAreaCanvas.enabled = true;
-
+        if (SceneManager.GetActiveScene().name == "Foraging_Area_Whitebox")
+            leaveResourceAreaCanvas.GetComponent<Leave_Resource_Area_Canvas_Script>().SetText();
+            
+        leaveResourceAreaCanvas.enabled = true;
         confirmationActive = true;
 
         player = playerController;
@@ -187,21 +185,5 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoadedRebind;
     }
 
-    /// <summary>
-    /// Check if we have enough resources. Hard-coded to stew
-    /// TODO: Check for all selected daily recipes
-    /// </summary>
-    private bool haveEnoughResources()
-    {
-        int numShrooms = Ingredient_Inventory.Instance.GetItemCount(IngredientType.Uncut_Fogshroom);
-        int numEyes = Ingredient_Inventory.Instance.GetItemCount(IngredientType.Uncut_Fermented_Eye);
-        int numBones = Ingredient_Inventory.Instance.GetItemCount(IngredientType.Bone);
-
-        if (numShrooms >= Day_Plan_Manager.instance.customersPlannedForEvening
-            && numEyes >= Day_Plan_Manager.instance.customersPlannedForEvening
-            && numBones >= Day_Plan_Manager.instance.customersPlannedForEvening)
-            return true;
-        else
-            return false;
-    }
+ 
 }

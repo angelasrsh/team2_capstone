@@ -28,7 +28,7 @@ public class Canvas_Inventory_Listener : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    if (openInventory.WasPerformedThisFrame() || openInventoryUI.WasPerformedThisFrame())
+    if (!UI_Manager.Instance.pauseMenuOn && (openInventory.WasPerformedThisFrame() || openInventoryUI.WasPerformedThisFrame()))
     {
       if (InventoryCanvas == null)
         Debug.LogWarning("[Canv_Inv_Lis] Error: no InventoryCanvas assigned!");
