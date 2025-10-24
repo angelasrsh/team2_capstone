@@ -57,7 +57,7 @@ public class Room_Change_Manager : MonoBehaviour
         }
 
         // Save state if leaving Restaurant
-        if (currentRoomID == Room_Data.RoomID.Restaurant)
+        if (currentRoomID == Room_Data.RoomID.Updated_Restaurant)
         {
             if (Restaurant_State.Instance != null)
             {
@@ -99,6 +99,7 @@ public class Room_Change_Manager : MonoBehaviour
                 Debug.Log($"No time override for this exit. Using whatever state already exists: {Day_Turnover_Manager.Instance.currentTimeOfDay}");
             }
         }
+        Game_Events_Manager.Instance.RoomChange(currentRoomID, exitingTo);
         StartCoroutine(HandleRoomTransition(exit.targetRoom, exit.spawnPointID));
     }
 

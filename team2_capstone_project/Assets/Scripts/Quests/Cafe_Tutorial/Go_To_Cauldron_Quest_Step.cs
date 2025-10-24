@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Go_To_Cauldron_Quest_Step : Tutorial_Quest_Step
+public class Go_To_Cauldron_Quest_Step : Dialogue_Quest_Step
 {
-    void OnEnable()
+    protected override void OnEnable()
     {
         SceneManager.sceneLoaded += onSceneLoaded;
-        DelayedInstructionStart();
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         SceneManager.sceneLoaded -= onSceneLoaded;
     }
@@ -21,6 +19,5 @@ public class Go_To_Cauldron_Quest_Step : Tutorial_Quest_Step
     {
         if (scene.name == "Cooking_Minigame")
             FinishQuestStep();
-            
     }
 }

@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
-using UnityEditor.SearchService;
+// using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,6 +19,9 @@ using UnityEngine.SceneManagement;
 /// When adding new tutorials, you must 
 ///     1) Add their S.O.s to the TutorialList in the Inspector
 ///     2) In the matching position, add the tutorial's room to the TutorialRoomIDs list in the Inspector
+///     3) Make sure the Quest is in the Quest Database
+///     4) Make sure the scene has a Quest_Manager, Tutorial_Manager, and Dialog_UI
+///     5) Create and add all quest step prefabs you want to the quest S.O.
 /// 
 /// </summary>
 public class Tutorial_Manager : MonoBehaviour
@@ -41,7 +44,6 @@ public class Tutorial_Manager : MonoBehaviour
     private Dictionary<String, Quest_Info_SO> RoomTutorialMap = new Dictionary<String, Quest_Info_SO>();
     private Dictionary<String, Quest_State> QuestIDQuestStateMap = new Dictionary<String, Quest_State>(); // Map quest IDs to quest states
 
-    //private int instructionIndex = 0;
 
     // Set variables
     private void Awake()
@@ -61,9 +63,17 @@ public class Tutorial_Manager : MonoBehaviour
         if (TutorialList.Length != TutorialRoomIDs.Length)  // The tutorial and room list must match and be the same length
             Debug.LogWarning("[T_MAN] ERROR: Tutorial Manager tutorial list and Tutorial Room list are not the same length");
 
+        // Initialize room tutorial map
         for (int i = 0; i < TutorialList.Length; i++)
             RoomTutorialMap[TutorialRoomIDs[i].ToString()] = TutorialList[i]; // Map Tutorial S_O to RoomID key
 
+        for (int i = 0; i < TutorialList.Length; i++)
+        {
+            QuestIDQuestStateMap[TutorialList[i].id] = Quest_State.REQUIREMENTS_NOT_MET;
+            QuestIDQuestStateMap[TutorialList[i].id] = Quest_Manager.Instance.GetQuestByID(TutorialList[i].id).state;
+            // Helpers.printLabeled(this, TutorialList[i].id + QuestIDQuestStateMap[TutorialList[i].id].ToString());
+        }
+            
 
     }
 
@@ -74,8 +84,24 @@ public class Tutorial_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onQuestStateChange += questStateChange;
         Game_Events_Manager.Instance.onQuestStepChange += ChangeQuestStep;
 
+        // State tracking for now
+        Game_Events_Manager.Instance.onInventoryToggle += InventoryToggle;
+
         // For detecting when we enter a room and need to start a tutorial
         SceneManager.sceneLoaded += CheckStartTutorial;
+
+        CheckStartTutorial(SceneManager.GetActiveScene());
+    }
+
+    
+    // Clean up by unsubscribing
+    private void OnDisable()
+    {
+        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
+        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
+
+        // State tracking for now
+        Game_Events_Manager.Instance.onInventoryToggle += InventoryToggle;
     }
 
     /// <summary>
@@ -84,12 +110,13 @@ public class Tutorial_Manager : MonoBehaviour
     /// Add new tutorials using the instructions in Tutorial_Manager.
     /// </summary>
     /// <param name="roomID"> room being entered </param>
-    private void CheckStartTutorial(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+    private void CheckStartTutorial(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode = LoadSceneMode.Single)
     {
         // Don't auto-start tutorials if tutorials aren't enabled
 #if !TUTORIAL_ENABLE
         return;
 #endif
+        Helpers.printLabeled(this, "");
         // End search if this isn't a room that is listed to have a tutorial
         if (!RoomTutorialMap.ContainsKey(scene.name))
             return;
@@ -101,15 +128,10 @@ public class Tutorial_Manager : MonoBehaviour
         {
             //Debug.Log($"[T_MAN] Auto-starting tutorial {tutorialID}");
             StartTutorial(tutorialID);
+            // Helpers.printLabeled(this, "Starting" + tutorialID);
         }
     }
 
-    // Clean up by unsubscribing
-    private void OnDisable()
-    {
-        Game_Events_Manager.Instance.onQuestStateChange -= questStateChange;
-        Game_Events_Manager.Instance.onQuestStepChange -= ChangeQuestStep;
-    }
 
     /// <summary>
     /// Begin the tutorial (any quest) specified by the ID.
@@ -133,7 +155,9 @@ public class Tutorial_Manager : MonoBehaviour
     {
         // If we are tracking this quest's state, update our tutorial state dictionary
         if (RoomTutorialMap.ContainsValue(q.Info))
+        {
             QuestIDQuestStateMap[q.Info.id] = q.state;
+        }
     }
 
     /// <summary>
@@ -149,5 +173,21 @@ public class Tutorial_Manager : MonoBehaviour
         //     setText(questInfoForCanvas.dialogueList[stepIndex]);
         // }
     }
+
+    #region State_Variables_For_Persistence_For_Now
+    /// State variables that are here until I have a better way of saving info
+
+    public bool hasOpenedInventory = false;
+    public bool hasClosedInventory = false;
+
+    private void InventoryToggle(bool isOpen)
+    {
+        if (isOpen)
+            hasOpenedInventory = true;
+        else if (hasOpenedInventory)
+            hasClosedInventory = false;
+    }
+    
+    #endregion
 
 }

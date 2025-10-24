@@ -18,6 +18,12 @@ public abstract class Quest_Step : MonoBehaviour
 
     private int stepIndex;
 
+    protected bool simulateMobile = false;
+
+    // #if UNITY_EDITOR
+        //     simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+    // #endif
+
 
     public void InitializeQuestStep(string questId, int stepIndex)
     {

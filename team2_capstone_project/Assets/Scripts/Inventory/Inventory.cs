@@ -40,6 +40,9 @@ public class Inventory : MonoBehaviour
 
   [field: SerializeField] public Item_Stack[] InventoryStacks { get; protected set; }
 
+    // Count total amount of items
+    public int TotalIngCount = 0;
+
   /// <summary>
   /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
   /// </summary>
@@ -117,13 +120,16 @@ public class Inventory : MonoBehaviour
 
     // Broadcast to other listening events
     if (type is Ingredient_Data ing)
-      Game_Events_Manager.Instance.ResourceAdd(ing);
+        Game_Events_Manager.Instance.ResourceAdd(ing);
     else if (type is Dish_Data dish)
-      Game_Events_Manager.Instance.DishAdd(dish);
+        Game_Events_Manager.Instance.DishAdd(dish);
 
+
+    int amtAdded = count - amtLeftToAdd;
+    TotalIngCount += amtAdded;
     updateInventory();
-    Debug.Log($"[Inventory] Added {count - amtLeftToAdd} {type.Name}");
-    return count - amtLeftToAdd; // Return how many items were actually added
+    Debug.Log($"[Inventory] Added {amtAdded} {type.Name}");
+    return amtAdded; // Return how many items were actually added
   }
 
   /// <summary>
@@ -159,10 +165,12 @@ public class Inventory : MonoBehaviour
     else if (type is Dish_Data)
       Game_Events_Manager.Instance.DishRemove((Dish_Data)type);
 
-    updateInventory(); // Remove empty elements
-    Debug.Log($"[Invtory] Removed {count - amtLeftToRemove} {type.Name}");
+    int amtRemoved = count - amtLeftToRemove;
+    TotalIngCount += amtRemoved;
+        updateInventory(); // Remove empty elements
+    Debug.Log($"[Invtory] Removed {amtRemoved} {type.Name}");
     // Return however much was added
-    return count - amtLeftToRemove;
+    return amtRemoved;
   }
 
   /// <summary>
@@ -214,20 +222,22 @@ public class Inventory : MonoBehaviour
   /// Generic functions to initialize the inventory with some sort of Inventory stack
   /// </summary>
   /// <typeparam name="T"> must be of or child of Item_Stack type</typeparam>
-  protected void InitializeInventoryStacks<T>() where T : Item_Stack
+  protected void InitializeInventoryStacks<T>() where T : Item_Stack, new()
   {
-    if (InventoryStacks == null)
-      InventoryStacks = new T[InventorySizeLimit];
-    else if (InventoryStacks.Length != InventorySizeLimit)
-    {
-      Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
-      InventoryStacks = new T[InventorySizeLimit];
-
-      for (int i = 0; i < temp.Length; i++) // copy over elements
+      if (InventoryStacks == null)
       {
-        InventoryStacks[i] = temp[i]; // Todo: Item_Stacks are trying to go into dish_tool_stacks and that's not great
+          InventoryStacks = new Item_Stack[InventorySizeLimit];
       }
-    }
+      else if (InventoryStacks.Length != InventorySizeLimit)
+      {
+          Item_Stack[] temp = InventoryStacks;
+          InventoryStacks = new Item_Stack[InventorySizeLimit];
+
+          for (int i = 0; i < Mathf.Min(temp.Length, InventoryStacks.Length); i++)
+          {
+              InventoryStacks[i] = temp[i];
+          }
+      }
   }
 }
 

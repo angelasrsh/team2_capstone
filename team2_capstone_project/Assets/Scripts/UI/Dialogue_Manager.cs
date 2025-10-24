@@ -9,7 +9,7 @@ using Grimoire;
 
 public class Dialogue_Manager : MonoBehaviour
 {
-    [Header("Components (Add here)")]
+    [Header("Components")]
     public TextAsset dialogFile;
     public Dialog_UI_Manager uiManager;
     public System.Action onDialogComplete;
@@ -17,6 +17,7 @@ public class Dialogue_Manager : MonoBehaviour
 
     [Header("Auto-Advancing Dialog Settings")]
     public bool autoAdvanceDialog = false; // Enable auto mode
+    public bool autoEndDialogue = false; // Enable auto on dialogue close on end
     public float autoAdvanceDelay = 2.5f;  // Time between lines
 
     [Header("Character Data")]
@@ -32,7 +33,7 @@ public class Dialogue_Manager : MonoBehaviour
     private string myDialogKey;
     [HideInInspector] public enum DialogueState { Normal, Waiting }
     [HideInInspector] public DialogueState currentState = DialogueState.Normal;
-    private InputAction interactAction;
+    private InputAction talkAction;
 
     // Components    
     private Player_Controller playerOverworld;
@@ -45,7 +46,7 @@ public class Dialogue_Manager : MonoBehaviour
         Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
         if (pic != null)
         {
-            interactAction = pic.GetComponent<PlayerInput>().actions["Interact"];
+            talkAction = pic.GetComponent<PlayerInput>().actions["Talk"];
         }
 
         foreach (var customer in customerDataList)
@@ -67,9 +68,23 @@ public class Dialogue_Manager : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && dialogQueue.Count == 0 && !uiManager.textTyping)
+        if (talkAction == null) return;
+
+        if (talkAction.triggered)
         {
-            EndDialog();
+            // If still typing, skip to full line
+            if (uiManager.textTyping)
+            {
+                uiManager.SkipCurrentLineInstant();
+            }
+            else if (dialogQueue.Count > 0)
+            {
+                PlayNextDialog();
+            }
+            else
+            {
+                EndDialog();
+            }
         }
     }
 
@@ -156,11 +171,13 @@ public class Dialogue_Manager : MonoBehaviour
     /// Starts a dialog sequence from the given key.
     /// Parses emotions from {Braces} in lines if present.
     /// </summary>
-    public void PlayScene(string aDialogKey)
+    public void PlayScene(string aDialogKey, bool disablePlayerInput = true)
     {
+        Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
+
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0) 
         {
-            PlayNextDialog();
+            PlayNextDialog(disablePlayerInput);
             return;
         }
 
@@ -174,18 +191,19 @@ public class Dialogue_Manager : MonoBehaviour
         }
         completedDialogKeys.Add(aDialogKey); 
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
-        PlayNextDialog();
+        PlayNextDialog(disablePlayerInput);
     }
 
     /// <summary>
     /// Plays the next line of dialog, parsing emotion from the text itself.
     /// </summary>
-    public void PlayNextDialog()
+    public void PlayNextDialog(bool disablePlayerInput = true)
     {
         if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
 
         if (dialogQueue.Count > 0)
         {
+            uiManager.ClearText();
             string dialogLine = dialogQueue.Dequeue();
 
             // Parse dialog line -> text {Emotion}
@@ -223,16 +241,19 @@ public class Dialogue_Manager : MonoBehaviour
                 }
             }
 
-            uiManager.ShowText(dialogText);
+            uiManager.ShowText(dialogText, disablePlayerInput);
 
             if (autoAdvanceDialog)
             {
-                StartCoroutine(AutoAdvanceNextLine());
+                StartCoroutine(AutoAdvanceNextLine(disablePlayerInput));
             }
         }
         else
         {
-            EndDialog();
+            if (autoEndDialogue)
+                EndDialog();
+
+            Game_Events_Manager.Instance.DialogueComplete(myDialogKey);
         }
     }
     #endregion
@@ -242,10 +263,10 @@ public class Dialogue_Manager : MonoBehaviour
     /// Starts a dialog sequence from the given key, but forces the portrait to a given emotion.
     /// Useful for reactions to liked/disliked/neutral dishes.
     /// </summary>
-    public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion)
+    public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
     {
         // Tell Game events manager so we don't overlap the dialogue box
-        Game_Events_Manager.Instance.BeginDialogueBox();
+        Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
         if (dialogQueue.Count > 0)
         {
@@ -264,19 +285,20 @@ public class Dialogue_Manager : MonoBehaviour
         }
 
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
-        PlayNextDialog(forcedEmotion);
+        PlayNextDialog(forcedEmotion, disablePlayerInput);
     }
 
 
     /// <summary>
     /// Plays the next line of dialog, forcing a specific emotion (ignores {Braces} in text).
     /// </summary>
-    public void PlayNextDialog(CustomerData.EmotionPortrait.Emotion forcedEmotion)
+    public void PlayNextDialog(CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
     {
         if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
 
         if (dialogQueue.Count > 0)
         {
+            uiManager.ClearText();
             string dialogLine = dialogQueue.Dequeue();
 
             // Ignore braces; use forced emotion
@@ -308,27 +330,29 @@ public class Dialogue_Manager : MonoBehaviour
                 }
             }
 
-            uiManager.ShowText(dialogText);
+            uiManager.ShowText(dialogText, disablePlayerInput);
 
             if (autoAdvanceDialog)
             {
-                StartCoroutine(AutoAdvanceNextLine());
+                StartCoroutine(AutoAdvanceNextLine(disablePlayerInput));
             }
         }
         else
         {
-            EndDialog();
+            if (autoEndDialogue)
+                EndDialog();
+
+            Game_Events_Manager.Instance.DialogueComplete(myDialogKey);
         }
     }
     #endregion
 
     #region Helpers
-    public IEnumerator AutoAdvanceNextLine()
+    public IEnumerator AutoAdvanceNextLine(bool disablePlayerInput = true)
     {
         yield return new WaitUntil(() => uiManager.textTyping == false);
         yield return new WaitForSeconds(autoAdvanceDelay);
-        uiManager.ClearText();
-        PlayNextDialog();
+        PlayNextDialog(disablePlayerInput);
     }
 
     public void EndDialog()
@@ -342,7 +366,7 @@ public class Dialogue_Manager : MonoBehaviour
         Player_Input_Controller.instance.EnablePlayerInput();
 
         onDialogComplete?.Invoke();
-        Game_Events_Manager.Instance.EndDialogBox(); // Could probably merge with above
+        Game_Events_Manager.Instance.EndDialogBox(myDialogKey); // Could probably merge with above
     }
 
     public void ResetDialogForKey(string aDialogKey)

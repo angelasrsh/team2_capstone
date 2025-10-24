@@ -12,12 +12,15 @@ using System.Linq;
 public class Journal_Menu : MonoBehaviour
 {
   public static Journal_Menu Instance;
-  private bool isPaused = false; // Currently will overlap pause menu, I think
+  public bool isPaused = false;
   private bool haveTabsInitialized = false;
-  private Player_Progress playerProgress = Player_Progress.Instance;
-  private InputAction openJournalAction, closeJournalAction, flipLeftAction, flipRightAction, clickAction;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
+  [Header("Player Info")]
+  private Player_Progress playerProgress = Player_Progress.Instance;
+  private InputAction flipLeftAction, flipRightAction, clickAction;
+  private InputAction openJournalActionPlayer, openJournalActionUI, closeJournalAction;
+  PlayerInput playerInput;
 
   [Header("Databases")]
   private Dish_Database dishDatabase;
@@ -48,7 +51,7 @@ public class Journal_Menu : MonoBehaviour
 
   [Header("UI References and Variables")]
   [SerializeField] public Sprite LockedIcon; // generic locked icon for locked items (just a question mark)
-  private Tabs currentTab = Tabs.None;
+  public Tabs currentTab { get; private set; } = Tabs.None;
 
   // Dictionary allows players to open to last page they had open in each tab
   private Dictionary<Tabs, int> tabCurrentPage = new Dictionary<Tabs, int>()
@@ -77,14 +80,6 @@ public class Journal_Menu : MonoBehaviour
     Instance = this;
     DontDestroyOnLoad(gameObject);
     SceneManager.sceneLoaded += OnSceneLoaded;
-  }
-
-  private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-  {
-    if (scene.name == "Main_Menu")
-      gameObject.SetActive(false);
-    else
-      gameObject.SetActive(true);
   }
 
   private void Start()
@@ -131,157 +126,206 @@ public class Journal_Menu : MonoBehaviour
 
     ShowDishTab(); // default to dish tab
     leftPagePanel.SetActive(false); // hide left page details at start
+    StartCoroutine(WaitAndBind());
     StartCoroutine(DelayedHideJournal());
   }
 
   private void OnEnable()
   {
     SceneManager.sceneLoaded += OnSceneLoadedRebind;
-    TryBindInput();
+    StartCoroutine(WaitAndBind());
   }
 
   private void OnDisable()
   {
-    SceneManager.sceneLoaded -= OnSceneLoadedRebind;
-    if (openJournalAction != null)
-      openJournalAction.Disable();
-    if (closeJournalAction != null)
-      closeJournalAction.Disable();
-    if (flipLeftAction != null)
-      flipLeftAction.Disable();
-    if (flipRightAction != null)
-      flipRightAction.Disable();
-    if (clickAction != null)
-      clickAction.Disable();
+      SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+      UnbindActions();
   }
 
-  private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
+  private void UnbindActions()
   {
-    TryBindInput();
+      Unbind(ref flipLeftAction, ctx => FlipToPrevious());
+      Unbind(ref flipRightAction, ctx => FlipToNext());
+      Unbind(ref openJournalActionPlayer);
+      Unbind(ref openJournalActionUI);
+      Unbind(ref closeJournalAction);
+      Unbind(ref clickAction);
   }
+
+  private void Unbind(ref InputAction action, System.Action<InputAction.CallbackContext> handler = null)
+  {
+      if (action == null) return;
+
+      if (handler != null)
+          action.performed -= handler;
+
+      action.Disable();
+      action = null;
+  }
+  
+  private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+  {
+    if (scene.name == "Main_Menu")
+      gameObject.SetActive(false);
+    else
+      gameObject.SetActive(true);
+  }
+
+  private IEnumerator WaitAndBind()
+  {
+      yield return null;
+      TryBindInput();
+  }
+
+  private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode) => StartCoroutine(WaitAndBind());
 
   private void TryBindInput()
   {
-    // Find the active PlayerInput in the scene (e.g. on Game_Manager)
-    if (Game_Manager.Instance == null)
-    {
-      Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal inputs.");
-      return;
-    }
-    PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
-    if (playerInput == null)
-    {
-      Debug.LogWarning("[Journal_Menu] No PlayerInput found to bind journal inputs.");
-      return;
-    }
+      if (Game_Manager.Instance == null)
+      {
+          Debug.LogWarning("[Journal_Menu] No Game_Manager instance found to bind journal inputs.");
+          return;
+      }
 
-    // Bind the "OpenJournal" action (Player Map)
-    openJournalAction = playerInput.actions["OpenJournal"];
-    openJournalAction.Enable();
+      if (Game_Manager.Instance.UIManager == null)
+      {
+          Debug.LogWarning("[Journal_Menu] No UI_Manager instance found — will retry next frame.");
+          StartCoroutine(RetryBindInput());
+          return;
+      }
 
-    // Bind Journal actions (Journal Map)
-    flipLeftAction = playerInput.actions["FlipLeft"];
-    flipRightAction = playerInput.actions["FlipRight"];
-    closeJournalAction = playerInput.actions["CloseJournal"];
-    clickAction = playerInput.actions["Click"];
+      playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+      if (playerInput == null)
+      {
+          Debug.LogWarning("[Journal_Menu] No PlayerInput found on Game_Manager.");
+          return;
+      }
 
-    flipLeftAction.performed += ctx => FlipToPrevious();
-    flipRightAction.performed += ctx => FlipToNext();
-    closeJournalAction.performed += ctx => ResumeGame();
-    // clickAction.performed += ctx => OnClick();
+      // Clean up any old actions before re-assigning
+      UnbindActions();
 
-    flipLeftAction.Disable();
-    flipRightAction.Disable();
-    closeJournalAction.Disable();
-    clickAction.Disable();
+      // Bind input actions
+      var playerMap = playerInput.actions.FindActionMap("Player", true);
+      var uiMap = playerInput.actions.FindActionMap("UI", true);
+
+      openJournalActionPlayer = playerMap.FindAction("OpenJournal", false);
+      openJournalActionUI = uiMap.FindAction("OpenJournal", false);
+      closeJournalAction = uiMap.FindAction("CloseJournal", false);
+      flipLeftAction = uiMap.FindAction("FlipLeft", false);
+      flipRightAction = uiMap.FindAction("FlipRight", false);
+      clickAction = uiMap.FindAction("ClickJournal", false);
+
+      if (flipLeftAction != null) flipLeftAction.performed += ctx => FlipToPrevious();
+      if (flipRightAction != null) flipRightAction.performed += ctx => FlipToNext();
+      
+      if (openJournalActionPlayer != null) openJournalActionPlayer.Enable();
+      if (openJournalActionUI != null) openJournalActionUI.Enable();
+      if (closeJournalAction != null) closeJournalAction.Enable();
+
+      Debug.Log("[Journal_Menu] Input actions successfully bound.");
+  }
+
+  private IEnumerator RetryBindInput()
+  {
+      yield return null; 
+      TryBindInput();
   }
 
   private void OnDestroy()
   {
     SceneManager.sceneLoaded -= OnSceneLoaded;
     Choose_Menu_Items.OnMenuSelectedNoParams -= PopulateDishes;
+    if (flipLeftAction != null)
+      flipLeftAction.performed -= ctx => FlipToPrevious();
+    if (flipRightAction != null)
+      flipRightAction.performed -= ctx => FlipToNext();
   }
 
-  // Update is called once per frame
   private void Update()
   {
-    if (openJournalAction.WasPerformedThisFrame())
+    if (openJournalActionPlayer == null || openJournalActionUI == null)
+      return;
+
+    if (!Game_Manager.Instance.UIManager.pauseMenuOn &&
+        (openJournalActionPlayer.WasPerformedThisFrame() ||
+         (openJournalActionUI.WasPerformedThisFrame() && !isPaused)))
     {
-      if (isPaused)
-      {
-        ResumeGame();
-        Game_Events_Manager.Instance.JournalToggled(false); // this is being checked every time the journal is opened/closed. Might not be ideal
-      }
-      else
-      {
-        PauseGame();
-        Game_Events_Manager.Instance.JournalToggled(true);
-      }
+      PauseGame();
+      Game_Events_Manager.Instance.JournalToggled(true);
+      return;
+    }
+
+    if (closeJournalAction != null && closeJournalAction.WasPerformedThisFrame() && isPaused)
+    {
+      ResumeGame();
+      Game_Events_Manager.Instance.JournalToggled(false);  // being checked every time journal is closed, might not be efficient
     }
   }
 
   private IEnumerator DelayedHideJournal()
   {
-    yield return new WaitForEndOfFrame(); // wait one frame to avoid null references
-    ResumeGame(false); // don't play sound on initial hide
+      yield return new WaitForEndOfFrame();
+      darkOverlay.SetActive(false);
+      journalContents.SetActive(false);
+      tabs.SetActive(false);
+      isPaused = false;
   }
 
   public void PauseGame()
   {
-      Debug.Log("Opening journal and pausing game...");
-      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 0.75f);
-      darkOverlay.SetActive(true);
-      journalContents.SetActive(true);
-      tabs.SetActive(true);
-      isPaused = true;
+    Debug.Log("Opening journal and pausing game...");
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 0.75f);
+    darkOverlay.SetActive(true);
+    journalContents.SetActive(true);
+    tabs.SetActive(true);
+    isPaused = true;
+    Game_Manager.Instance.UIManager.OpenUI();
 
-      // Get current PlayerInput
-      PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
-
-    // Switch to the "Journal" input map
+    // Get current PlayerInput
+    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (playerInput != null)
     {
-      playerInput.SwitchCurrentActionMap("Journal");
       flipLeftAction.Enable();
       flipRightAction.Enable();
       closeJournalAction.Enable();
       clickAction.Enable();
     }
-      
-    // Disable player movement  
-    Player_Controller player = FindObjectOfType<Player_Controller>();
-    if (player != null)
-        player.DisablePlayerMovement();
   }
 
   public void ResumeGame(bool playSound = true)
   {
-      Debug.Log("Closing journal and resuming game...");
-      if (playSound)
-          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.75f);
+    Debug.Log("Closing journal and resuming game...");
+    if (playSound)
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.75f);
 
-      darkOverlay.SetActive(false);
-      journalContents.SetActive(false);
-      tabs.SetActive(false);
-      isPaused = false;
-      
-       // Get current PlayerInput
-      PlayerInput playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+    darkOverlay.SetActive(false);
+    journalContents.SetActive(false);
+    tabs.SetActive(false);
+    isPaused = false;
+    Game_Manager.Instance.UIManager.CloseUI();
+    
+    // Get current PlayerInput
+    playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
 
     // Switch back to Player map
     if (playerInput != null)
     {
-      flipLeftAction.Disable();
-      flipRightAction.Disable();
-      closeJournalAction.Disable();
-      clickAction.Disable();
-      playerInput.SwitchCurrentActionMap("Player");
+      if (flipLeftAction != null) flipLeftAction.Disable();
+      if (flipRightAction != null) flipRightAction.Disable();
+      if (closeJournalAction != null) closeJournalAction.Disable();
+      if (clickAction != null) clickAction.Disable();
+
+      else if (flipLeftAction == null || flipRightAction == null || closeJournalAction == null || clickAction == null)
+          Debug.LogWarning("[Journal_Menu]: One or more journal input actions are null when trying to disable.");
     }
 
     // Enable player movement
     Player_Controller player = FindObjectOfType<Player_Controller>();
-    if (player != null)
-        player.EnablePlayerMovement();
+        if (player != null)
+            player.EnablePlayerMovement();
+
+    // Broadcast to game manager
+    Game_Events_Manager.Instance.JournalToggled(false);
   }
 
   #region Recipe Tab Methods
@@ -315,7 +359,7 @@ public class Journal_Menu : MonoBehaviour
       }
       else
       {
-        // Don't show empty slots if no more NPCs to show
+        // Don't show empty slots if no more dishes to show
         slot.ClearItem();
       }
 
@@ -333,6 +377,7 @@ public class Journal_Menu : MonoBehaviour
     recipeImage.preserveAspect = true;
     icon.sprite = dishData.Image;
     icon.preserveAspect = true;
+    Game_Events_Manager.Instance.DishDetailsClick(dishData);
   }
   #endregion
 
@@ -385,7 +430,7 @@ public class Journal_Menu : MonoBehaviour
       }
       else
       {
-        // Don't show empty slots if no more NPCs to show
+        // Don't show empty slots if no more ingredients to show
         slot.ClearItem();
       }
 

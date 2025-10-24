@@ -85,7 +85,7 @@ MonoBehaviour:
     bottomLeft: {r: 1, g: 1, b: 1, a: 1}
     bottomRight: {r: 1, g: 1, b: 1, a: 1}
   m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
+  m_spriteAsset: {fileID: 11400000, guid: 5d406352b5a61984eafd1f264a693ef6, type: 2}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
   m_TextStyleHashCode: -1183493901
@@ -514,10 +514,12 @@ MonoBehaviour:
   dialogFile: {fileID: 4900000, guid: a6534ce45819f0f418c4aebf888f41f2, type: 3}
   uiManager: {fileID: 8320050664616803454}
   autoAdvanceDialog: 0
-  autoAdvanceDelay: 2.5
+  autoEndDialogue: 0
+  autoAdvanceDelay: 3
   customerDataList:
   - {fileID: 11400000, guid: 6948a6b7da01dc545b67fe99a9a71dc1, type: 2}
   - {fileID: 11400000, guid: 135398e50e07f6c4ca66ad3835c5958e, type: 2}
+  - {fileID: 11400000, guid: ec82f4bc3922c8e41bb290e739a421ef, type: 2}
   currentState: 0
 --- !u!114 &8320050664616803454
 MonoBehaviour:
@@ -536,6 +538,7 @@ MonoBehaviour:
   lowRandomRange: 0.55
   highRandomRange: 0.75
   textTypingSpeed: 0.02
+  fastForwardMultiplier: 0.2
   characterPortraitImage: {fileID: 8320050662869239361}
   textTyping: 0
 --- !u!223 &8320050664616803441

@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 6642626054669146854}
   - component: {fileID: 3228094000564085673}
   - component: {fileID: 6113680877637856580}
+  - component: {fileID: 7704440638169076200}
   - component: {fileID: 6958590387895689391}
   - component: {fileID: 2041556558690807774}
-  - component: {fileID: 7704440638169076200}
   - component: {fileID: 4060353126230224005}
   - component: {fileID: 3085461530528901281}
   m_Layer: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
   maxPoolSize: 5
   minSelect: 1
   maxSelect: 2
-  minCustomersForDay: 2
+  minCustomersForDay: 3
   maxCustomersForDay: 4
 --- !u!114 &3228094000564085673
 MonoBehaviour:
@@ -144,6 +144,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   customers: []
+--- !u!114 &7704440638169076200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openUICount: 0
+  pauseMenuOn: 0
+  uiInputCooldownDuration: 0.25
 --- !u!114 &6958590387895689391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,21 +183,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7704440638169076200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  openUICount: 0
-  pauseMenuOn: 0
-  uiInputCooldownDuration: 0.25
 --- !u!114 &4060353126230224005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,20 +326,16 @@ MonoBehaviour:
     m_ActionName: Player/EndDialog[/Simulated Touchscreen/primaryTouch/tap]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 253ced77-a953-48d3-8d7c-8c818a96bc7d
-    m_ActionName: Journal/Click[/Keyboard/e,/Mouse/leftButton,/Simulated Touchscreen/primaryTouch/tap]
+    m_ActionId: aeea286f-9c73-4880-b9f3-8becb2068c48
+    m_ActionName: UI/FlipRight[/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 64bab8b5-f68f-4017-9c08-2aaa07432d03
-    m_ActionName: Journal/FlipLeft[/Keyboard/a,/Keyboard/leftArrow]
+    m_ActionId: bf8afbe1-bcb3-443a-a0de-ab6baca06426
+    m_ActionName: UI/FlipLeft[/Keyboard/a,/Keyboard/leftArrow]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 65fd1754-d588-4b1d-9c9c-5635e4c2b81d
-    m_ActionName: Journal/FlipRight[/Keyboard/d,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0b55d02f-6679-46aa-ad99-f1f47a44e275
-    m_ActionName: Journal/CloseJournal[/Keyboard/j,/Keyboard/escape]
+    m_ActionId: bb07e1d3-7dba-4ff2-a495-3dfaebcb941a
+    m_ActionName: UI/ClickJournal[/Keyboard/e,/Mouse/leftButton,/Simulated Touchscreen/primaryTouch/tap]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

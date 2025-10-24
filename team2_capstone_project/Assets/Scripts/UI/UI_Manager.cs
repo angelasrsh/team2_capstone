@@ -31,6 +31,12 @@ public class UI_Manager : MonoBehaviour
             Debug.Log("[UI_Manager]: Player Input is null!");
     }
 
+    private void OnEnable()
+    {
+        if (playerInput == null)
+            playerInput = Game_Manager.Instance?.GetComponent<PlayerInput>();
+    }
+
     public bool CanProcessInput()
     {
         return inputCooldown <= 0f;
@@ -43,6 +49,7 @@ public class UI_Manager : MonoBehaviour
 
     public void OpenUI()
     {
+        // playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
         openUICount++;
         Debug.Log("[UI_Manager]: Opening some UI. Currently open: " + openUICount);
         if (playerInput != null && playerInput.currentActionMap.name != "UI")
@@ -55,6 +62,7 @@ public class UI_Manager : MonoBehaviour
 
     public void CloseUI()
     {
+        // playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
         if (openUICount != 0)
             openUICount--;
         Debug.Log("[UI_Manager]: Closing some UI. Currently open: " + openUICount);

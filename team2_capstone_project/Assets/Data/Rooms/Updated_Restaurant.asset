@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomID: 9
   isOverworldScene: 1
-  music: {fileID: 8300000, guid: 80eb8acaf53a78542a2136c1112118bf, type: 3}
+  music: {fileID: 8300000, guid: 226b34f4a5a9d6f49b420750f134e23f, type: 3}
   ambientSound: {fileID: 8300000, guid: 4698755a6a1076a4fb97e2d57ace7328, type: 3}
-  musicVolume: 0.452
-  ambientVolume: 0.745
+  musicVolume: 0.55
+  ambientVolume: 0.92
   exits:
   - exitingTo: 4
     spawnPointID: 0
@@ -42,5 +42,10 @@ MonoBehaviour:
   - exitingTo: 6
     spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: be8fe1eacc40f6c4081b931d3d46bfa3, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 1
+  - exitingTo: 7
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 7b64c11b2e5c60941bf4c2a71cb8db04, type: 2}
     overrideTimeOfDay: 0
     overrideValue: 1

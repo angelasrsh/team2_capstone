@@ -24,6 +24,29 @@ public class Combine : MonoBehaviour
 
   private void Start()
   {
+    GameObject grid = GameObject.Find("Ingredient_Grid");
+    if (redZones == null || redZones.Count != 6)
+    {
+      // Find the redzones
+      redZones.Clear();
+      redZones.Add(grid.transform.GetChild(0).GetComponent<RectTransform>());
+      redZones.Add(grid.transform.GetChild(1).GetComponent<RectTransform>());
+      redZones.Add(grid.transform.GetChild(2).GetComponent<RectTransform>());
+      redZones.Add(grid.transform.GetChild(3).GetComponent<RectTransform>());
+      redZones.Add(grid.transform.GetChild(4).GetComponent<RectTransform>());
+      redZones.Add(grid.transform.GetChild(5).GetComponent<RectTransform>());
+    }
+    if (ingredientImages == null || ingredientImages.Count != 6)
+    {
+      // Find the images
+      ingredientImages.Clear();
+      ingredientImages.Add(redZones[0].Find("Ingredient").GetComponent<Image>());
+      ingredientImages.Add(redZones[1].Find("Ingredient").GetComponent<Image>());
+      ingredientImages.Add(redZones[2].Find("Ingredient").GetComponent<Image>());
+      ingredientImages.Add(redZones[3].Find("Ingredient").GetComponent<Image>());
+      ingredientImages.Add(redZones[4].Find("Ingredient").GetComponent<Image>());
+      ingredientImages.Add(redZones[5].Find("Ingredient").GetComponent<Image>());
+    }
     for (int i = 0; i < redZones.Count; i++)
     {
       ingredientsOnTable.Add(null);
@@ -117,7 +140,7 @@ public class Combine : MonoBehaviour
 
     foreach (Ingredient_Requirement req in dish.ingredientQuantities)
     {
-      if (howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
+      if (!howManyOfEach.ContainsKey(req.ingredient.ingredientType) || howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
         return false;
     }
 
@@ -131,7 +154,7 @@ public class Combine : MonoBehaviour
 
     foreach (Ingredient_Requirement req in candidate.ingredientsNeeded)
     {
-      if (howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
+      if (!howManyOfEach.ContainsKey(req.ingredient.ingredientType) || howManyOfEach[req.ingredient.ingredientType] != req.amountRequired)
         return false;
     }
 
@@ -153,10 +176,11 @@ public class Combine : MonoBehaviour
     ingredientImages[zone].gameObject.SetActive(true);
 
     if (howManyOfEach.ContainsKey(ing.ingredientType))
-      howManyOfEach[ing.ingredientType]++;
+        howManyOfEach[ing.ingredientType]++;
     else
-      howManyOfEach[ing.ingredientType] = 1;
-      
+        howManyOfEach[ing.ingredientType] = 1;
+
+    Game_Events_Manager.Instance.CombineAddToTable(ing, zone);
     return true;
   }
 

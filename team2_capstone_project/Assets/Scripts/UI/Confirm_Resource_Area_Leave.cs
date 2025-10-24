@@ -4,6 +4,8 @@ using Grimoire;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using TMPro;
+using Unity.VisualScripting;
 
 public class Confirm_Resource_Area_Leave : MonoBehaviour
 {
@@ -36,6 +38,8 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+        if (interactAction != null)
+        interactAction.performed -= OnInteractPerformed;
     }
 
     private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
@@ -84,19 +88,45 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player") || interactAction == null)
-            return;
+        if (!other.CompareTag("Player")) return;
 
-        if (interactAction.triggered && !confirmationActive)
+        player = other.GetComponent<Player_Controller>();
+
+        // Enable the action listener when inside the trigger
+        if (interactAction != null)
         {
-            OpenConfirmation(other.GetComponent<Player_Controller>());
+            interactAction.performed += OnInteractPerformed;
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        // Remove listener when player leaves
+        if (interactAction != null)
+        {
+            interactAction.performed -= OnInteractPerformed;
+        }
+
+        player = null;
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext ctx)
+    {
+        if (confirmationActive) return;
+        if (player == null) return;
+
+        OpenConfirmation(player);
     }
 
     private void OpenConfirmation(Player_Controller playerController)
     {
+        if (SceneManager.GetActiveScene().name == "Foraging_Area_Whitebox")
+            leaveResourceAreaCanvas.GetComponent<Leave_Resource_Area_Canvas_Script>().SetText();
+            
         leaveResourceAreaCanvas.enabled = true;
         confirmationActive = true;
 
@@ -154,4 +184,6 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoadedRebind;
     }
+
+ 
 }

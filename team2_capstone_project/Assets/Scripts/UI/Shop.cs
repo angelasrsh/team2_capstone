@@ -29,8 +29,7 @@ public class Shop : MonoBehaviour
 
   [Header("Player Input Info")]
   private Player_Controller player;
-  private InputAction interactAction;
-  private InputAction closeAction;
+  private InputAction talkAction, closeAction;
   private PlayerInput playerInput;
 
   private void Awake()
@@ -51,7 +50,7 @@ public class Shop : MonoBehaviour
     playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (playerInput != null)
     {
-      interactAction = playerInput.actions["Interact"]; // From Player Input Map
+      talkAction = playerInput.actions["Talk"]; // From Player Input Map
       closeAction = playerInput.actions.FindAction("CloseInteract", true); // From UI Input Map
     }
     
@@ -66,12 +65,8 @@ public class Shop : MonoBehaviour
       return;
 
     // Only process input if player is inside trigger and interact pressed once
-    if (interactAction.WasPerformedThisFrame())
-    {
-      Debug.Log("[Shop]: Player opened shop.");
-      if (!Game_Manager.Instance.UIManager.pauseMenuOn)
-        OpenShopUI();
-    }
+    if (talkAction.WasPerformedThisFrame() && !Game_Manager.Instance.UIManager.pauseMenuOn && !shopOpen)
+      OpenShopUI();
     else if (closeAction.WasPerformedThisFrame() && shopOpen)
       CloseShopUI();
   }

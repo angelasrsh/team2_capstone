@@ -7,21 +7,18 @@ using UnityEngine;
 /// <summary>
 /// Tutorial Quest Step to make the player move using WASD or arrow key binds
 /// </summary>
-public class Move_WASD_Quest_Step : Tutorial_Quest_Step
+public class Move_WASD_Quest_Step : Dialogue_Quest_Step
 {
 
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onPlayerMove += PlayerMoved;
-        DelayedInstructionStart();
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onPlayerMove -= PlayerMoved;
     }
-
 
     private void PlayerMoved()
     {

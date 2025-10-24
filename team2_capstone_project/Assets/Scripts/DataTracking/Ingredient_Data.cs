@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using OpenCover.Framework.Model;
+// using OpenCover.Framework.Model;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Foraging/Ingredient", fileName = "NewIngredient")]
@@ -81,7 +81,8 @@ public enum IngredientType
   Burnt_Blob,
   Cut_Slime,
   Uncut_Ficklegourd,
-  Cut_Ficklegourd
+  Cut_Ficklegourd,
+  Cooked_Cut_Ficklegourd
 }
 
 // public class CutLine

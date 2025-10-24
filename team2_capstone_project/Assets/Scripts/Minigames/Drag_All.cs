@@ -23,7 +23,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private Vector3 targetScale = new Vector3(5f, 5f, 5f);
 
   [Header("Cooking Minigame")]
-  private bool isOnPot = false;
   private static Cauldron cauldron; // Static reference to Cauldron script in scene
   private static bool waterAdded = false;
   private static Animator backgroundAnimator;
@@ -228,23 +227,24 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
       if (SceneManager.GetActiveScene().name == "Combine_Minigame")
       {
+        if (combine == null) // this has to be using the if
+          combine = FindObjectOfType<Combine>();
         DuplicateInventorySlot();
 
         // Combine doesn't use IsOverlapping in Drag_All
         int overlappingZone = combine.IsOverARedZone();
         bool added = false;
         Debug.Log("[Combine]: overlapping zone: " + overlappingZone);
+        Ingredient_Data ingr = (Ingredient_Data)(ParentSlot.stk.resource);
         if (overlappingZone != -1)
-          added = combine.AddToTable((Ingredient_Data)(ParentSlot.stk.resource), overlappingZone);
+          added = combine.AddToTable(ingr, overlappingZone);
 
         if (added)
-        {
-          Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-          Destroy(gameObject);
-        }
+          Ingredient_Inventory.Instance.RemoveResources(ingr.ingredientType, 1);
         else
           rectTransform.position = ingrOriginalPos;
 
+        Destroy(gameObject);
         return;
       }
 
@@ -254,16 +254,17 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       {
         if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
         {
-          // Debug.Log("In RED");
+          if (cauldron == null) // this has to be using the if
+            cauldron = FindObjectOfType<Cauldron>();
           DuplicateInventorySlot();
-          if (!isOnPot)
+          Ingredient_Data ingredient = (Ingredient_Data)(ParentSlot.stk.resource);
+          if (cauldron.AddToPot(ingredient))
           {
-            cauldron.AddToPot((Ingredient_Data)(ParentSlot.stk.resource));
-            if (ParentSlot.stk.resource.Name == "Bone Broth") // Maybe change this later to use enum so that we don't compare strings, but I can't be bothered rn
+            if (ingredient.ingredientType == IngredientType.Bone_Broth)
               BrothAdded();
-            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-            isOnPot = true;
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1); 
           }
+          Destroy(gameObject);
         }
         else if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
         {
@@ -277,7 +278,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             ingredient_data_var = Ingredient_Inventory.Instance.IngrEnumToData(ingredientType);
             DuplicateInventorySlot(); //show the ingredient picture after you take it off the inventory slot
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1); //decrease the number 
-            
+
             if (resizeCanvas != null)
             {
               // Debug.Log("[drag_all] ingredient type is: " + ingredient_data_var);
@@ -293,6 +294,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
             }
             cuttingBoardActive = true;
+            Destroy(gameObject);
           }
           else
           {
@@ -302,30 +304,24 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         }
         else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
         {
-          // pan ??= FindObjectOfType<Pan>();
+          if (pan == null) // this has to be using the if
+            pan = FindObjectOfType<Pan>();
           DuplicateInventorySlot();
           if (pan.AddToPan((Ingredient_Data)(ParentSlot.stk.resource))) // Only remove ingredient if pan was empty and ingredient was actually added;
+          {
             Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
-
-          // Start pan slider minigame
-          pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
+            // Start pan slider minigame
+            pan.Invoke(nameof(pan.StartSlider), 1f); // Delay before starting slider
+          }
+          Destroy(gameObject);
         }
       }
       else
       {
-        if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
-        {
-          if (isOnPot)
-          {
-            cauldron.RemoveFromPot((Ingredient_Data)(ParentSlot.stk.resource));
-            isOnPot = false;
-          }
-        }
         // Debug.Log("Not in RED, snapping back");
         rectTransform.position = ingrOriginalPos;
       }
     }
-
   }
 
   /// <summary>

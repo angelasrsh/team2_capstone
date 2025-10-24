@@ -20,19 +20,30 @@ MonoBehaviour:
   rarityWeight: 0
   minSpawn: 0
   maxSpawn: 5
-  countsAs:
-  - {fileID: 11400000, guid: 97586fec84298c7489d081880a485db5, type: 2}
+  countsAs: []
   cookThresholds:
-    rawEnd: 0
-    almostEnd: 0
-    cookedEnd: 0
-    overcookedEnd: 0
+    rawEnd: 0.4
+    almostEnd: 0.6
+    cookedEnd: 0.7
+    overcookedEnd: 0.8
   description: Ficklegourd... but cut
-  CutIngredientImages: []
+  CutIngredientImages:
+  - {fileID: -544353533, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: 496814554, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: 1616431135, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: 671773155, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: -840134852, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
+  - {fileID: -1345977730, guid: 2f47e59dff3565b4a9ed5487d0056bdc, type: 3}
   usedInDishes:
-  - {fileID: 11400000, guid: dc41864eb9c4b804a86902d1e1e68ee7, type: 2}
-  makesIngredient: []
-  ingredientsNeeded: []
+  - {fileID: 11400000, guid: 6027772cc3743e64d9acc12d85d3db55, type: 2}
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: f29135cfafbe8f941a8be52d30fdd332, type: 2}
+    amountRequired: 1
+    method: 3
+  ingredientsNeeded:
+  - ingredient: {fileID: 11400000, guid: babe1113605a7fa469981f3cacc4bf58, type: 2}
+    amountRequired: 1
+    method: 2
   ingredientType: 22
   CombinedCutPiecePrefab: {fileID: 0}
   cutsRequired: 0

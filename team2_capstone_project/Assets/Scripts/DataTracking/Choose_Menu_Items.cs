@@ -92,7 +92,7 @@ public class Choose_Menu_Items : MonoBehaviour
     {
       Debug.LogWarning($"Cannot select more than {maxSelect} dishes!");
       return;
-    }
+    } 
 
     dishesSelected.Add(dishType);
     Debug.Log($"{dishType} added. Total dishes: {dishesSelected.Count}");

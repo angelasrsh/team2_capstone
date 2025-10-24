@@ -2,20 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Make_Bone_Broth_Quest_Step : Tutorial_Quest_Step
+public class Make_Bone_Broth_Quest_Step : Dialogue_Quest_Step
 {
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onResourceAdd += ResourceAdd;
-        DelayedInstructionStart();
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onResourceAdd -= ResourceAdd;
     }
 
+    void Start()
+    {
+        DelayedDialogue(0, 0, false);
+    }
 
     private void ResourceAdd(Ingredient_Data ingredient)
     {

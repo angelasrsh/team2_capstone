@@ -7,10 +7,10 @@ public class Currency_UI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI currencyText;
 
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
+    // private void Awake()
+    // {
+    //     DontDestroyOnLoad(gameObject);
+    // }
 
     private void Start()
     {

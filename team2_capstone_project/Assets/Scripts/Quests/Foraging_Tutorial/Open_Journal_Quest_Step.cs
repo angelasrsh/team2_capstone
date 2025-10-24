@@ -2,21 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Open_Journal_Quest_Step : Tutorial_Quest_Step
+public class Open_Journal_Quest_Step : Dialogue_Quest_Step
 {
-
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
-        DelayedInstructionStart();
     }
-
-    // Unsubscribe to clean up
-    void OnDisable()
+    
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onJournalToggle -= JournalToggled;
     }
 
+    private void Start()
+    {
+        DelayedDialogue(0, 0, false);
+
+    }
 
     private void JournalToggled(bool isOpen)
     {

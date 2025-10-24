@@ -32,7 +32,6 @@ namespace Grimoire
     public AudioClip menuClose;
     public AudioClip bookClose;
     public AudioClip doorBell;
-    public AudioClip firstAreaWalkingSFX;
     public AudioClip sparkle;
     public AudioClip errorBuzz;
     public AudioClip bagPutIn;
@@ -47,6 +46,16 @@ namespace Grimoire
     public AudioClip lockedGateOpen;
     public AudioClip pageFlip;
     public AudioClip journalTabSelect;
+    public AudioClip teleport;
+    public AudioClip orderServed;
+
+    [Header("Footstep Clips")]
+    public AudioClip grassLeftFootstep; 
+    public AudioClip grassRightFootstep;
+    public AudioClip woodLeftFootstep;
+    public AudioClip woodRightFootstep;
+    public AudioClip stoneLeftFootstep; 
+    public AudioClip stoneRightFootstep;
 
     [Header("Cauldron Specific")]
     public AudioClip addingOneIngredient;
@@ -149,11 +158,6 @@ namespace Grimoire
         src.Play();
     }
 
-    public void ForestWalk()
-    {
-      PlaySFX(firstAreaWalkingSFX, 0.1f, Random.Range(0.9f, 1.1f));
-    }
-
     public void StopAllSFX()
     {
       foreach (var src in sfxSources)
@@ -240,7 +244,7 @@ namespace Grimoire
 
     public void AddOneIngredient()
     {
-      float randomPitch = Random.Range(0.8f, 1.2f);
+      float randomPitch = Random.Range(0.95f, 1.35f);
       PlaySFX(addingOneIngredient, 0.5f, randomPitch);
     }
 

@@ -33,29 +33,35 @@ public class Pause_Menu : MonoBehaviour
     {
         if (Game_Manager.Instance == null)
         {
-            Debug.LogError("[Pause_Menu] No Game_Manager found.");
+            Debug.LogError("[Pause_Menu] No Game_Manager found in scene: " + SceneManager.GetActiveScene().name);
             return;
         }
 
         playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
         if (playerInput == null)
         {
-            Debug.LogError("[Pause_Menu] No PlayerInput component on Game_Manager.");
+            Debug.LogError("[Pause_Menu] No PlayerInput component found on Game_Manager in scene: " + SceneManager.GetActiveScene().name);
             return;
         }
 
-        // Bind pause action safely
-        pauseAction = playerInput.actions.FindAction("Pause", true);
+        if (playerInput.actions == null)
+        {
+            Debug.LogError("[Pause_Menu] PlayerInput.actions is NULL — check that your Input Actions asset is assigned in the PlayerInput component!");
+            return;
+        }
+
+        pauseAction = playerInput.actions.FindAction("Pause", false);
         if (pauseAction == null)
         {
-            Debug.LogError("[Pause_Menu] Could not find 'Pause' action in PlayerInput actions.");
+            Debug.LogError("[Pause_Menu] Could not find 'Pause' action in PlayerInput actions. Current map: " +
+                        (playerInput.currentActionMap != null ? playerInput.currentActionMap.name : "NULL"));
             return;
         }
 
         pauseAction.Enable();
         pauseAction.performed += OnPausePerformed;
 
-        Debug.Log("[Pause_Menu] Bound to Pause action. Current map: " + playerInput.currentActionMap.name);
+        Debug.Log("[Pause_Menu] Bound to Pause action successfully. Scene: " + SceneManager.GetActiveScene().name);
     }
 
     private void OnPausePerformed(InputAction.CallbackContext ctx)
@@ -88,6 +94,7 @@ public class Pause_Menu : MonoBehaviour
 
         menuBox?.SetActive(true);
         darkOverlay?.SetActive(true);
+        UI_Manager.Instance.PauseMenuState(true);
         isPaused = true;
 
         Time.timeScale = 0f;  // Pause game time
@@ -101,6 +108,7 @@ public class Pause_Menu : MonoBehaviour
         menuBox?.SetActive(false);
         darkOverlay?.SetActive(false);
         isPaused = false;
+        UI_Manager.Instance.PauseMenuState(false);
 
         Time.timeScale = 1f;  // Resume game time
     }
@@ -108,6 +116,7 @@ public class Pause_Menu : MonoBehaviour
     public void QuitGame()
     {
         Debug.Log("Quitting game...");
+        ResumeGame();
         Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
     }
 
