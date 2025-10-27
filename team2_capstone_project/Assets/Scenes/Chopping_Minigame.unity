@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -700,7 +700,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163356, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_RootOrder
-      value: 20
+      value: 21
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163356, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1382,7 +1382,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 21
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &728387421
 PrefabInstance:
@@ -4007,21 +4007,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 2035282242}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 187db7e4424a11841a9e829577adc19b, type: 3}
+  m_Script: {fileID: 11500000, guid: cecb51508c422ff4b97e6a7548308bda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1432446357}
   drag_all_script: {fileID: 0}
   k_script: {fileID: 0}
-  ingredient_data_var: {fileID: 0}
+  ingredient_data_var: {fileID: 11400000, guid: 42342020c85c8354b946a340f7ad1b8b, type: 2}
   ingredient_object: {fileID: 0}
-  uiLineRendererPrefab: {fileID: 0}
+  uiLineRendererPrefab: {fileID: 6850087402582518981, guid: b94b36bd55fff9e488222c7cafb4c11f, type: 3}
   cuttingLinesParent: {fileID: 0}
   defaultIngredient: {fileID: 0}
   knife_is_overlapping: 0
-  redZoneForKnife: {fileID: 1897777148}
+  redZoneForKnife: {fileID: 0}
   currentLinePoints: []
-  temporary_Tutorial: {fileID: 0}
+  temporary_Tutorial: {fileID: 1316558151}
   currentState: 0
   currentLineIndex: 0
   swipeThreshold: 50
@@ -4037,7 +4037,6 @@ MonoBehaviour:
   firstCutDone: 0
   secondCutDone: 0
   isOverlappingCL1R: 0
-  ingredientConfigs: []
 --- !u!4 &2035282244
 Transform:
   m_ObjectHideFlags: 0
@@ -4258,6 +4257,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1817748309}
     m_Modifications:
+    - target: {fileID: 4166355332442737888, guid: 87bc4710804d43a4289094aba52d66ee, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.2990462
+      objectReference: {fileID: 0}
+    - target: {fileID: 4166355332442737888, guid: 87bc4710804d43a4289094aba52d66ee, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.95423865
+      objectReference: {fileID: 0}
+    - target: {fileID: 4166355332442737888, guid: 87bc4710804d43a4289094aba52d66ee, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -214.801
+      objectReference: {fileID: 0}
     - target: {fileID: 6850087402582518978, guid: 87bc4710804d43a4289094aba52d66ee, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4345,6 +4356,10 @@ PrefabInstance:
     - target: {fileID: 6850087402582518981, guid: 87bc4710804d43a4289094aba52d66ee, type: 3}
       propertyPath: m_Name
       value: ChopLine2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6850087402582518981, guid: 87bc4710804d43a4289094aba52d66ee, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87bc4710804d43a4289094aba52d66ee, type: 3}
@@ -4454,10 +4469,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2554059595863238618, guid: 51b9a68b443da6f45a11cc3a6c0f802b, type: 3}
       propertyPath: m_RenderMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2554059595896140846, guid: 51b9a68b443da6f45a11cc3a6c0f802b, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

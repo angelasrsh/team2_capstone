@@ -423,7 +423,7 @@ public class Journal_Menu : MonoBehaviour
       {
         Ingredient_Data ingredientData = allIngredients[index];
         bool isUnlocked = unlockedIngredients.Contains(ingredientData.ingredientType);
-        if (isUnlocked)
+        if(isUnlocked)
           slot.SetItem(ingredientData, true, false);
         else // Show locked ingredients only if there are still more ingredients in the database
           slot.SetItem(null, false, false);

@@ -76,39 +76,6 @@ MonoBehaviour:
   m_FillOrigin: 2
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &164237640403830081
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4815781156742830485}
-  m_Layer: 0
-  m_Name: Pivot
-  m_TagString: Untagged
-  m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4815781156742830485
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 164237640403830081}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.5, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 6603204143365180711}
-  - {fileID: 2588836824454978028}
-  m_Father: {fileID: 6503592380340263548}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &603140016886390946
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,13 +229,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3104747997843748902}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.029999971, y: 1.6565, z: 0}
-  m_LocalScale: {x: 2.1233842, y: 2.1233842, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.06, y: 1.813, z: 0}
+  m_LocalScale: {x: 4.2467685, y: 4.2467685, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4815781156742830485}
-  m_RootOrder: 0
+  m_Father: {fileID: 6503592380340263548}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8726549458928565426
 SpriteRenderer:
@@ -346,13 +313,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6430163191946168931}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.555, z: 0}
-  m_LocalScale: {x: 0.15, y: 0.15, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.39, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4815781156742830485}
-  m_RootOrder: 1
+  m_Father: {fileID: 6503592380340263548}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2684592500477329143
 SpriteRenderer:
@@ -436,7 +403,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6503592380340263548}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &4625024739234323316
 BoxCollider:
@@ -462,7 +429,6 @@ GameObject:
   - component: {fileID: 6503592380340263548}
   - component: {fileID: 6503592380340263550}
   - component: {fileID: 7403797851401391565}
-  - component: {fileID: 1307511933602979684}
   m_Layer: 7
   m_Name: Forgeable_Prefab
   m_TagString: Untagged
@@ -483,8 +449,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6571973495334816823}
+  - {fileID: 6603204143365180711}
   - {fileID: 6503592379672473607}
-  - {fileID: 4815781156742830485}
+  - {fileID: 2588836824454978028}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -521,18 +488,3 @@ MonoBehaviour:
   <data>k__BackingField: {fileID: 0}
   spriteRenderer: {fileID: 2684592500477329143}
   pickupPrefab: {fileID: 3018199550039579822, guid: a8276e5cc494fbc46a37c268c8ba3fec, type: 3}
---- !u!114 &1307511933602979684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6503592380340263545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 182caf5bb92bf7843822cdc627e677b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SpritePivot: {fileID: 164237640403830081}
-  SpriteObject: {fileID: 6430163191946168931}
-  manualShift: 0

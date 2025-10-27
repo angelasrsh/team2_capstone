@@ -24,12 +24,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1045412949770161208}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4156220325885168452}
+  m_Father: {fileID: 3018199550039579819}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &84186423802399541
@@ -97,7 +97,6 @@ GameObject:
   - component: {fileID: 2528676451581958279}
   - component: {fileID: 3018199550039579817}
   - component: {fileID: 3664594314411950461}
-  - component: {fileID: 7708092221308698133}
   m_Layer: 7
   m_Name: Pickup_Item_Prefab
   m_TagString: Untagged
@@ -117,7 +116,7 @@ Transform:
   m_LocalScale: {x: 0.15264286, y: 0.15264286, z: 0.15264286}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4156220325885168452}
+  - {fileID: 7117587275450281885}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -186,50 +185,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 17.394333, y: 11.25456, z: 17.604458}
   m_Center: {x: -0.37011668, y: 2.291803, z: 0.43754238}
---- !u!114 &7708092221308698133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3018199550039579822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 182caf5bb92bf7843822cdc627e677b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SpritePivot: {fileID: 5893451189774324166}
-  SpriteObject: {fileID: 1045412949770161208}
-  manualShift: 0
---- !u!1 &5893451189774324166
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4156220325885168452}
-  m_Layer: 7
-  m_Name: Pivot
-  m_TagString: Untagged
-  m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4156220325885168452
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5893451189774324166}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7117587275450281885}
-  m_Father: {fileID: 3018199550039579819}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

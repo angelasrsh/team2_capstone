@@ -59,7 +59,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     public void OnDrag(PointerEventData eventData)
     {
         RectTransform CL1R = null;
-        if(Drag_All.cuttingBoardActive && chop_script.addingIngredient)
+        if(Drag_All.cuttingBoardActive)
         {
              CL1R = chop_script.GetRedZone().GetComponent<RectTransform>();
         }

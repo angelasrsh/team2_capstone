@@ -33,7 +33,7 @@ public class Customer_Controller : MonoBehaviour
     // Animation
     private Animator animator;
     private SpriteRenderer spriteRenderer;
-    [SerializeField] private Transform spriteTransform;
+    private Transform spriteTransform;
 
     private void OnEnable()
     {
@@ -85,7 +85,7 @@ public class Customer_Controller : MonoBehaviour
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        // spriteTransform = transform.Find("Sprite");
+        spriteTransform = transform.Find("Sprite");
 
         if (spriteTransform != null)
         {
@@ -102,7 +102,7 @@ public class Customer_Controller : MonoBehaviour
         playerInventory = inventory;
 
         // Set sprite
-        Transform npc_sprite = spriteTransform;
+        Transform npc_sprite = transform.Find("Sprite");
         if (npc_sprite != null)
             npc_sprite.GetComponent<SpriteRenderer>().sprite = data.overworldSprite;
 
