@@ -10,6 +10,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     private bool journalRecipeClickFirstDialogueComplete = false;
     private bool journalRecipeClickDialogueComplete = false;
     private bool journalRecipeClickDialogueStarted = false;
+    private bool journalRecipeClickFirstDialogueStarted = false;
 
     [SerializeField] private Dish_Data DishToMake; // Which dish the player must click. Set to one-day blinding stew.
     override protected void OnEnable()
@@ -53,12 +54,15 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     }
 
     /// <summary>
-    /// Track which dialogue to give
+    /// Track which dialogue to give. Would really like to simplify this code; it's so messy >:'(
     /// </summary>
     private void checkPlayDialog()
     {
-        if (journalHasBeenOpened && !recipeClicked) // Opened journal but didn't click recipe
+        if (journalHasBeenOpened && !recipeClicked && !journalRecipeClickFirstDialogueStarted)
+        { // Opened journal but didn't click recipe
             DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe");
+            journalRecipeClickFirstDialogueStarted = true;
+        }
         else if (recipeClicked && !journalRecipeClickDialogueStarted && journalRecipeClickFirstDialogueComplete)
         { // Opened journal and clicked recipe but didn't get instruction yet
             DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe_Text");
