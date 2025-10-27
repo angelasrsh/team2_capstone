@@ -380,7 +380,7 @@ public class Ingredient_Inventory : Inventory
     {
         if (data == null)
         {
-            Helpers.printLabeled(this, "No quest data to load; initializing defaults.");
+            Helpers.printLabeled(this, "No ingredient inventory data to load; initializing defaults.");
             return;
         }
 

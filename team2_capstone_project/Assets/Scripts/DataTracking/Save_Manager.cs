@@ -166,9 +166,9 @@ public class Save_Manager : MonoBehaviour
         if (Ingredient_Inventory.Instance != null)
             currentGameData.ingredientInventoryData = Ingredient_Inventory.Instance.GetSaveData();
 
-        // // Save dish inventory data
-        // if (Dish_Tool_Inventory.Instance != null)
-        //     currentGameData.dishInventoryData = Dish_Tool_Inventory.Instance.GetSaveData();
+        // Save dish inventory data
+        if (Dish_Tool_Inventory.Instance != null)
+            currentGameData.dishInventoryData = Dish_Tool_Inventory.Instance.GetSaveData();
 
         currentGameData.elapsedTime += Time.deltaTime;
     }
@@ -194,11 +194,11 @@ public class Save_Manager : MonoBehaviour
         else
             Debug.LogWarning("No Ingredient Inventory data found in save file.");
 
-        // // Restore dish inventory
-        // if (currentGameData.dishInventoryData != null)
-        //     Dish_Tool_Inventory.Instance.LoadFromSaveData(currentGameData.ingredientInventoryData);
-        // else
-        //     Debug.LogWarning("No Dish Inventory data found in save file.");
+        // Restore dish inventory
+        if (currentGameData.dishInventoryData != null)
+            Dish_Tool_Inventory.Instance.LoadFromSaveData(currentGameData.dishInventoryData);
+        else
+            Debug.LogWarning("No Dish Inventory data found in save file.");
 
 
         // Handle room loading
@@ -260,7 +260,7 @@ public class GameData
     public Quest_Manager_Data questData;
 
     public IngredientInventoryData ingredientInventoryData;
-    // public DishInventoryData dishInventoryData;
+    public DishInventoryData dishInventoryData;
 }
 
 /// <summary>
