@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6958590387895689388}
   - component: {fileID: 7322542354820229773}
   - component: {fileID: 3461038497445604444}
+  - component: {fileID: 8020379076965656209}
   - component: {fileID: 4670473249970048115}
   - component: {fileID: 1934729213419131961}
   - component: {fileID: 6642626054669146854}
@@ -73,6 +74,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ad32d86200f0294fa69c866f4c349dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8020379076965656209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57e8df7ba10f24c45b81066e2b26df6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
 --- !u!114 &4670473249970048115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,6 +350,27 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: bb07e1d3-7dba-4ff2-a495-3dfaebcb941a
     m_ActionName: UI/ClickJournal[/Keyboard/e,/Mouse/leftButton,/Simulated Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 34a8d78f-ebac-4282-a177-fa12bf1cb47b
+    m_ActionName: Player/Sprint[/Keyboard/shift,/Simulated Touchscreen/press]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 734c3198-1714-44ed-8a90-08990f54be78
+    m_ActionName: Player/Talk[/Mouse/leftButton,/Keyboard/x,/Keyboard/space,/Simulated
+      Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c5db2a79-ad5f-4f08-94d4-fff2c2c1b184
+    m_ActionName: Player/SpeedDialog[/Mouse/rightButton,/Keyboard/space,/Simulated
+      Touchscreen/press]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4c9d7b91-d207-4ec7-8537-e6e8deb350b7
+    m_ActionName: Player/SkipDialog[/Mouse/leftButton,/Keyboard/x,/Simulated Touchscreen/touch0/press,/Simulated
+      Touchscreen/touch1/press,/Simulated Touchscreen/touch2/press,/Simulated Touchscreen/touch3/press,/Simulated
+      Touchscreen/touch4/press,/Simulated Touchscreen/touch5/press,/Simulated Touchscreen/touch6/press,/Simulated
+      Touchscreen/touch7/press,/Simulated Touchscreen/touch8/press,/Simulated Touchscreen/touch9/press]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

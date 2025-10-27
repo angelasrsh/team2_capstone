@@ -110,6 +110,14 @@ public class Room_Change_Interact : MonoBehaviour
             if (player != null)
             {
                 Player_Input_Controller.instance.DisablePlayerInput();
+
+                // Auto-save before room change
+                if (Save_Manager.instance != null)
+                {
+                    Save_Manager.instance.AutoSave();
+                    Debug.Log("Game auto-saved before room transition.");
+                }
+
                 Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
             }
         }

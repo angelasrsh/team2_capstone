@@ -7,7 +7,8 @@ public class Player_Progress : ScriptableObject
 {
   public static Player_Progress Instance;
 
-  // Default unlocks at game start
+  [SerializeField] private string playerName = "Chef";
+
   [Header("Default Unlocks")]
   [SerializeField] private Dish_Data.Dishes[] defaultDishes;
   [SerializeField] private CustomerData.NPCs[] defaultNPCs;
@@ -48,30 +49,43 @@ public class Player_Progress : ScriptableObject
   #region Getters and Setters for Save Data
   public PlayerProgressData GetSaveData()
   {
-    return new PlayerProgressData
-    {
-      money = money,
-      unlockedDishes = new List<Dish_Data.Dishes>(unlockedDishes),
-      unlockedNPCs = new List<CustomerData.NPCs>(unlockedNPCs),
-      unlockedIngredients = new List<IngredientType>(unlockedIngredients)
-    };
+      return new PlayerProgressData
+      {
+          playerName = playerName,
+          money = money,
+          unlockedDishes = new List<Dish_Data.Dishes>(unlockedDishes),
+          unlockedNPCs = new List<CustomerData.NPCs>(unlockedNPCs),
+          unlockedIngredients = new List<IngredientType>(unlockedIngredients)
+      };
   }
 
   public void LoadFromSaveData(PlayerProgressData data)
   {
-    if (data == null)
-    {
-      Debug.LogWarning("PlayerProgressData is null, loading defaults.");
-      return;
-    }
+      if (data == null)
+      {
+          Debug.LogWarning("PlayerProgressData is null, loading defaults.");
+          return;
+      }
 
-    unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
-    unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
-    unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
-    money = data.money;
+      playerName = string.IsNullOrWhiteSpace(data.playerName) ? "Player" : data.playerName;
+      unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
+      unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
+      unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
+      money = data.money;
 
-    OnMoneyChanged?.Invoke(money);  // update currency UI
+      OnMoneyChanged?.Invoke(money);
   }
+  #endregion
+
+
+  #region Player Name
+  public void SetPlayerName(string name)
+  {
+    playerName = string.IsNullOrWhiteSpace(name) ? "Chef" : name.Trim();
+    Save_Manager.instance?.SaveGameData();  // auto-save on name change
+  }
+
+  public string GetPlayerName() => playerName;
   #endregion
 
 
@@ -182,11 +196,14 @@ public class Player_Progress : ScriptableObject
   #endregion
 }
 
+#region PlayerProgressData
 [System.Serializable]
 public class PlayerProgressData
 {
-    public List<Dish_Data.Dishes> unlockedDishes = new List<Dish_Data.Dishes>();
-    public List<CustomerData.NPCs> unlockedNPCs = new List<CustomerData.NPCs>();
-    public List<IngredientType> unlockedIngredients = new List<IngredientType>();
-    public float money;
+  public string playerName = "Chef";
+  public List<Dish_Data.Dishes> unlockedDishes = new List<Dish_Data.Dishes>();
+  public List<CustomerData.NPCs> unlockedNPCs = new List<CustomerData.NPCs>();
+  public List<IngredientType> unlockedIngredients = new List<IngredientType>();
+  public float money;
 }
+#endregion

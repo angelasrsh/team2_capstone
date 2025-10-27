@@ -75,10 +75,17 @@ public class Save_Manager : MonoBehaviour
     {
         try
         {
-            UpdateGameData(); // Update current game data
+            // Ensure we have data to save
+            if (currentGameData == null)
+            {
+                Debug.LogWarning("No active GameData found. Creating new one for autosave.");
+                currentGameData = new GameData();
+            }
+
+            UpdateGameData(); // Fill with latest info
 
             string filePath = GetFilePath(slot);
-            string dataToSave = JsonUtility.ToJson(currentGameData);
+            string dataToSave = JsonUtility.ToJson(currentGameData, true);
             File.WriteAllText(filePath, dataToSave);
 
             Debug.Log($"Game saved to Slot {slot}! Elapsed Time: {currentGameData.elapsedTime}");
@@ -150,10 +157,16 @@ public class Save_Manager : MonoBehaviour
         }
 
         currentGameData.playerProgress = Player_Progress.Instance.GetSaveData();
+
+        // Save quest data
+        if (Quest_Manager.Instance != null)
+            currentGameData.questData = Quest_Manager.Instance.GetSaveData();
+
         currentGameData.elapsedTime += Time.deltaTime;
     }
 
-   private void RestoreGameData()
+
+    private void RestoreGameData()
     {
         // Restore player progress
         if (currentGameData.playerProgress != null)
@@ -161,11 +174,23 @@ public class Save_Manager : MonoBehaviour
         else
             Debug.LogWarning("No PlayerProgress data found in save file.");
 
+        // Restore quests
+        if (currentGameData.questData != null)
+            Quest_Manager.Instance.LoadFromSaveData(currentGameData.questData);
+        else
+            Debug.LogWarning("No Quest data found in save file.");
+
         // Handle room loading
         if (RoomManager.RoomDictionary.TryGetValue(currentGameData.currentRoom, out var targetRoom))
             StartCoroutine(LoadRoomScene(targetRoom));
         else
             Debug.LogWarning($"Room '{currentGameData.currentRoom}' not found in RoomDictionary.");
+    }
+    
+    public void AutoSave()
+    {
+        SaveGameData(currentSaveSlot);
+        Debug.Log("Auto-save completed.");
     }
 
     // Coroutine to handle scene loading
@@ -211,6 +236,7 @@ public class GameData
     public float elapsedTime = 0f;
     public string currentRoom = "";
     public PlayerProgressData playerProgress;
+    public Quest_Manager_Data questData;
 }
 
 /// <summary>

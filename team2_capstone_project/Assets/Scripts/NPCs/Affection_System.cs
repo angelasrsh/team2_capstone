@@ -66,6 +66,9 @@ public class AffectionEntry {
         else
             Debug.LogWarning("[Aff_Sys] Restaurant_State instance not found before cutscene.");
 
+        if (Save_Manager.instance != null)
+            Save_Manager.instance.AutoSave();
+
         // then transition
         Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());   
 

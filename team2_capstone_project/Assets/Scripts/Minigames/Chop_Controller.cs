@@ -10,9 +10,8 @@ using TMPro;
 // using UnityEngine.UIElements;
 using System;
 using UnityEngine.InputSystem.LowLevel;
-using System.Numerics; //for actions
-using Quaternion = UnityEngine.Quaternion;  // Add this line
-
+using System.Numerics;  //for actions
+using Quaternion = UnityEngine.Quaternion; 
 
 
 [System.Serializable]
@@ -318,7 +317,7 @@ public class Chop_Controller : MonoBehaviour
         chopLine1.gameObject.SetActive(false);
         CLRZ.gameObject.SetActive(false);
 
-        Debug.LogWarning("firstcutDone is done..starting second cut");
+        Debug.LogWarning("firstcutDone is done... starting second cut");
         chopLine2.gameObject.SetActive(true);
         CLRZ2.gameObject.SetActive(true);
         cuttingLineInitialized = true;
@@ -880,8 +879,6 @@ public class Chop_Controller : MonoBehaviour
     // {
     //     imageComponent.enabled = false;
     // }
-
-
 
     // Reset state
     Drag_All.cuttingBoardActive = false;
