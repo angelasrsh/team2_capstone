@@ -19,7 +19,7 @@ public class Player_Controller : MonoBehaviour
     public float staminaRechargeDelay = 3f;  // seconds to wait before starting recharge
     public float staminaRechargeRate = 1f;  // stamina per second recharged
     private Player_Stamina_UI staminaUI;
-    private Impact_Lines_UI sprintImpactLinesUI;
+    // private Impact_Lines_UI sprintImpactLinesUI;
 
     // Internal stamina variables
     private float currentStamina;
@@ -93,7 +93,7 @@ public class Player_Controller : MonoBehaviour
         if (staminaUI != null)
             staminaUI.SetStamina(currentStamina / maxStamina);
 
-        sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
+        // sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
     }
 
     private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
@@ -108,7 +108,7 @@ public class Player_Controller : MonoBehaviour
         if (staminaUI != null)
             staminaUI.SetStamina(currentStamina / maxStamina);
 
-        sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
+        // sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
     }
 
     private void TryBindInput()
@@ -167,13 +167,13 @@ public class Player_Controller : MonoBehaviour
         HandleSprint();
 
         // --- Sprint Lines Control ---
-        if (sprintImpactLinesUI != null)
-        {
-            if (isSprinting && IsMoving())
-                sprintImpactLinesUI.ShowLines();
-            else
-                sprintImpactLinesUI.HideLines();
-        }
+        // if (sprintImpactLinesUI != null)
+        // {
+        //     if (isSprinting && IsMoving())
+        //         sprintImpactLinesUI.ShowLines();
+        //     else
+        //         sprintImpactLinesUI.HideLines();
+        // }
 
         if (onMobile)
         {
@@ -385,14 +385,11 @@ public class Player_Controller : MonoBehaviour
     public void UpdatePlayerRoom(Room_Data.RoomID newRoomID)
     {
         Room_Data newRoom = Room_Manager.GetRoom(newRoomID);
+        
         if (newRoom != null)
-        {
             currentRoom = newRoom;
-        }
         else
-        {
             Debug.LogWarning($"Room not found: {newRoomID}");
-        }
     }
 
     private void HandleGlobalInputTriggered(InputAction.CallbackContext ctx)

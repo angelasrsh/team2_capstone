@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+#if UNITY_EDITOR
+using UnityEditorInternal;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -49,15 +52,40 @@ public class AffectionEntry {
         return -1;
     }
 
-
+    /// <summary>
+    /// Play the event associated with the next eligible event
+    /// </summary>
     private void PlayEvent()
     {
-        // SceneManager.LoadScene("Dating_Events");
-        // Play the scene however that happens
         Debug.Log("[Aff_Sys] Date start!");
-        SceneManager.LoadScene("Dating_Events");
 
-        // Set cutscene played to true afterwards
+        // save restaurant state first
+        if (Restaurant_State.Instance != null)
+        {
+            Restaurant_State.Instance.SaveCustomers();
+            Debug.Log("[Aff_Sys] Restaurant state saved before cutscene.");
+        }
+        else
+            Debug.LogWarning("[Aff_Sys] Restaurant_State instance not found before cutscene.");
+
+        if (Save_Manager.instance != null)
+            Save_Manager.instance.AutoSave();
+
+        // then transition
+        Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());   
+
+        // TODO: Mark the event as played once the scene finishes loading
+    }
+
+    private IEnumerator TransitionToDateScene()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Dating_Events", LoadSceneMode.Single);
+
+        // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        Debug.Log("[Aff_Sys] Date scene loaded.");
     }
 
     /// <summary>

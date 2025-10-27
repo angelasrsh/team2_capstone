@@ -8,11 +8,11 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "NPCs/Event", fileName = "Event")] 
 public class Event_Data : ScriptableObject
 {
-    [Header("Event identifiers")]
+    [Header("Event Identifiers")]
     public CustomerData Customer;
     public int MilestonePercent;
 
-    [Header("Panel images")]
+    [Header("Panel Images")]
     public Sprite[] panels;
 
 }

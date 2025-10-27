@@ -1,5 +1,38 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &408080751252699745
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8213202435963890775}
+  m_Layer: 9
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 4162164826716764455, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8213202435963890775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408080751252699745}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3005470653747130214}
+  - {fileID: 4974332968954792278}
+  m_Father: {fileID: 7355524852260023639}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3315561528028832961
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,11 +58,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3315561528028832961}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.065, y: 0.77, z: -0.004}
+  m_LocalPosition: {x: 0.06500001, y: 1.3700008, z: -0.004000132}
   m_LocalScale: {x: 1.218378, y: 1.218378, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7355524852260023639}
+  m_Father: {fileID: 8213202435963890775}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8947673555878976729
@@ -108,12 +141,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4431314375857497700}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.011, y: -0.022, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.0110000195, y: 0.57800055, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7355524852260023639}
+  m_Father: {fileID: 8213202435963890775}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3255201098488130977
@@ -180,6 +213,7 @@ GameObject:
   - component: {fileID: 3117469419518947517}
   - component: {fileID: 7355524852260023636}
   - component: {fileID: 1518617726048764857}
+  - component: {fileID: 2126841973870761064}
   m_Layer: 9
   m_Name: Slime_Tall_Tree
   m_TagString: Untagged
@@ -199,8 +233,7 @@ Transform:
   m_LocalScale: {x: 3.4681604, y: 3.4681604, z: 3.4681604}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3005470653747130214}
-  - {fileID: 4974332968954792278}
+  - {fileID: 8213202435963890775}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -217,6 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InteractIcon: {fileID: 3315561528028832961}
+  holdTime: 1
   ingredientData: {fileID: 11400000, guid: 462b51631c3fbee4890a50089b51e1b5, type: 2}
   forageableData: {fileID: 0}
   foragedVariant: {fileID: 4814337501658360740, guid: d14ef850159a191469273fc2495553f9, type: 3}
@@ -248,3 +282,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.94067806, y: 1.2634813, z: 1.1584346}
   m_Center: {x: -0.0067888405, y: 0.13174126, z: 0.11763996}
+--- !u!114 &2126841973870761064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7355524852260023634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 182caf5bb92bf7843822cdc627e677b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpritePivot: {fileID: 408080751252699745}
+  SpriteObject: {fileID: 4431314375857497700}
+  manualShift: 0

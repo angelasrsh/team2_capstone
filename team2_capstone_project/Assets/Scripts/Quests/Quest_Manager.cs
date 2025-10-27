@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 // Credit for the quest system goes to https://www.youtube.com/watch?v=UyTJLDGcT64 (with modification)
 
@@ -59,8 +60,6 @@ public class Quest_Manager : MonoBehaviour
         SceneManager.sceneLoaded += CheckPauseQuests;
 
         UnlockQuests();
-
-
     }
 
     private void OnDisable()
@@ -71,7 +70,7 @@ public class Quest_Manager : MonoBehaviour
         Game_Events_Manager.Instance.onFinishQuest -= FinishQuest;
 
         Game_Events_Manager.Instance.onQuestStepChange -= QuestStepChange;
-        
+
         SceneManager.sceneLoaded -= CheckPauseQuests;
     }
 
@@ -131,6 +130,8 @@ public class Quest_Manager : MonoBehaviour
             quest.InstantiateCurrentQuestStep(this.transform);
         else
             ChangeQuestState(quest.Info.id, Quest_State.FINISHED); // or add CAN_FINISHED if not auto-finishing
+
+        Save_Manager.instance?.AutoSave();
     }
 
     /// <summary>
@@ -219,4 +220,74 @@ public class Quest_Manager : MonoBehaviour
         return quest;
     }
 
+    #region Save / Load
+    public Quest_Manager_Data GetSaveData()
+    {
+        Quest_Manager_Data data = new Quest_Manager_Data();
+
+        foreach (var kvp in questMap)
+        {
+            Quest q = kvp.Value;
+            Quest_Save_Data qData = new Quest_Save_Data
+            {
+                questID = q.Info.id,
+                state = q.state,
+                currentStepIndex = q.CurrentStepIndex
+            };
+            data.allQuestData.Add(qData);
+        }
+
+        return data;
+    }
+
+    public void LoadFromSaveData(Quest_Manager_Data data)
+    {
+        if (data == null || data.allQuestData.Count == 0)
+        {
+            Debug.Log("[Q_MAN] No quest data to load; initializing defaults.");
+            return;
+        }
+
+        foreach (var qData in data.allQuestData)
+        {
+            if (questMap.TryGetValue(qData.questID, out Quest quest))
+            {
+                quest.state = qData.state;
+                quest.CurrentStepIndex = qData.currentStepIndex;
+
+                // Recreate quest step if currently in progress
+                if (quest.state == Quest_State.IN_PROGRESS && quest.CurrentStepExists())
+                {
+                    quest.InstantiateCurrentQuestStep(this.transform);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[Q_MAN] Quest ID {qData.questID} not found when loading.");
+            }
+        }
+
+        Debug.Log("[Q_MAN] Quest data loaded successfully.");
+    }
+    #endregion
 }
+
+#region Quest_Save_Data
+[System.Serializable]
+public class Quest_Save_Data
+{
+    public string questID;
+    public Quest_State state;
+    public int currentStepIndex;
+}
+#endregion
+
+#region Quest_Manager_Data
+[System.Serializable]
+public class Quest_Manager_Data
+{
+    public List<Quest_Save_Data> allQuestData = new List<Quest_Save_Data>();
+}
+#endregion
+
+

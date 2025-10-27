@@ -36,6 +36,12 @@ public class Quest
         return (currentQuestStepIndex < Info.QuestStepPrefabs.Length);
     }
 
+    public int CurrentStepIndex
+    {
+        get => currentQuestStepIndex;
+        set => currentQuestStepIndex = value;
+    }
+
     /// <summary> 
     /// Called by Quest.cs whenever we need to start a new quest step
     /// </summary>
