@@ -798,6 +798,7 @@ public class Chop_Controller : MonoBehaviour
         ResetIngredientPiecesToOriginal();
 
         Drag_All.cuttingBoardActive = false;
+        Drag_All.canDrag = true;
         hasIngredientData = false;
         currentState = CuttingState.Idle;
         addingIngredient = false;
