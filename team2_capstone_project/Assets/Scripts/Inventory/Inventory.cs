@@ -167,7 +167,7 @@ public class Inventory : MonoBehaviour
 
     int amtRemoved = count - amtLeftToRemove;
     TotalIngCount += amtRemoved;
-        updateInventory(); // Remove empty elements
+    updateInventory(); // Remove empty elements
     Debug.Log($"[Invtory] Removed {amtRemoved} {type.Name}");
     // Return however much was added
     return amtRemoved;

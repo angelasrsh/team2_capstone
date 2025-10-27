@@ -15,7 +15,7 @@ public class Shop : MonoBehaviour
   Player_Progress playerProgress;
   [SerializeField] private GameObject shopUI;
   [SerializeField] private GameObject grid;
-  [SerializeField] private GameObject shopItemPrefab;
+  // [SerializeField] private GameObject shopItemPrefab;
   [SerializeField] private TextMeshProUGUI shopkeeperText; // Shopkeeper's "dialogue" text
   [SerializeField] public List<Shop_Item> items; // assign 6 slots in inspector
   [SerializeField] public Shop_Database shopDatabase;
@@ -29,10 +29,10 @@ public class Shop : MonoBehaviour
 
   [Header("Player Input Info")]
   private Player_Controller player;
-  private InputAction talkAction, closeAction;
+  private InputAction interactAction, closeAction;
   private PlayerInput playerInput;
 
-  private void Awake()
+  private void Start()
   {
     if (shopDatabase == null)
     {
@@ -50,7 +50,7 @@ public class Shop : MonoBehaviour
     playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (playerInput != null)
     {
-      talkAction = playerInput.actions["Talk"]; // From Player Input Map
+      interactAction = playerInput.actions["Interact"]; // From Player Input Map
       closeAction = playerInput.actions.FindAction("CloseInteract", true); // From UI Input Map
     }
     
@@ -65,7 +65,7 @@ public class Shop : MonoBehaviour
       return;
 
     // Only process input if player is inside trigger and interact pressed once
-    if (talkAction.WasPerformedThisFrame() && !Game_Manager.Instance.UIManager.pauseMenuOn && !shopOpen)
+    if (interactAction.WasPerformedThisFrame() && !Game_Manager.Instance.UIManager.pauseMenuOn && !shopOpen)
       OpenShopUI();
     else if (closeAction.WasPerformedThisFrame() && shopOpen)
       CloseShopUI();
@@ -235,7 +235,7 @@ public class Shop : MonoBehaviour
       if (currentAmount == 0) // Ignore buy button press if buying 0 amount
         return;
 
-      if(shop.BuyItem(currentItem, currentAmount))
+      if (shop.BuyItem(currentItem, currentAmount))
       {
         currentAmount = 0;
         amountText.text = currentAmount.ToString();

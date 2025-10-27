@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4308610490772557366}
   - component: {fileID: 5221859584557783122}
+  - component: {fileID: 8277090380007215061}
   m_Layer: 9
   m_Name: Foraged_Eleonora
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_LocalScale: {x: 1.3783299, y: 1.3783299, z: 1.3783299}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7845741247417704020}
+  - {fileID: 7539821535849887195}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -46,6 +47,53 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 5.2613173, y: 4.4927087, z: 1.4141335}
   m_Center: {x: 1.7484236, y: 1.7463541, z: -3.5786028}
+--- !u!114 &8277090380007215061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4308610490772557367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 182caf5bb92bf7843822cdc627e677b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpritePivot: {fileID: 7148795922215993322}
+  SpriteObject: {fileID: 7845741247417704017}
+  manualShift: 0
+--- !u!1 &7148795922215993322
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7539821535849887195}
+  m_Layer: 9
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7539821535849887195
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7148795922215993322}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.65, y: -1, z: -3.43}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7845741247417704020}
+  m_Father: {fileID: 4308610490772557366}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7845741247417704017
 GameObject:
   m_ObjectHideFlags: 0
@@ -70,12 +118,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7845741247417704017}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.65, y: 1.15, z: -3.43}
-  m_LocalScale: {x: 0.60225, y: 0.60225, z: 0.60225}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.15, z: 0}
+  m_LocalScale: {x: 0.60225004, y: 0.60225004, z: 0.60225004}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4308610490772557366}
+  m_Father: {fileID: 7539821535849887195}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7845741247417704022
