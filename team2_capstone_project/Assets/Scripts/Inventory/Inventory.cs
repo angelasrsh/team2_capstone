@@ -189,20 +189,21 @@ public class Inventory : MonoBehaviour
       InventoryGrid.PopulateInventory();
   }
 
-  /// <summary>
-  /// Check if the inventory contains the requested item
-  /// </summary>
-  /// <param name="item"> Item to search for </param>
-  /// <returns> True if the item is in inventory, false otherwise. </returns>
-  public bool HasItem(Item_Data item)
-  {
-    foreach (Item_Stack i in InventoryStacks)
+    /// <summary>
+    /// Check if the inventory contains the requested item
+    /// </summary>
+    /// <param name="item"> Item to search for </param>
+    /// <returns> True if the item is in inventory, false otherwise. </returns>
+    public bool HasItem(Item_Data item)
     {
-      if (i != null && i.resource == item)
-        return true;
+        foreach (Item_Stack i in InventoryStacks)
+        {
+            if (i != null && i.resource == item)
+                return true;
+        }
+        return false;
     }
-    return false;
-  }
+  
 
   /// <summary>
   /// Print inventory contents
@@ -226,17 +227,22 @@ public class Inventory : MonoBehaviour
   {
       if (InventoryStacks == null)
       {
-          InventoryStacks = new Item_Stack[InventorySizeLimit];
+          InventoryStacks = new T[InventorySizeLimit];
       }
       else if (InventoryStacks.Length != InventorySizeLimit)
       {
           Item_Stack[] temp = InventoryStacks;
-          InventoryStacks = new Item_Stack[InventorySizeLimit];
+          InventoryStacks = new T[InventorySizeLimit];
 
           for (int i = 0; i < Mathf.Min(temp.Length, InventoryStacks.Length); i++)
-          {
-              InventoryStacks[i] = temp[i];
-          }
+            {
+                if (InventoryStacks[i] != null)
+                {
+                    InventoryStacks[i].resource = temp[i].resource;
+                    InventoryStacks[i].amount = temp[i].amount;
+                }
+                
+            }
       }
   }
 }
