@@ -99,24 +99,73 @@ public class Dish_Tool_Inventory : Inventory
     updateInventory();
   }
 
-  /// <summary>
-  /// Returns Dish_Data for the selected dish. If selectedSlot has no dish, returns null.
-  /// This function is in Dish_Tool_Inventory. Used in Customer_Controller.
-  /// </summary>
-  /// <returns></returns>
-  public Dish_Data GetSelectedDishData()
-  {
-    if (leftSlotSelected)
+    /// <summary>
+    /// Returns Dish_Data for the selected dish. If selectedSlot has no dish, returns null.
+    /// This function is in Dish_Tool_Inventory. Used in Customer_Controller.
+    /// </summary>
+    /// <returns></returns>
+    public Dish_Data GetSelectedDishData()
     {
-      if (InventoryStacks[0] == null)
-        return null;
+        if (leftSlotSelected)
+        {
+            if (InventoryStacks[0] == null)
+                return null;
 
-      return (Dish_Data)(InventoryStacks[0].resource);
+            return (Dish_Data)(InventoryStacks[0].resource);
+        }
+
+        if (InventoryStacks[1] == null)
+            return null;
+
+        return (Dish_Data)(InventoryStacks[1].resource);
     }
 
-    if (InventoryStacks[1] == null)
-      return null;
+    /// <summary>
+    /// Returns true if the inventory is completely full
+    /// </summary>
+    /// <returns> true if # items = total possible number of items </returns>
+    public bool IsFull()
+    {
+        bool isFull = (TotalIngCount == InventorySizeLimit);
+        return isFull;
+        
+    }
+  
+      #region Save / Load
+    public DishInventoryData GetSaveData()
+    {
+        DishInventoryData data = new DishInventoryData();
 
-    return (Dish_Data)(InventoryStacks[1].resource);
-  }
+        data.InventoryStacks = this.InventoryStacks;
+        data.TotalIngCount = this.TotalIngCount;
+
+        return data;
+    }
+
+    public void LoadFromSaveData(DishInventoryData data)
+    {
+        if (data == null)
+        {
+            Helpers.printLabeled(this, "No dish data to load; initializing defaults.");
+            return;
+        }
+
+        this.InventoryStacks = data.InventoryStacks;
+        this.TotalIngCount = data.TotalIngCount;
+
+        Debug.Log("Dish Inventory data loaded successfully.");
+    }
+    #endregion
 }
+
+#region Dish_Inventory_Save_Data
+[System.Serializable]
+public class DishInventoryData
+{
+    [field: SerializeField] public Item_Stack[] InventoryStacks;
+
+    // Count total amount of items
+    public int TotalIngCount = 0;
+}
+#endregion
+

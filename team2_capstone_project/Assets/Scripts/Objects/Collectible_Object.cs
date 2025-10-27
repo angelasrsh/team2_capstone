@@ -74,7 +74,9 @@ public class Collectible_Object : Interactable_Object
         // --- Hide visuals and collider ---
         if (spriteRenderer != null) spriteRenderer.enabled = false;
         Collider col = GetComponent<Collider>();
+        CapsuleCollider capsuleCol = GetComponent<CapsuleCollider>();
         if (col != null) col.enabled = false;
+        if (capsuleCol != null) capsuleCol.enabled = false;
 
         enabled = false;
     }

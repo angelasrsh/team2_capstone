@@ -34,6 +34,12 @@ public class UI_Interaction_Fill : MonoBehaviour
         Interactable_Object.OnGlobalHoldProgress -= HandleProgress;
     }
 
+    private void OnDestroy()
+    {
+        Interactable_Object.OnGlobalHoldProgress -= HandleProgress;
+        canvasGroup = null;
+    }
+
     private void HandleProgress(float progress)
     {
         targetFill = progress;

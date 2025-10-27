@@ -14,10 +14,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private Transform parentAfterDrag; //original parent of the drag
   private Vector3 ingrOriginalPos;
   private static GameObject errorText; // only exists in cauldron and pan scenes
+  public static bool canDrag = true;
 
   [Header("Target Transform")]
   private RectTransform rectTransform;
-  public RectTransform redZone;
+  public RectTransform redZone; // this will be trash redZone in restaurant
   public RectTransform redZoneForKnife;
   private Transform resizeCanvas; // Canvas to become child of AND centers itself and scales larger to this canvas
   private Vector3 targetScale = new Vector3(5f, 5f, 5f);
@@ -32,7 +33,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
   [Header("Chopping Minigame")]
   private Canvas canvas;
-  public bool canDrag = true;
   private Image currentImage;
   public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
   public Chop_Controller chopScript;
@@ -44,6 +44,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   [Header("Combine Minigame")]
   private static Combine combine; // Static reference to Combine script in scene
 
+  [Header("Trash Can")]
+  private static Trash trash; // Static reference to Trash script in scene
+  private static RectTransform trashRedZone;
+
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
   [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
@@ -53,11 +57,11 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private static bool audioTriggered = false;
 
   // Start is called before the first frame update
-   void Start()
+  void Start()
   {
     if (cauldron == null)
       cauldron = FindObjectOfType<Cauldron>();
-    
+
     ParentSlot = GetComponentInParent<Inventory_Slot>();
 
     // Find and set animator from animation background
@@ -78,10 +82,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     GameObject red_zone_found = GameObject.Find("RedZone");
     if (red_zone_found != null)
       redZone = red_zone_found.GetComponent<RectTransform>();
-    else
-    {
-      Debug.Log("[Drag_All] Could not find redZone!");
-    }
+    // else
+    // {
+    //   Debug.Log("[Drag_All] Could not find redZone!");
+    // }
     GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
     if (resizeCanvas_object != null)
       resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
@@ -122,7 +126,38 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       pan ??= FindObjectOfType<Pan>();
     else if (SceneManager.GetActiveScene().name == "Combine_Minigame")
       combine ??= FindObjectOfType<Combine>();
+    else if (SceneManager.GetActiveScene().name == "Updated_Restaurant") // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
+    {
+      trash ??= FindObjectOfType<Trash>();
+      trashRedZone = trash.redZone;
+    }
   }
+  
+  private void OnEnable()
+  {
+    Trash.OnTrashOpenChanged += SetCanDrag;
+    SceneManager.activeSceneChanged += OnSceneChanged;
+  }
+
+  private void OnDisable()
+  {
+    Trash.OnTrashOpenChanged -= SetCanDrag;
+    SceneManager.activeSceneChanged -= OnSceneChanged;
+  }
+
+  private void OnSceneChanged(Scene previousScene, Scene newScene)
+  {
+    if (newScene.name == "Updated_Restaurant") // add in world map later if we end up not wanting to drag these in world map too
+      canDrag = false;
+    else
+      canDrag = true;
+  }
+
+  public void SetCanDrag(bool draggable)
+  {
+    canDrag = draggable;
+  }
+
   public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
   {
     //checks if the rectangles are overlapping
@@ -140,7 +175,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     Rect rect2 = new Rect(cornersB[0], cornersB[2] - cornersB[0]);
 
     return rect1.Overlaps(rect2);
-
   }
 
   public static bool IsOverlappingRotated(RectTransform rectA, RectTransform rectB)
@@ -206,7 +240,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     }
   }
 
-
   public void OnDrag(PointerEventData eventData)
   {
     if (!canDrag || (SceneManager.GetActiveScene().name == "Cooking_Minigame" && cauldron.IsStirring()))
@@ -247,11 +280,35 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Destroy(gameObject);
         return;
       }
+      else if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && IsOverlapping(rectTransform, trashRedZone)) // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
+      {
+        if (trash == null)
+        {
+          trash = FindObjectOfType<Trash>();
+          trashRedZone = trash.redZone;
+        }
+
+        if (!trash.trashOpen) // just a safety check. Shouldn't need to do this if canDrag is set up properly
+        {
+          rectTransform.position = ingrOriginalPos;
+          return;
+        }
+
+        DuplicateInventorySlot();
+        int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
+        if (trashed > 0) // Only remove ingredient actually added to trash
+          Ingredient_Inventory.Instance.RemoveResources(ingredientType, trashed);
+        else
+          rectTransform.position = ingrOriginalPos;
+        Destroy(gameObject);
+        return;
+      }
 
       // Debug.Log("ended drag");
       transform.SetParent(parentAfterDrag);
       if (IsOverlapping(rectTransform, redZone))
       {
+        Debug.Log("is overlapping redzone");
         if (SceneManager.GetActiveScene().name == "Cooking_Minigame")
         {
           if (cauldron == null) // this has to be using the if
@@ -262,7 +319,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
           {
             if (ingredient.ingredientType == IngredientType.Bone_Broth)
               BrothAdded();
-            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1); 
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, 1);
           }
           Destroy(gameObject);
         }
@@ -291,7 +348,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
               chopScript.SetIngredientData(ingredient_data_var, this.gameObject);
               //spawn the cut prefab
               chopScript.ShowIngredientPiecedTogether();
-
             }
             cuttingBoardActive = true;
             Destroy(gameObject);
