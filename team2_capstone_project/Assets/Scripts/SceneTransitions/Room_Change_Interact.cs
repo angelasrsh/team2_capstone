@@ -9,6 +9,7 @@ public class Room_Change_Interact : MonoBehaviour
     [Header("Room Transition Settings")]
     public Room_Data currentRoom;
     public Room_Data.RoomID exitingTo;
+    public bool BlockIfInventoryFull;
 
     private bool isPlayerInRange = false;
     private bool interactPressed = false;
@@ -107,6 +108,19 @@ public class Room_Change_Interact : MonoBehaviour
             interactPressed = false; // consume input
             Debug.Log($"Player interacted to change room to: {exitingTo}");
 
+            // Block if inventory is full and setting is true
+            if (BlockIfInventoryFull && Dish_Tool_Inventory.Instance.IsFull())
+            {
+                Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+
+                if (dm != null)
+                    dm.PlayScene("Journal.Hands_Full");
+                else
+                    Helpers.printLabeled(this, "Dialogue manager is null");
+                    
+                return;
+            }
+
             if (player != null)
             {
                 Player_Input_Controller.instance.DisablePlayerInput();
@@ -122,4 +136,5 @@ public class Room_Change_Interact : MonoBehaviour
             }
         }
     }
+
 }

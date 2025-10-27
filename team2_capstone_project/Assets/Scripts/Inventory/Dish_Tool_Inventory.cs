@@ -119,6 +119,17 @@ public class Dish_Tool_Inventory : Inventory
 
         return (Dish_Data)(InventoryStacks[1].resource);
     }
+
+    /// <summary>
+    /// Returns true if the inventory is completely full
+    /// </summary>
+    /// <returns> true if # items = total possible number of items </returns>
+    public bool IsFull()
+    {
+        bool isFull = (TotalIngCount == InventorySizeLimit);
+        return isFull;
+        
+    }
   
       #region Save / Load
     public DishInventoryData GetSaveData()

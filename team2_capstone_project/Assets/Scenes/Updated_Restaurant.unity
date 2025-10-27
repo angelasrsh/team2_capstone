@@ -1168,6 +1168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
   exitingTo: 4
+  BlockIfInventoryFull: 1
 --- !u!65 &143557598
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3358,6 +3359,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
   exitingTo: 5
+  BlockIfInventoryFull: 0
 --- !u!65 &495531440
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6200,6 +6202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
   exitingTo: 6
+  BlockIfInventoryFull: 0
 --- !u!135 &964966579
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -8212,6 +8215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
   exitingTo: 7
+  BlockIfInventoryFull: 1
 --- !u!135 &1301802188
 SphereCollider:
   m_ObjectHideFlags: 0
