@@ -327,7 +327,7 @@ public class Chop_Controller : MonoBehaviour
 
         if (firstDrop)
         {
-            // SetTutorialText("Drag and drop knife over line.");
+            SetTutorialText("Drag and drop knife over line.");
             firstDrop = false;
         }
         return ingredient_data_var;
@@ -593,7 +593,7 @@ public class Chop_Controller : MonoBehaviour
             Debug.Log("Knife snapped to line!");
             if (firstSnap)
             {
-                // SetTutorialText("Click and drag along the line back and forth until the line disappears.");
+                SetTutorialText("Click and drag along the line back and forth until the line disappears.");
                 firstSnap = false;
             }
         }
@@ -886,17 +886,17 @@ public class Chop_Controller : MonoBehaviour
         return chopLine.Find(lineConfig.redZoneObjectName);
     }
 
-    // // Tutorial text helpers
-    // public void SetTutorialText(string txt)
-    // {
-    //     temporary_Tutorial.text = txt;
-    //     temporary_Tutorial.gameObject.SetActive(true);
-    // }
+    // Tutorial text helpers
+    public void SetTutorialText(string txt)
+    {
+        temporary_Tutorial.text = txt;
+        temporary_Tutorial.gameObject.SetActive(true);
+    }
 
-    // private void HideErrorText()
-    // {
-    //     temporary_Tutorial?.gameObject.SetActive(false);
-    // }
+    private void HideErrorText()
+    {
+        temporary_Tutorial?.gameObject.SetActive(false);
+    }
 }
 
 /* ================================================================================
