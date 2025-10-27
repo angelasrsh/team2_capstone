@@ -14,6 +14,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private Transform parentAfterDrag; //original parent of the drag
   private Vector3 ingrOriginalPos;
   private static GameObject errorText; // only exists in cauldron and pan scenes
+  public static bool canDrag = true;
 
   [Header("Target Transform")]
   private RectTransform rectTransform;
@@ -32,7 +33,6 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
   [Header("Chopping Minigame")]
   private Canvas canvas;
-  public static bool canDrag = true;
   private Image currentImage;
   public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
   public Chop_Controller chopScript;
@@ -61,7 +61,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   {
     if (cauldron == null)
       cauldron = FindObjectOfType<Cauldron>();
-    
+
     ParentSlot = GetComponentInParent<Inventory_Slot>();
 
     // Find and set animator from animation background
@@ -132,6 +132,32 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       trashRedZone = trash.redZone;
     }
   }
+  
+  private void OnEnable()
+  {
+    Trash.OnTrashOpenChanged += SetCanDrag;
+    SceneManager.activeSceneChanged += OnSceneChanged;
+  }
+
+  private void OnDisable()
+  {
+    Trash.OnTrashOpenChanged -= SetCanDrag;
+    SceneManager.activeSceneChanged -= OnSceneChanged;
+  }
+
+  private void OnSceneChanged(Scene previousScene, Scene newScene)
+  {
+    if (newScene.name == "Updated_Restaurant") // add in world map later if we end up not wanting to drag these in world map too
+      canDrag = false;
+    else
+      canDrag = true;
+  }
+
+  public void SetCanDrag(bool draggable)
+  {
+    canDrag = draggable;
+  }
+
   public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
   {
     //checks if the rectangles are overlapping
@@ -255,22 +281,28 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         return;
       }
       else if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && IsOverlapping(rectTransform, trashRedZone)) // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
+      {
+        if (trash == null)
         {
-          Debug.Log("[Drag_All]: getting hereeeeeeeeeeeeeeeeeeeeeeee");
-          if (trash == null)
-          {
-            trash = FindObjectOfType<Trash>();
-            trashRedZone = trash.redZone;
-          }
-
-          DuplicateInventorySlot();
-          int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
-          if (trashed > 0) // Only remove ingredient actually added to trash
-          {
-            Ingredient_Inventory.Instance.RemoveResources(ingredientType, trashed);
-          }
-          Destroy(gameObject);
+          trash = FindObjectOfType<Trash>();
+          trashRedZone = trash.redZone;
         }
+
+        if (!trash.trashOpen) // just a safety check. Shouldn't need to do this if canDrag is set up properly
+        {
+          rectTransform.position = ingrOriginalPos;
+          return;
+        }
+
+        DuplicateInventorySlot();
+        int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
+        if (trashed > 0) // Only remove ingredient actually added to trash
+          Ingredient_Inventory.Instance.RemoveResources(ingredientType, trashed);
+        else
+          rectTransform.position = ingrOriginalPos;
+        Destroy(gameObject);
+        return;
+      }
 
       // Debug.Log("ended drag");
       transform.SetParent(parentAfterDrag);

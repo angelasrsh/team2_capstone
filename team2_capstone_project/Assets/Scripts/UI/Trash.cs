@@ -9,8 +9,9 @@ using TMPro;
 
 public class Trash : MonoBehaviour
 {
+  public static event System.Action<bool> OnTrashOpenChanged;
   private bool isPlayerInRange = false;
-  private bool trashOpen = false; 
+  public bool trashOpen = false; 
   [SerializeField] private GameObject trashUI;
   [SerializeField] private GameObject grid;
   [SerializeField] public RectTransform redZone; // only here so that drag_all can easily find redZone even when it's inactive
@@ -81,6 +82,9 @@ public class Trash : MonoBehaviour
     trashUI.SetActive(true);
     trashOpen = true;
     Game_Manager.Instance.UIManager.OpenUI();
+
+    // Notify draggables to allow drag when trash open
+    OnTrashOpenChanged?.Invoke(trashOpen);
   }
 
   private void CloseTrashUI()
@@ -90,6 +94,9 @@ public class Trash : MonoBehaviour
     if (trashOpen)
       Game_Manager.Instance.UIManager.CloseUI();
     trashOpen = false;
+
+    // Notify draggables to disable drag when trash closed
+    OnTrashOpenChanged?.Invoke(trashOpen);
   }
 
   /// <summary>
