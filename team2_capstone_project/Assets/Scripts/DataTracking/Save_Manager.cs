@@ -162,6 +162,14 @@ public class Save_Manager : MonoBehaviour
         if (Quest_Manager.Instance != null)
             currentGameData.questData = Quest_Manager.Instance.GetSaveData();
 
+        // Save ingredient inventory data
+        if (Ingredient_Inventory.Instance != null)
+            currentGameData.ingredientInventoryData = Ingredient_Inventory.Instance.GetSaveData();
+
+        // // Save dish inventory data
+        // if (Dish_Tool_Inventory.Instance != null)
+        //     currentGameData.dishInventoryData = Dish_Tool_Inventory.Instance.GetSaveData();
+
         currentGameData.elapsedTime += Time.deltaTime;
     }
 
@@ -179,6 +187,19 @@ public class Save_Manager : MonoBehaviour
             Quest_Manager.Instance.LoadFromSaveData(currentGameData.questData);
         else
             Debug.LogWarning("No Quest data found in save file.");
+
+        // Restore ingredient inventory
+        if (currentGameData.ingredientInventoryData != null)
+            Ingredient_Inventory.Instance.LoadFromSaveData(currentGameData.ingredientInventoryData);
+        else
+            Debug.LogWarning("No Ingredient Inventory data found in save file.");
+
+        // // Restore dish inventory
+        // if (currentGameData.dishInventoryData != null)
+        //     Dish_Tool_Inventory.Instance.LoadFromSaveData(currentGameData.ingredientInventoryData);
+        // else
+        //     Debug.LogWarning("No Dish Inventory data found in save file.");
+
 
         // Handle room loading
         if (RoomManager.RoomDictionary.TryGetValue(currentGameData.currentRoom, out var targetRoom))
@@ -237,6 +258,9 @@ public class GameData
     public string currentRoom = "";
     public PlayerProgressData playerProgress;
     public Quest_Manager_Data questData;
+
+    public IngredientInventoryData ingredientInventoryData;
+    // public DishInventoryData dishInventoryData;
 }
 
 /// <summary>
