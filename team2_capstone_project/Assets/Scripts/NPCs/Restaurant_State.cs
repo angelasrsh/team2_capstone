@@ -38,6 +38,7 @@ public class Restaurant_State : MonoBehaviour
     private void HandleDayEnded(Day_Summary_Data summary)
     {
         SaveCustomers();
+        Save_Manager.instance?.AutoSave();
     }
 
     private void HandleDayStarted()

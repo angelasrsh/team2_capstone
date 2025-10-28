@@ -93,6 +93,10 @@ public class Player_Controller : MonoBehaviour
         if (staminaUI != null)
             staminaUI.SetStamina(currentStamina / maxStamina);
 
+        currentRoom = Room_Manager.GetRoomFromActiveScene();
+        if (currentRoom != null)
+        Debug.Log($"[Player_Controller] Player spawned in room: {currentRoom.roomID}");
+
         // sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
     }
 
