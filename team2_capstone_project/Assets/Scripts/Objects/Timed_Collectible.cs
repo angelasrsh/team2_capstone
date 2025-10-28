@@ -30,10 +30,7 @@ namespace Grimoire
                 originalColor = spriteRenderer.color;
         }
 
-        private void OnEnable()
-        {
-            StartCoroutine(LifetimeRoutine());
-        }
+        private void OnEnable() => StartCoroutine(LifetimeRoutine());
 
         private IEnumerator LifetimeRoutine()
         {

@@ -127,52 +127,111 @@ public class Save_Manager : MonoBehaviour
     }
     #endregion
 
+
     public void CreateNewSaveSlot(int slot)
     {
-        if (currentGameData == null) // Only create if no active save data
+        currentGameData = new GameData
         {
-            currentGameData = new GameData
-            {
-                elapsedTime = tempElapsedTime
-            };
+            elapsedTime = 0f
+        };
 
-            SetCurrentSlot(slot); // Update the current save slot
-            SaveGameData(slot);   // Save the data to disk
+        SetCurrentSlot(slot);
+        SaveGameData(slot);
 
-            Debug.Log($"New save slot {slot} created with elapsed time: {tempElapsedTime}");
-        }
-        else
-        {
-            Debug.LogWarning($"Save slot {slot} already exists or is being used.");
-        }
+        Debug.Log($"New save slot {slot} created (overwritten if existed).");
     }
+
+    // Old version, keeping this just in case
+    // public void CreateNewSaveSlot(int slot)
+    // {
+    //     if (currentGameData == null) // Only create if no active save data
+    //     {
+    //         currentGameData = new GameData
+    //         {
+    //             elapsedTime = tempElapsedTime
+    //         };
+
+    //         SetCurrentSlot(slot); // Update the current save slot
+    //         SaveGameData(slot);   // Save the data to disk
+
+    //         Debug.Log($"New save slot {slot} created with elapsed time: {tempElapsedTime}");
+    //     }
+    //     else
+    //     {
+    //         Debug.LogWarning($"Save slot {slot} already exists or is being used.");
+    //     }
+    // }
+
+    // Also an old version, kept for reference
+    // private void UpdateGameData()
+    // {
+    //     var player = FindObjectOfType<Player_Controller>();
+    //     if (player != null && player.currentRoom != null)
+    //     {
+    //         currentGameData.currentRoom = player.currentRoom.roomID.ToString();
+    //         Debug.Log($"Updated current room: {currentGameData.currentRoom}");
+    //     }
+
+    //     currentGameData.playerProgress = Player_Progress.Instance.GetSaveData();
+
+    //     // Save quest data
+    //     if (Quest_Manager.Instance != null)
+    //         currentGameData.questData = Quest_Manager.Instance.GetSaveData();
+
+    //     // Save ingredient inventory data
+    //     if (Ingredient_Inventory.Instance != null)
+    //         currentGameData.ingredientInventoryData = Ingredient_Inventory.Instance.GetSaveData();
+
+    //     // Save dish inventory data
+    //     if (Dish_Tool_Inventory.Instance != null)
+    //         currentGameData.dishInventoryData = Dish_Tool_Inventory.Instance.GetSaveData();
+
+    //     currentGameData.elapsedTime += Time.deltaTime;
+    // }
 
     private void UpdateGameData()
     {
-        var player = FindObjectOfType<Player_Controller>();
-        if (player != null && player.currentRoom != null)
+        // --- Room tracking ---
+        Room_Data activeRoom = Room_Manager.GetRoomFromActiveScene();
+        if (activeRoom != null)
         {
-            currentGameData.currentRoom = player.currentRoom.roomID.ToString();
-            Debug.Log($"Updated current room: {currentGameData.currentRoom}");
+            currentGameData.currentRoom = activeRoom.roomID.ToString();
+            Debug.Log($"[Save_Manager] Current room saved as {currentGameData.currentRoom}");
+        }
+        else
+        {
+            Debug.LogWarning("[Save_Manager] Could not find active room! Defaulting to Kitchen.");
+            currentGameData.currentRoom = "Kitchen"; // fallback
         }
 
-        currentGameData.playerProgress = Player_Progress.Instance.GetSaveData();
+        // --- Player progress ---
+        if (Player_Progress.Instance != null)
+            currentGameData.playerProgress = Player_Progress.Instance.GetSaveData();
+        else
+        {
+            Debug.LogWarning("[Save_Manager] Player_Progress.Instance is null! Using defaults.");
+            currentGameData.playerProgress = new PlayerProgressData();
+        }
 
-        // Save quest data
-        if (Quest_Manager.Instance != null)
-            currentGameData.questData = Quest_Manager.Instance.GetSaveData();
+        // --- Restaurant state ---
+        if (Restaurant_State.Instance != null)
+        {
+            Restaurant_State.Instance.SaveCustomers(); // ensure data is current
+            currentGameData.restaurantStateData = new RestaurantStateData
+            {
+                customers = new List<Customer_State>(Restaurant_State.Instance.customers)
+            };
+            Debug.Log($"[Save_Manager] Saved {currentGameData.restaurantStateData.customers.Count} customers in restaurant state.");
+        }
+        else
+        {
+            Debug.LogWarning("[Save_Manager] Restaurant_State.Instance is null! Saving empty restaurant state.");
+            currentGameData.restaurantStateData = new RestaurantStateData();
+        }
 
-        // Save ingredient inventory data
-        if (Ingredient_Inventory.Instance != null)
-            currentGameData.ingredientInventoryData = Ingredient_Inventory.Instance.GetSaveData();
-
-        // Save dish inventory data
-        if (Dish_Tool_Inventory.Instance != null)
-            currentGameData.dishInventoryData = Dish_Tool_Inventory.Instance.GetSaveData();
-
+        // --- Elapsed time ---
         currentGameData.elapsedTime += Time.deltaTime;
     }
-
 
     private void RestoreGameData()
     {
@@ -200,12 +259,30 @@ public class Save_Manager : MonoBehaviour
         else
             Debug.LogWarning("No Dish Inventory data found in save file.");
 
+        // Restore restaurant state
+        if (currentGameData.restaurantStateData != null && currentGameData.restaurantStateData.customers != null)
+        {
+            if (Restaurant_State.Instance != null)
+            {
+                Restaurant_State.Instance.customers = new List<Customer_State>(currentGameData.restaurantStateData.customers);
+                Debug.Log($"[Save_Manager] Restored {Restaurant_State.Instance.customers.Count} customers to restaurant state.");
+            }
+            else
+                Debug.LogWarning("[Save_Manager] Restaurant_State.Instance not found when restoring restaurant data!");
+        }
+        else
+            Debug.Log("[Save_Manager] No restaurant state found in save file.");
+
 
         // Handle room loading
-        if (RoomManager.RoomDictionary.TryGetValue(currentGameData.currentRoom, out var targetRoom))
+        string roomKey = string.IsNullOrEmpty(currentGameData.currentRoom) 
+            ? "Bedroom" // fallback room ID
+            : currentGameData.currentRoom;
+
+        if (RoomManager.RoomDictionary.TryGetValue(roomKey, out var targetRoom))
             StartCoroutine(LoadRoomScene(targetRoom));
         else
-            Debug.LogWarning($"Room '{currentGameData.currentRoom}' not found in RoomDictionary.");
+            Debug.LogWarning($"Room '{roomKey}' not found in RoomDictionary. Available keys: {string.Join(", ", RoomManager.RoomDictionary.Keys)}");
     }
     
     public void AutoSave()
@@ -217,30 +294,64 @@ public class Save_Manager : MonoBehaviour
     // Coroutine to handle scene loading
     private IEnumerator LoadRoomScene(Room_Data targetRoom)
     {
-        // Load target scene asynchronously
-        AsyncOperation asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(targetRoom.roomID.ToString());
+        // Load the target scene asynchronously
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetRoom.roomID.ToString());
 
-        // Wait until the scene is loaded
         while (!asyncLoad.isDone)
-        {
             yield return null;
-        }
 
-        // Find player in the new scene and position them at the spawn point
-        var player = FindObjectOfType<Player_Controller>();
-        if (player != null)
+        // Give one extra frame for everything to initialize
+        yield return null;
+
+        // --- Only handle player + spawn points in overworld scenes ---
+        if (targetRoom.isOverworldScene)
         {
-            var spawnPoint = GameObject.Find(roomExitOptions.spawnPointID.ToString());
+            var player = FindObjectOfType<Player_Controller>();
+            if (player == null)
+            {
+                Debug.LogWarning($"[Save_Manager] No Player_Controller found in overworld scene {targetRoom.roomID}.");
+                yield break;
+            }
+
+            // Determine spawn point
+            Transform spawnPoint = null;
+
+            // 1. Use stored exit options if available
+            if (roomExitOptions != null && roomExitOptions.spawnPointID != Room_Data.SpawnPointID.Default)
+            {
+                spawnPoint = FindSpawnPointByID(roomExitOptions.spawnPointID);
+                if (spawnPoint != null)
+                    Debug.Log($"[Save_Manager] Using spawn point '{roomExitOptions.spawnPointID}' from RoomExitOptions.");
+                else
+                    Debug.LogWarning($"[Save_Manager] Could not find spawn point '{roomExitOptions.spawnPointID}' — falling back to default.");
+            }
+
+            // 2. Fallback to default
+            if (spawnPoint == null)
+                spawnPoint = FindSpawnPointByID(Room_Data.SpawnPointID.Default);
+
+            // 3. Apply spawn point
             if (spawnPoint != null)
             {
-                player.transform.position = spawnPoint.transform.position;
-                Debug.Log($"Player moved to spawn point: {roomExitOptions.spawnPointID} in scene {targetRoom.roomID}");
+                player.transform.position = spawnPoint.position;
+                Debug.Log($"[Save_Manager] Player moved to spawn point '{spawnPoint.name}' in scene {targetRoom.roomID}.");
             }
             else
-            {
-                Debug.LogWarning($"Spawn point {roomExitOptions.spawnPointID} not found in scene {targetRoom.roomID}.");
-            }
+                Debug.LogWarning($"[Save_Manager] No spawn point found in scene {targetRoom.roomID}; player position unchanged.");
         }
+        else
+        {
+            // Not an overworld scene, so don't try to position the player
+            Debug.Log($"[Save_Manager] Loaded non-overworld scene {targetRoom.roomID}; skipping spawn logic.");
+        }
+    }
+    
+    private Transform FindSpawnPointByID(Room_Data.SpawnPointID id)
+    {
+        // Naming convention = "<ID>SpawnPoint"
+        string spawnName = $"{id}SpawnPoint";
+        GameObject spawnObj = GameObject.Find(spawnName);
+        return spawnObj != null ? spawnObj.transform : null;
     }
 
     private string GetFilePath(int slot) => Path.Combine(Application.persistentDataPath, $"slot{slot}.json");
@@ -258,9 +369,9 @@ public class GameData
     public string currentRoom = "";
     public PlayerProgressData playerProgress;
     public Quest_Manager_Data questData;
-
     public IngredientInventoryData ingredientInventoryData;
     public DishInventoryData dishInventoryData;
+    public RestaurantStateData restaurantStateData;
 }
 
 /// <summary>
@@ -286,6 +397,12 @@ public static class RoomManager
         Debug.Log($"RoomManager initialized with {RoomDictionary.Count} rooms.");
     }
     #endregion
+}
+
+[System.Serializable]
+public class RestaurantStateData
+{
+    public List<Customer_State> customers = new List<Customer_State>();
 }
 
 

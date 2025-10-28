@@ -74,17 +74,11 @@ public class Dialogue_Manager : MonoBehaviour
         {
             // If still typing, skip to full line
             if (uiManager.textTyping)
-            {
                 uiManager.SkipCurrentLineInstant();
-            }
             else if (dialogQueue.Count > 0)
-            {
                 PlayNextDialog();
-            }
             else
-            {
                 EndDialog();
-            }
         }
     }
 
@@ -191,7 +185,7 @@ public class Dialogue_Manager : MonoBehaviour
         }
         completedDialogKeys.Add(aDialogKey); 
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
-        PlayNextDialog(disablePlayerInput);
+        StartCoroutine(PlayNextDialogWithDelay(disablePlayerInput));
     }
 
     /// <summary>
@@ -209,6 +203,9 @@ public class Dialogue_Manager : MonoBehaviour
             // Parse dialog line -> text {Emotion}
             string[] parts = dialogLine.Split(new[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
             string dialogText = parts[0].Trim(); 
+
+            // Safely replace {player} placeholder with actual player name (fallback = "Chef") and set emotion if present
+            dialogText = ProcessDialogueVariables(dialogText);
             CustomerData.EmotionPortrait.Emotion emotion = CustomerData.EmotionPortrait.Emotion.Neutral;
 
             if (parts.Length > 1 && Enum.TryParse(parts[1].Trim(), true, out CustomerData.EmotionPortrait.Emotion parsedEmotion))
@@ -285,7 +282,7 @@ public class Dialogue_Manager : MonoBehaviour
         }
 
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
-        PlayNextDialog(forcedEmotion, disablePlayerInput);
+        StartCoroutine(PlayNextForcedEmotionDialogWithDelay(forcedEmotion, disablePlayerInput));
     }
 
 
@@ -305,6 +302,8 @@ public class Dialogue_Manager : MonoBehaviour
             string[] parts = dialogLine.Split(new[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
             string dialogText = parts[0].Trim();
 
+            // Replace {player} with player name and set emotion
+            dialogText = ProcessDialogueVariables(dialogText);
             var emotion = forcedEmotion;
 
             // Character from key
@@ -375,6 +374,35 @@ public class Dialogue_Manager : MonoBehaviour
         {
             completedDialogKeys.Remove(aDialogKey);
         }
+    }
+
+    private string ProcessDialogueVariables(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+
+        string playerName = Player_Progress.Instance != null
+            ? Player_Progress.Instance.GetPlayerName()
+            : "Chef";
+
+        // Replace the variable
+        string processed = text.Replace("[player]", playerName);
+
+        // Remove any leftover braces
+        processed = processed.Replace("[]", "").Replace("]", "");
+        return processed;
+    }
+
+
+    private IEnumerator PlayNextDialogWithDelay(bool disablePlayerInput = true)
+    {
+        yield return null; // wait one frame for Player_Progress.Instance to initialize
+        PlayNextDialog(disablePlayerInput);
+    }
+
+    private IEnumerator PlayNextForcedEmotionDialogWithDelay(CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
+    {
+        yield return null; // wait one frame for Player_Progress.Instance to initialize
+        PlayNextDialog(forcedEmotion, disablePlayerInput);
     }
     #endregion
 }
