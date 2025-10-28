@@ -29,15 +29,6 @@ public class Room_Change_Trigger : MonoBehaviour
     }
   }
 
-  public void OnPlayButtonPressed()
-  {
-    if (isSceneTransitioning) return;
-    isSceneTransitioning = true;
-
-    // Game_Events_Manager.Instance.RoomChange(exitingTo);
-    Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
-  }
-  
   public void OnBackButtonPressedForMinigame()
   {
     if (isSceneTransitioning) return;

@@ -19,16 +19,6 @@ public class Game_Manager : MonoBehaviour
 
   private void Awake()
   {
-    if (roomCollection != null)
-    {
-      Room_Manager.Initialize(roomCollection);
-      Debug.Log("[GameManager]: Room_Manager initialized!");
-    }
-    else
-    {
-      Debug.LogError("[GameManager]: No RoomCollectionData assigned!");
-    }
-
     if (Instance != null && Instance != this)
     {
       Destroy(gameObject);
@@ -37,6 +27,22 @@ public class Game_Manager : MonoBehaviour
 
     Instance = this;
     DontDestroyOnLoad(gameObject);
+
+    if (roomCollection != null)
+    {
+      Room_Manager.Initialize(roomCollection);
+      Debug.Log("[GameManager]: Room_Manager initialized!");
+    }
+    else
+      Debug.LogError("[GameManager]: No RoomCollectionData assigned!");
+
+    if (playerProgress != null)
+    {
+      var tmp = playerProgress.GetPlayerName();
+      Debug.Log($"[Game_Manager] Player Progress loaded: {tmp}");
+    } 
+    else
+      Debug.LogError("[GameManager]: Player_Progress not set in inspector!"); 
 
     if (dishDatabase == null)
       Debug.LogError("[GameManager]: DishDatabase not set in inspector!");
