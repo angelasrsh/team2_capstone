@@ -152,12 +152,35 @@ public class Dialogue_Manager : MonoBehaviour
 
     public string GetDialogFromKey(string aKey)
     {
+        // 1. Exact match first
         if (dialogMap.TryGetValue(aKey, out string value))
-        {
             return value;
+
+        // 2. Try to find random numbered variants
+        List<string> variantKeys = new List<string>();
+
+        // E.g. if aKey = "Elf.LikedDish", look for "Elf.LikedDish1", "Elf.LikedDish2", etc.
+        foreach (var key in dialogMap.Keys)
+        {
+            if (key.StartsWith(aKey, StringComparison.OrdinalIgnoreCase))
+            {
+                // ensure it’s not the same key (avoids infinite recursion)
+                if (!key.Equals(aKey, StringComparison.OrdinalIgnoreCase))
+                    variantKeys.Add(key);
+            }
         }
+
+        // 3. If we found variants, return one at random
+        if (variantKeys.Count > 0)
+        {
+            string randomKey = variantKeys[UnityEngine.Random.Range(0, variantKeys.Count)];
+            return dialogMap[randomKey];
+        }
+
+        // 4. Fallback
         return aKey;
     }
+
     #endregion
 
     #region Play Scene (Normal)

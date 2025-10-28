@@ -15,7 +15,7 @@ using UnityEngine.SceneManagement;
 public class AffectionEntry {
     public const int MaxAffection = 100; // TODO: Probably should add this somewhere else to avoid repeated data
     public const int NumEvents = 4;
-    public int MinAffection = 0; // Update if we want to stop player from dropping below a certain level
+    public const int MinAffection = 0; // Update if we want to stop player from dropping below a certain level
     public const int AffectionMilestone = MaxAffection / NumEvents; // 25
     public CustomerData customerData;
     public int AffectionLevel;
@@ -91,17 +91,13 @@ public class AffectionEntry {
     /// <summary>
     /// Change the affection level
     /// </summary>
-    /// <param name="amount"> Amount to add (can be negative) </param>
+    /// <param name="amount"> Amount to add (cannot be negative) </param>
     public void AddAffection(int amount)
     {
         AffectionLevel += amount;
 
-        // Check range
-        if (AffectionLevel > MaxAffection)
-            AffectionLevel = MaxAffection;
-
-        if (AffectionLevel < MinAffection)
-            AffectionLevel = MinAffection;
+        // Clamp affection between 0 and 100
+        AffectionLevel = Mathf.Clamp(AffectionLevel, MinAffection, MaxAffection);
     }
 }
 
@@ -182,7 +178,7 @@ public class Affection_System : MonoBehaviour
             entryToUpdate.AddAffection(LikedDishAffection);
         else if (suffix.Equals("NeutralDish"))
             entryToUpdate.AddAffection(NeutralDishAffection);
-        else if (suffix.Equals("DislikedDishAffection"))
+        else if (suffix.Equals("DislikedDish"))
             entryToUpdate.AddAffection(DislikedDishAffection);
         else
             Debug.Log($"[AFF_SYS] Error: Unknown suffix {suffix}");

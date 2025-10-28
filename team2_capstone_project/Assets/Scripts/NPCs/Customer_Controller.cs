@@ -330,6 +330,7 @@ public class Customer_Controller : MonoBehaviour
     public bool TryServeDish(Inventory playerInventory)
     {
         Debug.Log("Attempting to serve dish...");
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
 
         if (requestedDish == null)
         {
@@ -337,7 +338,7 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
-        // Make sure we're working with the Dish_Tool_Inventory
+        // Make sure we're working with Dish_Tool_Inventory
         var dishInventory = Dish_Tool_Inventory.Instance;
         if (dishInventory == null)
         {
@@ -353,40 +354,64 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
-        if (selectedDish != requestedDish)
+        bool isFailedDish = selectedDish.dishType == Dish_Data.Dishes.Failed_Dish;
+
+        // Only enforce exact match if it's NOT the failed dish
+        if (selectedDish != requestedDish && !isFailedDish)
         {
             Debug.Log($"Selected dish {selectedDish.name} does not match requested {requestedDish.name}.");
             return false;
         }
 
-        // Remove it from inventory
+        // Remove served dish from inventory
         dishInventory.RemoveSelectedSlot();
 
-        Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
+        Debug.Log($"{data.customerName} has been served {selectedDish.name}!");
         Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.orderServed, 0.75f);
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
-        // Record dish served, money earned, and customer served for day summary
+        // Record the served dish
         int currencyEarned = Mathf.RoundToInt(selectedDish.price);
         Day_Turnover_Manager.Instance.RecordDishServed(selectedDish, currencyEarned, data.customerName);
 
-        // Prep for dialogue
-        (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
-        requestedDish = null; // clear after serving
+        // Check for special dishes
+        if (selectedDish.name == "One-Day Blinding Stew")
+        {
+            string specialKey = $"{data.npcID}.BlindingStew";
 
-        // Add affection and play a cutscene (if the event has been reached)
+            if (dm != null)
+            {
+                var emotion = CustomerData.EmotionPortrait.Emotion.Surprised;
+
+                dm.onDialogComplete = () =>
+                {
+                    dm.onDialogComplete = null;
+                    LeaveRestaurant();
+                };
+
+                dm.PlayScene(specialKey, emotion);
+            }
+            requestedDish = null;
+            return true;
+        }
+
+        // Determine dialogue + affection logic
+        (string dialogueKey, string suffix) = isFailedDish
+            ? GenerateFailedDishDialogueKey()
+            : GenerateDialogueKey(selectedDish);
+
+        requestedDish = null;
+
+        // Add affection (failed dish always negative)
         Affection_System.Instance.AddAffection(data, suffix, false);
 
-        // Play dialogue
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        // Play dialogue & leave after completion
         if (dm != null && !string.IsNullOrEmpty(dialogueKey))
         {
             var emotion = MapReactionToEmotion(suffix);
 
-            // Assign leave logic to onDialogComplete
             dm.onDialogComplete = () =>
             {
-                // Clear to avoid multiple invocations
                 dm.onDialogComplete = null;
                 LeaveRestaurant();
             };
@@ -396,7 +421,6 @@ public class Customer_Controller : MonoBehaviour
         }
         else
         {
-            // Fallback: leave immediately if no dialogue
             LeaveRestaurant();
             return true;
         }
@@ -490,7 +514,15 @@ public class Customer_Controller : MonoBehaviour
                 return CustomerData.EmotionPortrait.Emotion.Neutral;
         }
     }
+
+    private (string key, string suffix) GenerateFailedDishDialogueKey()
+    {
+        string baseKey = data.npcID.ToString();
+        string suffix = "DislikedDish";
+        return ($"{baseKey}.{suffix}", suffix);
+    }
     #endregion
+
 
     #region State Management
     public Customer_State GetState()
