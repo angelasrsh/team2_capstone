@@ -21358,6 +21358,7 @@ GameObject:
   - component: {fileID: 2136317492}
   - component: {fileID: 2136317491}
   - component: {fileID: 2136317493}
+  - component: {fileID: 2136317494}
   m_Layer: 0
   m_Name: ChestTemp
   m_TagString: Untagged
@@ -21411,6 +21412,19 @@ MonoBehaviour:
   grid: {fileID: 993593750}
   redZone: {fileID: 161665452}
   itemsInChest: []
+--- !u!135 &2136317494
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136317488}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.9187702
+  m_Center: {x: 0.52018476, y: 0.029161334, z: 0.10997351}
 --- !u!4 &543450652768558939
 Transform:
   m_ObjectHideFlags: 0

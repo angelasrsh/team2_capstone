@@ -51,11 +51,13 @@ public class Chest : MonoBehaviour
     {
         if (!isPlayerInRange || !Game_Manager.Instance.UIManager.CanProcessInput() || player == null)
             return;
-
-        // Only process input if player is inside trigger and interact pressed once
-        if (interactAction.WasPerformedThisFrame() && !Game_Manager.Instance.UIManager.pauseMenuOn && !chestOpen)
-            OpenChestUI();
-        else if (closeAction.WasPerformedThisFrame() && chestOpen)
+      
+    // Only process input if player is inside trigger and interact pressed once
+    if (interactAction.WasPerformedThisFrame() && !Game_Manager.Instance.UIManager.pauseMenuOn && !chestOpen)
+        {
+          Debug.Log("opening Chest");
+          OpenChestUI();
+        } else if (closeAction.WasPerformedThisFrame() && chestOpen)
             CloseChestUI();
     }
 
