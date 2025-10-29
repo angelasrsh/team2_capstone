@@ -66,12 +66,16 @@ public class Drag_Dish :  MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
   private void OnEnable()
   {
     Trash.OnTrashOpenChanged += SetCanDrag;
+    Chest.OnChestOpenChanged += SetCanDrag;
+
     SceneManager.activeSceneChanged += OnSceneChanged;
   }
 
   private void OnDisable()
   {
     Trash.OnTrashOpenChanged -= SetCanDrag;
+    Chest.OnChestOpenChanged -= SetCanDrag;
+
     SceneManager.activeSceneChanged -= OnSceneChanged;
   }
 
