@@ -213,6 +213,12 @@ public class Save_Manager : MonoBehaviour
             currentGameData.playerProgress = new PlayerProgressData();
         }
 
+        // --- Ingredient inventory (extra check) ---
+        if (Ingredient_Inventory.Instance != null)
+            currentGameData.ingredientInventoryData = Ingredient_Inventory.Instance.GetSaveData();
+        else
+            Debug.LogWarning("[Save_Manager] Ingredient_Inventory.Instance is null!");
+
         // --- Restaurant state ---
         if (Restaurant_State.Instance != null)
         {

@@ -377,10 +377,11 @@ public class Customer_Controller : MonoBehaviour
         // Check for special dishes
         if (selectedDish.name == "One-Day Blinding Stew")
         {
-            string specialKey = $"{data.npcID}.BlindingStew";
-
             if (dm != null)
             {
+                string baseKey = $"{data.npcID}.BlindingStew";
+                string resolvedKey = dm.ResolveDialogKey(baseKey);
+
                 var emotion = CustomerData.EmotionPortrait.Emotion.Surprised;
 
                 dm.onDialogComplete = () =>
@@ -388,12 +389,12 @@ public class Customer_Controller : MonoBehaviour
                     dm.onDialogComplete = null;
                     LeaveRestaurant();
                 };
-
-                dm.PlayScene(specialKey, emotion);
+                dm.PlayScene(resolvedKey, emotion);
             }
             requestedDish = null;
             return true;
         }
+
 
         // Determine dialogue + affection logic
         (string dialogueKey, string suffix) = isFailedDish
@@ -452,6 +453,10 @@ public class Customer_Controller : MonoBehaviour
             Debug.LogWarning("No exit points defined or agent not on NavMesh. Destroying customer immediately.");
             OnCustomerLeft?.Invoke(data.customerName);
             Destroy(gameObject);
+
+            // Save in restaurant state and save manager
+            Restaurant_State.Instance?.SaveCustomers();
+            Save_Manager.instance?.AutoSave();
         }
     }
 
@@ -470,14 +475,17 @@ public class Customer_Controller : MonoBehaviour
         // Reached exit
         OnCustomerLeft?.Invoke(data.customerName);
         Destroy(gameObject);
+
+        // Save in restaurant state and save manager
+        Restaurant_State.Instance?.SaveCustomers();
+        Save_Manager.instance?.AutoSave();
     }
 
 
     #region Dialog
     /// <summary>
     /// Generates a dialogue key based on the customer's identity and whether the served dish is liked/neutral/disliked.
-    /// Prefer using the portraitData.characterName enum if available, otherwise fall back to data.customerName string.
-    /// Example keys produced: "Elf.LikedDish", "Satyr.DislikedDish", "Phrog.NeutralDish"
+    /// Special-case dishes (like One-Day Blinding Stew) are checked first so they can override normal favorite/disliked logic.
     /// </summary>
     private (string key, string suffix) GenerateDialogueKey(Dish_Data servedDish)
     {
@@ -486,6 +494,13 @@ public class Customer_Controller : MonoBehaviour
 
         string baseKey = data.npcID.ToString();
 
+        // 1) Special-case dishes first (they must override favorites/dislikes)
+        if (servedDish.dishType == Dish_Data.Dishes.Blinding_Stew)
+        {
+            return ($"{baseKey}.BlindingStew", "BlindingStew");
+        }
+
+        // 2) Otherwise use favorite/disliked/neutral logic
         string suffix = "NeutralDish";
         if (data.favoriteDishes != null && Array.Exists(data.favoriteDishes, d => d == servedDish))
         {
@@ -498,6 +513,7 @@ public class Customer_Controller : MonoBehaviour
 
         return ($"{baseKey}.{suffix}", suffix);
     }
+
 
     /// <summary>
     /// Maps the reaction type to a portrait emotion.

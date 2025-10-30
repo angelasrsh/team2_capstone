@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
-  m_Name: Foraging_Area_Whitebox
+  m_Name: Outside_Restaurant
   m_EditorClassIdentifier: 
-  roomID: 8
+  roomID: 10
   isOverworldScene: 1
-  music: {fileID: 8300000, guid: 5418322616f68f3429c1635520f8f5dc, type: 3}
-  ambientSound: {fileID: 8300000, guid: f3f4445f1373f9c4ca71452facc20792, type: 3}
-  musicVolume: 0.5
-  ambientVolume: 0.68
+  music: {fileID: 0}
+  ambientSound: {fileID: 8300000, guid: 3dd7679cb9a506a4d8f6a8e69ee9ff7a, type: 3}
+  musicVolume: 1
+  ambientVolume: 1
   exits:
   - exitingTo: 0
     spawnPointID: 0
@@ -27,10 +27,5 @@ MonoBehaviour:
   - exitingTo: 9
     spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
-    overrideTimeOfDay: 1
-    overrideValue: 1
-  - exitingTo: 10
-    spawnPointID: 6
-    targetRoom: {fileID: 11400000, guid: 5f118692621034e49b39ec07232ebc46, type: 2}
     overrideTimeOfDay: 1
     overrideValue: 1

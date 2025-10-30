@@ -152,34 +152,73 @@ public class Dialogue_Manager : MonoBehaviour
 
     public string GetDialogFromKey(string aKey)
     {
-        // 1. Exact match first
+        //  1. Look for exact key
         if (dialogMap.TryGetValue(aKey, out string value))
             return value;
 
-        // 2. Try to find random numbered variants
+        // 2. Collect numbered variants
         List<string> variantKeys = new List<string>();
 
-        // E.g. if aKey = "Elf.LikedDish", look for "Elf.LikedDish1", "Elf.LikedDish2", etc.
         foreach (var key in dialogMap.Keys)
         {
+            // Match keys that begin with the same base
             if (key.StartsWith(aKey, StringComparison.OrdinalIgnoreCase))
             {
-                // ensure it’s not the same key (avoids infinite recursion)
-                if (!key.Equals(aKey, StringComparison.OrdinalIgnoreCase))
-                    variantKeys.Add(key);
+                // Include numbered variants only
+                if (key.Length > aKey.Length)
+                {
+                    string suffix = key.Substring(aKey.Length);
+                    if (int.TryParse(suffix, out _))
+                    {
+                        variantKeys.Add(key);
+                    }
+                }
             }
         }
 
-        // 3. If we found variants, return one at random
+        // 3. If any numbered variants exist, pick one randomly
         if (variantKeys.Count > 0)
         {
             string randomKey = variantKeys[UnityEngine.Random.Range(0, variantKeys.Count)];
             return dialogMap[randomKey];
         }
 
-        // 4. Fallback
+        // 4. No match found at all, fallback
+        Debug.LogWarning($"[Dialogue_Manager] No dialog found for key '{aKey}'.");
         return aKey;
     }
+
+
+    /// <summary>
+    /// Returns the resolved dialog key for a base key (e.g. "Phrog.BlindingStew").
+    /// If an exact key exists it returns that key; otherwise picks a random numbered variant key
+    /// (e.g. "Phrog.BlindingStew1") if any exist; otherwise returns the original baseKey.
+    /// </summary>
+    public string ResolveDialogKey(string baseKey)
+    {
+        // if exact key exists, return it
+        if (dialogMap.ContainsKey(baseKey))
+            return baseKey;
+
+        // Find variant keys that start with baseKey (case-insensitive)
+        List<string> variantKeys = new List<string>();
+        foreach (var key in dialogMap.Keys)
+        {
+            if (key.StartsWith(baseKey, StringComparison.OrdinalIgnoreCase))
+            {
+               // Don't include baseKey itself
+                if (!key.Equals(baseKey, StringComparison.OrdinalIgnoreCase))
+                    variantKeys.Add(key);
+            }
+        }
+
+        if (variantKeys.Count > 0)
+        {
+            return variantKeys[UnityEngine.Random.Range(0, variantKeys.Count)];
+        }
+        return baseKey;  // Fallback 
+    }
+
 
     #endregion
 
@@ -192,13 +231,13 @@ public class Dialogue_Manager : MonoBehaviour
     {
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
-        if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0) 
+        if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0)
         {
             PlayNextDialog(disablePlayerInput);
             return;
         }
 
-        myDialogKey = aDialogKey; 
+        myDialogKey = aDialogKey;
         string dialogText = GetDialogFromKey(aDialogKey);
         string[] lines = dialogText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -206,7 +245,7 @@ public class Dialogue_Manager : MonoBehaviour
         {
             dialogQueue.Enqueue(line);
         }
-        completedDialogKeys.Add(aDialogKey); 
+        completedDialogKeys.Add(aDialogKey);
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
         StartCoroutine(PlayNextDialogWithDelay(disablePlayerInput));
     }
