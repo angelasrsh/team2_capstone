@@ -48,6 +48,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private static Trash trash; // Static reference to Trash script in scene
   private static RectTransform trashRedZone;
 
+  [Header("Chest")]
+  private static Chest chest; // Static reference to Trash script in scene
+  private static RectTransform chestRedZone;
+
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
   [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
@@ -89,10 +93,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
     if (resizeCanvas_object != null)
       resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
-    else
-    {
-      Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
-    }
+    // else
+    // {
+    //   Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
+    // }
 
     rectTransform = GetComponent<RectTransform>();
 
@@ -130,18 +134,22 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
       trash ??= FindObjectOfType<Trash>();
       trashRedZone = trash.redZone;
+      chest ??= FindObjectOfType<Chest>();
+      chestRedZone = chest.redZone;
     }
   }
   
   private void OnEnable()
   {
     Trash.OnTrashOpenChanged += SetCanDrag;
+    Chest.OnChestOpenChanged += SetCanDrag;
     SceneManager.activeSceneChanged += OnSceneChanged;
   }
 
   private void OnDisable()
   {
     Trash.OnTrashOpenChanged -= SetCanDrag;
+    Chest.OnChestOpenChanged -= SetCanDrag;
     SceneManager.activeSceneChanged -= OnSceneChanged;
   }
 
@@ -280,26 +288,42 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Destroy(gameObject);
         return;
       }
-      else if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && IsOverlapping(rectTransform, trashRedZone)) // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
+      else if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && (IsOverlapping(rectTransform, trashRedZone) || IsOverlapping(rectTransform, chestRedZone)) ) // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
       {
-        if (trash == null)
+        if (trash == null || chest == null)
         {
           trash = FindObjectOfType<Trash>();
           trashRedZone = trash.redZone;
+          chest = FindObjectOfType<Chest>();
+          chestRedZone = chest.redZone;
         }
 
         if (!trash.trashOpen) // just a safety check. Shouldn't need to do this if canDrag is set up properly
         {
           rectTransform.position = ingrOriginalPos;
           return;
+        } else if (!chest.chestOpen)
+        {
+          rectTransform.position = ingrOriginalPos;
+          return;
         }
 
+
         DuplicateInventorySlot();
-        int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
-        if (trashed > 0) // Only remove ingredient actually added to trash
-          Ingredient_Inventory.Instance.RemoveResources(ingredientType, trashed);
+        if (chest.chestOpen)
+        {
+          int placedInChest = chest.AddItemToChest((Ingredient_Data)(ParentSlot.stk.resource), 1);
+
+        }
         else
-          rectTransform.position = ingrOriginalPos;
+        {
+          int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
+          if (trashed > 0) // Only remove ingredient actually added to trash
+            Ingredient_Inventory.Instance.RemoveResources(ingredientType, trashed);
+          else
+            rectTransform.position = ingrOriginalPos;
+        }
+        
         Destroy(gameObject);
         return;
       }

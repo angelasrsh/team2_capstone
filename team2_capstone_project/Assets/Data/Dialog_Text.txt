@@ -1,12 +1,37 @@
-Elf.LikedDish = In a few more hundred years, this establishment might really grow into something. Hm? Ah, my apologies; I forgot how long humans live. (+10 Affection)
-Elf.NeutralDish = Your culinary experience is evident, [player], though I do wish you’d use a bit more oregano. Regardless, this will do. (+5 Affection)
-Elf.DislikedDish = It will take a few centuries to forget this dreadful experience I had today. (-5 Affection)
-Elf.Filler = What a… quaint abode you have, [player]! It’s very nice, for a human. A bit more help on the woodwork and it could be a serviceable little cafe.
+--- DISH SERVING ---
 
-Phrog.LikedDish = I’ve heard of this place from around the pond, I’m glad it’s as good as they say it is!
+Elf.LikedDish1 = In a few more hundred years, this establishment might really grow into something. Hm? Ah, my apologies; I forgot how long humans live. (+10 Affection)
+Elf.LikedDish2 = Reminds me a lot of my mother’s cooking. She was a very disagreeable woman, but at least she knew how to whip up something tasty. Hopefully you won’t prove as obnoxious.
+Elf.LikedDish3 = My father taught me two things in life; to speak up when something is wrong, and to never take no as an answer. Thankfully, I don’t need to exercise the first lesson today. Seconds, now.
+Elf.LikedDish4 = An adequate meal, perhaps even fit for an Elf. Continue to serve food of this caliber and you will keep my patronage, [player].
+Elf.LikedDish5 = This will stave me over until ‘morrow. Congratulations, [player].
+Elf.NeutralDish = Your culinary experience is evident, [player], though I do wish you’d use a bit more oregano. Regardless, this will do. (+5 Affection)
+Elf.DislikedDish1 = It will take a few centuries to forget this dreadful experience I had today. (-5 Affection)
+Elf.DislikedDish2 = This defies culinary science, [player].
+Elf.BlindingStew = Is... is that an eyeball staring back at me? In spite of all my years of living, you truly have managed to craft something... unique, [player].
+Elf.Filler = What a… quaint abode you have, [player]! It’s very nice, for a human. A bit more help on the woodwork and this could be a serviceable little café.
+
+Phrog.LikedDish1 = I’ve heard of this place from around the pond, I’m glad it’s as good as they say it is!
+Phrog.LikedDish2 = Just the right amount of bug and slime! Thank you, [player]!
 Phrog.NeutralDish = Could use a bit more bug bits, I think.
-Phrog.DislikedDish = [player]! I said I wanted flies in my food!
+Phrog.DislikedDish1 = [player]! I said I wanted flies in my food!
+Phrog.DislikedDish2 = Gurp?! (What... what *is* this?!)
+Phrog.BlindingStew1 = Ahhh, what bitter spores! I can’t see straight! I love it!
+Phrog.BlindingStew2 = Ah, a refreshing blinding stew — and you even gave me extra eyeballs! You've made my day, [player].
 Phrog.Filler = Gurp! (Good afternoon, [player]! Today, I would like to eat...)
+
+Satyr.DislikeddDish1 = Hmph. This is why you should've used some of *my* ingredients, [player].
+Satyr.DislikedDish2 = I would've liked to spend the money I wasted on this dish elsewhere. 
+
+
+--- NPC FORAGING AREA ---
+
+Elf.ForagingArea1 = Ah, [player]. Out gathering ingredients before this evening, hm? Humans' amount of perserverance can be quite commendable.
+Elf.ForagingArea2 = I will never tire of the winds that blow through these lands. Me and... never mind, pay no heed to my musings. 
+Satyr.ForagingArea1 = Heh, not to worry, [player]. I won’t take any of the ingredients you’re after. If you do happen to come up short, though, you can always buy them from me later.
+
+
+--- TUTORIAL ---
 
 Journal.Hands_Full = You don't have space to make anything else! Serve a dish or throw it into the trash to clear up space.
 
@@ -30,6 +55,7 @@ Journal.Close_Inventory_Mobile = (Tap <sprite name="backpack"> again to close yo
 Journal.Collect_Ingredients = Let's explore! When you've gathered enough ingredients, head back to the carriage and press "E" to head back!
 Journal.Collect_Ingredients = You can also hold "Shift" to sprint!
 
+
 Journal.Frying_Pan_Instruction = Let's cook! Drag an uncooked patty on the pan, click when the arrow reaches the green bar to flip it. Catch, then repeat on the other side!
 Journal.Combine_Minigame_Instruction = Use the recipe to place the right ingredients on the board, then press "Combine!" Position doesn't matter. ("X" to close dialogue)
 Journal.Cooking_Minigame_Instruction = Check the recipe, drag ingredients in the cauldron, then stir continuously to make a dish!
@@ -43,16 +69,6 @@ Journal.Serve_Customer = To serve a customer once you have a dish, press 1 or 2 
 Journal.Make_Money = Nice job! You can use the money you earn to buy more ingredients at the Satyr's Shop.
 Journal.Make_Money = Good work today! When you're done, head to the left door by the cooking stations and press "E".
 
-Other elf liked dish lines:
-Reminds me a lot of my mother’s cooking. She was a very disagreeable woman, but at least she knew how to whip up something tasty. Hopefully you won’t prove as obnoxious.
-
-My father taught me two things in life; to speak up when something is wrong, and to never take no as an answer. Thankfully I don’t need to exercise the first lesson today. Seconds, now.
-
-An adequate meal, perhaps even fit for an Elf. Continue to serve food of this caliber and you will keep my patronage.
-
-In a few more hundred years this establishment might really grow into something. Hm? Ah, my apologies; I forgot how long humans live.
-
-This will stave me over until ‘morrow. Congratulations.
 
 Journal.sGet_Order = Now you cook and serve the food! To get an order, go to a customer and press "E"
 Journal.sMake_Food = To cook, you'll have to follow the recipe. Chop up ingredients, then cook them in the cauldron!

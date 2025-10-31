@@ -16,6 +16,7 @@ public class Journal_Menu : MonoBehaviour
   private bool haveTabsInitialized = false;
   private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
+
   [Header("Player Info")]
   private Player_Progress playerProgress = Player_Progress.Instance;
   private InputAction flipLeftAction, flipRightAction, clickAction;
@@ -128,6 +129,12 @@ public class Journal_Menu : MonoBehaviour
     leftPagePanel.SetActive(false); // hide left page details at start
     StartCoroutine(WaitAndBind());
     StartCoroutine(DelayedHideJournal());
+
+    Player_Progress.OnRecipesUpdated += () => 
+    {
+        if (currentTab == Tabs.Dish)
+            PopulateDishes();
+    };
   }
 
   private void OnEnable()

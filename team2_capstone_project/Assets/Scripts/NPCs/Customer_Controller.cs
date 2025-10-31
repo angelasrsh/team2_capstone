@@ -330,6 +330,7 @@ public class Customer_Controller : MonoBehaviour
     public bool TryServeDish(Inventory playerInventory)
     {
         Debug.Log("Attempting to serve dish...");
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
 
         if (requestedDish == null)
         {
@@ -337,7 +338,7 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
-        // Make sure we're working with the Dish_Tool_Inventory
+        // Make sure we're working with Dish_Tool_Inventory
         var dishInventory = Dish_Tool_Inventory.Instance;
         if (dishInventory == null)
         {
@@ -353,40 +354,65 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
-        if (selectedDish != requestedDish)
+        bool isFailedDish = selectedDish.dishType == Dish_Data.Dishes.Failed_Dish;
+
+        // Only enforce exact match if it's NOT the failed dish
+        if (selectedDish != requestedDish && !isFailedDish)
         {
             Debug.Log($"Selected dish {selectedDish.name} does not match requested {requestedDish.name}.");
             return false;
         }
 
-        // Remove it from inventory
+        // Remove served dish from inventory
         dishInventory.RemoveSelectedSlot();
 
-        Debug.Log($"{data.customerName} has been served {requestedDish.name}!");
+        Debug.Log($"{data.customerName} has been served {selectedDish.name}!");
         Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.orderServed, 0.75f);
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
-        // Record dish served, money earned, and customer served for day summary
+        // Record the served dish
         int currencyEarned = Mathf.RoundToInt(selectedDish.price);
         Day_Turnover_Manager.Instance.RecordDishServed(selectedDish, currencyEarned, data.customerName);
 
-        // Prep for dialogue
-        (string dialogueKey, string suffix) = GenerateDialogueKey(requestedDish);
-        requestedDish = null; // clear after serving
+        // Check for special dishes
+        if (selectedDish.name == "One-Day Blinding Stew")
+        {
+            if (dm != null)
+            {
+                string baseKey = $"{data.npcID}.BlindingStew";
+                string resolvedKey = dm.ResolveDialogKey(baseKey);
 
-        // Add affection and play a cutscene (if the event has been reached)
+                var emotion = CustomerData.EmotionPortrait.Emotion.Surprised;
+
+                dm.onDialogComplete = () =>
+                {
+                    dm.onDialogComplete = null;
+                    LeaveRestaurant();
+                };
+                dm.PlayScene(resolvedKey, emotion);
+            }
+            requestedDish = null;
+            return true;
+        }
+
+
+        // Determine dialogue + affection logic
+        (string dialogueKey, string suffix) = isFailedDish
+            ? GenerateFailedDishDialogueKey()
+            : GenerateDialogueKey(selectedDish);
+
+        requestedDish = null;
+
+        // Add affection (failed dish always negative)
         Affection_System.Instance.AddAffection(data, suffix, false);
 
-        // Play dialogue
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        // Play dialogue & leave after completion
         if (dm != null && !string.IsNullOrEmpty(dialogueKey))
         {
             var emotion = MapReactionToEmotion(suffix);
 
-            // Assign leave logic to onDialogComplete
             dm.onDialogComplete = () =>
             {
-                // Clear to avoid multiple invocations
                 dm.onDialogComplete = null;
                 LeaveRestaurant();
             };
@@ -396,7 +422,6 @@ public class Customer_Controller : MonoBehaviour
         }
         else
         {
-            // Fallback: leave immediately if no dialogue
             LeaveRestaurant();
             return true;
         }
@@ -428,6 +453,10 @@ public class Customer_Controller : MonoBehaviour
             Debug.LogWarning("No exit points defined or agent not on NavMesh. Destroying customer immediately.");
             OnCustomerLeft?.Invoke(data.customerName);
             Destroy(gameObject);
+
+            // Save in restaurant state and save manager
+            Restaurant_State.Instance?.SaveCustomers();
+            Save_Manager.instance?.AutoSave();
         }
     }
 
@@ -446,14 +475,17 @@ public class Customer_Controller : MonoBehaviour
         // Reached exit
         OnCustomerLeft?.Invoke(data.customerName);
         Destroy(gameObject);
+
+        // Save in restaurant state and save manager
+        Restaurant_State.Instance?.SaveCustomers();
+        Save_Manager.instance?.AutoSave();
     }
 
 
     #region Dialog
     /// <summary>
     /// Generates a dialogue key based on the customer's identity and whether the served dish is liked/neutral/disliked.
-    /// Prefer using the portraitData.characterName enum if available, otherwise fall back to data.customerName string.
-    /// Example keys produced: "Elf.LikedDish", "Satyr.DislikedDish", "Phrog.NeutralDish"
+    /// Special-case dishes (like One-Day Blinding Stew) are checked first so they can override normal favorite/disliked logic.
     /// </summary>
     private (string key, string suffix) GenerateDialogueKey(Dish_Data servedDish)
     {
@@ -462,6 +494,13 @@ public class Customer_Controller : MonoBehaviour
 
         string baseKey = data.npcID.ToString();
 
+        // 1) Special-case dishes first (they must override favorites/dislikes)
+        if (servedDish.dishType == Dish_Data.Dishes.Blinding_Stew)
+        {
+            return ($"{baseKey}.BlindingStew", "BlindingStew");
+        }
+
+        // 2) Otherwise use favorite/disliked/neutral logic
         string suffix = "NeutralDish";
         if (data.favoriteDishes != null && Array.Exists(data.favoriteDishes, d => d == servedDish))
         {
@@ -474,6 +513,7 @@ public class Customer_Controller : MonoBehaviour
 
         return ($"{baseKey}.{suffix}", suffix);
     }
+
 
     /// <summary>
     /// Maps the reaction type to a portrait emotion.
@@ -490,7 +530,15 @@ public class Customer_Controller : MonoBehaviour
                 return CustomerData.EmotionPortrait.Emotion.Neutral;
         }
     }
+
+    private (string key, string suffix) GenerateFailedDishDialogueKey()
+    {
+        string baseKey = data.npcID.ToString();
+        string suffix = "DislikedDish";
+        return ($"{baseKey}.{suffix}", suffix);
+    }
     #endregion
+
 
     #region State Management
     public Customer_State GetState()

@@ -135,6 +135,9 @@ public class Save_Manager : MonoBehaviour
             elapsedTime = 0f
         };
 
+        // Reset player progress daily recipe flags
+        Player_Progress.Instance?.ResetDailyRecipeFlags(fullReset: true);
+
         SetCurrentSlot(slot);
         SaveGameData(slot);
 
@@ -212,6 +215,12 @@ public class Save_Manager : MonoBehaviour
             Debug.LogWarning("[Save_Manager] Player_Progress.Instance is null! Using defaults.");
             currentGameData.playerProgress = new PlayerProgressData();
         }
+
+        // --- Ingredient inventory (extra check) ---
+        if (Ingredient_Inventory.Instance != null)
+            currentGameData.ingredientInventoryData = Ingredient_Inventory.Instance.GetSaveData();
+        else
+            Debug.LogWarning("[Save_Manager] Ingredient_Inventory.Instance is null!");
 
         // --- Restaurant state ---
         if (Restaurant_State.Instance != null)
