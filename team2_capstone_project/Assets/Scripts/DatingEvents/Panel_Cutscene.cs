@@ -8,8 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class Panel_Cutscene : MonoBehaviour
 {
-    [Header("Scene panels")]
-    public Event_Data DatingCutsceneData;
+    //[Header("Scene panels")]
+    //public Event_Data DatingCutsceneData;
 
     //public Scene returnScene; // Temp: Delete later
 
