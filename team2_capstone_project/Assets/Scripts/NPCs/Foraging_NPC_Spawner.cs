@@ -26,7 +26,7 @@ public class Foraging_NPC_Spawner : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) => SpawnEligibleNPCs();
     private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
     private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
-    private void OnDestroy() => ClearExistingNPCs();
+    // private void OnDestroy() => ClearExistingNPCs();
 
     public void SpawnEligibleNPCs()
     {
@@ -93,29 +93,33 @@ public class Foraging_NPC_Spawner : MonoBehaviour
             SpawnNPC(npc, point);
         }
 
-        // --- 4. Spawn remaining NPCs using affection weighting ---
-        while (activeNPCs.Count < maxNPCs)
+        // --- 4. Safely spawn remaining NPCs using affection weighting ---
+        int safety = 0;
+        while (activeNPCs.Count < maxNPCs && safety < 50)
         {
+            safety++;
+
             Transform point = GetFreeSpawnPoint();
             if (point == null)
                 break;
 
             if (Random.value > baseSpawnChance)
-                continue;  
+                continue;
 
-            // Build weighted random selection
             CustomerData chosen = WeightedRandomNPC(weightedPool, affectionSys);
             if (chosen == null)
                 break;
 
-            // Prevent duplicates
             if (activeNPCIDs.Contains(chosen.npcID.ToString()))
                 continue;
 
             SpawnNPC(chosen, point);
         }
-    }
 
+        if (safety >= 50)
+            Debug.LogWarning("[Foraging_NPC_Spawner] Spawn loop exited due to safety limit!");
+    }
+    
     private CustomerData WeightedRandomNPC(List<CustomerData> npcs, Affection_System affSys)
     {
         if (npcs == null || npcs.Count == 0)
