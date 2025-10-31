@@ -8,8 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Panel_Cutscene : MonoBehaviour
 {
-    [Header("Scene panels")]
-    public Event_Data DatingCutsceneData;
+    //[Header("Scene panels")]
 
     //public Scene returnScene; // Temp: Delete later
 
@@ -17,11 +16,22 @@ public class Panel_Cutscene : MonoBehaviour
     //private GameObject[] panels = new GameObject[2];
     UnityEngine.UI.Image[] panelObjects;
 
+    private Event_Data DatingCutsceneData;
     private int panelIndex = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+
+        // Get cutscene to play
+        DatingCutsceneData = Affection_System.Instance.Cutscene;
+        if (DatingCutsceneData == null)
+        {
+            Helpers.printLabeled(this, "Warning: No cutscene has been set in the Affection System on GameManager");
+            SceneManager.LoadScene("Updated_Restaurant");
+        }
+
+
         panelObjects = GetComponentsInChildren<UnityEngine.UI.Image>();
 
         if (panelObjects.Length != 2)
@@ -40,7 +50,7 @@ public class Panel_Cutscene : MonoBehaviour
 
         // If not the last panel, display a new panel
         if (panelIndex < DatingCutsceneData.panels.Length)
-            displayPanel(panelIndex);       
+            displayPanel(panelIndex);
 
         panelIndex++;
 
@@ -88,6 +98,7 @@ public class Panel_Cutscene : MonoBehaviour
             SceneManager.LoadScene("Updated_Restaurant");
     }
 
+    // TODO: Would like to try fading the cutscene panels for a smoother transition
     // IEnumerator FadeSprites(UnityEngine.UI.Image sprite, float newAlpha, float fadeDuration)
     // {
     //     float startAlpha = sprite.color.a;
