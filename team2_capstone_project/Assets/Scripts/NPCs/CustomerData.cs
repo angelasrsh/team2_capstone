@@ -75,7 +75,7 @@ public class CustomerData : ScriptableObject
         Journal
     }
 
-    [Header("Dating events")]
+    [Header("Dating Events")]
     public Event_Data Cutscene_50;
     public Event_Data Cutscene_100;
 }
