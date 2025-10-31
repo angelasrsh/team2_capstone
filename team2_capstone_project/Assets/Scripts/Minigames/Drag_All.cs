@@ -93,10 +93,10 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     GameObject resizeCanvas_object = GameObject.Find("IngredientResize-Canvas");
     if (resizeCanvas_object != null)
       resizeCanvas = resizeCanvas_object.GetComponent<RectTransform>();
-    else
-    {
-      Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
-    }
+    // else
+    // {
+    //   Debug.Log("[Drag_All] Could not find Ingredient Resize Canvas!");
+    // }
 
     rectTransform = GetComponent<RectTransform>();
 

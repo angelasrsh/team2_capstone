@@ -135,6 +135,9 @@ public class Save_Manager : MonoBehaviour
             elapsedTime = 0f
         };
 
+        // Reset player progress daily recipe flags
+        Player_Progress.Instance?.ResetDailyRecipeFlags(fullReset: true);
+
         SetCurrentSlot(slot);
         SaveGameData(slot);
 

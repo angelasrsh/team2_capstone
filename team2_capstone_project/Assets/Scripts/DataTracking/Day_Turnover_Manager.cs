@@ -76,6 +76,7 @@ public class Day_Turnover_Manager : MonoBehaviour
     totalCurrencyEarned = 0;
     CurrentDay = nextDay;
     currentTimeOfDay = TimeOfDay.Morning;
+    Player_Progress.Instance.ResetDailyRecipeFlags();
 
     if (Choose_Menu_Items.instance != null)
     {
