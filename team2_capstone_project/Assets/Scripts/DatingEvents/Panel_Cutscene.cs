@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class Panel_Cutscene : MonoBehaviour
 {
     //[Header("Scene panels")]
-    //public Event_Data DatingCutsceneData;
 
     //public Scene returnScene; // Temp: Delete later
 
@@ -17,6 +16,7 @@ public class Panel_Cutscene : MonoBehaviour
     //private GameObject[] panels = new GameObject[2];
     UnityEngine.UI.Image[] panelObjects;
 
+    private Event_Data DatingCutsceneData;
     private int panelIndex = 0;
 
     // Start is called before the first frame update
