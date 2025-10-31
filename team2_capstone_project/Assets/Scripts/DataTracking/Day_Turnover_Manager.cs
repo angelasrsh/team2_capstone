@@ -78,10 +78,13 @@ public class Day_Turnover_Manager : MonoBehaviour
     currentTimeOfDay = TimeOfDay.Morning;
     Player_Progress.Instance.ResetDailyRecipeFlags();
 
-    if (Choose_Menu_Items.instance != null)
+    if (Choose_Menu_Items.instance == null)
+        Debug.LogWarning("[Day_Turnover_Manager] No Choose_Menu_Items found when ending day — will refresh next load.");
+    else
     {
-      Choose_Menu_Items.instance.GenerateDailyPool();
-      Debug.Log($"Daily menu refreshed for {CurrentDay}.");
+        Choose_Menu_Items.instance.GenerateDailyPool();
+        Debug.Log($"Daily menu refreshed for {CurrentDay}.");
+        Save_Manager.instance?.AutoSave();
     }
 
     // fire after reset
