@@ -154,18 +154,14 @@ public class Customer_Controller : MonoBehaviour
         }
 
         // only try to sit if not already sat
-        if (!hasSatDown && seat != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-        {
+        if (!hasSatDown && seat != null && agent.isOnNavMesh &&
+                !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
             SitDown();
-        }
 
         HandleWalkAnimation();
     }
 
-    void LateUpdate()
-    {
-        transform.forward = Vector3.forward;
-    }
+    void LateUpdate() => transform.forward = Vector3.forward;
 
     private void HandleWalkAnimation()
     {
@@ -205,6 +201,7 @@ public class Customer_Controller : MonoBehaviour
         // seat = null; // clear reference to seat so we don't try to sit again
         Debug.Log($"{data.customerName} sat down and is waiting for interaction.");
     }
+
 
     #region Dish Picking
     private Dish_Data ChooseWeightedDish()
@@ -278,6 +275,13 @@ public class Customer_Controller : MonoBehaviour
     /// </summary>
     private void RequestDishAfterDialogue()
     {
+        // Unlock NPC in journal if not already unlocked
+        if (Player_Progress.Instance != null && !Player_Progress.Instance.IsNPCUnlocked(data.npcID))
+        {
+            Player_Progress.Instance.UnlockNPC(data.npcID);
+            Debug.Log($"[Customer_Controller] {data.customerName} unlocked in journal!");
+        }
+        
         // Play filler dialogue
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null)

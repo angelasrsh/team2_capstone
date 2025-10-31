@@ -100,11 +100,32 @@ public class Player_Progress : ScriptableObject
   #region Player Name
   public void SetPlayerName(string name)
   {
-    playerName = string.IsNullOrWhiteSpace(name) ? "Chef" : name.Trim();
-    Save_Manager.instance?.SaveGameData();  // auto-save on name change
+      // Trim leading/trailing spaces
+      name = name?.Trim();
+
+      // If empty or null, fall back to default
+      if (string.IsNullOrWhiteSpace(name))
+      {
+          playerName = "Chef";
+      }
+      else
+      {
+          // Limit to 16 characters max
+          if (name.Length > 16)
+          {
+              Debug.LogWarning($"Player name '{name}' is too long — trimming to 16 characters.");
+              name = name.Substring(0, 16);
+          }
+
+          playerName = name;
+      }
+
+      // Auto-save when name changes
+      Save_Manager.instance?.SaveGameData();
   }
 
   public string GetPlayerName() => playerName;
+  
   #endregion
 
 

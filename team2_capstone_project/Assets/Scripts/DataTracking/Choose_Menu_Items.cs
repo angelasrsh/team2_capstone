@@ -15,7 +15,7 @@ public class Choose_Menu_Items : MonoBehaviour
   [SerializeField] private int minPoolSize = 3;
   [SerializeField] private int maxPoolSize = 5;
   [SerializeField] private int minSelect = 1;
-  [SerializeField] private int maxSelect = 2;
+  public int maxSelect = 2;
 
   // Customer constraints for the day
   [SerializeField] private int minCustomersForDay = 2;
@@ -74,28 +74,29 @@ public class Choose_Menu_Items : MonoBehaviour
 
   public List<Dish_Data.Dishes> GetDailyPool() => new List<Dish_Data.Dishes>(dailyPool);
 
-  public void AddDish(Dish_Data.Dishes dishType)
+  public bool AddDish(Dish_Data.Dishes dishType)
   {
-    if (!dailyPool.Contains(dishType))
-    {
-      Debug.LogWarning($"{dishType} is not available in today's pool!");
-      return;
-    }
+      if (!dailyPool.Contains(dishType))
+      {
+          Debug.LogWarning($"{dishType} is not available in today's pool!");
+          return false;
+      }
 
-    if (dishesSelected.Contains(dishType))
-    {
-      Debug.Log($"{dishType} is already selected.");
-      return;
-    }
+      if (dishesSelected.Contains(dishType))
+      {
+          Debug.Log($"{dishType} is already selected.");
+          return false;
+      }
 
-    if (dishesSelected.Count >= maxSelect)
-    {
-      Debug.LogWarning($"Cannot select more than {maxSelect} dishes!");
-      return;
-    } 
+      if (dishesSelected.Count >= maxSelect)
+      {
+          Debug.LogWarning($"Cannot select more than {maxSelect} dishes!");
+          return false;
+      }
 
-    dishesSelected.Add(dishType);
-    Debug.Log($"{dishType} added. Total dishes: {dishesSelected.Count}");
+      dishesSelected.Add(dishType);
+      Debug.Log($"{dishType} added. Total dishes: {dishesSelected.Count}");
+      return true;
   }
 
   public void RemoveDish(Dish_Data.Dishes dishType)

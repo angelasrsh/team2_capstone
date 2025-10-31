@@ -9,7 +9,7 @@ public class End_Day : MonoBehaviour
 {
     private bool interactPressed;
     private InputAction interactAction;
-    private Room_Change_Trigger leaveTrigger;
+    private Room_Change_Interact leaveTrigger;
 
     private void OnEnable()
     {
@@ -81,7 +81,7 @@ public class End_Day : MonoBehaviour
 
     private void FindTimeofDay()
     {
-        leaveTrigger = FindObjectOfType<Room_Change_Trigger>(true);
+        leaveTrigger = FindObjectOfType<Room_Change_Interact>(true);
         if (leaveTrigger == null)
         {
             Debug.LogWarning("[End_Day] No Room_Change_Trigger found in scene.");
