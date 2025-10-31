@@ -204,96 +204,111 @@ public class Customer_Controller : MonoBehaviour
 
 
     #region Dish Picking
-    private Dish_Data ChooseWeightedDish()
+    private Dish_Data ChooseDailyMenuDish()
     {
-        var dailyMenu = Choose_Menu_Items.instance?.GetSelectedDishes();
-        List<Dish_Data> dailyMenuDishes = new List<Dish_Data>();
-        List<Dish_Data> favoriteDishes = new List<Dish_Data>();
-        List<Dish_Data> neutralDishes = new List<Dish_Data>();
+        var dailyMenuEnums = Choose_Menu_Items.instance?.GetSelectedDishes();
 
-        // --- Daily Menu Section ---
-        if (dailyMenu != null)
+        if (dailyMenuEnums == null || dailyMenuEnums.Count == 0)
         {
-            foreach (var dishEnum in dailyMenu)
-            {
-                Dish_Data dish = Game_Manager.Instance.dishDatabase.GetDish(dishEnum);
-                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                    dailyMenuDishes.Add(dish);
-            }
-
-            // Safety check before using random range
-            if (dailyMenuDishes.Count > 0)
-                return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
+            Debug.LogWarning($"[{data.customerName}] No daily menu dishes set — picking random fallback dish.");
+            var allDishes = Game_Manager.Instance.dishDatabase.GetAllDishes();
+            return allDishes.Count > 0
+                ? allDishes[UnityEngine.Random.Range(0, allDishes.Count)]
+                : null;
         }
 
-        // --- Favorites ---
-        if (data.favoriteDishes != null)
-        {
-            foreach (var dish in data.favoriteDishes)
-                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                    favoriteDishes.Add(dish);
-        }
+        // Always pick a random dish from today's menu — no ingredient checks
+        Dish_Data.Dishes chosenEnum = dailyMenuEnums[UnityEngine.Random.Range(0, dailyMenuEnums.Count)];
+        Dish_Data chosenDish = Game_Manager.Instance.dishDatabase.GetDish(chosenEnum);
 
-        // --- Neutral ---
-        if (data.neutralDishes != null)
-        {
-            foreach (var dish in data.neutralDishes)
-                if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                    neutralDishes.Add(dish);
-        }
-
-        // --- Weighted Roll ---
-        int roll = UnityEngine.Random.Range(0, 100);
-        if (roll < 70 && dailyMenuDishes.Count > 0)
-            return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
-        else if (roll < 90 && favoriteDishes.Count > 0)
-            return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
-        else if (neutralDishes.Count > 0)
-            return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
-
-        // --- Fallback: Any cookable dish ---
-        var allCookable = new List<Dish_Data>();
-        foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes())
-        {
-            if (Ingredient_Inventory.Instance.CanMakeDish(dish))
-                allCookable.Add(dish);
-        }
-
-        if (allCookable.Count > 0)
-            return allCookable[UnityEngine.Random.Range(0, allCookable.Count)];
-
-        // --- Final fallback ---
-        Debug.LogWarning($"[Customer_Controller] {data.customerName} found no cookable dishes. Picking truly random.");
-        var allDishesFallback = Game_Manager.Instance.dishDatabase.GetAllDishes();
-        return allDishesFallback.Count > 0
-            ? allDishesFallback[UnityEngine.Random.Range(0, allDishesFallback.Count)]
-            : null;
+        Debug.Log($"[{data.customerName}] picked {chosenDish.name} from today's menu.");
+        return chosenDish;
     }
+
+    // private Dish_Data ChooseWeightedDish()
+    // {
+    //     var dailyMenu = Choose_Menu_Items.instance?.GetSelectedDishes();
+    //     List<Dish_Data> dailyMenuDishes = new List<Dish_Data>();
+    //     List<Dish_Data> favoriteDishes = new List<Dish_Data>();
+    //     List<Dish_Data> neutralDishes = new List<Dish_Data>();
+
+    //     // --- Daily Menu Section ---
+    //     if (dailyMenu != null)
+    //     {
+    //         foreach (var dishEnum in dailyMenu)
+    //         {
+    //             Dish_Data dish = Game_Manager.Instance.dishDatabase.GetDish(dishEnum);
+    //             if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+    //                 dailyMenuDishes.Add(dish);
+    //         }
+
+    //         // Safety check before using random range
+    //         if (dailyMenuDishes.Count > 0)
+    //             return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
+    //     }
+
+    //     // --- Favorites ---
+    //     if (data.favoriteDishes != null)
+    //     {
+    //         foreach (var dish in data.favoriteDishes)
+    //             if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+    //                 favoriteDishes.Add(dish);
+    //     }
+
+    //     // --- Neutral ---
+    //     if (data.neutralDishes != null)
+    //     {
+    //         foreach (var dish in data.neutralDishes)
+    //             if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+    //                 neutralDishes.Add(dish);
+    //     }
+
+    //     // --- Weighted Roll ---
+    //     int roll = UnityEngine.Random.Range(0, 100);
+    //     if (roll < 70 && dailyMenuDishes.Count > 0)
+    //         return dailyMenuDishes[UnityEngine.Random.Range(0, dailyMenuDishes.Count)];
+    //     else if (roll < 90 && favoriteDishes.Count > 0)
+    //         return favoriteDishes[UnityEngine.Random.Range(0, favoriteDishes.Count)];
+    //     else if (neutralDishes.Count > 0)
+    //         return neutralDishes[UnityEngine.Random.Range(0, neutralDishes.Count)];
+
+    //     // --- Fallback: Any cookable dish ---
+    //     var allCookable = new List<Dish_Data>();
+    //     foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes())
+    //     {
+    //         if (Ingredient_Inventory.Instance.CanMakeDish(dish))
+    //             allCookable.Add(dish);
+    //     }
+
+    //     if (allCookable.Count > 0)
+    //         return allCookable[UnityEngine.Random.Range(0, allCookable.Count)];
+
+    //     // --- Final fallback ---
+    //     Debug.LogWarning($"[Customer_Controller] {data.customerName} found no cookable dishes. Picking truly random.");
+    //     var allDishesFallback = Game_Manager.Instance.dishDatabase.GetAllDishes();
+    //     return allDishesFallback.Count > 0
+    //         ? allDishesFallback[UnityEngine.Random.Range(0, allDishesFallback.Count)]
+    //         : null;
+    // }
 
     /// <summary>
     /// Handles the process of requesting a dish after initial dialogue.
     /// </summary>
     private void RequestDishAfterDialogue()
     {
-        // Unlock NPC in journal if not already unlocked
+        // Unlock NPC in journal if not already done
         if (Player_Progress.Instance != null && !Player_Progress.Instance.IsNPCUnlocked(data.npcID))
-        {
             Player_Progress.Instance.UnlockNPC(data.npcID);
-            Debug.Log($"[Customer_Controller] {data.customerName} unlocked in journal!");
-        }
-        
+
         // Play filler dialogue
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null)
-        {
-            string fillerKey = $"{data.npcID}.Filler";
-            dm.PlayScene(fillerKey, CustomerData.EmotionPortrait.Emotion.Neutral);
-        }
+            dm.PlayScene($"{data.npcID}.Filler", CustomerData.EmotionPortrait.Emotion.Neutral);
 
-        // Pick weighted dish
-        requestedDish = ChooseWeightedDish();
+        // Pick a daily menu dish (always)
+        requestedDish = ChooseDailyMenuDish();
 
-        // Show in bubble
+        // Show in thought bubble
         if (requestedDish != null && thoughtBubble != null)
         {
             thoughtBubble.SetActive(true);
@@ -303,10 +318,11 @@ public class Customer_Controller : MonoBehaviour
             Debug.Log($"{data.customerName} now wants {requestedDish.name}!");
         }
         else
-            Debug.LogWarning($"{data.customerName} could not decide on a dish (no valid dishes).");
+            Debug.LogWarning($"{data.customerName} could not decide on a dish!");
 
         hasRequestedDish = true;
     }
+
     #endregion
 
     private void OnTriggerStay(Collider other)
@@ -358,14 +374,9 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
+        // Check if served dish matches requested dish
         bool isFailedDish = selectedDish.dishType == Dish_Data.Dishes.Failed_Dish;
-
-        // Only enforce exact match if it's NOT the failed dish
-        if (selectedDish != requestedDish && !isFailedDish)
-        {
-            Debug.Log($"Selected dish {selectedDish.name} does not match requested {requestedDish.name}.");
-            return false;
-        }
+        bool wrongDish = selectedDish != requestedDish && !isFailedDish;
 
         // Remove served dish from inventory
         dishInventory.RemoveSelectedSlot();
@@ -374,8 +385,16 @@ public class Customer_Controller : MonoBehaviour
         Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.orderServed, 0.75f);
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
+        // Check if player served the wrong dish
+        if (wrongDish)
+            Debug.Log($"[{data.customerName}] was served the WRONG dish: expected {requestedDish.name}, got {selectedDish.name}");
+
         // Record the served dish
         int currencyEarned = Mathf.RoundToInt(selectedDish.price);
+        if (wrongDish)
+            currencyEarned = Mathf.RoundToInt(currencyEarned * 0.5f);  // halve payment for wrong dish
+
+        Player_Progress.Instance.AddMoney(currencyEarned);
         Day_Turnover_Manager.Instance.RecordDishServed(selectedDish, currencyEarned, data.customerName);
 
         // Check for special dishes
@@ -399,36 +418,29 @@ public class Customer_Controller : MonoBehaviour
             return true;
         }
 
-
         // Determine dialogue + affection logic
-        (string dialogueKey, string suffix) = isFailedDish
-            ? GenerateFailedDishDialogueKey()
-            : GenerateDialogueKey(selectedDish);
-
-        requestedDish = null;
-
-        // Add affection (failed dish always negative)
-        Affection_System.Instance.AddAffection(data, suffix, false);
-
-        // Play dialogue & leave after completion
-        if (dm != null && !string.IsNullOrEmpty(dialogueKey))
+        if (isFailedDish)
         {
-            var emotion = MapReactionToEmotion(suffix);
-
-            dm.onDialogComplete = () =>
-            {
-                dm.onDialogComplete = null;
-                LeaveRestaurant();
-            };
-
-            dm.PlayScene(dialogueKey, emotion);
-            return true;
+            (string dialogueKey, string suffix) = GenerateFailedDishDialogueKey();
+            Affection_System.Instance.AddAffection(data, suffix, false);
+            PlayCustomerDialogue(dialogueKey, suffix);
+        }
+        else if (wrongDish)
+        {
+            (string dialogueKey, string suffix) = GenerateWrongDishDialogueKey();
+            Affection_System.Instance.AddAffection(data, suffix, true); // maybe partial affection
+            PlayCustomerDialogue(dialogueKey, suffix);
         }
         else
         {
-            LeaveRestaurant();
-            return true;
+            (string dialogueKey, string suffix) = GenerateDialogueKey(selectedDish);
+            Affection_System.Instance.AddAffection(data, suffix, false);
+            PlayCustomerDialogue(dialogueKey, suffix);
         }
+
+        requestedDish = null;
+        return true;
+
     }
 
     public void LeaveRestaurant()
@@ -498,13 +510,13 @@ public class Customer_Controller : MonoBehaviour
 
         string baseKey = data.npcID.ToString();
 
-        // 1) Special-case dishes first (they must override favorites/dislikes)
+        // 1. Special-case dishes first (they must override favorites/dislikes)
         if (servedDish.dishType == Dish_Data.Dishes.Blinding_Stew)
         {
             return ($"{baseKey}.BlindingStew", "BlindingStew");
         }
 
-        // 2) Otherwise use favorite/disliked/neutral logic
+        // 2. Otherwise use favorite/disliked/neutral logic
         string suffix = "NeutralDish";
         if (data.favoriteDishes != null && Array.Exists(data.favoriteDishes, d => d == servedDish))
         {
@@ -517,7 +529,6 @@ public class Customer_Controller : MonoBehaviour
 
         return ($"{baseKey}.{suffix}", suffix);
     }
-
 
     /// <summary>
     /// Maps the reaction type to a portrait emotion.
@@ -535,11 +546,35 @@ public class Customer_Controller : MonoBehaviour
         }
     }
 
+    private void PlayCustomerDialogue(string dialogueKey, string suffix)
+    {
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null || string.IsNullOrEmpty(dialogueKey))
+        {
+            LeaveRestaurant();
+            return;
+        }
+
+        var emotion = MapReactionToEmotion(suffix);
+        dm.onDialogComplete = () =>
+        {
+            dm.onDialogComplete = null;
+            LeaveRestaurant();
+        };
+        dm.PlayScene(dialogueKey, emotion);
+    }
+
     private (string key, string suffix) GenerateFailedDishDialogueKey()
     {
         string baseKey = data.npcID.ToString();
         string suffix = "DislikedDish";
         return ($"{baseKey}.{suffix}", suffix);
+    }
+
+    private (string key, string suffix) GenerateWrongDishDialogueKey()
+    {
+        string baseKey = data.npcID.ToString();
+        return ($"{baseKey}.WrongDish", "WrongDish");
     }
     #endregion
 

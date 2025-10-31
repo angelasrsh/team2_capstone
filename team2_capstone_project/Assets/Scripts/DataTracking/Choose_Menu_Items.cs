@@ -36,10 +36,11 @@ public class Choose_Menu_Items : MonoBehaviour
 
   private void Start()
   {
-    if (dailyPool.Count == 0)
-    {
-      GenerateDailyPool();
-    }
+      if (dailyPool == null || dailyPool.Count == 0)
+      {
+          Debug.Log("[Choose_Menu_Items] No saved daily pool found — generating new one.");
+          GenerateDailyPool();
+      }
   }
 
   /// <summary>
@@ -136,6 +137,7 @@ public class Choose_Menu_Items : MonoBehaviour
     // 3. Notify other systems
     OnDailyMenuSelected?.Invoke(new List<Dish_Data.Dishes>(dishesSelected));
     OnMenuSelectedNoParams?.Invoke();
+    Save_Manager.instance?.AutoSave();  // save selection
 
     Debug.Log($"Daily menu confirmed with {dishesSelected.Count} dishes and {customersToday} expected customers.");
   }
@@ -163,5 +165,19 @@ public class Choose_Menu_Items : MonoBehaviour
 
     // Clamp to ensure within absolute min/max
     return Mathf.Clamp(baseCount, minCustomersForDay, maxCustomersForDay + 3);
+  }
+
+  public void LoadFromSaveData(DailyMenuData data)
+  {
+      if (data == null)
+      {
+          Debug.LogWarning("[Choose_Menu_Items] No daily menu data to load.");
+          return;
+      }
+
+      dailyPool = new List<Dish_Data.Dishes>(data.dailyPool);
+      dishesSelected = new List<Dish_Data.Dishes>(data.dishesSelected);
+
+      Debug.Log($"[Choose_Menu_Items] Loaded daily pool ({dailyPool.Count}) and selected dishes ({dishesSelected.Count}).");
   }
 }

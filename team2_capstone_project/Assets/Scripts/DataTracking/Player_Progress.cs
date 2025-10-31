@@ -23,8 +23,8 @@ public class Player_Progress : ScriptableObject
 
   // Money vars
   [SerializeField] private float startingMoney;
-  public event System.Action<float> OnMoneyChanged;
   [HideInInspector] public float money;
+  public static event System.Action<float> OnMoneyChanged;  
 
   // Daily Recipe Spawner tracking
   [SerializeField] private int lastRecipeSpawnedDay = -1;   // Monday=0, Tuesday=1, etc.
@@ -131,30 +131,36 @@ public class Player_Progress : ScriptableObject
 
   #region Money
   /// <summary>
-  /// Add amount to player's money.
+  /// Add amount to player's money (float-safe)
   /// </summary>
   public void AddMoney(float amount)
   {
-    money += amount;
-    OnMoneyChanged?.Invoke(money);
+      money += amount;
+      OnMoneyChanged?.Invoke(money);
   }
 
   /// <summary>
-  /// Subtract amount from player's money.
+  /// Subtract amount from player's money (float-safe)
   /// </summary>
   public void SubtractMoney(float amount)
   {
-     money -= amount;
-     OnMoneyChanged?.Invoke(money);
+      money -= amount;
+      OnMoneyChanged?.Invoke(money);
   }
 
   /// <summary>
-  /// Used to get the current amount of money the player has.
+  /// Directly sets player's money to specific value
   /// </summary>
-  public float GetMoneyAmount()
+  public void SetMoney(float amount)
   {
-    return money;
+      money = amount;
+      OnMoneyChanged?.Invoke(money);
   }
+
+  /// <summary>
+  /// Returns player's current money
+  /// </summary>
+  public float GetMoneyAmount() => money;
   #endregion
 
 

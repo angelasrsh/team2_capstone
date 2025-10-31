@@ -48,13 +48,15 @@ namespace Grimoire
     public AudioClip journalTabSelect;
     public AudioClip teleport;
     public AudioClip orderServed;
+    public AudioClip openShopSFX;
+    public AudioClip closeShopSFX;
 
     [Header("Footstep Clips")]
-    public AudioClip grassLeftFootstep; 
+    public AudioClip grassLeftFootstep;
     public AudioClip grassRightFootstep;
     public AudioClip woodLeftFootstep;
     public AudioClip woodRightFootstep;
-    public AudioClip stoneLeftFootstep; 
+    public AudioClip stoneLeftFootstep;
     public AudioClip stoneRightFootstep;
 
     [Header("Cauldron Specific")]
@@ -87,14 +89,12 @@ namespace Grimoire
       // --------------------------
       sfxSources = new List<AudioSource>(sfxPoolSize);
 
-      // Inside Awake(), after adding your sources
-
       for (int i = 0; i < sfxPoolSize; i++)
       {
-          AudioSource src = gameObject.AddComponent<AudioSource>();
-          src.playOnAwake = false;
-          src.outputAudioMixerGroup = sfxGroup; // 👈 Route SFX pool
-          sfxSources.Add(src);
+        AudioSource src = gameObject.AddComponent<AudioSource>();
+        src.playOnAwake = false;
+        src.outputAudioMixerGroup = sfxGroup; // 👈 Route SFX pool
+        sfxSources.Add(src);
       }
 
       // Ambient
@@ -146,16 +146,16 @@ namespace Grimoire
     // SFX
     public void PlaySFX(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
-        if (clip == null) return;
+      if (clip == null) return;
 
-        AudioSource src = sfxSources[nextSfxIndex];
-        nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
+      AudioSource src = sfxSources[nextSfxIndex];
+      nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
 
-        src.Stop(); // prevent leftover state
-        src.clip = clip;
-        src.volume = Mathf.Clamp01(volume);
-        src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
-        src.Play();
+      src.Stop(); // prevent leftover state
+      src.clip = clip;
+      src.volume = Mathf.Clamp01(volume);
+      src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
+      src.Play();
     }
 
     public void StopAllSFX()
@@ -261,16 +261,16 @@ namespace Grimoire
     // FOOTSTEPS
     public void PlayFootsteps(AudioClip clip, float speed = 1.6f)
     {
-        if (clip == null) return;
+      if (clip == null) return;
 
-        if (!footstepsSource.isPlaying)
-        {
-            footstepsSource.clip = clip;
-            footstepsSource.loop = true;
-            footstepsSource.volume = 0.1f;
-            footstepsSource.pitch = Random.Range(speed - 0.1f, speed + 0.1f);
-            footstepsSource.Play();
-        }
+      if (!footstepsSource.isPlaying)
+      {
+        footstepsSource.clip = clip;
+        footstepsSource.loop = true;
+        footstepsSource.volume = 0.1f;
+        footstepsSource.pitch = Random.Range(speed - 0.1f, speed + 0.1f);
+        footstepsSource.Play();
+      }
     }
 
     public void StopFootsteps()
@@ -280,19 +280,22 @@ namespace Grimoire
     }
     #endregion
 
+
+    #region Unique SFX Methods
     public void PlayDoorbell()
     {
       float randomPitch = Random.Range(0.9f, 1.05f);
       PlaySFX(doorBell, 0.32f, randomPitch);
     }
-    
+
     public void PlaySparkleSFX()
     {
-        float[] allowedPitches = { 1.5f, 1.7f };
-        float chosenPitch = allowedPitches[Random.Range(0, allowedPitches.Length)];
+      float[] allowedPitches = { 1.5f, 1.7f };
+      float chosenPitch = allowedPitches[Random.Range(0, allowedPitches.Length)];
 
-        PlaySFX(sparkle, 0.3f, chosenPitch);
+      PlaySFX(sparkle, 0.3f, chosenPitch);
     }
   }
+  #endregion
 }
 

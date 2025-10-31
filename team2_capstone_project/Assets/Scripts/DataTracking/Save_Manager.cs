@@ -238,6 +238,23 @@ public class Save_Manager : MonoBehaviour
             currentGameData.restaurantStateData = new RestaurantStateData();
         }
 
+        // --- Daily menu ---
+        if (Choose_Menu_Items.instance != null)
+        {
+            currentGameData.dailyMenuData = new DailyMenuData
+            {
+                dailyPool = Choose_Menu_Items.instance.GetDailyPool(),
+                dishesSelected = Choose_Menu_Items.instance.GetSelectedDishes(),
+                customersPlanned = Day_Plan_Manager.instance != null ? Day_Plan_Manager.instance.customersPlannedForEvening : 0
+            };
+            Debug.Log($"[Save_Manager] Saved daily menu with {currentGameData.dailyMenuData.dishesSelected.Count} selected dishes.");
+        }
+        else
+        {
+            currentGameData.dailyMenuData = new DailyMenuData();
+            Debug.LogWarning("[Save_Manager] Choose_Menu_Items.instance was null when saving daily menu!");
+        }
+
         // --- Elapsed time ---
         currentGameData.elapsedTime += Time.deltaTime;
     }
@@ -282,6 +299,22 @@ public class Save_Manager : MonoBehaviour
         else
             Debug.Log("[Save_Manager] No restaurant state found in save file.");
 
+        // Restore daily menu
+        if (currentGameData.dailyMenuData != null && Choose_Menu_Items.instance != null)
+        {
+            Choose_Menu_Items.instance.LoadFromSaveData(currentGameData.dailyMenuData);
+
+            if (Day_Plan_Manager.instance != null)
+                Day_Plan_Manager.instance.SetPlan(
+                    currentGameData.dailyMenuData.dishesSelected,
+                    currentGameData.dailyMenuData.customersPlanned
+                );
+
+            Debug.Log($"[Save_Manager] Restored daily menu with {currentGameData.dailyMenuData.dishesSelected.Count} selected dishes.");
+        }
+        else
+            Debug.LogWarning("[Save_Manager] No daily menu data found or Choose_Menu_Items not ready yet.");
+            
 
         // Handle room loading
         string roomKey = string.IsNullOrEmpty(currentGameData.currentRoom) 
@@ -381,6 +414,7 @@ public class GameData
     public IngredientInventoryData ingredientInventoryData;
     public DishInventoryData dishInventoryData;
     public RestaurantStateData restaurantStateData;
+    public DailyMenuData dailyMenuData;
 }
 
 /// <summary>
@@ -413,6 +447,15 @@ public class RestaurantStateData
 {
     public List<Customer_State> customers = new List<Customer_State>();
 }
+
+[System.Serializable]
+public class DailyMenuData
+{
+    public List<Dish_Data.Dishes> dailyPool = new();
+    public List<Dish_Data.Dishes> dishesSelected = new();
+    public int customersPlanned = 0;
+}
+
 
 
 

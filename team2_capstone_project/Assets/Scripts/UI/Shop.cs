@@ -98,6 +98,7 @@ public class Shop : MonoBehaviour
   {
     shopUI.SetActive(true);
     shopOpen = true;
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.openShopSFX, 0.65f, 1.25f);
     Game_Manager.Instance.UIManager.OpenUI();
 
     if (!firstOpen)
@@ -110,6 +111,7 @@ public class Shop : MonoBehaviour
     if (shopOpen)
       Game_Manager.Instance.UIManager.CloseUI();
     shopOpen = false;
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.closeShopSFX, 0.65f, 1.3f);
 
     if (firstOpen)
       firstOpen = false;
