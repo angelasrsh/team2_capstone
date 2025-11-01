@@ -5,36 +5,52 @@ using UnityEngine.UI;
 
 namespace Grimoire
 {
-public class Screen_Fade : MonoBehaviour
-{
-    public CanvasGroup fadeCanvasGroup; 
-    public float fadeDuration = 3.0f;
-
-    public void Start() {}
-
-    public IEnumerator BlackFadeIn()
+    public class Screen_Fade : MonoBehaviour
     {
-        float timer = 0;
-        while (timer <= fadeDuration)
-        {
-            fadeCanvasGroup.alpha = Mathf.Lerp(0, 1, timer / fadeDuration);
-            timer += Time.deltaTime;
-            yield return null;
-        }
-        fadeCanvasGroup.alpha = 1;
-    }
+        public static Screen_Fade instance;
+        public CanvasGroup fadeCanvasGroup;
+        public float fadeDuration = 1.0f;
 
-    public IEnumerator BlackFadeOut()
-    {
-        float timer = 0;
-        while (timer <= fadeDuration)
+        private void Awake()
         {
-            fadeCanvasGroup.alpha = Mathf.Lerp(1, 0, timer / fadeDuration);
-            timer += Time.deltaTime;
-            yield return null;
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else if (instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // Ensure initial alpha state (optional)
+            if (fadeCanvasGroup == null)
+                fadeCanvasGroup = GetComponent<CanvasGroup>();
         }
-        fadeCanvasGroup.alpha = 0;
+
+        public IEnumerator BlackFadeIn()
+        {
+            float timer = 0f;
+            while (timer <= fadeDuration)
+            {
+                fadeCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            fadeCanvasGroup.alpha = 1f;
+        }
+
+        public IEnumerator BlackFadeOut()
+        {
+            float timer = 0f;
+            while (timer <= fadeDuration)
+            {
+                fadeCanvasGroup.alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            fadeCanvasGroup.alpha = 0f;
+        }
     }
 }
-}
-

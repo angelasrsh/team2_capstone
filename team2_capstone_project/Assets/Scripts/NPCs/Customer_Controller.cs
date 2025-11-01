@@ -193,13 +193,15 @@ public class Customer_Controller : MonoBehaviour
         }
     }
 
-    private void SitDown()
+   private void SitDown()
     {
         agent.isStopped = true;
         hasSatDown = true;
-        // don't null seat anymore, we need it for state saving
-        // seat = null; // clear reference to seat so we don't try to sit again
-        Debug.Log($"{data.customerName} sat down and is waiting for interaction.");
+        Debug.Log($"{data.customerName} sat down at seat index {seatIndex}.");
+
+        // immediately save state after sitting down
+        Restaurant_State.TryAutoSave();
+        Save_Manager.instance?.AutoSave();
     }
 
 
@@ -321,6 +323,10 @@ public class Customer_Controller : MonoBehaviour
             Debug.LogWarning($"{data.customerName} could not decide on a dish!");
 
         hasRequestedDish = true;
+
+        // Save request in restaurant state and save manager
+        Restaurant_State.Instance?.SaveCustomers();
+        Save_Manager.instance?.AutoSave();
     }
 
     #endregion
@@ -384,6 +390,10 @@ public class Customer_Controller : MonoBehaviour
         Debug.Log($"{data.customerName} has been served {selectedDish.name}!");
         Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.orderServed, 0.75f);
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
+
+        // Save in restaurant state and save manager
+        Restaurant_State.Instance?.SaveCustomers();
+        Save_Manager.instance?.AutoSave();
 
         // Check if player served the wrong dish
         if (wrongDish)

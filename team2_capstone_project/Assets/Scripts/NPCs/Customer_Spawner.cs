@@ -66,29 +66,59 @@ public class Customer_Spawner : MonoBehaviour
 
     private void RestoreCustomersFromState()
     {
+        if (Restaurant_State.Instance == null || Restaurant_State.Instance.customers.Count == 0)
+        {
+            Debug.Log("Customer_Spawner: No customers to restore.");
+            return;
+        }
+
         foreach (var cState in Restaurant_State.Instance.customers)
         {
+            // 1. Find seat
             Transform seat = Seat_Manager.Instance.GetSeatByIndex(cState.seatIndex);
-            CustomerData data = FindCustomerData(cState.customerName);
+            if (seat == null)
+            {
+                Debug.LogWarning($"Seat index {cState.seatIndex} invalid for {cState.customerName}!");
+                continue;
+            }
 
+            // 2. Get customer data
+            CustomerData data = FindCustomerData(cState.customerName);
             if (data == null)
             {
                 Debug.LogWarning($"CustomerData for {cState.customerName} not found!");
                 continue;
             }
 
+            // 3. Spawn the customer already seated
             Customer_Controller customer = Instantiate(customerPrefab, seat.position, Quaternion.identity);
-            customer.Init(data, seat, Dish_Tool_Inventory.Instance, true);
+            customer.Init(data, seat, Dish_Tool_Inventory.Instance, spawnSeated: true);
 
-            if (cState.hasRequestedDish)
+            // 4. Restore requested dish if applicable
+            if (cState.hasRequestedDish && !string.IsNullOrEmpty(cState.requestedDishName))
+            {
                 customer.Debug_ForceRequestDish(cState.requestedDishName);
+                Debug.Log($"Restored {cState.customerName}'s requested dish: {cState.requestedDishName}");
+            }
 
+            // 5. Optional: Handle served customers (if you ever keep them around)
+            if (cState.hasBeenServed)
+            {
+                // e.g. you could make them leave instantly or hide them
+                customer.LeaveRestaurant();
+            }
+
+            // 6. Track datable customers
             if (data.datable)
                 uniqueCustomersPresent.Add(data.customerName);
 
+            // 7. Subscribe to events
             customer.OnCustomerLeft += HandleCustomerLeft;
         }
+
+        Debug.Log($"Customer_Spawner: Restored {Restaurant_State.Instance.customers.Count} customers from state.");
     }
+
 
     private CustomerData FindCustomerData(string name)
     {
