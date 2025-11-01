@@ -434,13 +434,43 @@ public class Customer_Controller : MonoBehaviour
         else
         {
             (string dialogueKey, string suffix) = GenerateDialogueKey(selectedDish);
-            Affection_System.Instance.AddAffection(data, suffix, false);
+
+            // Check if this dish is both requested and on today's daily menu
+            bool onDailyMenu = false;
+            var dailyMenuEnums = Choose_Menu_Items.instance?.GetSelectedDishes();
+            if (dailyMenuEnums != null)
+            {
+                foreach (var menuDishEnum in dailyMenuEnums)
+                {
+                    Dish_Data dailyDish = Game_Manager.Instance.dishDatabase.GetDish(menuDishEnum);
+                    if (dailyDish == selectedDish)
+                    {
+                        onDailyMenu = true;
+                        break;
+                    }
+                }
+            }
+
+            // If it's the requested dish AND on the daily menu, give favorite affection
+            if (onDailyMenu && selectedDish == requestedDish)
+            {
+                Debug.Log($"[{data.customerName}] received a daily menu bonus for {selectedDish.name}! " +
+                        $"Giving favorite-dish affection (dialog remains {suffix}).");
+
+                // Treat as favorite affection, but don't alter dialog
+                Affection_System.Instance.AddAffection(data, "LikedDish", false);
+            }
+            else
+            {
+                // Normal affection behavior
+                Affection_System.Instance.AddAffection(data, suffix, false);
+            }
+
             PlayCustomerDialogue(dialogueKey, suffix);
         }
 
         requestedDish = null;
         return true;
-
     }
 
     public void LeaveRestaurant()
