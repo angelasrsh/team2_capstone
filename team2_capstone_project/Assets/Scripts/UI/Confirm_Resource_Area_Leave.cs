@@ -184,6 +184,4 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoadedRebind;
     }
-
- 
 }

@@ -228,21 +228,25 @@ public class Inventory : MonoBehaviour
       if (InventoryStacks == null)
       {
           InventoryStacks = new T[InventorySizeLimit];
+          return;
       }
-      else if (InventoryStacks.Length != InventorySizeLimit)
+
+      if (InventoryStacks.Length != InventorySizeLimit)
       {
           Item_Stack[] temp = InventoryStacks;
           InventoryStacks = new T[InventorySizeLimit];
 
           for (int i = 0; i < Mathf.Min(temp.Length, InventoryStacks.Length); i++)
-            {
-                if (InventoryStacks[i] != null)
-                {
-                    InventoryStacks[i].resource = temp[i].resource;
-                    InventoryStacks[i].amount = temp[i].amount;
-                }
-                
-            }
+          {
+              if (temp[i] != null)
+              {
+                  InventoryStacks[i] = new T
+                  {
+                      resource = temp[i].resource,
+                      amount = temp[i].amount
+                  };
+              }
+          }
       }
   }
 }

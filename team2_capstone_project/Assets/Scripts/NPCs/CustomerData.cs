@@ -74,4 +74,8 @@ public class CustomerData : ScriptableObject
         Satyr,
         Journal
     }
+
+    [Header("Dating Events")]
+    public Event_Data Cutscene_50;
+    public Event_Data Cutscene_100;
 }

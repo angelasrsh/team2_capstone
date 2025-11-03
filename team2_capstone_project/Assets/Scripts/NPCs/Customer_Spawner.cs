@@ -129,6 +129,15 @@ public class Customer_Spawner : MonoBehaviour
         List<CustomerData> validCustomers = new List<CustomerData>();
         foreach (var data in possibleCustomers)
         {
+            if (data == null)
+                continue;
+
+            // Skip if NPC isn't unlocked yet
+            if (Player_Progress.Instance != null && !Player_Progress.Instance.IsNPCUnlocked(data.npcID))
+            {
+                continue;
+            }
+
             if (data.datable && uniqueCustomersPresent.Contains(data.customerName))
                 continue;
 
@@ -137,7 +146,7 @@ public class Customer_Spawner : MonoBehaviour
 
         if (validCustomers.Count == 0)
         {
-            Debug.LogWarning("No valid customers to spawn.");
+            Debug.LogWarning("No valid customers to spawn (possibly all locked or already present).");
             return;
         }
 

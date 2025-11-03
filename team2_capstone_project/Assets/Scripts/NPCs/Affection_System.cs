@@ -15,7 +15,7 @@ using UnityEngine.SceneManagement;
 public class AffectionEntry {
     public const int MaxAffection = 100; // TODO: Probably should add this somewhere else to avoid repeated data
     public const int NumEvents = 4;
-    public int MinAffection = 0; // Update if we want to stop player from dropping below a certain level
+    public const int MinAffection = 0; // Update if we want to stop player from dropping below a certain level
     public const int AffectionMilestone = MaxAffection / NumEvents; // 25
     public CustomerData customerData;
     public int AffectionLevel;
@@ -32,8 +32,26 @@ public class AffectionEntry {
     /// </summary>
     public void TryPlayEvent()
     {
-        if (NextEligibleEvent() > -1)
-            PlayEvent();
+        int milestone = NextEligibleEvent(); // 0 - 3 for 25 - 100 level events
+        switch (milestone)
+        {
+            case 1:
+                Affection_System.Instance.Cutscene = customerData.Cutscene_50;
+                PlayDatingEvent();
+                break;
+            case 3:
+                Affection_System.Instance.Cutscene = customerData.Cutscene_100;
+                PlayDatingEvent();
+                break;
+            case 0:
+            case 2:
+            // TODO: Add dialogue dating events
+            default:
+                break;
+                // Can also make a function that takes care of calling both types of events
+        }    
+        if (milestone > -1)
+            EventsPlayed[milestone] = true; // Mark event as played        
     }
 
     /// <summary>
@@ -55,7 +73,7 @@ public class AffectionEntry {
     /// <summary>
     /// Play the event associated with the next eligible event
     /// </summary>
-    private void PlayEvent()
+    private void PlayDatingEvent()
     {
         Debug.Log("[Aff_Sys] Date start!");
 
@@ -74,7 +92,6 @@ public class AffectionEntry {
         // then transition
         Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());   
 
-        // TODO: Mark the event as played once the scene finishes loading
     }
 
     private IEnumerator TransitionToDateScene()
@@ -91,17 +108,13 @@ public class AffectionEntry {
     /// <summary>
     /// Change the affection level
     /// </summary>
-    /// <param name="amount"> Amount to add (can be negative) </param>
+    /// <param name="amount"> Amount to add (cannot be negative) </param>
     public void AddAffection(int amount)
     {
         AffectionLevel += amount;
 
-        // Check range
-        if (AffectionLevel > MaxAffection)
-            AffectionLevel = MaxAffection;
-
-        if (AffectionLevel < MinAffection)
-            AffectionLevel = MinAffection;
+        // Clamp affection between 0 and 100
+        AffectionLevel = Mathf.Clamp(AffectionLevel, MinAffection, MaxAffection);
     }
 }
 
@@ -111,9 +124,8 @@ public class AffectionEntry {
 /// </summary>
 public class Affection_System : MonoBehaviour
 {
-    // Assign this in the inspector for now. Maybe change to using a databse later
-    [Header("Manually add in NPCs")]
-    [SerializeField] private List<AffectionEntry> CustomerAffectionEntries = new List<AffectionEntry>(); // Change to using enum
+    // Store affection data for customers
+    private List<AffectionEntry> CustomerAffectionEntries = new List<AffectionEntry>(); // Change to using enum
 
     // Constants
     [Header("Constants")]
@@ -123,8 +135,11 @@ public class Affection_System : MonoBehaviour
 
     public static Affection_System Instance;
 
+    public Event_Data Cutscene; // Played by Panel_Cutscene
+
     // Temp variables until a better system is made
     private CustomerData nextCutsceneCustomer;
+    
 
     private void Awake()
     {
@@ -182,7 +197,7 @@ public class Affection_System : MonoBehaviour
             entryToUpdate.AddAffection(LikedDishAffection);
         else if (suffix.Equals("NeutralDish"))
             entryToUpdate.AddAffection(NeutralDishAffection);
-        else if (suffix.Equals("DislikedDishAffection"))
+        else if (suffix.Equals("DislikedDish"))
             entryToUpdate.AddAffection(DislikedDishAffection);
         else
             Debug.Log($"[AFF_SYS] Error: Unknown suffix {suffix}");
@@ -211,10 +226,18 @@ public class Affection_System : MonoBehaviour
         if (entryToUpdate == null)
             return; // Don't do anything if there is no entry for the customer
 
-        // Attempt to play event, then reset
+        // Attempt to play event
         entryToUpdate.TryPlayEvent();
-        nextCutsceneCustomer = null;
 
+    }
+
+    /// <summary>
+    /// This should be called after a dating event to clear what customer has a cutscene to be played.
+    /// I don't think clearing the data is actually necessary, though.
+    /// </summary>
+    public void ClearNextCutsceneCustomer()
+    {
+        nextCutsceneCustomer = null;
     }
 
     public int GetAffectionLevel(CustomerData customer)

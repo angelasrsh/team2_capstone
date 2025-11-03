@@ -15,7 +15,7 @@ public class Choose_Menu_Items : MonoBehaviour
   [SerializeField] private int minPoolSize = 3;
   [SerializeField] private int maxPoolSize = 5;
   [SerializeField] private int minSelect = 1;
-  [SerializeField] private int maxSelect = 2;
+  public int maxSelect = 2;
 
   // Customer constraints for the day
   [SerializeField] private int minCustomersForDay = 2;
@@ -36,10 +36,11 @@ public class Choose_Menu_Items : MonoBehaviour
 
   private void Start()
   {
-    if (dailyPool.Count == 0)
-    {
-      GenerateDailyPool();
-    }
+      if (dailyPool == null || dailyPool.Count == 0)
+      {
+          Debug.Log("[Choose_Menu_Items] No saved daily pool found — generating new one.");
+          GenerateDailyPool();
+      }
   }
 
   /// <summary>
@@ -74,28 +75,29 @@ public class Choose_Menu_Items : MonoBehaviour
 
   public List<Dish_Data.Dishes> GetDailyPool() => new List<Dish_Data.Dishes>(dailyPool);
 
-  public void AddDish(Dish_Data.Dishes dishType)
+  public bool AddDish(Dish_Data.Dishes dishType)
   {
-    if (!dailyPool.Contains(dishType))
-    {
-      Debug.LogWarning($"{dishType} is not available in today's pool!");
-      return;
-    }
+      if (!dailyPool.Contains(dishType))
+      {
+          Debug.LogWarning($"{dishType} is not available in today's pool!");
+          return false;
+      }
 
-    if (dishesSelected.Contains(dishType))
-    {
-      Debug.Log($"{dishType} is already selected.");
-      return;
-    }
+      if (dishesSelected.Contains(dishType))
+      {
+          Debug.Log($"{dishType} is already selected.");
+          return false;
+      }
 
-    if (dishesSelected.Count >= maxSelect)
-    {
-      Debug.LogWarning($"Cannot select more than {maxSelect} dishes!");
-      return;
-    } 
+      if (dishesSelected.Count >= maxSelect)
+      {
+          Debug.LogWarning($"Cannot select more than {maxSelect} dishes!");
+          return false;
+      }
 
-    dishesSelected.Add(dishType);
-    Debug.Log($"{dishType} added. Total dishes: {dishesSelected.Count}");
+      dishesSelected.Add(dishType);
+      Debug.Log($"{dishType} added. Total dishes: {dishesSelected.Count}");
+      return true;
   }
 
   public void RemoveDish(Dish_Data.Dishes dishType)
@@ -135,6 +137,7 @@ public class Choose_Menu_Items : MonoBehaviour
     // 3. Notify other systems
     OnDailyMenuSelected?.Invoke(new List<Dish_Data.Dishes>(dishesSelected));
     OnMenuSelectedNoParams?.Invoke();
+    Save_Manager.instance?.AutoSave();  // save selection
 
     Debug.Log($"Daily menu confirmed with {dishesSelected.Count} dishes and {customersToday} expected customers.");
   }
@@ -162,5 +165,19 @@ public class Choose_Menu_Items : MonoBehaviour
 
     // Clamp to ensure within absolute min/max
     return Mathf.Clamp(baseCount, minCustomersForDay, maxCustomersForDay + 3);
+  }
+
+  public void LoadFromSaveData(DailyMenuData data)
+  {
+      if (data == null)
+      {
+          Debug.LogWarning("[Choose_Menu_Items] No daily menu data to load.");
+          return;
+      }
+
+      dailyPool = new List<Dish_Data.Dishes>(data.dailyPool);
+      dishesSelected = new List<Dish_Data.Dishes>(data.dishesSelected);
+
+      Debug.Log($"[Choose_Menu_Items] Loaded daily pool ({dailyPool.Count}) and selected dishes ({dishesSelected.Count}).");
   }
 }

@@ -4,6 +4,7 @@ using Grimoire;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.Animations;
 
 // [RequireComponent(typeof(Rigidbody))]
 public class Player_Controller : MonoBehaviour
@@ -13,8 +14,13 @@ public class Player_Controller : MonoBehaviour
     public float acceleration = 10f;
     public float deceleration = 15f;
 
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Transform spriteTransform;
+
     [Header("Stamina Sprint")]
-    public float sprintMultiplier = 1.8f;      
+    public float sprintMultiplier = 1.8f;
     public float maxStamina = 5f;  // seconds spent sprinting
     public float staminaRechargeDelay = 3f;  // seconds to wait before starting recharge
     public float staminaRechargeRate = 1f;  // stamina per second recharged
@@ -81,6 +87,17 @@ public class Player_Controller : MonoBehaviour
         currentStamina = maxStamina;
         SendStaminaProgress();
         onMobile = Application.isMobilePlatform;
+
+        if (spriteTransform == null)
+        {
+            spriteTransform = transform.Find("Sprite");
+        }
+
+        if (spriteTransform != null)
+        {
+            spriteRenderer = spriteTransform.GetComponentInChildren<SpriteRenderer>();
+            animator = spriteTransform.GetComponentInChildren<Animator>();
+        }
     }
 
     private void Start()
@@ -95,7 +112,7 @@ public class Player_Controller : MonoBehaviour
 
         currentRoom = Room_Manager.GetRoomFromActiveScene();
         if (currentRoom != null)
-        Debug.Log($"[Player_Controller] Player spawned in room: {currentRoom.roomID}");
+            Debug.Log($"[Player_Controller] Player spawned in room: {currentRoom.roomID}");
 
         // sprintImpactLinesUI = GetComponentInChildren<Impact_Lines_UI>();
     }
@@ -212,7 +229,7 @@ public class Player_Controller : MonoBehaviour
     private void FixedUpdate()
     {
         if (movementLocked || controller == null)
-        return;
+            return;
 
         // Smooth input for movement
         smoothInput = Vector2.MoveTowards(smoothInput, targetInput, 15f * Time.fixedDeltaTime);
@@ -274,6 +291,52 @@ public class Player_Controller : MonoBehaviour
 
     public bool IsMoving() => movement.magnitude > 0.1f;
 
+    private void LateUpdate()
+    {
+        transform.forward = Vector3.forward;
+        HandleWalkAnimation();
+    }
+
+    private void HandleWalkAnimation()
+    {
+        if (animator == null || spriteRenderer == null)
+            return;
+
+        // Calculate current movement speed
+        float horizontalSpeed = new Vector3(currentMoveVelocity.x, 0f, currentMoveVelocity.z).magnitude;
+
+        if (animator.HasParameterOfType("speed", AnimatorControllerParameterType.Float))
+            animator.SetFloat("speed", horizontalSpeed);
+
+        // Flip the sprite based on horizontal input
+        if (horizontalSpeed > 0.05f)
+        {
+            bool facingRight = movement.x > 0.01f;
+            spriteRenderer.flipX = facingRight;
+
+            if (animator.HasParameterOfType("facingRight", AnimatorControllerParameterType.Bool))
+                animator.SetBool("facingRight", facingRight);
+        }
+
+        // Adjust animation playback speed based on sprint
+        if (isSprinting)
+        {
+            float targetAnimSpeed = isSprinting ? 1.5f : 1f;
+            animator.speed = Mathf.Lerp(animator.speed, targetAnimSpeed, Time.deltaTime * 8f);
+        }
+        else
+            animator.speed = 1.0f; // normal speed when walking or idle
+    }
+
+    /// <summary>
+    /// Called by the input action when the player moves.
+    /// Tell the GameEventsManager that this action occurred.
+    /// GameEvents wants to know this for the sake of the tutorial.
+    /// </summary>
+    private void onMove(InputAction.CallbackContext context) => Game_Events_Manager.Instance?.PlayerMoved();
+
+
+    #region Material Detect
     private void DetectSurface()
     {
         if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down,
@@ -293,14 +356,8 @@ public class Player_Controller : MonoBehaviour
             Debug.LogWarning("Player ground surface detection raycast did not hit any ground.");
         }
     }
+    #endregion
 
-
-    /// <summary>
-    /// Called by the input action when the player moves.
-    /// Tell the GameEventsManager that this action occurred.
-    /// GameEvents wants to know this for the sake of the tutorial.
-    /// </summary>
-    private void onMove(InputAction.CallbackContext context) => Game_Events_Manager.Instance?.PlayerMoved();
 
     #region Stamina Sprint
     private void HandleSprint()
@@ -389,7 +446,7 @@ public class Player_Controller : MonoBehaviour
     public void UpdatePlayerRoom(Room_Data.RoomID newRoomID)
     {
         Room_Data newRoom = Room_Manager.GetRoom(newRoomID);
-        
+
         if (newRoom != null)
             currentRoom = newRoom;
         else
@@ -411,3 +468,4 @@ public class Player_Controller : MonoBehaviour
     }
     #endregion
 }
+

@@ -106,19 +106,28 @@ public class Dish_Tool_Inventory : Inventory
     /// <returns></returns>
     public Dish_Data GetSelectedDishData()
     {
+        // Ensure array is initialized and valid
+        if (InventoryStacks == null || InventoryStacks.Length < 2)
+        {
+            Debug.LogWarning("[Dish_Tool_Inventory] InventoryStacks was null or wrong size — rebuilding.");
+            InventorySizeLimit = 2;
+            InitializeInventoryStacks<Dish_Tool_Stack>();
+        }
+
         if (leftSlotSelected)
         {
             if (InventoryStacks[0] == null)
                 return null;
 
-            return (Dish_Data)(InventoryStacks[0].resource);
+            return (Dish_Data)InventoryStacks[0].resource;
         }
 
         if (InventoryStacks[1] == null)
             return null;
 
-        return (Dish_Data)(InventoryStacks[1].resource);
+        return (Dish_Data)InventoryStacks[1].resource;
     }
+
 
     /// <summary>
     /// Returns true if the inventory is completely full

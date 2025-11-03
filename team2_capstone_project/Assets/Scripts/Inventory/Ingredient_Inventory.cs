@@ -139,17 +139,39 @@ public class Ingredient_Inventory : Inventory
 
     public bool CanMakeDish(Dish_Data dish)
     {
-        if (dish == null || dish.ingredientQuantities == null) return false;
+        if (dish == null || dish.ingredientQuantities == null)
+        {
+            Debug.LogWarning("[Ingr_Inventory] Dish or ingredients list was null.");
+            return false;
+        }
+
         Debug.Log($"[Ingr_Inventory] Checking if we can make {dish.Name}");
 
         foreach (var req in dish.ingredientQuantities)
         {
-            if (GetItemCount(req.ingredient) < req.amountRequired)
+            int have = GetItemCount(req.ingredient);
+            int need = req.amountRequired;
+
+            Debug.Log($"Requires {need}x {req.ingredient.Name}, player has {have}");
+
+            // Extra debug for countsAs relationships
+            foreach (var ingr in Ingredient_Inventory.Instance.AllIngredients)
+            {
+                if (Ingredient_Inventory.Instance.CountsAsOrIs(ingr, req.ingredient))
+                    Debug.Log($"  [CountsAs] {ingr.Name} counts as {req.ingredient.Name}");
+            }
+
+            if (have < need)
+            {
+                Debug.LogWarning($"Not enough {req.ingredient.Name}. Needed {need}, but have {have}.");
                 return false;
-            Debug.Log("Don't have enough " + req.ingredient.Name);
+            }
         }
+
+        Debug.Log($"All ingredients met for {dish.Name}");
         return true;
     }
+
 
     #region Ingredient enum/string conversion
     /// <summary>
@@ -326,37 +348,86 @@ public class Ingredient_Inventory : Inventory
     /// Return the number of ingredients of that type in the inventory
     public int GetItemCount(Ingredient_Data ingredient)
     {
+        if (ingredient == null) return 0;
+
         int total = 0;
 
         foreach (Item_Stack stack in InventoryStacks)
         {
-            if (stack == null || stack.resource == null) continue;
+            if (stack == null || stack.resource == null)
+                continue;
+
+            Ingredient_Data invIngredient = stack.resource as Ingredient_Data;
+            if (invIngredient == null)
+                continue;
 
             // Direct match
-            if (stack.resource == ingredient)
+            if (invIngredient == ingredient || invIngredient.Name == ingredient.Name)
             {
                 total += stack.amount;
+                Debug.Log($"[Ingredient_Inventory] Counting {invIngredient.Name} as {ingredient.Name} (+{stack.amount})");
                 continue;
             }
 
             // Check "countsAs" from the inventory item side
-            if (stack.resource is Ingredient_Data invIngredient)
-            {
-                if (invIngredient.countsAs != null && invIngredient.countsAs.Contains(ingredient))
-                {
-                    total += stack.amount;
-                    continue;
-                }
-            }
-
-            // also check "countsAs" from the ingredient side
-            if (ingredient.countsAs != null && ingredient.countsAs.Contains(stack.resource as Ingredient_Data))
+            if (invIngredient.countsAs != null &&
+                invIngredient.countsAs.Any(c => c != null && c.Name == ingredient.Name))
             {
                 total += stack.amount;
+                Debug.Log($"[Ingredient_Inventory] Counting {invIngredient.Name} as {ingredient.Name} (+{stack.amount})");
+                continue;
+            }
+
+            // Check "countsAs" from the ingredient side (less common, but safe)
+            if (ingredient.countsAs != null &&
+                ingredient.countsAs.Any(c => c != null && c.Name == invIngredient.Name))
+            {
+                total += stack.amount;
+                Debug.Log($"[Ingredient_Inventory] Counting {invIngredient.Name} as {ingredient.Name} (+{stack.amount})");
+                continue;
             }
         }
+
         return total;
     }
+
+    
+    /// <summary>
+    /// Recursively checks if ingredient A is the same as or "counts as" ingredient B.
+    /// Uses a visited set to prevent infinite loops from circular references.
+    /// </summary>
+    private bool CountsAsOrIs(Ingredient_Data a, Ingredient_Data b, HashSet<Ingredient_Data> visited = null)
+    {
+        if (a == null || b == null)
+            return false;
+
+        if (a == b)
+            return true;
+
+        // Initialize the visited set on the first call
+        if (visited == null)
+            visited = new HashSet<Ingredient_Data>();
+
+        // If we've already checked this ingredient, stop to avoid infinite recursion
+        if (visited.Contains(a))
+            return false;
+
+        visited.Add(a);
+
+        if (a.countsAs == null)
+            return false;
+
+        foreach (var counted in a.countsAs)
+        {
+            if (counted == null) continue;
+
+            if (counted == b || CountsAsOrIs(counted, b, visited))
+                return true;
+        }
+
+        return false;
+    }
+
 
     /// <returns>Water's ingredient data</returns>
     public Ingredient_Data getWaterData()
@@ -370,9 +441,23 @@ public class Ingredient_Inventory : Inventory
     {
         IngredientInventoryData data = new IngredientInventoryData();
 
-        data.InventoryStacks = this.InventoryStacks;
-        data.TotalIngCount = this.TotalIngCount;
+        foreach (var stack in InventoryStacks)
+        {
+            if (stack == null || stack.resource == null)
+                continue;
 
+            var ingr = stack.resource as Ingredient_Data;
+            if (ingr == null)
+                continue;
+
+            data.stacks.Add(new SerializableItemStack
+            {
+                ingredientName = ingr.Name,
+                amount = stack.amount
+            });
+        }
+
+        data.TotalIngCount = this.TotalIngCount;
         return data;
     }
 
@@ -380,14 +465,37 @@ public class Ingredient_Inventory : Inventory
     {
         if (data == null)
         {
-            Helpers.printLabeled(this, "No ingredient inventory data to load; initializing defaults.");
+            Debug.LogWarning("[Ingredient_Inventory] No ingredient inventory data found — initializing empty.");
+            InitializeInventoryStacks<Item_Stack>();
             return;
         }
 
-        this.InventoryStacks = data.InventoryStacks;
-        this.TotalIngCount = data.TotalIngCount;
+        InitializeInventoryStacks<Item_Stack>();
 
-        Debug.Log("Ingredient Inventory data loaded successfully.");
+        int index = 0;
+        foreach (var s in data.stacks)
+        {
+            if (IngredientDict.TryGetValue(s.ingredientName, out var ingredient))
+            {
+                var newStack = new Item_Stack
+                {
+                    resource = ingredient,
+                    amount = s.amount
+                };
+                InventoryStacks[index] = newStack;
+                index++;
+                if (index >= InventorySizeLimit) break;
+            }
+            else
+            {
+                Debug.LogWarning($"[Ingredient_Inventory] Could not find ingredient '{s.ingredientName}' in dictionary during load.");
+            }
+        }
+
+        this.TotalIngCount = data.TotalIngCount;
+        updateInventory();
+
+        Debug.Log($"[Ingredient_Inventory] Loaded {data.stacks.Count} ingredient stacks from save.");
     }
     #endregion
 }
@@ -396,10 +504,15 @@ public class Ingredient_Inventory : Inventory
 [System.Serializable]
 public class IngredientInventoryData
 {
-    [field: SerializeField] public Item_Stack[] InventoryStacks;
-
-    // Count total amount of items
+    public List<SerializableItemStack> stacks = new List<SerializableItemStack>();
     public int TotalIngCount = 0;
+}
+
+[System.Serializable]
+public class SerializableItemStack
+{
+    public string ingredientName;
+    public int amount;
 }
 #endregion
 

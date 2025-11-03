@@ -17,7 +17,8 @@ public class Room_Data : ScriptableObject
     Frying_Pan_Minigame,
     Combine_Minigame,
     Foraging_Area_Whitebox,
-    Updated_Restaurant
+    Updated_Restaurant,
+    Outside_Restaurant
   }
 
   public enum SpawnPointID
@@ -26,7 +27,9 @@ public class Room_Data : ScriptableObject
     Cauldron,
     Cutting_Board,
     Frying_Pan,
-    Combine_Table
+    Combine_Table,
+    Door,
+    Carriage
   }
 
   [Header("Room Info")]

@@ -135,6 +135,9 @@ public class Save_Manager : MonoBehaviour
             elapsedTime = 0f
         };
 
+        // Reset player progress daily recipe flags
+        Player_Progress.Instance?.ResetDailyRecipeFlags(fullReset: true);
+
         SetCurrentSlot(slot);
         SaveGameData(slot);
 
@@ -213,6 +216,12 @@ public class Save_Manager : MonoBehaviour
             currentGameData.playerProgress = new PlayerProgressData();
         }
 
+        // --- Ingredient inventory (extra check) ---
+        if (Ingredient_Inventory.Instance != null)
+            currentGameData.ingredientInventoryData = Ingredient_Inventory.Instance.GetSaveData();
+        else
+            Debug.LogWarning("[Save_Manager] Ingredient_Inventory.Instance is null!");
+
         // --- Restaurant state ---
         if (Restaurant_State.Instance != null)
         {
@@ -227,6 +236,23 @@ public class Save_Manager : MonoBehaviour
         {
             Debug.LogWarning("[Save_Manager] Restaurant_State.Instance is null! Saving empty restaurant state.");
             currentGameData.restaurantStateData = new RestaurantStateData();
+        }
+
+        // --- Daily menu ---
+        if (Choose_Menu_Items.instance != null)
+        {
+            currentGameData.dailyMenuData = new DailyMenuData
+            {
+                dailyPool = Choose_Menu_Items.instance.GetDailyPool(),
+                dishesSelected = Choose_Menu_Items.instance.GetSelectedDishes(),
+                customersPlanned = Day_Plan_Manager.instance != null ? Day_Plan_Manager.instance.customersPlannedForEvening : 0
+            };
+            Debug.Log($"[Save_Manager] Saved daily menu with {currentGameData.dailyMenuData.dishesSelected.Count} selected dishes.");
+        }
+        else
+        {
+            currentGameData.dailyMenuData = new DailyMenuData();
+            Debug.LogWarning("[Save_Manager] Choose_Menu_Items.instance was null when saving daily menu!");
         }
 
         // --- Elapsed time ---
@@ -273,6 +299,22 @@ public class Save_Manager : MonoBehaviour
         else
             Debug.Log("[Save_Manager] No restaurant state found in save file.");
 
+        // Restore daily menu
+        if (currentGameData.dailyMenuData != null && Choose_Menu_Items.instance != null)
+        {
+            Choose_Menu_Items.instance.LoadFromSaveData(currentGameData.dailyMenuData);
+
+            if (Day_Plan_Manager.instance != null)
+                Day_Plan_Manager.instance.SetPlan(
+                    currentGameData.dailyMenuData.dishesSelected,
+                    currentGameData.dailyMenuData.customersPlanned
+                );
+
+            Debug.Log($"[Save_Manager] Restored daily menu with {currentGameData.dailyMenuData.dishesSelected.Count} selected dishes.");
+        }
+        else
+            Debug.LogWarning("[Save_Manager] No daily menu data found or Choose_Menu_Items not ready yet.");
+            
 
         // Handle room loading
         string roomKey = string.IsNullOrEmpty(currentGameData.currentRoom) 
@@ -372,6 +414,7 @@ public class GameData
     public IngredientInventoryData ingredientInventoryData;
     public DishInventoryData dishInventoryData;
     public RestaurantStateData restaurantStateData;
+    public DailyMenuData dailyMenuData;
 }
 
 /// <summary>
@@ -404,6 +447,15 @@ public class RestaurantStateData
 {
     public List<Customer_State> customers = new List<Customer_State>();
 }
+
+[System.Serializable]
+public class DailyMenuData
+{
+    public List<Dish_Data.Dishes> dailyPool = new();
+    public List<Dish_Data.Dishes> dishesSelected = new();
+    public int customersPlanned = 0;
+}
+
 
 
 

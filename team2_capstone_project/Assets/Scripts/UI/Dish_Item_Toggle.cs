@@ -28,24 +28,36 @@ public class Dish_Item_Toggle : MonoBehaviour
 
   private void OnToggleChanged(bool isOn)
   {
-    Debug.Log($"Toggle for {dishType} changed to: {isOn}");
-    UpdateColor(isOn);
+      if (toggle == null) return;
 
-    var menu = Choose_Menu_Items.instance;
-    if (menu != null)
-    {
+      var menu = Choose_Menu_Items.instance;
+      if (menu == null)
+      {
+          Debug.LogWarning("Choose_Menu_Items instance not found in the scene.");
+          return;
+      }
+
       if (isOn)
-        menu.AddDish(dishType);
-      else
-        menu.RemoveDish(dishType);
+      {
+          bool added = menu.AddDish(dishType);
+          if (!added)
+          {
+              // ❌ If adding failed, revert the toggle
+              toggle.isOn = false;
 
-      if (Audio_Manager.instance != null)
-        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.clickSFX, 0.5f, 1f);
-    }
-    else
-    {
-      Debug.LogWarning("Choose_Menu_Items instance not found in the scene.");
-    }
+              // Optionally trigger UI feedback if available
+              var ui = FindObjectOfType<Choose_Menu_UI>();
+              if (ui != null)
+                  ui.ShowSelectionError($"You can only select up to {menu.maxSelect} dishes!");
+
+              return;
+          }
+      }
+      else
+          menu.RemoveDish(dishType);
+
+      UpdateColor(isOn);
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.clickSFX, 0.5f, 1f);
   }
 
   private void UpdateColor(bool isOn)
