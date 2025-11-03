@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class Main_Menu_UI : MonoBehaviour
 {
@@ -20,11 +21,63 @@ public class Main_Menu_UI : MonoBehaviour
 
     private bool isSceneTransitioning = false;
     private int currentSlot = 1;
+    private InputAction confirmAction;
 
-    private void Start()
+    private void Awake()
     {
-        CheckForExistingSave();
+        SceneManager.sceneLoaded += OnSceneLoadedRebind;
+        TryBindInput();
     }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoadedRebind;
+        TryBindInput();
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+        if (confirmAction != null)
+            confirmAction.performed -= OnConfirmPerformed;
+    }
+
+    private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode) => TryBindInput();
+    private void TryBindInput()
+    {
+        PlayerInput playerInput = null;
+
+        // Prefer Game_Manager if it holds PlayerInput
+        if (Game_Manager.Instance != null)
+            playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
+
+        // Fallback to Player_Input_Controller if needed
+        if (playerInput == null)
+        {
+            var pic = FindObjectOfType<Player_Input_Controller>();
+            if (pic != null)
+                playerInput = pic.GetComponent<PlayerInput>();
+        }
+
+        if (playerInput == null)
+        {
+            Debug.LogWarning("[Main_Menu_UI] No PlayerInput found in scene to bind actions.");
+            return;
+        }
+
+        // Bind Interact action
+        confirmAction = playerInput.actions["Confirm"];
+        if (confirmAction == null)
+            Debug.LogWarning("[Main_Menu_UI] Could not find 'Confirm' action in PlayerInput!");
+        else
+        {
+            confirmAction.Enable();
+            confirmAction.performed += OnConfirmPerformed;
+            Debug.Log("[Main_Menu_UI] 'Confirm' action bound and enabled.");
+        }
+    }
+
+    private void Start() => CheckForExistingSave();
 
     private void CheckForExistingSave()
     {
@@ -35,11 +88,7 @@ public class Main_Menu_UI : MonoBehaviour
         Debug.Log(saveExists ? "Save file found, enabling Load Game." : "No save file found, disabling Load Game.");
     }
 
-    public void OnNewGameButtonPressed()
-    {
-        namePromptPanel.SetActive(true);
-    }
-
+    public void OnNewGameButtonPressed() => namePromptPanel.SetActive(true);
     public void OnConfirmNewGame()
     {
         string playerName = nameInputField.text.Trim();
@@ -58,6 +107,16 @@ public class Main_Menu_UI : MonoBehaviour
         StartCoroutine(StartNewGameScene());
     }
 
+    private void OnConfirmPerformed(InputAction.CallbackContext ctx)
+    {
+        if (isSceneTransitioning) return;
+        
+        if (namePromptPanel.activeSelf)
+            OnConfirmNewGame();
+        Debug.Log("Confirm pressed, confirming new game.");
+    }
+
+    public void OnBackButtonPressed() => namePromptPanel.SetActive(false);
     public void OnLoadGameButtonPressed()
     {
         if (isSceneTransitioning) return;
@@ -71,7 +130,7 @@ public class Main_Menu_UI : MonoBehaviour
         if (isSceneTransitioning) yield break;
         isSceneTransitioning = true;
 
-        yield return new WaitForSeconds(0.3f); // small delay for UI feel
+        yield return new WaitForSeconds(0.3f);  // small delay for UI feel
         Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
     }
 }
