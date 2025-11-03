@@ -63,6 +63,7 @@ public class Player_Controller : MonoBehaviour
     private Vector3 currentMoveVelocity;
     private bool isGrounded;
     [HideInInspector] public string currentSurface = "Grass";
+    private bool facingRight = true;
 
     // Input System
     private PlayerInput playerInput;
@@ -302,30 +303,35 @@ public class Player_Controller : MonoBehaviour
         if (animator == null || spriteRenderer == null)
             return;
 
-        // Calculate current movement speed
+        // Calculate horizontal move speed
         float horizontalSpeed = new Vector3(currentMoveVelocity.x, 0f, currentMoveVelocity.z).magnitude;
-
         if (animator.HasParameterOfType("speed", AnimatorControllerParameterType.Float))
             animator.SetFloat("speed", horizontalSpeed);
 
-        // Flip the sprite based on horizontal input
+        // --- Facing Direction Handling ---
         if (horizontalSpeed > 0.05f)
         {
-            bool facingRight = movement.x > 0.01f;
-            spriteRenderer.flipX = facingRight;
-
-            if (animator.HasParameterOfType("facingRight", AnimatorControllerParameterType.Bool))
-                animator.SetBool("facingRight", facingRight);
+            // Update facing only when player is actually moving
+            if (movement.x > 0.05f)
+                facingRight = true;
+            else if (movement.x < -0.05f)
+                facingRight = false;
         }
 
-        // Adjust animation playback speed based on sprint
+        // Apply stored facing direction consistently (even when idle)
+        spriteRenderer.flipX = facingRight;
+
+        if (animator.HasParameterOfType("facingRight", AnimatorControllerParameterType.Bool))
+            animator.SetBool("facingRight", facingRight);
+
+        // --- Animation speed adjustments ---
         if (isSprinting)
         {
-            float targetAnimSpeed = isSprinting ? 1.5f : 1f;
+            float targetAnimSpeed = 1.5f;
             animator.speed = Mathf.Lerp(animator.speed, targetAnimSpeed, Time.deltaTime * 8f);
         }
         else
-            animator.speed = 1.0f; // normal speed when walking or idle
+            animator.speed = 1f;
     }
 
     /// <summary>

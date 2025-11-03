@@ -78,13 +78,19 @@ public class Day_Turnover_Manager : MonoBehaviour
     currentTimeOfDay = TimeOfDay.Morning;
     Player_Progress.Instance.ResetDailyRecipeFlags();
 
+    // Reset weather globally for new day
+    if (Weather_Manager.Instance != null)
+      Weather_Manager.Instance.ResetWeatherForNewDay();
+    else
+      Debug.LogWarning("[Day_Turnover_Manager] No WeatherManager found — weather not reset.");
+
     if (Choose_Menu_Items.instance == null)
-        Debug.LogWarning("[Day_Turnover_Manager] No Choose_Menu_Items found when ending day — will refresh next load.");
+      Debug.LogWarning("[Day_Turnover_Manager] No Choose_Menu_Items found when ending day — will refresh next load.");
     else
     {
-        Choose_Menu_Items.instance.GenerateDailyPool();
-        Debug.Log($"Daily menu refreshed for {CurrentDay}.");
-        Save_Manager.instance?.AutoSave();
+      Choose_Menu_Items.instance.GenerateDailyPool();
+      Debug.Log($"Daily menu refreshed for {CurrentDay}.");
+      Save_Manager.instance?.AutoSave();
     }
 
     // fire after reset
@@ -97,5 +103,7 @@ public class Day_Turnover_Manager : MonoBehaviour
       ui.gameObject.SetActive(true);
     }
   }
+
+  public void SetCurrentDay(WeekDay newDay) => CurrentDay = newDay;
 }
 

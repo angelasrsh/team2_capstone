@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.SceneManagement;
+using Grimoire;
 
 public class Save_Manager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Save_Manager : MonoBehaviour
     private static GameData currentGameData;
     public Room_Collection_Data roomCollection;
     private RoomExitOptions roomExitOptions;
+    private Grimoire.Screen_Fade screenFade;
 
     private string saveFilePath;
     private int currentSaveSlot = 1;
@@ -255,6 +257,15 @@ public class Save_Manager : MonoBehaviour
             Debug.LogWarning("[Save_Manager] Choose_Menu_Items.instance was null when saving daily menu!");
         }
 
+        // --- Current day ---
+        if (Day_Turnover_Manager.Instance != null)
+        {
+            currentGameData.currentDay = Day_Turnover_Manager.Instance.CurrentDay;
+            Debug.Log($"[Save_Manager] Saved current day as {currentGameData.currentDay}");
+        }
+        else
+            Debug.LogWarning("[Save_Manager] Day_Turnover_Manager.Instance was null during save — keeping previous day value.");
+
         // --- Elapsed time ---
         currentGameData.elapsedTime += Time.deltaTime;
     }
@@ -314,7 +325,10 @@ public class Save_Manager : MonoBehaviour
         }
         else
             Debug.LogWarning("[Save_Manager] No daily menu data found or Choose_Menu_Items not ready yet.");
-            
+
+        // Restore current day
+        if (Day_Turnover_Manager.Instance != null)
+            Day_Turnover_Manager.Instance.SetCurrentDay(currentGameData.currentDay);
 
         // Handle room loading
         string roomKey = string.IsNullOrEmpty(currentGameData.currentRoom) 
@@ -336,62 +350,78 @@ public class Save_Manager : MonoBehaviour
     // Coroutine to handle scene loading
     private IEnumerator LoadRoomScene(Room_Data targetRoom)
     {
+        // Use persistent screen fade (should exist in your initial scene)
+        screenFade = Grimoire.Screen_Fade.instance;
+        if (screenFade != null)
+        {
+            // Fade to black before loading
+            yield return screenFade.StartCoroutine(screenFade.BlackFadeIn());
+        }
+        else
+        {
+            Debug.LogWarning("[Save_Manager] No persistent Screen_Fade found. Continuing without fade.");
+        }
+
         // Load the target scene asynchronously
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetRoom.roomID.ToString());
-
         while (!asyncLoad.isDone)
             yield return null;
 
-        // Give one extra frame for everything to initialize
+        // Wait one frame for objects to initialize
         yield return null;
 
-        // --- Only handle player + spawn points in overworld scenes ---
+        // --- Player reposition logic ---
         if (targetRoom.isOverworldScene)
         {
             var player = FindObjectOfType<Player_Controller>();
             if (player == null)
-            {
                 Debug.LogWarning($"[Save_Manager] No Player_Controller found in overworld scene {targetRoom.roomID}.");
-                yield break;
-            }
-
-            // Determine spawn point
-            Transform spawnPoint = null;
-
-            // 1. Use stored exit options if available
-            if (roomExitOptions != null && roomExitOptions.spawnPointID != Room_Data.SpawnPointID.Default)
-            {
-                spawnPoint = FindSpawnPointByID(roomExitOptions.spawnPointID);
-                if (spawnPoint != null)
-                    Debug.Log($"[Save_Manager] Using spawn point '{roomExitOptions.spawnPointID}' from RoomExitOptions.");
-                else
-                    Debug.LogWarning($"[Save_Manager] Could not find spawn point '{roomExitOptions.spawnPointID}' — falling back to default.");
-            }
-
-            // 2. Fallback to default
-            if (spawnPoint == null)
-                spawnPoint = FindSpawnPointByID(Room_Data.SpawnPointID.Default);
-
-            // 3. Apply spawn point
-            if (spawnPoint != null)
-            {
-                player.transform.position = spawnPoint.position;
-                Debug.Log($"[Save_Manager] Player moved to spawn point '{spawnPoint.name}' in scene {targetRoom.roomID}.");
-            }
             else
-                Debug.LogWarning($"[Save_Manager] No spawn point found in scene {targetRoom.roomID}; player position unchanged.");
+            {
+                Transform spawnPoint = FindSpawnPointByID(Room_Data.SpawnPointID.Default);
+                if (spawnPoint != null)
+                {
+                    player.transform.position = spawnPoint.position;
+                    Debug.Log($"[Save_Manager] Player moved to spawn point '{spawnPoint.name}' in scene {targetRoom.roomID}.");
+                }
+            }
         }
+
+       // --- MUSIC --- 
+        if (targetRoom.music != null)
+            Music_Persistence.instance.CheckMusic(targetRoom.music, targetRoom.musicVolume);
         else
+            Music_Persistence.instance.StopMusic();
+
+        // --- AMBIENT ---
+        if (targetRoom.ambientSound != null)
+            Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound, targetRoom.ambientVolume);
+        else
+            Music_Persistence.instance.StopAmbient();
+
+        // --- Weather ---
+        if (Weather_Manager.Instance != null)
         {
-            // Not an overworld scene, so don't try to position the player
-            Debug.Log($"[Save_Manager] Loaded non-overworld scene {targetRoom.roomID}; skipping spawn logic.");
+            Weather_Manager.Instance.isRaining = currentGameData.isRaining;
+            Weather_Manager.Instance.ApplyWeatherForCurrentScene();
+        }
+
+        // --- HOLD black for UI to finish hiding ---
+        float uiHideDelay = 1.0f;
+        yield return new WaitForSeconds(uiHideDelay);
+
+        // Fade back into the scene
+        if (screenFade != null)
+        {
+            // ensure alpha is 1 before fading out (should be if persistent)
+            screenFade.fadeCanvasGroup.alpha = 1f;
+            yield return screenFade.StartCoroutine(screenFade.BlackFadeOut());
         }
     }
-    
+
     private Transform FindSpawnPointByID(Room_Data.SpawnPointID id)
     {
-        // Naming convention = "<ID>SpawnPoint"
-        string spawnName = $"{id}SpawnPoint";
+        string spawnName = $"{id}SpawnPoint";  // e.g., "DefaultSpawnPoint"
         GameObject spawnObj = GameObject.Find(spawnName);
         return spawnObj != null ? spawnObj.transform : null;
     }
@@ -415,6 +445,8 @@ public class GameData
     public DishInventoryData dishInventoryData;
     public RestaurantStateData restaurantStateData;
     public DailyMenuData dailyMenuData;
+    public bool isRaining = false;
+    public Day_Turnover_Manager.WeekDay currentDay = Day_Turnover_Manager.WeekDay.Monday;
 }
 
 /// <summary>

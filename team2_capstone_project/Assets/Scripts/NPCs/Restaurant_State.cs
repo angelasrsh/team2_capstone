@@ -9,6 +9,9 @@ public class Restaurant_State : MonoBehaviour
     public static Restaurant_State Instance;
     public List<Customer_State> customers = new List<Customer_State>();
 
+    private static float lastAutoSaveTime = -999f;
+    private const float saveCooldown = 2f; // seconds btwn autosaves
+
     private void Awake()
     {
         if (Instance == null)
@@ -69,6 +72,16 @@ public class Restaurant_State : MonoBehaviour
         }
 
         Debug.Log($"Restaurant_State: Saved {customers.Count} customers.");
+    }
+
+    public static void TryAutoSave()
+    {
+        if (Time.time - lastAutoSaveTime >= saveCooldown)
+        {
+            Instance?.SaveCustomers();
+            Save_Manager.instance?.AutoSave();
+            lastAutoSaveTime = Time.time;
+        }
     }
 
     public void ResetRestaurantState()

@@ -31,11 +31,17 @@ namespace Grimoire
 
             // Unlock and save
             Player_Progress.Instance.UnlockDish(data.dishType);
-            Player_Progress.Instance.MarkRecipeCollectedToday(); 
+            Player_Progress.Instance.MarkRecipeCollectedToday();
             Player_Progress.Instance.ClearDailyRecipe();
-            Save_Manager.instance?.SaveGameData();
+            StartCoroutine(SaveAfterDelay());
 
             HideObject();
+        }
+        
+        private IEnumerator SaveAfterDelay()
+        {
+            yield return new WaitForSeconds(0.5f);  // wait for Player_Progress/Save_Manager to stabilize
+            Save_Manager.instance?.SaveGameData();
         }
 
         private void HideObject()
