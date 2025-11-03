@@ -10,14 +10,15 @@ GameObject:
   m_Component:
   - component: {fileID: 6958590387895689388}
   - component: {fileID: 7322542354820229773}
-  - component: {fileID: 3461038497445604444}
+  - component: {fileID: 7704440638169076200}
   - component: {fileID: 8020379076965656209}
+  - component: {fileID: 3461038497445604444}
   - component: {fileID: 4670473249970048115}
   - component: {fileID: 1934729213419131961}
   - component: {fileID: 6642626054669146854}
   - component: {fileID: 3228094000564085673}
+  - component: {fileID: 1137200243691017696}
   - component: {fileID: 6113680877637856580}
-  - component: {fileID: 7704440638169076200}
   - component: {fileID: 6958590387895689391}
   - component: {fileID: 2041556558690807774}
   - component: {fileID: 4060353126230224005}
@@ -62,7 +63,7 @@ MonoBehaviour:
   playerProgress: {fileID: 11400000, guid: f2c59ef6e9041524e924df3048a855ee, type: 2}
   UIManager: {fileID: 0}
   roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
---- !u!114 &3461038497445604444
+--- !u!114 &7704440638169076200
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,9 +72,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6958590387895689390}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ad32d86200f0294fa69c866f4c349dc, type: 3}
+  m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  openUICount: 0
+  pauseMenuOn: 0
+  uiInputCooldownDuration: 0.25
 --- !u!114 &8020379076965656209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,6 +91,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
+--- !u!114 &3461038497445604444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad32d86200f0294fa69c866f4c349dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4670473249970048115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,6 +131,7 @@ MonoBehaviour:
   LikedDishAffection: 25
   NeutralDishAffection: 5
   DislikedDishAffection: -5
+  Cutscene: {fileID: 0}
 --- !u!114 &6642626054669146854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,6 +162,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9858dd33a8c2dd4fa636e5f6c8937fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1137200243691017696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ab716bd0326804b954a9e364ebb82a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rainChance: 1
+  isRaining: 0
+  clearSkybox: {fileID: 2100000, guid: 9ca22510633fbfd4399f1704cd9d5c72, type: 2}
+  cloudySkybox: {fileID: 2100000, guid: b5a27fa4b11bfb24cbc6daff3802c229, type: 2}
+  rainSystemPrefab: {fileID: 160098, guid: 69b40ef7ee16c834c844b3fa26e0fdda, type: 3}
+  fadeDuration: 2
+  foragingRainMusic: {fileID: 8300000, guid: a0437e1d0fa6a9849a36a0e9d61329b2, type: 3}
+  foragingRainMusicVolume: 0.47
 --- !u!114 &6113680877637856580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,21 +195,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   customers: []
---- !u!114 &7704440638169076200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  openUICount: 0
-  pauseMenuOn: 0
-  uiInputCooldownDuration: 0.25
 --- !u!114 &6958590387895689391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,6 +393,10 @@ MonoBehaviour:
       Touchscreen/touch1/press,/Simulated Touchscreen/touch2/press,/Simulated Touchscreen/touch3/press,/Simulated
       Touchscreen/touch4/press,/Simulated Touchscreen/touch5/press,/Simulated Touchscreen/touch6/press,/Simulated
       Touchscreen/touch7/press,/Simulated Touchscreen/touch8/press,/Simulated Touchscreen/touch9/press]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 72b0c1d2-71ad-4d84-a6ee-d5ea8d575864
+    m_ActionName: Player/Confirm[/Keyboard/enter]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

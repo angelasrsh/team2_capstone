@@ -257,6 +257,15 @@ public class Save_Manager : MonoBehaviour
             Debug.LogWarning("[Save_Manager] Choose_Menu_Items.instance was null when saving daily menu!");
         }
 
+        // --- Current day ---
+        if (Day_Turnover_Manager.Instance != null)
+        {
+            currentGameData.currentDay = Day_Turnover_Manager.Instance.CurrentDay;
+            Debug.Log($"[Save_Manager] Saved current day as {currentGameData.currentDay}");
+        }
+        else
+            Debug.LogWarning("[Save_Manager] Day_Turnover_Manager.Instance was null during save — keeping previous day value.");
+
         // --- Elapsed time ---
         currentGameData.elapsedTime += Time.deltaTime;
     }
@@ -316,7 +325,10 @@ public class Save_Manager : MonoBehaviour
         }
         else
             Debug.LogWarning("[Save_Manager] No daily menu data found or Choose_Menu_Items not ready yet.");
-            
+
+        // Restore current day
+        if (Day_Turnover_Manager.Instance != null)
+            Day_Turnover_Manager.Instance.SetCurrentDay(currentGameData.currentDay);
 
         // Handle room loading
         string roomKey = string.IsNullOrEmpty(currentGameData.currentRoom) 
@@ -375,12 +387,24 @@ public class Save_Manager : MonoBehaviour
             }
         }
 
-        // restore music & ambient
-        if (targetRoom.music != null) Music_Persistence.instance.CheckMusic(targetRoom.music, targetRoom.musicVolume);
-        else Music_Persistence.instance.StopMusic();
+       // --- MUSIC --- 
+        if (targetRoom.music != null)
+            Music_Persistence.instance.CheckMusic(targetRoom.music, targetRoom.musicVolume);
+        else
+            Music_Persistence.instance.StopMusic();
 
-        if (targetRoom.ambientSound != null) Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound, targetRoom.ambientVolume);
-        else Music_Persistence.instance.StopAmbient();
+        // --- AMBIENT ---
+        if (targetRoom.ambientSound != null)
+            Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound, targetRoom.ambientVolume);
+        else
+            Music_Persistence.instance.StopAmbient();
+
+        // --- Weather ---
+        if (Weather_Manager.Instance != null)
+        {
+            Weather_Manager.Instance.isRaining = currentGameData.isRaining;
+            Weather_Manager.Instance.ApplyWeatherForCurrentScene();
+        }
 
         // --- HOLD black for UI to finish hiding ---
         float uiHideDelay = 1.0f;
@@ -397,8 +421,7 @@ public class Save_Manager : MonoBehaviour
 
     private Transform FindSpawnPointByID(Room_Data.SpawnPointID id)
     {
-        // Naming convention = "<ID>SpawnPoint"
-        string spawnName = $"{id}SpawnPoint";
+        string spawnName = $"{id}SpawnPoint";  // e.g., "DefaultSpawnPoint"
         GameObject spawnObj = GameObject.Find(spawnName);
         return spawnObj != null ? spawnObj.transform : null;
     }
@@ -422,6 +445,8 @@ public class GameData
     public DishInventoryData dishInventoryData;
     public RestaurantStateData restaurantStateData;
     public DailyMenuData dailyMenuData;
+    public bool isRaining = false;
+    public Day_Turnover_Manager.WeekDay currentDay = Day_Turnover_Manager.WeekDay.Monday;
 }
 
 /// <summary>

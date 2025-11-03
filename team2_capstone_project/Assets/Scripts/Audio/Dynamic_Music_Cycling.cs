@@ -30,9 +30,24 @@ public class Dynamic_Music_Cycling : MonoBehaviour
     private Coroutine cycleCoroutine;
     private bool isCycling = false;
     private AudioClip lastPlayedAmbient;
+    private AudioSource tempAmbientSource;
 
+    private void OnDestroy()
+    {
+        if (cycleCoroutine != null)
+            StopCoroutine(cycleCoroutine);
+
+        if (tempAmbientSource != null)
+            Destroy(tempAmbientSource);
+    }
+    
     private void Start()
     {
+        // Create a temporary ambient source just for cycling
+        tempAmbientSource = gameObject.AddComponent<AudioSource>();
+        tempAmbientSource.playOnAwake = false;
+        tempAmbientSource.loop = false;
+
         // Start main music immediately 
         if (Music_Persistence.instance.musicSource.clip != mainMusic)
         {
@@ -69,12 +84,15 @@ public class Dynamic_Music_Cycling : MonoBehaviour
 
                 if (chosenAmbient != null && chosenAmbient.clip != null)
                 {
-                    var ambientSource = Music_Persistence.instance.ambientSource;
-                    ambientSource.clip = chosenAmbient.clip;
-                    ambientSource.volume = 0f;
-                    ambientSource.Play();
+                    if (tempAmbientSource != null)
+                    {
+                        tempAmbientSource.clip = chosenAmbient.clip;
+                        tempAmbientSource.volume = 0f;
+                        tempAmbientSource.Play();
+                        yield return StartCoroutine(FadeVolume(tempAmbientSource, chosenAmbient.volume, fadeDuration));
+                    }
 
-                    yield return StartCoroutine(FadeVolume(ambientSource, chosenAmbient.volume, fadeDuration));
+                    yield return StartCoroutine(FadeVolume(tempAmbientSource, chosenAmbient.volume, fadeDuration));
                 }
             }
 
@@ -133,11 +151,5 @@ public class Dynamic_Music_Cycling : MonoBehaviour
         }
 
         source.volume = targetVolume;
-    }
-
-    private void OnDestroy()
-    {
-        if (cycleCoroutine != null)
-            StopCoroutine(cycleCoroutine);
     }
 }
