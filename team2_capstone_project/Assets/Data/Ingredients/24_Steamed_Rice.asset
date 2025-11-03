@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: 17_Water
+  m_Name: 24_Steamed_Rice
   m_EditorClassIdentifier: 
-  Name: Water
-  Amount: 0
-  Image: {fileID: 21300000, guid: a4eb7569edffc944b90338b6e5af9d81, type: 3}
+  Name: Steamed Rice
+  Amount: 4
+  Image: {fileID: 21300000, guid: 38576297abbd3f0499ab103b339eb71a, type: 3}
   tier: 0
   price: 0
-  rarityWeight: 0
+  rarityWeight: 1
   minSpawn: 0
   maxSpawn: 0
   countsAs: []
@@ -26,17 +26,17 @@ MonoBehaviour:
     almostEnd: 0
     cookedEnd: 0
     overcookedEnd: 0
-  description: Just water... Unless...?
+  description: Freshly steamed rice.
   CutIngredientImages: []
   usedInDishes: []
-  makesIngredient:
-  - ingredient: {fileID: 11400000, guid: 55ef2e90d6ee21745bcc07d91b3435a2, type: 2}
+  makesIngredient: []
+  ingredientsNeeded:
+  - ingredient: {fileID: 11400000, guid: 13c58c2175248304faa05f161914c5e4, type: 2}
     amountRequired: 1
     method: 1
-  - ingredient: {fileID: 11400000, guid: 2b049ef314bf4b647b24f3a7b5dad8a4, type: 2}
+  - ingredient: {fileID: 11400000, guid: c5b2a46b578a60a468d0cb31729c2ab1, type: 2}
     amountRequired: 1
     method: 1
-  ingredientsNeeded: []
-  ingredientType: 18
+  ingredientType: 25
   CombinedCutPiecePrefab: {fileID: 0}
   cutsRequired: 0
