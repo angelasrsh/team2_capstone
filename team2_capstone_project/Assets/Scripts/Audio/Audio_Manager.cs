@@ -256,7 +256,7 @@ namespace Grimoire
     }
     #endregion
 
-    #region Footsteps SFX
+    #region Footsteps
     // -------------------------------------------------------
     // FOOTSTEPS
     public void PlayFootsteps(AudioClip clip, float speed = 1.6f)
@@ -277,6 +277,60 @@ namespace Grimoire
     {
       footstepsSource.Stop();
       footstepsSource.clip = null;
+    }
+    #endregion
+
+
+    #region Weather
+    // -----------------------------------------------------------------------
+    // Weather Ambient Methods
+    public void CrossfadeAmbient(AudioClip newClip, float fadeDuration = 2f)
+    {
+        if (newClip == null)
+        {
+            Debug.LogWarning("[Audio_Manager] Tried to crossfade to a null ambient clip.");
+            return;
+        }
+
+        // Use the Music_Persistence system directly
+        if (Music_Persistence.instance != null)
+            Music_Persistence.instance.CheckAmbient(newClip, fadeDuration);
+        else
+            Debug.LogWarning("[Audio_Manager] No Music_Persistence instance found for CrossfadeAmbient.");
+    }
+
+    private IEnumerator CrossfadeAmbientCoroutine(AudioClip newClip, float fadeDuration)
+    {
+        if (ambientSource == null)
+        {
+            Debug.LogWarning("[Audio_Manager] Ambient source not initialized.");
+            yield break;
+        }
+
+        float startVol = ambientSource.volume;
+
+        // If currently playing, fade out
+        if (ambientSource.isPlaying && ambientSource.clip != newClip)
+        {
+            for (float t = 0f; t < fadeDuration; t += Time.deltaTime)
+            {
+                ambientSource.volume = Mathf.Lerp(startVol, 0f, t / fadeDuration);
+                yield return null;
+            }
+            ambientSource.Stop();
+        }
+
+        // Assign new clip and fade in
+        ambientSource.clip = newClip;
+        ambientSource.volume = 0f;
+        ambientSource.loop = true;
+        ambientSource.Play();
+
+        for (float t = 0f; t < fadeDuration; t += Time.deltaTime)
+        {
+            ambientSource.volume = Mathf.Lerp(0f, 1f, t / fadeDuration);
+            yield return null;
+        }
     }
     #endregion
 

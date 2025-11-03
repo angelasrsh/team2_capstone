@@ -28,6 +28,16 @@ public class Dialog_UI_Manager : MonoBehaviour
     [HideInInspector] public bool textTyping = false;
     private bool htmlText = false;
 
+    [Header("Dialogue Box Animation")]
+    public RectTransform textBoxTransform;
+    [SerializeField] private float openDuration = 0.5f;
+    [SerializeField] private float closeDuration = 0.3f;
+    [SerializeField] private float idleAmplitude = 0.01f;
+    [SerializeField] private float idleSpeed = 1.5f;
+
+    private Coroutine openRoutine;
+    private Coroutine idleRoutine;
+
     private Dialogue_Manager dialogManager;
     private Player_Controller playerOverworld;
     private AudioClip currentDialogSound;
@@ -126,7 +136,7 @@ public class Dialog_UI_Manager : MonoBehaviour
         if (speedAction != null)
         {
             speedAction.performed -= OnSpeedPerformed;
-            speedAction.canceled  -= OnSpeedCanceled;
+            speedAction.canceled -= OnSpeedCanceled;
             speedAction.Disable();
             speedAction = null;
         }
@@ -175,17 +185,6 @@ public class Dialog_UI_Manager : MonoBehaviour
         currentTypingSpeed = textTypingSpeed;
     }
 
-    public void HideTextBox()
-    {
-        if (textBoxCanavasGroup == null) return;
-
-        textBoxCanavasGroup.alpha = 0;
-        ClearText();
-
-        // Player_Input_Controller.instance?.EnablePlayerInput();
-    }
-
-
     public void ClearText()
     {
         textBoxText.text = "";
@@ -193,11 +192,10 @@ public class Dialog_UI_Manager : MonoBehaviour
 
     public void ShowText(string aText, bool disablePlayerInput = true)
     {
-        // if (disablePlayerInput)
-        //     Player_Input_Controller.instance?.DisablePlayerInput();
+        if (openRoutine != null) StopCoroutine(openRoutine);
+        openRoutine = StartCoroutine(AnimateOpenBox());
 
         textBoxCanavasGroup.alpha = 1;
-
         if (typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
@@ -206,6 +204,15 @@ public class Dialog_UI_Manager : MonoBehaviour
 
         typingCoroutine = StartCoroutine(AddOneCharEnumerator(aText));
     }
+
+    public void HideTextBox()
+    {
+        if (openRoutine != null) StopCoroutine(openRoutine);
+        openRoutine = StartCoroutine(AnimateCloseBox());
+
+        ClearText();
+    }
+
 
     private IEnumerator AddOneCharEnumerator(string aText)
     {
@@ -219,7 +226,7 @@ public class Dialog_UI_Manager : MonoBehaviour
         for (int i = 0; i < aText.Length; i++)
         {
             // Debug.Log($"[Dialog_UI_Manager] Typing char {i}: '{aText[i]}' | Skip={skipCurrentLine} Fast={fastForwarding}");
-            
+
             if (skipCurrentLine)
             {
                 textBoxText.text = aText;
@@ -321,6 +328,81 @@ public class Dialog_UI_Manager : MonoBehaviour
     public void SetTypingSpeed(float speed)
     {
         currentTypingSpeed = speed;
+    }
+    #endregion
+
+
+    #region Animation
+    private IEnumerator AnimateOpenBox()
+    {
+        if (textBoxTransform == null) yield break;
+
+        // Start hidden
+        textBoxTransform.localScale = Vector3.zero;
+        textBoxCanavasGroup.alpha = 0f;
+
+        float t = 0f;
+        while (t < openDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            float normalized = t / openDuration;
+
+            // Smooth ease-out scaling (grow from center)
+            float scale = Mathf.Lerp(0f, 1f, 1 - Mathf.Pow(1 - normalized, 3));
+            textBoxTransform.localScale = new Vector3(scale, scale, 1f);
+            textBoxCanavasGroup.alpha = normalized;
+            yield return null;
+        }
+
+        textBoxTransform.localScale = Vector3.one;
+        textBoxCanavasGroup.alpha = 1f;
+
+        // Start the idle breathing immediately
+        if (idleRoutine != null) StopCoroutine(idleRoutine);
+        idleRoutine = StartCoroutine(IdleBreathe());
+    }
+
+    private IEnumerator IdleBreathe()
+    {
+        if (textBoxTransform == null) yield break;
+
+        Vector3 baseScale = Vector3.one;
+        float timer = 0f;
+
+        while (true)
+        {
+            timer += Time.unscaledDeltaTime * idleSpeed;
+            float offset = Mathf.Sin(timer) * idleAmplitude;
+            textBoxTransform.localScale = baseScale * (1f + offset);
+            yield return null;
+        }
+    }
+
+    private IEnumerator AnimateCloseBox()
+    {
+        if (idleRoutine != null)
+        {
+            StopCoroutine(idleRoutine);
+            idleRoutine = null;
+        }
+
+        Vector3 startScale = textBoxTransform.localScale;
+        float startAlpha = textBoxCanavasGroup.alpha;
+        float t = 0f;
+
+        while (t < closeDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            float normalized = t / closeDuration;
+
+            float scale = Mathf.Lerp(startScale.x, 0f, Mathf.Pow(normalized, 2));
+            textBoxTransform.localScale = new Vector3(scale, scale, 1f);
+            textBoxCanavasGroup.alpha = Mathf.Lerp(startAlpha, 0f, normalized);
+            yield return null;
+        }
+
+        textBoxTransform.localScale = Vector3.zero;
+        textBoxCanavasGroup.alpha = 0f;
     }
     #endregion
 }

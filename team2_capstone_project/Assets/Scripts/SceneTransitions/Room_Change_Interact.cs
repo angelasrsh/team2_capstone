@@ -31,6 +31,7 @@ public class Room_Change_Interact : MonoBehaviour
     private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
     {
         TryBindInput();
+        interactPressed = false; // reset after load
     }
 
     private void TryBindInput()
@@ -82,12 +83,15 @@ public class Room_Change_Interact : MonoBehaviour
         interactPressed = true;
     }
 
-    private void OnTriggerEnter(Collider other)
+   private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = true;
             player = other.GetComponent<Player_Controller>();
+
+            // Reset input buffer to prevent accidental activation
+            interactPressed = false;
         }
     }
 

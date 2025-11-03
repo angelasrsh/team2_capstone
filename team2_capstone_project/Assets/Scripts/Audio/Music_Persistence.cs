@@ -33,9 +33,7 @@ namespace Grimoire
                 }
             }
             else
-            {
                 Destroy(gameObject);
-            }
         }
 
         public void CheckMusic(AudioClip newMusic, float targetVolume)
@@ -63,6 +61,22 @@ namespace Grimoire
 
         public void CheckAmbient(AudioClip newAmbient, float targetVolume)
         {
+            if (ambientSource == null)
+            {
+                Debug.LogWarning("[Music_Persistence] No ambient source found!");
+                return;
+            }
+
+            // If same clip but the source is stopped (e.g. re-entering scene), ensure it plays / fades in
+            if (ambientSource.clip == newAmbient && !ambientSource.isPlaying)
+            {
+                currentAmbient = newAmbient;
+                if (ambientFadeCoroutine != null)
+                    StopCoroutine(ambientFadeCoroutine);
+                ambientFadeCoroutine = StartCoroutine(AmbientFadeIn(ambientSource, targetVolume, 1f));
+                return;
+            }
+
             if (newAmbient != currentAmbient)
             {
                 currentAmbient = newAmbient;
@@ -74,7 +88,6 @@ namespace Grimoire
                 ambientFadeCoroutine = StartCoroutine(AmbientFadeIn(ambientSource, targetVolume, 1f));
             }
         }
-
 
         public void PreTransitionCheckMusic(AudioClip newMusic)
         {

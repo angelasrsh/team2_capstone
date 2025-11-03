@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Expected_Customers_UI : MonoBehaviour
 {
@@ -16,35 +17,38 @@ public class Expected_Customers_UI : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
 
-        canvasGroup.alpha = 0f; 
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        if (canvasGroup != null)
+            canvasGroup.alpha = 0f;
     }
 
     private void OnEnable()
     {
-        if (Day_Plan_Manager.instance != null)
-        {
-            // If a plan already exists when loading this UI, show it immediately
-            int expected = Day_Plan_Manager.instance.customersPlannedForEvening;
-            if (expected > 0)
-                ShowExpectedCustomerCount(expected);
-        }
-
+        SceneManager.sceneLoaded += HandleSceneLoaded;
         Day_Plan_Manager.OnPlanUpdated += HandlePlanUpdated;
+
+        if (Day_Plan_Manager.instance != null)
+            ShowExpectedCustomerCount(Day_Plan_Manager.instance.customersPlannedForEvening);
     }
 
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
         Day_Plan_Manager.OnPlanUpdated -= HandlePlanUpdated;
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (Day_Plan_Manager.instance != null)
+            ShowExpectedCustomerCount(Day_Plan_Manager.instance.customersPlannedForEvening);
     }
 
     private void HandlePlanUpdated(int expectedCount)

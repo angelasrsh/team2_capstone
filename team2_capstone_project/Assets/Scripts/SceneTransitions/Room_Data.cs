@@ -42,6 +42,13 @@ public class Room_Data : ScriptableObject
   [Range(0f, 1f)] public float musicVolume = 1f;
   [Range(0f, 1f)] public float ambientVolume = 1f;
 
+  [Header("Weather Settings")]
+  public bool isOutdoorScene = true;  // whether to show/hide rain visuals
+  public AudioClip rainMusic;
+  [Range(0f, 1f)] public float rainMusicVolume = 1f;
+  public AudioClip rainAmbient;
+  [Range(0f, 1f)] public float rainAmbientVolume = 1f;
+
   [Header("Room Exits")]
   public RoomExitOptions[] exits;
 }

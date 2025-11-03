@@ -150,6 +150,7 @@ public class Room_Change_Manager : MonoBehaviour
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetRoom.roomID.ToString());
         while (!asyncLoad.isDone)
             yield return null;
+            yield return null;  // extra frame for persistent objects to awake/enable
 
         // place player immediately after scene loads prior to fade out
         if (targetRoom.isOverworldScene)
@@ -192,15 +193,26 @@ public class Room_Change_Manager : MonoBehaviour
         if (Player_Input_Controller.instance != null)
             Player_Input_Controller.instance.EnablePlayerInput();
 
+        // --- MUSIC ---
         if (targetRoom.music != null)
             Music_Persistence.instance.CheckMusic(targetRoom.music, targetRoom.musicVolume);
         else
+        {
+            // Explicitly stop previous music if new scene doesn't have any
             Music_Persistence.instance.StopMusic();
+        }
 
-        if (targetRoom.ambientSound != null)
-            Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound, targetRoom.ambientVolume);
+        // --- AMBIENT / WEATHER ---
+        if (Weather_Manager.Instance != null)
+            Weather_Manager.Instance.ApplyWeatherForCurrentScene();
         else
-            Music_Persistence.instance.StopAmbient();
+        {
+            // fallback ambient setup if no weather manager
+            if (targetRoom.ambientSound != null)
+                Music_Persistence.instance.CheckAmbient(targetRoom.ambientSound, targetRoom.ambientVolume);
+            else
+                Music_Persistence.instance.StopAmbient();
+        }
     }
 
     private IEnumerator HandleNewRoomTransition(Room_Data targetRoom)

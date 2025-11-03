@@ -193,13 +193,15 @@ public class Customer_Controller : MonoBehaviour
         }
     }
 
-    private void SitDown()
+   private void SitDown()
     {
         agent.isStopped = true;
         hasSatDown = true;
-        // don't null seat anymore, we need it for state saving
-        // seat = null; // clear reference to seat so we don't try to sit again
-        Debug.Log($"{data.customerName} sat down and is waiting for interaction.");
+        Debug.Log($"{data.customerName} sat down at seat index {seatIndex}.");
+
+        // immediately save state after sitting down
+        Restaurant_State.TryAutoSave();
+        Save_Manager.instance?.AutoSave();
     }
 
 
@@ -321,6 +323,10 @@ public class Customer_Controller : MonoBehaviour
             Debug.LogWarning($"{data.customerName} could not decide on a dish!");
 
         hasRequestedDish = true;
+
+        // Save request in restaurant state and save manager
+        Restaurant_State.Instance?.SaveCustomers();
+        Save_Manager.instance?.AutoSave();
     }
 
     #endregion
@@ -385,6 +391,10 @@ public class Customer_Controller : MonoBehaviour
         Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.orderServed, 0.75f);
         if (thoughtBubble != null) thoughtBubble.SetActive(false);
 
+        // Save in restaurant state and save manager
+        Restaurant_State.Instance?.SaveCustomers();
+        Save_Manager.instance?.AutoSave();
+
         // Check if player served the wrong dish
         if (wrongDish)
             Debug.Log($"[{data.customerName}] was served the WRONG dish: expected {requestedDish.name}, got {selectedDish.name}");
@@ -434,13 +444,43 @@ public class Customer_Controller : MonoBehaviour
         else
         {
             (string dialogueKey, string suffix) = GenerateDialogueKey(selectedDish);
-            Affection_System.Instance.AddAffection(data, suffix, false);
+
+            // Check if this dish is both requested and on today's daily menu
+            bool onDailyMenu = false;
+            var dailyMenuEnums = Choose_Menu_Items.instance?.GetSelectedDishes();
+            if (dailyMenuEnums != null)
+            {
+                foreach (var menuDishEnum in dailyMenuEnums)
+                {
+                    Dish_Data dailyDish = Game_Manager.Instance.dishDatabase.GetDish(menuDishEnum);
+                    if (dailyDish == selectedDish)
+                    {
+                        onDailyMenu = true;
+                        break;
+                    }
+                }
+            }
+
+            // If it's the requested dish AND on the daily menu, give favorite affection
+            if (onDailyMenu && selectedDish == requestedDish)
+            {
+                Debug.Log($"[{data.customerName}] received a daily menu bonus for {selectedDish.name}! " +
+                        $"Giving favorite-dish affection (dialog remains {suffix}).");
+
+                // Treat as favorite affection, but don't alter dialog
+                Affection_System.Instance.AddAffection(data, "LikedDish", false);
+            }
+            else
+            {
+                // Normal affection behavior
+                Affection_System.Instance.AddAffection(data, suffix, false);
+            }
+
             PlayCustomerDialogue(dialogueKey, suffix);
         }
 
         requestedDish = null;
         return true;
-
     }
 
     public void LeaveRestaurant()

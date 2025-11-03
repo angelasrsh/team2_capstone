@@ -15,8 +15,7 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     public Room_Data.RoomID exitingTo;
 
     private Player_Controller player;
-    private InputAction interactAction;
-    private InputAction pauseAction;
+    private InputAction interactAction, pauseAction;
     private bool confirmationActive = false;
 
     private void Awake()
@@ -39,14 +38,11 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoadedRebind;
         if (interactAction != null)
-        interactAction.performed -= OnInteractPerformed;
+            interactAction.performed -= OnInteractPerformed;
     }
-
-    private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode)
-    {
-        TryBindInput();
-    }
-
+    
+    private void OnDestroy() => SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+    private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode) => TryBindInput();
     private void TryBindInput()
     {
         PlayerInput playerInput = null;
@@ -76,11 +72,9 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
             Debug.LogWarning("[Confirm_Resource_Area_Leave] Could not find 'Interact' action in PlayerInput!");
         }
         else
-        {
             interactAction.Enable();
-        }
 
-        // Bind Pause action (we’ll disable it when the confirmation opens)
+        // Bind Pause action
         pauseAction = playerInput.actions["Pause"];
         if (pauseAction == null)
         {
@@ -107,9 +101,7 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
         // Remove listener when player leaves
         if (interactAction != null)
-        {
             interactAction.performed -= OnInteractPerformed;
-        }
 
         player = null;
     }
@@ -178,10 +170,5 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
         if (pauseAction != null && !pauseAction.enabled)
             pauseAction.Enable();
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoadedRebind;
     }
 }
