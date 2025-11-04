@@ -42,7 +42,8 @@ public class Quest_Database : ScriptableObject
     private void OnValidate()
     {
 #if UNITY_EDITOR
-        PopulateQuests();
+        if (!EditorApplication.isUpdating)
+            PopulateQuests();
 #endif
     }
 }
