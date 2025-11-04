@@ -66,13 +66,20 @@ public class Customer_Spawner : MonoBehaviour
 
     private void RestoreCustomersFromState()
     {
-        if (Restaurant_State.Instance == null || Restaurant_State.Instance.customers.Count == 0)
+        if (Restaurant_State.Instance == null)
+        {
+            Debug.LogWarning("Customer_Spawner: No Restaurant_State found during restore.");
+            return;
+        }
+
+        if (Restaurant_State.Instance.customers == null || Restaurant_State.Instance.customers.Count == 0)
         {
             Debug.Log("Customer_Spawner: No customers to restore.");
             return;
         }
 
-        foreach (var cState in Restaurant_State.Instance.customers)
+        var savedCustomers = Restaurant_State.Instance.customers;
+        foreach (var cState in savedCustomers)
         {
             // 1. Find seat
             Transform seat = Seat_Manager.Instance.GetSeatByIndex(cState.seatIndex);

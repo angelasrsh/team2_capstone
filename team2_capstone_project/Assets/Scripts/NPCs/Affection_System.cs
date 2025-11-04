@@ -6,6 +6,8 @@ using UnityEditorInternal;
 #endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
+using UnityEngine.Events;
 
 /// <summary>
 /// Stores affection data for a single customer, including their current level
@@ -126,6 +128,7 @@ public class Affection_System : MonoBehaviour
 {
     // Store affection data for customers
     private List<AffectionEntry> CustomerAffectionEntries = new List<AffectionEntry>(); // Change to using enum
+    public event Action<CustomerData, int> OnAffectionChanged;
 
     // Constants
     [Header("Constants")]

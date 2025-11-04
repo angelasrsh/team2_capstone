@@ -82,7 +82,8 @@ public enum IngredientType
   Cut_Slime,
   Uncut_Ficklegourd,
   Cut_Ficklegourd,
-  Cooked_Cut_Ficklegourd
+  Cooked_Cut_Ficklegourd,
+  Ring
 }
 
 // public class CutLine
