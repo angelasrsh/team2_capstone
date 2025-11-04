@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using Unity.VisualScripting;
 
 // Credit for the quest system goes to https://www.youtube.com/watch?v=UyTJLDGcT64 (with modification)
 
@@ -96,7 +97,12 @@ public class Quest_Manager : MonoBehaviour
     {
         bool meetsRequirements = true;
 
-        // Can later check requirements and set meetsRequirements to false if not met
+        foreach (Quest_Info_SO q in quest.Info.QuestPrerequisites)
+        {
+            if (GetQuestByID(q.id).state != Quest_State.FINISHED)
+                meetsRequirements = false;
+
+        }
 
         return meetsRequirements;
     }

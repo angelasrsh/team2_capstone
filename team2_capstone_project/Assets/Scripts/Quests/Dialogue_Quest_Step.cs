@@ -17,7 +17,7 @@ public class Dialogue_Quest_Step : Quest_Step
     public string textKeyPC;
     public string postStepTextKey;
     public int InstructionWaitTime = 0;
-    public int PopupWaitTime = 10;
+    public int PopupWaitTime = 10; // Not currently used(?)
 
     public bool QuestStepComplete { get; set; } = false;
 

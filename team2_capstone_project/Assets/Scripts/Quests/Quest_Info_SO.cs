@@ -21,7 +21,8 @@ public class Quest_Info_SO : ScriptableObject
     // Set this if the quest is only active in certain rooms
     public List<Room_Data.RoomID> InactiveRooms;
 
-    // Could later add requirements here (ex: finishing other quests)
+    // Quest prerequisites (ex: finishing other quests)
+    public Quest_Info_SO[] QuestPrerequisites;
 
     // Quest step GameObjects holding the quest step info
     public GameObject[] QuestStepPrefabs;

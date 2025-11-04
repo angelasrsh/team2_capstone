@@ -7,17 +7,17 @@ using UnityEngine;
 /// <summary>
 /// Tutorial Quest Step to make the player sprint
 /// </summary>
-public class Sprint_Quest_Step : Dialogue_Quest_Step
+public class Talk_To_Satyr_Quest_Step : Dialogue_Quest_Step
 {
 
     protected override void OnEnable()
     {
-        Game_Events_Manager.Instance.onIsSprintingChange += PlayerSprint;
+        Game_Events_Manager.Instance.onInShop += InShop;
     }
 
     protected override void OnDisable()
     {
-        Game_Events_Manager.Instance.onIsSprintingChange -= PlayerSprint;
+        Game_Events_Manager.Instance.onInShop -= InShop;
     }
 
      void Start()
@@ -27,9 +27,9 @@ public class Sprint_Quest_Step : Dialogue_Quest_Step
 
 
 
-    private void PlayerSprint(bool isSprinting)
+    private void InShop(bool isInShop)
     {
-        if (isSprinting)
+        if (isInShop)
             FinishQuestStep(); // Finish and destroy this object
     }
 

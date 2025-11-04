@@ -42,6 +42,12 @@ public class Game_Events_Manager : MonoBehaviour
         //Debug.Log("[G_E_M] Player Moved");
     }
 
+    public event Action<bool> onIsSprintingChange;
+    public void IsSprintingChange(bool isSprinting)
+    {
+        onIsSprintingChange?.Invoke(isSprinting);
+    }
+
 
     public event Action<bool> onInventoryToggle;
     /// <summary>
@@ -228,7 +234,15 @@ public class Game_Events_Manager : MonoBehaviour
     {
         onDialogueComplete?.Invoke(dialogKey);
     }
-    
+
+    /// <summary>
+    /// Triggers when the player enters or exits the Satyr's shop
+    /// </summary>
+    public event Action<bool> onInShop;
+    public void InShop(bool isInShop)
+    {
+        onInShop?.Invoke(isInShop);
+    }
     #endregion
 
 
