@@ -150,6 +150,7 @@ public class Quest_Manager : MonoBehaviour
         Quest quest = GetQuestByID(id);
         // claim rewards if applicable
         ChangeQuestState(quest.Info.id, Quest_State.FINISHED);
+        UnlockQuests();
     }
 
     /// <summary>

@@ -165,6 +165,8 @@ public class Tutorial_Manager : MonoBehaviour
         {
             QuestIDQuestStateMap[q.Info.id] = q.state;
         }
+
+        CheckStartTutorial(SceneManager.GetActiveScene(), LoadSceneMode.Single); // check if we can start any new tutorial quests
     }
 
     /// <summary>
