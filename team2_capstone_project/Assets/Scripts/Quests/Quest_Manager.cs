@@ -168,14 +168,14 @@ public class Quest_Manager : MonoBehaviour
         foreach (KeyValuePair<string, Quest> questkvp in questMap)
         {
             Quest q = questkvp.Value;
-            q.IsPaused = true; // Assume not an active room (pause)
+            q.IsPaused = false; // Assume not an inactive room (don't pause)
 
-            for (int i = 0; i < q.Info.ActiveRooms.Count; i++)
+            for (int i = 0; i < q.Info.InactiveRooms.Count; i++)
             {
-                // Is an active room - unpause
-                if (q.Info.ActiveRooms[i].ToString().Equals(scene.name))
+                // Is an active room - pause
+                if (q.Info.InactiveRooms[i].ToString().Equals(scene.name))
                 {
-                    q.IsPaused = false;
+                    q.IsPaused = true;
                 }
 
             }

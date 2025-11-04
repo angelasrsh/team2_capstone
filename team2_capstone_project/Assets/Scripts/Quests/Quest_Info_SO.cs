@@ -19,7 +19,7 @@ public class Quest_Info_SO : ScriptableObject
     public string DisplayName;
 
     // Set this if the quest is only active in certain rooms
-    public List<Room_Data.RoomID> ActiveRooms;
+    public List<Room_Data.RoomID> InactiveRooms;
 
     // Could later add requirements here (ex: finishing other quests)
 
