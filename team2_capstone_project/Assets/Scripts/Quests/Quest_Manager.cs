@@ -20,7 +20,7 @@ using System.IO;
 /// 6) Add the Quest_Step prefabs to the Quest_Info_SO for the quest
 /// 7) Toggle to refresh the Quest_Database so the manager can see it
 /// 8) Make sure there is something that triggers the start of the quest (...StartQuest(...))
-///    If it is a tutorial, add it to the Tutorial_Manager to start when a certain room is first loaded
+///    If it is a room-based tutorial, add it to the Tutorial_Manager to start when a certain room is first loaded
 /// </summary>
 public class Quest_Manager : MonoBehaviour
 {

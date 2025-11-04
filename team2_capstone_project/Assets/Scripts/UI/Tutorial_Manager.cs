@@ -116,7 +116,7 @@ public class Tutorial_Manager : MonoBehaviour
 #if !TUTORIAL_ENABLE
         return;
 #endif
-        Helpers.printLabeled(this, "");
+        //Helpers.printLabeled(this, "");
         // End search if this isn't a room that is listed to have a tutorial
         if (!RoomTutorialMap.ContainsKey(scene.name))
             return;
