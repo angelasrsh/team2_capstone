@@ -19,7 +19,7 @@ namespace Grimoire
     [Header("Audio Mixer Routing")]
     [SerializeField] private AudioMixer masterMixer;
     [SerializeField] private AudioMixerGroup musicGroup;
-    [SerializeField] private AudioMixerGroup ambientGroup;
+    public AudioMixerGroup ambientGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
     [SerializeField] private AudioMixerGroup footstepsGroup;
 
@@ -70,6 +70,9 @@ namespace Grimoire
     [SerializeField] private AudioClip bubbling;
     [SerializeField] private AudioClip startFire;
     [SerializeField] private AudioClip ambientFire;
+
+    private AudioSource dishLoopSource;
+    [SerializeField] private AudioClip dishLoopClip;
 
     private void Awake()
     {
