@@ -99,7 +99,15 @@ public class Foraging_Area_NPC_Actor : MonoBehaviour
     private void Update()
     {
         if (!playerInRange || !canTalk || talkAction == null || hasTalked)
+        {
+            if (hasTalked)
+            {
+                Game_Events_Manager.Instance.OverworldNPCDialogue();
+
+            }
             return;
+        }
+
 
         if (talkAction.WasPerformedThisFrame())
         {
@@ -122,6 +130,8 @@ public class Foraging_Area_NPC_Actor : MonoBehaviour
             var emotion = CustomerData.EmotionPortrait.Emotion.Neutral;
 
             dm.PlayScene(resolvedKey, emotion);
+            Game_Events_Manager.Instance.StartQuest("Elf_Ring_Quest");
+
             Debug.Log($"[Foraging_Area_NPC_Actor] Playing dialogue key: {resolvedKey}");
         }
         else

@@ -5,8 +5,6 @@ using UnityEngine;
 public class Dialgoue_SFX_Manager : MonoBehaviour {
 	// Audio players components.
 	public AudioSource Source;
-	public AudioClip[] monkeydialogues;
-	public AudioClip[] hamdialogues;
 
 	// Singleton instance.
 	public static Dialgoue_SFX_Manager Instance = null;
@@ -44,11 +42,4 @@ public class Dialgoue_SFX_Manager : MonoBehaviour {
 		Source.Play();
 	}
 
-	public AudioClip MonkeyDialogue() {
-		return monkeydialogues[Random.Range(0, monkeydialogues.Length)];
-    }
-
-	public AudioClip HamDialogue() {
-		return hamdialogues[Random.Range(0, hamdialogues.Length)];
-	}
 }

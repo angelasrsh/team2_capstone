@@ -35,6 +35,8 @@ public class Customer_Controller : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     [SerializeField] private Transform spriteTransform;
 
+    [SerializeField] private string dialogueKnotName;
+
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoadedRebind;
@@ -601,7 +603,15 @@ public class Customer_Controller : MonoBehaviour
             dm.onDialogComplete = null;
             LeaveRestaurant();
         };
-        dm.PlayScene(dialogueKey, emotion);
+        //New INK dialogue section 
+        if (!dialogueKnotName.Equals(""))
+        {
+            Game_Events_Manager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+        } else
+        {
+            dm.PlayScene(dialogueKey, emotion);
+            
+        }
     }
 
     private (string key, string suffix) GenerateFailedDishDialogueKey()

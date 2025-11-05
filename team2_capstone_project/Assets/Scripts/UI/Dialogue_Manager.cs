@@ -38,6 +38,22 @@ public class Dialogue_Manager : MonoBehaviour
     // Components    
     private Player_Controller playerOverworld;
 
+    
+    //new ink dialogue methods
+    private void OnEnable()
+    {
+        Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue += EnterDialogue;
+    }
+    private void OnDisable()
+    {
+        Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
+    }
+
+    private void EnterDialogue(string knotName)
+    {
+        
+    }
+
     private void Awake()
     {
         playerOverworld = FindObjectOfType<Player_Controller>();
@@ -64,6 +80,7 @@ public class Dialogue_Manager : MonoBehaviour
 
             PopulateDialogMap();
         }
+        
     }
     
     private void Update()
@@ -229,6 +246,7 @@ public class Dialogue_Manager : MonoBehaviour
     /// </summary>
     public void PlayScene(string aDialogKey, bool disablePlayerInput = true)
     {
+        
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0)
@@ -324,6 +342,8 @@ public class Dialogue_Manager : MonoBehaviour
     /// </summary>
     public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
     {
+        //INk NEW DIalogue events
+        
         // Tell Game events manager so we don't overlap the dialogue box
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 

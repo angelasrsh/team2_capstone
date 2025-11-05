@@ -27,7 +27,11 @@ public class Dialogue_Quest_Step : Quest_Step
     private bool postStepTextKeyDialogStarted = false;
 
 
+    [Header("Dialogue manager")]
     private Dialogue_Manager dm;
+    
+    [SerializeField] private string dialogueKnotName;
+    
 
     virtual protected void OnEnable()
     {
@@ -108,7 +112,14 @@ public class Dialogue_Quest_Step : Quest_Step
 
         if (dm != null)
         {
-            dm.PlayScene(key, disablePlayerInput);
+            if (!dialogueKnotName.Equals(""))
+            {
+                
+            } else
+            {
+                dm.PlayScene(key, disablePlayerInput);
+            }
+
         }
         else
         {
