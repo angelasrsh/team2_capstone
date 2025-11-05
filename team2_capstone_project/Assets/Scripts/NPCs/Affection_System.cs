@@ -24,7 +24,8 @@ public class AffectionEntry {
     public bool[] EventsPlayed = new bool[NumEvents]; // default false
 
     // public Scene eventScene; // Temp: Delete later
-
+    private int dialogueIndex = 0;
+    private List<string> dialogKeys;
    
 
 
@@ -34,6 +35,10 @@ public class AffectionEntry {
     /// </summary>
     public void TryPlayEvent()
     {
+        // If currently in the middle of an event, keep playing it instead
+        if (dialogueIndex > 0 && dialogueIndex < dialogKeys.Count)
+            PlayDialogueEvent();
+            
         int milestone = NextEligibleEvent(); // 0 - 3 for 25 - 100 level events
         Event_Data selectedCutscene = null;
         
@@ -46,8 +51,15 @@ public class AffectionEntry {
                 selectedCutscene = customerData.Cutscene_100;
             break;
             case 0:
+                dialogKeys = customerData.Dialogue_25;
+                dialogueIndex = 0;
+                PlayDialogueEvent();
+                break;
             case 2:
-            // TODO: Add dialogue dating events
+                dialogKeys = customerData.Dialogue_75;
+                dialogueIndex = 0;
+                PlayDialogueEvent();
+                break;
             default:
                 break;
                 // Can also make a function that takes care of calling both types of events
@@ -104,9 +116,20 @@ public class AffectionEntry {
             Save_Manager.instance.AutoSave();
 
         // then transition
-        Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());   
+        Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());
 
     }
+
+    private void PlayDialogueEvent()
+    {
+        Dialogue_Manager dm = UnityEngine.Object.FindObjectOfType<Dialogue_Manager>(); // not performant
+        if (dialogueIndex < dialogKeys.Count)
+        {
+            dm?.PlayScene(dialogKeys[dialogueIndex]);
+            dialogueIndex++;
+        }
+    }
+    
 
     private IEnumerator TransitionToDateScene()
     {
