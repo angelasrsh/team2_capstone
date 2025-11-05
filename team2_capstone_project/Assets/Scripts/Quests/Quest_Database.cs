@@ -16,6 +16,7 @@ public class Quest_Database : ScriptableObject
 {
     public List<Quest_Info_SO> allQuests;
     public bool ToggleToRefresh;
+    private bool oldToggleToRefresh;
 
     public void PopulateQuests()
     {
@@ -42,8 +43,12 @@ public class Quest_Database : ScriptableObject
     private void OnValidate()
     {
 #if UNITY_EDITOR
-        if (!EditorApplication.isUpdating)
+        if (!EditorApplication.isUpdating && ToggleToRefresh != oldToggleToRefresh)
+        {
             PopulateQuests();
+            oldToggleToRefresh = ToggleToRefresh;
+        }
+            
 #endif
     }
 }
