@@ -6,6 +6,8 @@ using UnityEditorInternal;
 #endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
+using UnityEngine.Events;
 
 /// <summary>
 /// Stores affection data for a single customer, including their current level
@@ -126,6 +128,7 @@ public class Affection_System : MonoBehaviour
 {
     // Store affection data for customers
     private List<AffectionEntry> CustomerAffectionEntries = new List<AffectionEntry>(); // Change to using enum
+    public event System.Action<CustomerData, int> OnAffectionChanged;
 
     // Constants
     [Header("Constants")]
@@ -177,22 +180,21 @@ public class Affection_System : MonoBehaviour
     /// <param name="tryPlayEvent"> Trigger an event if one is ready </param> 
     public void AddAffection(CustomerData customer, string suffix, bool tryPlayEvent)
     {
-        // Don't care about storing non-dateable customers
         if (!customer.datable)
             return;
 
-        // Retrieve entry
         AffectionEntry entryToUpdate = CustomerAffectionEntries.Find(x => x.customerData == customer);
-
-        // If null, create new entry
         if (entryToUpdate == null)
         {
             entryToUpdate = new AffectionEntry { customerData = customer };
             CustomerAffectionEntries.Add(entryToUpdate);
         }
+
         Debug.Log($"[AFF_SYS] updating affection for {entryToUpdate.customerData.customerName}");
 
-        // Would probably be better to make an enum or array
+        int affectionBefore = entryToUpdate.AffectionLevel;
+
+        // Modify affection
         if (suffix.Equals("LikedDish"))
             entryToUpdate.AddAffection(LikedDishAffection);
         else if (suffix.Equals("NeutralDish"))
@@ -202,14 +204,16 @@ public class Affection_System : MonoBehaviour
         else
             Debug.Log($"[AFF_SYS] Error: Unknown suffix {suffix}");
 
+        // Fire event if affection lvl changed
+        if (entryToUpdate.AffectionLevel != affectionBefore)
+            OnAffectionChanged?.Invoke(customer, entryToUpdate.AffectionLevel);
+
         if (tryPlayEvent)
             entryToUpdate.TryPlayEvent();
-        else // save CustomerData for later calls to TryPlayNextEvent
+        else
             nextCutsceneCustomer = customer;
-
-
-        return;
     }
+
 
     /// <summary>
     /// If a customerdata is saved in nextCutsceneCustomer, see if you can play an event for that customer

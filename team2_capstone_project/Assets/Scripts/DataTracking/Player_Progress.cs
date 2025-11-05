@@ -32,7 +32,7 @@ public class Player_Progress : ScriptableObject
   public static event Action OnRecipesUpdated;
   [SerializeField] private bool hasCollectedRecipeToday = false;
   
-  public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used)
+  // public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used)
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used)
   public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used)
 
