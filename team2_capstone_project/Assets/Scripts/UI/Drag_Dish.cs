@@ -21,6 +21,10 @@ public class Drag_Dish :  MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
   private static Trash trash; // Static reference to Trash script in scene
   private static RectTransform trashRedZone;
 
+  [Header("Chest")]
+  private static Chest chest; // Static reference to Chest script in scene
+  private static RectTransform chestRedZone;
+
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
   [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
@@ -42,6 +46,9 @@ public class Drag_Dish :  MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     {
       trash ??= FindObjectOfType<Trash>();
       trashRedZone = trash.redZone;
+
+      chest ??= FindObjectOfType<Chest>();
+      chestRedZone = chest.redZone;
     }
   }
   public static bool IsOverlapping(RectTransform rectA, RectTransform rectB)
@@ -112,30 +119,45 @@ public class Drag_Dish :  MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     if (!canDrag)
       return;
 
-    if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && IsOverlapping(rectTransform, trashRedZone)) // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
+    if (SceneManager.GetActiveScene().name == "Updated_Restaurant") // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
     {
       if (trash == null)
       {
         trash = FindObjectOfType<Trash>();
         trashRedZone = trash.redZone;
       }
-
-      if (!trash.trashOpen) // just a safety check. Shouldn't need to do this if canDrag is set up properly
+      if (chest == null)
       {
-        rectTransform.position = dishOriginalPos;
+        chest = FindObjectOfType<Chest>();
+        chestRedZone = chest.redZone;
+      }
+
+      if (IsOverlapping(rectTransform, trashRedZone) || IsOverlapping(rectTransform, chestRedZone))
+      {
+        DuplicateInventorySlot();
+        Dish_Data dish = (Dish_Data)(ParentSlot.stk.resource);
+
+        if (chest.chestOpen)
+        {
+          int placedInChest = chest.AddItemToChest(dish, 1);
+          if (placedInChest > 0) // Only remove ingredient actually added to chest
+            Dish_Tool_Inventory.Instance.RemoveResources(dish, placedInChest); // placedInChest should always be 1
+          else
+            rectTransform.position = dishOriginalPos;
+        }
+        else
+        {
+          int trashed = trash.AddItemToTrash(dish, 1);
+          if (trashed > 0) // Only remove ingredient actually added to trash
+            Dish_Tool_Inventory.Instance.RemoveResources(dish, trashed); // trashed should always be 1
+          else
+            rectTransform.position = dishOriginalPos;
+        }
+
+
+        Destroy(gameObject);
         return;
       }
-
-      DuplicateInventorySlot();
-      Dish_Data dish = (Dish_Data)(ParentSlot.stk.resource);
-      int trashed = trash.AddItemToTrash(dish, 1);
-      if (trashed > 0) // Only remove dish if actually added to trash
-      {
-        Dish_Tool_Inventory.Instance.RemoveResources(dish, 1);
-      }
-      else
-        rectTransform.position = dishOriginalPos;
-      Destroy(gameObject);
       return;
     }
 
