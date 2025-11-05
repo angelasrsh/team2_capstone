@@ -37,7 +37,8 @@ public class Dialogue_Manager : MonoBehaviour
     [HideInInspector] public DialogueState currentState = DialogueState.Normal;
     private InputAction talkAction;
 
-    // Components    
+    // Components    INK stuff
+
     private Player_Controller playerOverworld;
     [Header("Ink Story")]
     [SerializeField] private TextAsset inkJson;
@@ -45,7 +46,10 @@ public class Dialogue_Manager : MonoBehaviour
 
 
     private bool dialgouePlaying = false;
+    private int currentChoiceIndex = -1;
+
     //new ink dialogue methods
+
     private void OnEnable()
     {
         Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue += EnterDialogue;
@@ -57,6 +61,10 @@ public class Dialogue_Manager : MonoBehaviour
         Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
         // Game_Events_Manager.Instance.onOverworldNPCDialogue -= SubmitPressed;
 
+    }
+    private void UpdateCHoiceIndex(int choiceIndex)
+    {
+        this.currentChoiceIndex = choiceIndex;
     }
 
     private void SubmitPressed()
@@ -100,7 +108,7 @@ public class Dialogue_Manager : MonoBehaviour
         {
             string dialogueLine = story.Continue();
             Debug.Log(dialogueLine);
-            Game_Events_Manager.Instance.dialogueEvents.DisplayDialogue(dialogueLine);
+            Game_Events_Manager.Instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
         }
         else
         {

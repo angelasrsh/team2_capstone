@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Ink.Runtime;
 
 public class Dialogue_Events
 {
@@ -33,13 +34,22 @@ public class Dialogue_Events
             onDialogueFinished();
         }
     }
-    public event Action<string> onDisplayDialogue;
-    public void DisplayDialogue(string dialogueLine)
+    public event Action<string, List<Ink.Runtime.Choice>> onDisplayDialogue;
+    public void DisplayDialogue(string dialogueLine, List<Ink.Runtime.Choice> dialogueChoices)
     {
         Debug.Log("Display Dialogue for new NPC stuff");
         if (onDisplayDialogue != null)
         {
-            onDisplayDialogue(dialogueLine);
+            onDisplayDialogue(dialogueLine, dialogueChoices);
+        }
+    }
+
+    public event Action<int> onUpdateChoiceIndex;
+    public void UpdateChoiceIndex(int choiceIndex)
+    {
+        if (onUpdateChoiceIndex != null)
+        {
+            onUpdateChoiceIndex(choiceIndex);
         }
     }
 
