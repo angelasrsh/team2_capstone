@@ -13,6 +13,9 @@ public class Event_Data : ScriptableObject
     public int MilestonePercent;
 
     [Header("Panel Images")]
-    public Sprite[] panels;
+    public Sprite[] Panels;
+
+    [Header("Music")]
+    public AudioClip Music;
 
 }

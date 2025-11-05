@@ -83,6 +83,8 @@ public enum IngredientType
   Uncut_Ficklegourd,
   Cut_Ficklegourd,
   Cooked_Cut_Ficklegourd,
+  PreWashed_Rice,
+  Steamed_Rice,
   Lost_Elven_Ring
 }
 

@@ -62,6 +62,7 @@ public class Dish_Tool_Inventory : Inventory
   /// <returns>How many items were added</returns>
   public override int AddResources(Item_Data type, int count)
   {
+    Debug.Log($"[Dish_Tool_Inventory]: Adding {count} of {type.name} to dish inventory.");
     return addResourcesOfType<Dish_Tool_Stack>(type, count);
   }
 

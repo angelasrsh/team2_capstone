@@ -90,7 +90,7 @@ public class Hover_Info : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         if (currentItem == null)
         {
-            Debug.Log("[Hover_Info]: current item is null!");
+            // Debug.Log("[Hover_Info]: current item is null!");
             return;
         }
 
