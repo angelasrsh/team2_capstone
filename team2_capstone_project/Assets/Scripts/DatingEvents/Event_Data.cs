@@ -9,6 +9,7 @@ using UnityEngine;
 public class Event_Data : ScriptableObject
 {
     [Header("Event Identifiers")]
+    public string CutsceneID;  // e.g. "Elf_50", "Satyr_100", etc.
     public CustomerData Customer;
     public int MilestonePercent;
 

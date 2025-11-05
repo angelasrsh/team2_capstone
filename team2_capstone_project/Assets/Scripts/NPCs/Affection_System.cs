@@ -35,16 +35,16 @@ public class AffectionEntry {
     public void TryPlayEvent()
     {
         int milestone = NextEligibleEvent(); // 0 - 3 for 25 - 100 level events
+        Event_Data selectedCutscene = null;
+        
         switch (milestone)
         {
             case 1:
-                Affection_System.Instance.Cutscene = customerData.Cutscene_50;
-                PlayDatingEvent();
-                break;
+                selectedCutscene = customerData.Cutscene_50;    
+            break;
             case 3:
-                Affection_System.Instance.Cutscene = customerData.Cutscene_100;
-                PlayDatingEvent();
-                break;
+                selectedCutscene = customerData.Cutscene_100;
+            break;
             case 0:
             case 2:
             // TODO: Add dialogue dating events
@@ -52,8 +52,20 @@ public class AffectionEntry {
                 break;
                 // Can also make a function that takes care of calling both types of events
         }    
-        if (milestone > -1)
-            EventsPlayed[milestone] = true; // Mark event as played        
+        if (selectedCutscene != null)
+        {
+            // Skip if already played
+            if (Cutscene_Manager.Instance != null && 
+                Cutscene_Manager.Instance.HasPlayed(selectedCutscene.CutsceneID))
+            {
+                Debug.Log($"[Aff_Sys] Skipping {selectedCutscene.CutsceneID} because it was already played.");
+                return;
+            }
+
+            Affection_System.Instance.Cutscene = selectedCutscene;
+            PlayDatingEvent();
+            EventsPlayed[milestone] = true;
+        }     
     }
 
     /// <summary>
