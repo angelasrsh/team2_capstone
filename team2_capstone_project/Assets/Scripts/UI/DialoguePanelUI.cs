@@ -46,8 +46,8 @@ public class DialoguePanelUI : MonoBehaviour
 
     private void DisplayDialogue(string dialogueLine)
     {
+        Debug.Log("DisplayDialog is working!");
         dialogueText.text = dialogueLine;
-        contentParent.SetActive(true);
 
     }
     private void ResetPanel()

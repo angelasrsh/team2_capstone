@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Elf_Ring_Quest_Step : Quest_Step
 {
-    [SerializeField] private string dialogueKnotName;
+    [SerializeField] public string dialogueKnotName;
     protected void OnEnable()
     {
         Game_Events_Manager.Instance.onOverworldNPCDialogue += Elf75Dialogue;
@@ -12,6 +12,7 @@ public class Elf_Ring_Quest_Step : Quest_Step
     
     protected void OnDisable()
     {
+        
         Game_Events_Manager.Instance.onOverworldNPCDialogue -= Elf75Dialogue;
     }
 
@@ -22,12 +23,17 @@ public class Elf_Ring_Quest_Step : Quest_Step
 
     private void Elf75Dialogue()
     {
-        // if (isOpen)
-        Debug.Log("Insert dialogue for elf here");
-        if(!dialogueKnotName.Equals(""))
-        {
-            Game_Events_Manager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
-        }
+
+            // Debug.Log("PlayScene New Ink in Elf75Dialogue");
+
+            if (!dialogueKnotName.Equals(""))
+            {
+                Game_Events_Manager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+            }
+            else
+            {
+                Debug.LogWarning("[Foraging_Area_NPC_Actor] No dialogue knot name found!");
+            }
             FinishQuestStep(); // Finish and destroy this object
     }
 }

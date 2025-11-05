@@ -26,6 +26,9 @@ public class Foraging_Area_NPC_Actor : MonoBehaviour
     [SerializeField] private Transform spriteTransform;
     [SerializeField] private GameObject thoughtBubbleUI;
 
+    [Header("Quest Integration")]
+    public Elf_Ring_Quest_Step elf_ring_quest_knot;
+
     private void Awake()
     {
         if (spriteTransform != null)
@@ -111,11 +114,34 @@ public class Foraging_Area_NPC_Actor : MonoBehaviour
 
         if (talkAction.WasPerformedThisFrame())
         {
+            
             StartCoroutine(HandleTalk());
         }
 
         HandleIdleAnimation();
     }
+
+    // Helper method to safely get the knot name
+    private string GetDialogueKnotName()
+    {
+        // First, try to get it from the quest step reference
+        if (elf_ring_quest_knot != null)
+        {
+            return elf_ring_quest_knot.dialogueKnotName;
+        }
+        
+        // Fallback: Try to find it in the scene
+        var questStep = FindObjectOfType<Elf_Ring_Quest_Step>();
+        if (questStep != null)
+        {
+            elf_ring_quest_knot = questStep; // Cache it for next time
+            return questStep.dialogueKnotName;
+        }
+        
+        Debug.LogWarning("[Foraging_Area_NPC_Actor] Could not find Elf_Ring_Quest_Step!");
+        return string.Empty;
+    }
+
 
     private IEnumerator HandleTalk()
     {

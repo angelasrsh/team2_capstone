@@ -43,18 +43,19 @@ public class Dialogue_Manager : MonoBehaviour
     [SerializeField] private TextAsset inkJson;
     private Story story;
 
+
     private bool dialgouePlaying = false;
     //new ink dialogue methods
     private void OnEnable()
     {
         Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue += EnterDialogue;
-        Game_Events_Manager.Instance.onOverworldNPCDialogue += SubmitPressed;
+        // Game_Events_Manager.Instance.onOverworldNPCDialogue += SubmitPressed;
     }
 
     private void OnDisable()
     {
         Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
-        Game_Events_Manager.Instance.onOverworldNPCDialogue -= SubmitPressed;
+        // Game_Events_Manager.Instance.onOverworldNPCDialogue -= SubmitPressed;
 
     }
 
@@ -156,7 +157,10 @@ public class Dialogue_Manager : MonoBehaviour
     private void Update()
     {
         if (talkAction == null) return;
-
+        if (dialgouePlaying && talkAction != null && talkAction.WasPerformedThisFrame())
+        {
+            ContinueStory();
+        }
         if (talkAction.triggered)
         {
             // // If still typing, skip to full line
