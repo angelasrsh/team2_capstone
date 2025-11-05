@@ -94,14 +94,35 @@ public class Panel_Cutscene : MonoBehaviour
     public void onClickNext()
     {
         if (panelIndex < DatingCutsceneData.Panels.Length)
+        {
             ChangePanel();
+        }
         else
         {
             if (DatingCutsceneData.Customer == null) // global event like intro cutscene
                 Player_Progress.Instance.SetIntroPlayed(true);
+            else if (Cutscene_Manager.Instance != null) // Mark cutscene as played
+                Cutscene_Manager.Instance.MarkAsPlayed(DatingCutsceneData.CutsceneID);
+
+            // Save immediately to persist this
+            Save_Manager.instance?.AutoSave();
+
             Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Dating_Events, DatingCutsceneData.roomToReturnTo);
+            // StartCoroutine(TransitionBackToRestaurant());
         }
     }
+
+    private IEnumerator TransitionBackToRestaurant()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Updated_Restaurant", LoadSceneMode.Single);
+
+        // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        Debug.Log("[Panel_Cutscene] Returned to restaurant from cutscene.");
+    }
+
 
     // TODO: Would like to try fading the cutscene panels for a smoother transition
     // IEnumerator FadeSprites(UnityEngine.UI.Image sprite, float newAlpha, float fadeDuration)
