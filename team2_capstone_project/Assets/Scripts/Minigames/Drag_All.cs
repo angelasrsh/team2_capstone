@@ -312,7 +312,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             else
               rectTransform.position = ingrOriginalPos;
           }
-          else
+          else if (trash.trashOpen)
           {
             int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
             if (trashed > 0) // Only remove ingredient actually added to trash

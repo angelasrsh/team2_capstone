@@ -132,9 +132,9 @@ public class Drag_Dish :  MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         chestRedZone = chest.redZone;
       }
 
-      if (IsOverlapping(rectTransform, trashRedZone) || IsOverlapping(rectTransform, chestRedZone))
+      transform.SetParent(parentAfterDrag);
+      if ((trash.trashOpen && IsOverlapping(rectTransform, trashRedZone)) || (chest.chestOpen && IsOverlapping(rectTransform, chestRedZone)))
       {
-        DuplicateInventorySlot();
         Dish_Data dish = (Dish_Data)(ParentSlot.stk.resource);
 
         if (chest.chestOpen)
@@ -153,27 +153,12 @@ public class Drag_Dish :  MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
           else
             rectTransform.position = dishOriginalPos;
         }
-
-
-        Destroy(gameObject);
-        return;
       }
+      rectTransform.position = dishOriginalPos;
       return;
     }
 
     transform.position = dishOriginalPos;
-  }
-
-  /// <summary>
-  /// The Inventory UI requires an image slot, so duplicate and replace self
-  /// </summary>
-  private void DuplicateInventorySlot()
-  {
-    GameObject newImageSlot = Instantiate(this.gameObject, ParentSlot.transform);
-    this.name = "Image_Slot_Old";
-    newImageSlot.name = "Image_Slot"; // Must rename so Inventory_Slot can find the new image_slot
-    newImageSlot.GetComponent<RectTransform>().offsetMax = new Vector2(0, 0);
-    newImageSlot.GetComponent<RectTransform>().offsetMin = new Vector2(0, 0);
   }
 
   public void SetCanDrag(bool draggable)

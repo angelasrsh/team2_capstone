@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class Chest_Item: MonoBehaviour
+public class Chest_Item: MonoBehaviour, IPointerDownHandler
 {
   [SerializeField] private Image itemImage;
   [SerializeField] private TextMeshProUGUI amountText;
@@ -13,8 +13,8 @@ public class Chest_Item: MonoBehaviour
   private int currentAmount;
   private const int MAX_STACK = 10; // stack limit for ingredients
 
-  private float lastClickTime;
-  private const float doubleClickDelay = 0.25f; // seconds
+  private float lastTapTime = 0f;
+  private const float doubleTapThreshold = 0.25f;
   private static Chest chest; // static because we only have one chest (change later if multiple chests)
 
   public void Setup(Transform slot)
@@ -22,6 +22,44 @@ public class Chest_Item: MonoBehaviour
     itemImage = slot.Find("Image").GetComponent<Image>();
     amountText = slot.Find("Amount").GetComponent<TextMeshProUGUI>();
     ClearItem();
+  }
+
+  public void OnPointerDown(PointerEventData eventData)
+  {
+    float timeSinceLastTap = Time.time - lastTapTime;
+
+    if (timeSinceLastTap <= doubleTapThreshold)
+    {
+        TakeOneItem();
+        lastTapTime = 0f; // reset so triple taps won't trigger multiple removals
+    }
+    else
+    {
+        lastTapTime = Time.time; // first tap, wait for second
+    }
+  }
+
+  private void TakeOneItem()
+  {
+    if (currentItem == null)
+      return;
+
+    if (Chest.Instance == null)
+      return;
+
+    int removed = Chest.Instance.RemoveItemFromChest(this, 1);
+
+    if (removed > 0)
+    {
+      // Add to inventory
+      if (currentItem is Ingredient_Data ingredient)
+        Ingredient_Inventory.Instance.AddResources(ingredient.ingredientType, removed);
+      else if (currentItem is Dish_Data dish)
+        Dish_Tool_Inventory.Instance.AddResources(dish, removed);
+
+      currentAmount -= removed;
+      UpdateVisuals();
+    }
   }
 
   public bool IsEmpty()
@@ -39,6 +77,11 @@ public class Chest_Item: MonoBehaviour
     return currentAmount;
   }
 
+  public void SetAmount(int newAmount)
+  {
+    currentAmount = Mathf.Max(0, newAmount);
+  }
+  
   public bool CanStack(Item_Data newItem)
   {
     return newItem is Ingredient_Data ingredient && currentItem == ingredient && currentAmount < MAX_STACK;
@@ -91,14 +134,13 @@ public class Chest_Item: MonoBehaviour
 
   private void UpdateVisuals()
   {
-    if (currentItem != null)
+    if (currentItem != null && currentAmount > 0)
     {
       itemImage.sprite = currentItem.Image;
       itemImage.preserveAspect = true;
       itemImage.gameObject.SetActive(true);
 
-      bool isIngredient = currentItem is Ingredient_Data;
-      if (isIngredient)
+      if (currentItem is Ingredient_Data)
       {
         amountText.text = currentAmount.ToString();
         amountText.gameObject.SetActive(true);

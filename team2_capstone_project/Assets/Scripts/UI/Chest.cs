@@ -169,6 +169,21 @@ public class Chest : MonoBehaviour
 
     return amount - remaining;
   }
+
+  /// <summary>
+  /// Attempts to remove 'amount' of 'item' from the chest.
+  /// Returns the actual number removed.
+  /// </summary>
+  public int RemoveItemFromChest(Chest_Item slot, int amount = 1)
+  {
+    if (slot == null || slot.IsEmpty())
+      return 0;
+
+    int removed = Mathf.Min(slot.GetAmount(), amount);
+    // slot.SetAmount(slot.GetAmount() - removed);
+
+    return removed;
+  }
   
   /// <summary>
   /// Get the chest save data for saving.
