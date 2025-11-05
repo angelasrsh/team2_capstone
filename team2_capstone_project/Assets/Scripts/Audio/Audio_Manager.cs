@@ -50,6 +50,7 @@ namespace Grimoire
     public AudioClip orderServed;
     public AudioClip openShopSFX;
     public AudioClip closeShopSFX;
+    public AudioClip pianoHit;
 
     [Header("Footstep Clips")]
     public AudioClip grassLeftFootstep;
