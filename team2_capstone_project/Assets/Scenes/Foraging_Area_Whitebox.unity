@@ -6875,7 +6875,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!223 &708894103
 Canvas:
   m_ObjectHideFlags: 0
@@ -18334,6 +18334,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2152913129354225850, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
+      propertyPath: contentParent
+      value: 
+      objectReference: {fileID: 2106199230}
+    - target: {fileID: 8320050663169520962, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8320050664446296208, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
+      propertyPath: m_Alpha
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8320050664616803440, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -18418,10 +18430,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8320050664616803441, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
-      propertyPath: m_SortingOrder
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 8320050664616803444, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
       propertyPath: m_Name
       value: Dialog_UI
@@ -18431,11 +18439,7 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8320050664616803453, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
-      propertyPath: autoEndDialogue
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8320050664616803453, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
-      propertyPath: autoAdvanceDialog
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -23480,6 +23484,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d14ef850159a191469273fc2495553f9, type: 3}
+--- !u!1 &2106199230 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8320050664446296212, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
+  m_PrefabInstance: {fileID: 1699808192}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2119355351
 GameObject:
   m_ObjectHideFlags: 0

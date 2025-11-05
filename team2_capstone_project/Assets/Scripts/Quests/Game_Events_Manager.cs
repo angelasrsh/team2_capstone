@@ -209,12 +209,12 @@ public class Game_Events_Manager : MonoBehaviour
     public event Action onOverworldNPCDialogue;
     public void OverworldNPCDialogue()
     {
-        Debug.Log("Overwolrd called");
+        // Debug.Log("Overwolrd called");
         if (onOverworldNPCDialogue != null)
         {
             
             onOverworldNPCDialogue();
-            Debug.Log($"[Overworld] Starting quest ");
+            // Debug.Log($"[Overworld] Starting quest ");
         }
             
         

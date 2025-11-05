@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Elf_Ring_Quest_Step : Quest_Step
 {
+    [SerializeField] private string dialogueKnotName;
     protected void OnEnable()
     {
         Game_Events_Manager.Instance.onOverworldNPCDialogue += Elf75Dialogue;
@@ -23,6 +24,10 @@ public class Elf_Ring_Quest_Step : Quest_Step
     {
         // if (isOpen)
         Debug.Log("Insert dialogue for elf here");
+        if(!dialogueKnotName.Equals(""))
+        {
+            Game_Events_Manager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+        }
             FinishQuestStep(); // Finish and destroy this object
     }
 }
