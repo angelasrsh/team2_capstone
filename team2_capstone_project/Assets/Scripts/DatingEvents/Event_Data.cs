@@ -8,6 +8,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "NPCs/Event", fileName = "Event")] 
 public class Event_Data : ScriptableObject
 {
+    public Room_Data.RoomID roomToReturnTo;
+
     [Header("Event Identifiers")]
     public CustomerData Customer;
     public int MilestonePercent;
@@ -17,5 +19,4 @@ public class Event_Data : ScriptableObject
 
     [Header("Music")]
     public AudioClip Music;
-
 }

@@ -96,7 +96,11 @@ public class Panel_Cutscene : MonoBehaviour
         if (panelIndex < DatingCutsceneData.Panels.Length)
             ChangePanel();
         else
-            SceneManager.LoadScene("Updated_Restaurant");
+        {
+            if (DatingCutsceneData.Customer == null) // global event like intro cutscene
+                Player_Progress.Instance.SetIntroPlayed(true);
+            Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Dating_Events, DatingCutsceneData.roomToReturnTo);
+        }
     }
 
     // TODO: Would like to try fading the cutscene panels for a smoother transition

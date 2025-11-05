@@ -13,6 +13,7 @@ public class Main_Menu_UI : MonoBehaviour
     public Room_Data currentRoom;
     public Room_Data.RoomID exitingTo;
     private Player_Controller player;
+    [SerializeField] private Event_Data introCutsceneData;
 
     [Header("UI Elements")]
     [SerializeField] private TMP_InputField nameInputField;
@@ -97,6 +98,7 @@ public class Main_Menu_UI : MonoBehaviour
 
         // Set the player name in Player_Progress
         Player_Progress.Instance.SetPlayerName(playerName);
+        Player_Progress.Instance.SetIntroPlayed(false);
 
         // Create a new save slot (overwriting existing one)
         Save_Manager.instance.CreateNewSaveSlot(currentSlot);
@@ -131,6 +133,7 @@ public class Main_Menu_UI : MonoBehaviour
         isSceneTransitioning = true;
 
         yield return new WaitForSeconds(0.3f);  // small delay for UI feel
-        Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+        // Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+        Affection_System.Instance.PlayIntroCutscene(introCutsceneData);
     }
 }

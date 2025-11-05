@@ -26,8 +26,6 @@ public class AffectionEntry {
     // public Scene eventScene; // Temp: Delete later
 
    
-
-
     /// <summary>
     /// Call this function to check if there is an event that can be played
     /// And play it if able
@@ -242,6 +240,32 @@ public class Affection_System : MonoBehaviour
     public void ClearNextCutsceneCustomer()
     {
         nextCutsceneCustomer = null;
+    }
+
+    public void PlayIntroCutscene(Event_Data cutsceneData)
+    {
+        Cutscene = cutsceneData;
+        // Debug.Log("[Aff_Sys] Starting intro cutscene...");
+
+        // Save state just in case
+        if (Save_Manager.instance != null)
+            Save_Manager.instance.AutoSave();
+
+        Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());
+    }
+
+    /// <summary>
+    /// Same as the one in AffectionEntry, but used specifically for global events like intro cutscene.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator TransitionToDateScene()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Dating_Events", LoadSceneMode.Single);
+
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        Debug.Log("[Aff_Sys] Date scene loaded.");
     }
 
     public int GetAffectionLevel(CustomerData customer)
