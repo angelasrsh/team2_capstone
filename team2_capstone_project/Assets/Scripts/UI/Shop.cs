@@ -54,7 +54,7 @@ public class Shop : MonoBehaviour
       closeAction = playerInput.actions.FindAction("CloseInteract", true); // From UI Input Map
     }
     
-    CloseShopUI();
+    CloseShopUI(false);
     CreateShopItemCards();
     firstOpen = true;
   }
@@ -106,17 +106,21 @@ public class Shop : MonoBehaviour
       shopkeeperText.text = otherOpenText;
   }
 
-  private void CloseShopUI()
+  private void CloseShopUI(bool playSound = true)
   {
-    shopUI.SetActive(false);
-    if (shopOpen)
-      Game_Manager.Instance.UIManager.CloseUI();
-    shopOpen = false;
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.closeShopSFX, 0.65f, 1.3f);
-    Game_Events_Manager.Instance.InShop(false);
+        shopUI.SetActive(false);
+        Game_Events_Manager.Instance.InShop(false);
 
-    if (firstOpen)
-      firstOpen = false;
+        if (shopOpen)
+            Game_Manager.Instance.UIManager.CloseUI();
+
+        shopOpen = false;
+
+        if (playSound)
+            Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.closeShopSFX, 0.65f, 1.3f);
+
+        if (firstOpen)
+            firstOpen = false;
   }
 
   /// <summary>

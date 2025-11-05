@@ -698,6 +698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2cfbdc2b553bcd49b8c96476c4f5b0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPaused: 0
   detailsText: {fileID: 6559461563259614022}
   nameText: {fileID: 9139013914397180539}
   recipeImage: {fileID: 2452555381017637974}
@@ -1864,6 +1865,10 @@ PrefabInstance:
     - target: {fileID: 758040659617110754, guid: e17327b2d22482e4b889006a3a6f86a3, type: 3}
       propertyPath: m_RaycastTarget
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3279670320706813946, guid: e17327b2d22482e4b889006a3a6f86a3, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3613980863280176878, guid: e17327b2d22482e4b889006a3a6f86a3, type: 3}
       propertyPath: m_Name

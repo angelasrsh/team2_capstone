@@ -142,6 +142,8 @@ public class Customer_Controller : MonoBehaviour
             {
                 if (hasSatDown && !hasRequestedDish)
                 {
+                    if (TryPlayRingReturnDialogue())
+                        return;
                     RequestDishAfterDialogue();
                     Game_Events_Manager.Instance.GetOrder();
                 }
@@ -540,6 +542,100 @@ public class Customer_Controller : MonoBehaviour
 
     #region Dialog
     /// <summary>
+    /// Attempts to play the ring return dialogue for Asper if the player has the ring item in their inventory.
+    /// If successful, removes the ring from inventory and marks it as collected.
+    /// </summary>
+    /// <returns></returns>
+    private bool TryPlayRingReturnDialogue()
+    {
+        if (Affection_Event_Item_Tracker.instance == null)
+        {
+            Debug.LogWarning($"[{data.customerName}] Tracker instance missing.");
+            return false;
+        }
+
+        if (data == null)
+        {
+            Debug.LogWarning("[RingReturn] CustomerData missing on NPC.");
+            return false;
+        }
+
+        var tracker = Affection_Event_Item_Tracker.instance;
+
+        // Find the relevant entry in the tracker
+        var entry = tracker.items.Find(i => i.npc != null && i.npc.npcID == data.npcID);
+        if (entry == null)
+        {
+            Debug.LogWarning($"[{data.customerName}] No event item entry found in tracker.");
+            return false;
+        }
+
+        Debug.Log($"[DEBUG] Tracker entry for {data.customerName}: " +
+                $"Unlocked={entry.unlocked}, Collected={entry.collected}, Item={entry.eventItem?.Name}");
+
+        // Skip if item hasn’t been unlocked yet
+        if (!entry.unlocked)
+        {
+            Debug.Log($"[{data.customerName}] Event item not yet unlocked — skipping ring return dialogue.");
+            return false;
+        }
+
+        // Check if player has the ring item in inventory
+        var inventory = FindObjectOfType<Inventory>();
+        if (inventory == null)
+        {
+            Debug.LogWarning($"[{data.customerName}] Inventory missing in scene.");
+            return false;
+        }
+
+        if (entry.eventItem == null)
+        {
+            Debug.LogWarning($"[{data.customerName}] entry.eventItem missing!");
+            return false;
+        }
+
+        bool hasItem = inventory.HasItem(entry.eventItem);
+        Debug.Log($"[{data.customerName}] Checking inventory for {entry.eventItem.Name} → {hasItem}");
+
+        // Only play return dialogue if the player currently has the item
+        if (!hasItem)
+        {
+            Debug.Log($"[{data.customerName}] Player does not currently have the ring — using normal dialogue instead.");
+            return false;
+        }
+
+        // Trigger ring return dialogue
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+        {
+            Debug.LogWarning("[RingReturn] Dialogue_Manager missing.");
+            return false;
+        }
+
+        dm.onDialogComplete = () =>
+        {
+            dm.onDialogComplete = null;
+
+            // Remove the item from the player's inventory and mark collected
+            inventory.RemoveResources(entry.eventItem, 1);
+            Ingredient_Inventory.Instance.RemoveResources(entry.eventItem, 1);
+
+            if (!entry.collected)
+            {
+                tracker.MarkCollected(entry);
+                Debug.Log($"[{data.customerName}] Ring returned and marked collected.");
+            }
+            else
+                Debug.Log($"[{data.customerName}] Ring was already marked collected — just removing from inventory.");
+        };
+
+        Debug.Log($"[{data.customerName}] Playing ring return dialogue scene: {data.npcID}.RingReturn");
+        dm.PlayScene($"{data.npcID}.RingReturn", CustomerData.EmotionPortrait.Emotion.Happy);
+        return true;
+    }
+
+
+    /// <summary>
     /// Generates a dialogue key based on the customer's identity and whether the served dish is liked/neutral/disliked.
     /// Special-case dishes (like One-Day Blinding Stew) are checked first so they can override normal favorite/disliked logic.
     /// </summary>
@@ -622,13 +718,13 @@ public class Customer_Controller : MonoBehaviour
     #region State Management
     public Customer_State GetState()
     {
-        Debug.Log("[Customer_Controller]: customer: " + data.customerName + " being saved.");
+        // Debug.Log("[Customer_Controller]: customer: " + data.customerName + " being saved.");
         if (requestedDish == null)
             Debug.Log("[Customer_Controller]: requested dish is null");
         else
             Debug.Log("[Customer_Controller]: requested dish: " + requestedDish.name + " being saved.");
-        Debug.Log("[Customer_Controller]: hasRequestedDish: " + hasRequestedDish + ".");
-        Debug.Log("[Customer_Controller]: served: " + (requestedDish == null && hasRequestedDish) + ".");
+        // Debug.Log("[Customer_Controller]: hasRequestedDish: " + hasRequestedDish + ".");
+        // Debug.Log("[Customer_Controller]: served: " + (requestedDish == null && hasRequestedDish) + ".");
         return new Customer_State
         {
             customerName = data.customerName,
@@ -637,35 +733,6 @@ public class Customer_Controller : MonoBehaviour
             hasRequestedDish = hasRequestedDish,
             hasBeenServed = (requestedDish == null && hasRequestedDish)
         };
-    }
-
-    /// <summary>
-    /// Debug method to force the customer to request a specific dish by name.
-    /// </summary>
-    public void Debug_ForceRequestDish(string dishName)
-    {
-        if (string.IsNullOrEmpty(dishName)) return;
-
-        Dish_Data found = null;
-
-        // Look in all known arrays
-        // foreach (var dish in data.favoriteDishes) if (dish.name == dishName) found = dish;
-        // foreach (var dish in data.neutralDishes) if (dish.name == dishName) found = dish;
-        // foreach (var dish in data.dislikedDishes) if (dish.name == dishName) found = dish;
-        foreach (var dish in Game_Manager.Instance.dishDatabase.GetAllDishes()) if (dish.name == dishName) found = dish;
-
-        if (found != null)
-        {
-            requestedDish = found;
-            hasRequestedDish = true;
-
-            if (thoughtBubble != null)
-            {
-                thoughtBubble.SetActive(true);
-                if (bubbleDishImage != null)
-                    bubbleDishImage.sprite = requestedDish.Image;
-            }
-        }
     }
     #endregion
 }

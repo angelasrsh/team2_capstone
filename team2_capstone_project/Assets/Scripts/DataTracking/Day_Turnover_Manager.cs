@@ -77,6 +77,8 @@ public class Day_Turnover_Manager : MonoBehaviour
     CurrentDay = nextDay;
     currentTimeOfDay = TimeOfDay.Morning;
     Player_Progress.Instance.ResetDailyRecipeFlags();
+    if (Expected_Customers_UI.Instance != null)
+      Expected_Customers_UI.Instance.SendMessage("ResetAnimationState", SendMessageOptions.DontRequireReceiver);
 
     // Reset weather globally for new day
     if (Weather_Manager.Instance != null)
@@ -84,6 +86,7 @@ public class Day_Turnover_Manager : MonoBehaviour
     else
       Debug.LogWarning("[Day_Turnover_Manager] No WeatherManager found — weather not reset.");
 
+    // Refresh daily menu pool
     if (Choose_Menu_Items.instance == null)
       Debug.LogWarning("[Day_Turnover_Manager] No Choose_Menu_Items found when ending day — will refresh next load.");
     else
