@@ -11,7 +11,7 @@ I am messing with you, but you still have a thing or two to learn before you can
 
 …Where did you get that? 
 * [It seemed important.]
-
+    Thank you.
 * [You recognize it, don't you?]
 
 
@@ -30,7 +30,8 @@ I am messing with you, but you still have a thing or two to learn before you can
 
 * [“You married a human?!”]
 
-- I believed some things were worth defying ages of expectation for. Even though elves so disrespectfully defy the laws of time, it still punished me for it. Us Elves… we pay for memory.
+- 
+I believed some things were worth defying ages of expectation for. Even though elves so disrespectfully defy the laws of time, it still punished me for it. Us Elves… we pay for memory.
 
 (She clenches the ring in her hand)
 Do not mistake this for weakness. I refuse to mourn so weakly in front of you. So humanly.

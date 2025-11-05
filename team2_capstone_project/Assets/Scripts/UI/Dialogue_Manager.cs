@@ -53,16 +53,15 @@ public class Dialogue_Manager : MonoBehaviour
     private void OnEnable()
     {
         Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue += EnterDialogue;
-        // Game_Events_Manager.Instance.onOverworldNPCDialogue += SubmitPressed;
+        Game_Events_Manager.Instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
     }
 
     private void OnDisable()
     {
         Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
-        // Game_Events_Manager.Instance.onOverworldNPCDialogue -= SubmitPressed;
-
+        Game_Events_Manager.Instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;  
     }
-    private void UpdateCHoiceIndex(int choiceIndex)
+    private void UpdateChoiceIndex(int choiceIndex)
     {
         this.currentChoiceIndex = choiceIndex;
     }
@@ -104,13 +103,19 @@ public class Dialogue_Manager : MonoBehaviour
 
     private void DisplayNextLine()
     {
+        //make a choice if applciable
+        if(story.currentChoices.Count > 0 && currentChoiceIndex != -1)
+        {
+            story.ChooseChoiceIndex(currentChoiceIndex);
+            currentChoiceIndex = -1;
+        }
         if (story.canContinue)
         {
             string dialogueLine = story.Continue();
             Debug.Log(dialogueLine);
             Game_Events_Manager.Instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
         }
-        else
+        else if (story.currentChoices.Count == 0)
         {
             // No more lines, exit dialogue
             ExitDialogue();
