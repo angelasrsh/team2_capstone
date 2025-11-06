@@ -18,7 +18,8 @@ public class Room_Data : ScriptableObject
     Combine_Minigame,
     Foraging_Area_Whitebox,
     Updated_Restaurant,
-    Outside_Restaurant
+    Outside_Restaurant,
+    Dating_Events
   }
 
   public enum SpawnPointID

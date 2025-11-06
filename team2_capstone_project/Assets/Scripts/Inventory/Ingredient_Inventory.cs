@@ -207,7 +207,7 @@ public class Ingredient_Inventory : Inventory
             case IngredientType.Milk:
                 return "Milk";
             case IngredientType.Oil:
-                return "Oil";
+                return "Eleonora Oil";
             case IngredientType.Uncut_Slime:
                 return "Slime Gelatin";
             case IngredientType.Uncooked_Patty:
@@ -230,6 +230,10 @@ public class Ingredient_Inventory : Inventory
                 return "Uncut Ficklegourd";
             case IngredientType.Cooked_Cut_Ficklegourd:
                 return "Cooked Ficklegourd";
+            case IngredientType.PreWashed_Rice:
+                return "Pre-Washed Rice";
+            case IngredientType.Steamed_Rice:
+                return "Steamed Rice";
             default:
                 return "";
         }
@@ -294,6 +298,10 @@ public class Ingredient_Inventory : Inventory
                 return IngredientType.Uncut_Ficklegourd;
             case "Cooked Ficklegourd":
                 return IngredientType.Cooked_Cut_Ficklegourd;
+            case "Pre-Washed Rice":
+                return IngredientType.PreWashed_Rice;
+            case "Steamed Rice":
+                return IngredientType.Steamed_Rice;
             default:
                 return IngredientType.Null;
         }

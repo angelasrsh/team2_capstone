@@ -9,6 +9,7 @@ using TMPro;
 
 public class Chest : MonoBehaviour
 {
+    public static Chest Instance;
     public static event System.Action<bool> OnChestOpenChanged;
     private bool isPlayerInRange = false;
     public bool chestOpen = false; 
@@ -22,6 +23,14 @@ public class Chest : MonoBehaviour
     private Player_Controller player;
     private InputAction interactAction, closeAction;
     private PlayerInput playerInput;
+
+    void Awake()
+    {
+      if (Instance == null)
+        Instance = this;
+      else
+        Debug.LogWarning("[Chest] Multiple Chest instances in the scene!");
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -42,8 +51,14 @@ public class Chest : MonoBehaviour
         {
             Debug.LogWarning("[Chest]: Chest UI is not set in inspector!");
         }
+        redZone = GameObject.Find("ChestRedZone").GetComponent<RectTransform>();
         CreateChestSlots();
         CloseChestUI();
+        
+        // Try to load save data for this scene
+        var save = Save_Manager.GetGameData();
+        if (save != null && save.chestData != null)
+        LoadChestData(save.chestData);
     }
 
     // Update is called once per frame
@@ -105,17 +120,21 @@ public class Chest : MonoBehaviour
     /// </summary>
     private void CreateChestSlots()
     {
-        foreach (Transform slot in grid.transform)
-        {
-            Chest_Item newChestItem = new Chest_Item(slot);
-            itemsInChest.Add(newChestItem);
-        }
+      itemsInChest.Clear();
+      foreach (Transform slot in grid.transform)
+      {
+        Chest_Item chestItem = slot.gameObject.GetComponent<Chest_Item>();
+        if (chestItem == null)
+          chestItem = slot.gameObject.AddComponent<Chest_Item>();
+        chestItem.Setup(slot);
+        itemsInChest.Add(chestItem);
+      }
     }
 
-    /// <summary>
-    /// Adds item dropped into trash into the trash slots. This method assumes you cannot add more than
-    /// the stack limit at once, so keep it consistent with the max stack limit of inventory slot.
-    /// </summary>
+  /// <summary>
+  /// Adds item dropped into trash into the trash slots. This method assumes you cannot add more than
+  /// the stack limit at once, so keep it consistent with the max stack limit of inventory slot.
+  /// </summary>
   public int AddItemToChest(Item_Data item, int amount = 1) // change amount later
   {
     // Stack as much as you can
@@ -135,125 +154,73 @@ public class Chest : MonoBehaviour
     // Use empty slots for leftovers or if not stackable
     foreach (var slot in itemsInChest)
     {
-        if (remaining <= 0)
+      if (remaining <= 0)
         break;
 
-        if (slot.IsEmpty())
-        {
+      if (slot.IsEmpty())
+      {
         int added = slot.StartNewStack(item, remaining);
         remaining -= added;
-        }
+      }
     }
 
     if (remaining > 0)
-        Debug.LogWarning($"[Chest]: Not enough space! {remaining} {item.name} could not be added.");
+      Debug.LogWarning($"[Chest]: Not enough space! {remaining} {item.name} could not be added.");
 
     return amount - remaining;
-    }
-
-    #region Chest_Item Class
-    [System.Serializable]
-  public class Chest_Item
-  {
-    [SerializeField] private Image itemImage;
-    [SerializeField] private TextMeshProUGUI amountText;
-    // [SerializeField] private Toggle toggle;
-    private Item_Data currentItem; // object since it can be dish or ingredient
-    private int currentAmount;
-    private const int MAX_STACK = 10; // stack limit for ingredients
-
-    public Chest_Item(Transform slot)
-    {
-      itemImage = slot.Find("Image").GetComponent<Image>();
-      amountText = slot.Find("Amount").GetComponent<TextMeshProUGUI>();
-      ClearItem();
-    }
-
-    public bool IsEmpty()
-    {
-      return currentItem == null;
-    }
-
-    public Item_Data GetItem()
-    {
-      return currentItem;
-    }
-
-    public int GetAmount()
-    {
-      return currentAmount;
-    }
-
-    public bool CanStack(Item_Data newItem)
-    {
-      return newItem is Ingredient_Data ingredient && currentItem == ingredient && currentAmount < MAX_STACK;
-    }
-
-    /// <summary>
-    /// Add to this slot's existing stack if possible, and return how many items were actually added.
-    /// </summary>
-    public int AddToExistingStack(Item_Data newItem, int amount)
-    {
-      if (!CanStack(newItem))
-        return 0;
-
-      int spaceLeft = MAX_STACK - currentAmount;
-      int added = Mathf.Min(spaceLeft, amount);
-      currentAmount += added;
-      UpdateVisuals();
-      return added;
-    }
-
-    /// <summary>
-    /// Start a new stack in this empty slot. Returns how many items were actually added.
-    /// </summary>
-    public int StartNewStack(Item_Data newItem, int amount)
-    {
-      if (!IsEmpty())
-        return 0;
-
-      currentItem = newItem;
-      int added = 1;
-      if (newItem is Ingredient_Data)
-        added = Mathf.Min(amount, MAX_STACK);
-
-      currentAmount = added;
-      UpdateVisuals();
-      return added;
-    }
-
-    public void ClearItem()
-    {
-      // if (currentItem == null && currentAmount == 0)
-      //   return;
-
-      currentItem = null;
-      currentAmount = 0;
-      currentItem = null;
-      amountText.gameObject.SetActive(false);
-      itemImage.gameObject.SetActive(false);
-    }
-
-    private void UpdateVisuals()
-    {
-      if (currentItem != null)
-      {
-        itemImage.sprite = currentItem.Image;
-        itemImage.preserveAspect = true;
-        itemImage.gameObject.SetActive(true);
-
-        bool isIngredient = currentItem is Ingredient_Data;
-        if (isIngredient)
-        {
-          amountText.text = currentAmount.ToString();
-          amountText.gameObject.SetActive(true);
-        }
-        else
-          amountText.gameObject.SetActive(false);
-      }
-      else
-        ClearItem();
-    }
   }
-  #endregion
+
+  /// <summary>
+  /// Attempts to remove 'amount' of 'item' from the chest.
+  /// Returns the actual number removed.
+  /// </summary>
+  public int RemoveItemFromChest(Chest_Item slot, int amount = 1)
+  {
+    if (slot == null || slot.IsEmpty())
+      return 0;
+
+    int removed = Mathf.Min(slot.GetAmount(), amount);
+    // slot.SetAmount(slot.GetAmount() - removed);
+
+    return removed;
+  }
+  
+  /// <summary>
+  /// Get the chest save data for saving.
+  /// </summary>
+  public ChestSaveData GetChestSaveData()
+  {
+    ChestSaveData saveData = new ChestSaveData();
+    foreach (Chest_Item slot in itemsInChest)
+    {
+      ChestItemData data = slot.ToData();
+      if (data != null)
+        saveData.itemsInChest.Add(data);
+    }
+    Debug.Log("[Chest] Generated chest save data.");
+    Debug.Log($"[Chest] Saved {saveData.itemsInChest.Count} items in chest.");
+    return saveData;
+  }
+
+  /// <summary>
+  /// Load the chest from saved data.
+  /// </summary>
+  public void LoadChestData(ChestSaveData saveData)
+  {
+    // Clear all slots first
+    foreach (Chest_Item slot in itemsInChest)
+      slot.ClearItem();
+
+    if (saveData == null || saveData.itemsInChest == null)
+      return;
+
+    for (int i = 0; i < saveData.itemsInChest.Count && i < itemsInChest.Count; i++)
+    {
+      if (saveData.itemsInChest[i] != null)
+        Debug.Log($"[Chest] Loading item {i}: Category {saveData.itemsInChest[i].category}, DishType {saveData.itemsInChest[i].dishType}, Amount {saveData.itemsInChest[i].amount}");
+      itemsInChest[i].FromData(saveData.itemsInChest[i]);
+    }
+    Debug.Log("[Chest] Loaded chest data from save.");
+    Debug.Log($"[Chest] Loaded {saveData.itemsInChest.Count} items into chest.");
+  }
 }

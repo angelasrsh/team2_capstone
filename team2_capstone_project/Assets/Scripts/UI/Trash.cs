@@ -15,7 +15,6 @@ public class Trash : MonoBehaviour
   [SerializeField] private GameObject trashUI;
   [SerializeField] private GameObject grid;
   [SerializeField] public RectTransform redZone; // only here so that drag_all can easily find redZone even when it's inactive
-  // [SerializeField] private GameObject shopItemPrefab;
   [SerializeField] public List<Trash_Item> itemsInTrash; // assign 18 slots in inspector
 
   [Header("Player Input Info")]
@@ -43,6 +42,7 @@ public class Trash : MonoBehaviour
       Debug.LogWarning("[Trash]: Trash UI is not set in inspector!");
     }
 
+    redZone = GameObject.Find("TrashRedZone").GetComponent<RectTransform>();
     CreateTrashSlots();
     CloseTrashUI();
   }
@@ -165,8 +165,7 @@ public class Trash : MonoBehaviour
   {
     [SerializeField] private Image itemImage;
     [SerializeField] private TextMeshProUGUI amountText;
-    // [SerializeField] private Toggle toggle;
-    private Item_Data currentItem; // object since it can be dish or ingredient
+    private Item_Data currentItem; // Item_Data since it can be dish or ingredient
     private int currentAmount;
     private const int MAX_STACK = 10; // stack limit for ingredients
 

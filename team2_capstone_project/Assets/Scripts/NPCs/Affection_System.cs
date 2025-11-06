@@ -24,36 +24,64 @@ public class AffectionEntry {
     public bool[] EventsPlayed = new bool[NumEvents]; // default false
 
     // public Scene eventScene; // Temp: Delete later
-
+    private int dialogueIndex = 0;
+    private List<string> dialogKeys;
    
-
-
     /// <summary>
     /// Call this function to check if there is an event that can be played
     /// And play it if able
     /// </summary>
     public void TryPlayEvent()
     {
+        // If currently in the middle of an event, keep playing it instead
+        if (dialogueIndex > 0 && dialogueIndex < dialogKeys.Count)
+        {
+            PlayDialogueEvent();
+            return;
+        }
+
+            
         int milestone = NextEligibleEvent(); // 0 - 3 for 25 - 100 level events
+        Event_Data selectedCutscene = null;
+        
         switch (milestone)
         {
             case 1:
-                Affection_System.Instance.Cutscene = customerData.Cutscene_50;
-                PlayDatingEvent();
-                break;
+                selectedCutscene = customerData.Cutscene_50;    
+            break;
             case 3:
-                Affection_System.Instance.Cutscene = customerData.Cutscene_100;
-                PlayDatingEvent();
-                break;
+                selectedCutscene = customerData.Cutscene_100;
+            break;
             case 0:
+                dialogKeys = customerData.Dialogue_25;
+                dialogueIndex = 0;
+                PlayDialogueEvent();
+                EventsPlayed[milestone] = true;
+                break;
             case 2:
-            // TODO: Add dialogue dating events
+                dialogKeys = customerData.Dialogue_75;
+                dialogueIndex = 0;
+                PlayDialogueEvent();
+                EventsPlayed[milestone] = true;
+                break;
             default:
                 break;
                 // Can also make a function that takes care of calling both types of events
         }    
-        if (milestone > -1)
-            EventsPlayed[milestone] = true; // Mark event as played        
+        if (selectedCutscene != null)
+        {
+            // Skip if already played
+            if (Cutscene_Manager.Instance != null && 
+                Cutscene_Manager.Instance.HasPlayed(selectedCutscene.CutsceneID))
+            {
+                Debug.Log($"[Aff_Sys] Skipping {selectedCutscene.CutsceneID} because it was already played.");
+                return;
+            }
+
+            Affection_System.Instance.Cutscene = selectedCutscene;
+            PlayDatingEvent();
+            EventsPlayed[milestone] = true;
+        }     
     }
 
     /// <summary>
@@ -92,9 +120,20 @@ public class AffectionEntry {
             Save_Manager.instance.AutoSave();
 
         // then transition
-        Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());   
+        Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());
 
     }
+
+    private void PlayDialogueEvent()
+    {
+        Dialogue_Manager dm = UnityEngine.Object.FindObjectOfType<Dialogue_Manager>(); // not performant
+        if (dialogueIndex < dialogKeys.Count)
+        {
+            dm?.PlayScene(dialogKeys[dialogueIndex]);
+            dialogueIndex++;
+        }
+    }
+    
 
     private IEnumerator TransitionToDateScene()
     {
@@ -242,6 +281,32 @@ public class Affection_System : MonoBehaviour
     public void ClearNextCutsceneCustomer()
     {
         nextCutsceneCustomer = null;
+    }
+
+    public void PlayIntroCutscene(Event_Data cutsceneData)
+    {
+        Cutscene = cutsceneData;
+        // Debug.Log("[Aff_Sys] Starting intro cutscene...");
+
+        // Save state just in case
+        if (Save_Manager.instance != null)
+            Save_Manager.instance.AutoSave();
+
+        Game_Events_Manager.Instance.StartCoroutine(TransitionToDateScene());
+    }
+
+    /// <summary>
+    /// Same as the one in AffectionEntry, but used specifically for global events like intro cutscene.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator TransitionToDateScene()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Dating_Events", LoadSceneMode.Single);
+
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        Debug.Log("[Aff_Sys] Date scene loaded.");
     }
 
     public int GetAffectionLevel(CustomerData customer)

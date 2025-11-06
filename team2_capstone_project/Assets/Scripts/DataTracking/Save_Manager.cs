@@ -292,6 +292,19 @@ public class Save_Manager : MonoBehaviour
             Debug.Log($"[Save_Manager] Saved {currentGameData.affectionEventItems.Count} affection event items.");
         }
 
+        // --- Chest ---
+        if (Chest.Instance != null)
+        {
+            currentGameData.chestData = Chest.Instance.GetChestSaveData();
+            // Debug.Log($"[Save_Manager] Saved {currentGameData.chestData.itemsInChest.Count} items in chest.");
+        }
+        else
+            Debug.LogWarning("[Save_Manager] Chest.Instance was null during save — chest data not saved.");
+          
+        // --- Cutscenes ---
+        if (Cutscene_Manager.Instance != null)
+            Cutscene_Manager.Instance.SaveToGameData(currentGameData);
+
         // --- Elapsed time ---
         currentGameData.elapsedTime += Time.deltaTime;
     }
@@ -371,7 +384,11 @@ public class Save_Manager : MonoBehaviour
             Expected_Customers_UI.Instance.ShowExpectedCustomerCount(planned, animate: false);
             Debug.Log($"[Save_Manager] Refreshed Expected Customers UI after load: {planned}");
         }
-        
+
+        // Restore cutscene data
+        if (Cutscene_Manager.Instance != null)
+            Cutscene_Manager.Instance.LoadFromSave(currentGameData);
+
 
         // Handle room loading
         string roomKey = string.IsNullOrEmpty(currentGameData.currentRoom) 
@@ -491,6 +508,8 @@ public class GameData
     public bool isRaining = false;
     public Day_Turnover_Manager.WeekDay currentDay = Day_Turnover_Manager.WeekDay.Monday;
     public List<AffectionEventItemsSaveData> affectionEventItems = new();
+    public ChestSaveData chestData;
+    public List<string> playedCutscenes = new List<string>();
 }
 
 /// <summary>
@@ -541,6 +560,26 @@ public class AffectionEventItemsSaveData
     public bool collected;
 }
 
+[System.Serializable]
+public class ChestSaveData
+{
+  public List<ChestItemData> itemsInChest = new();
+}
+
+[System.Serializable]
+public class ChestItemData
+{
+    public ItemCategory category;
+    public Dish_Data.Dishes dishType; // only used if category is Dish
+    public IngredientType ingredientType; // only used if category is Ingredient
+    public int amount;
+}
+
+public enum ItemCategory
+{
+  Dish,
+  Ingredient
+}
 
 
 
