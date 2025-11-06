@@ -228,8 +228,15 @@ public class Game_Events_Manager : MonoBehaviour
     {
         onDialogueComplete?.Invoke(dialogKey);
     }
-    
+
+    public event System.Action<CustomerData, int> OnAffectionChanged;
+    public void AffectionChanged(CustomerData customer, int level)
+    {
+        OnAffectionChanged?.Invoke(customer, level);
+    }
+
     #endregion
+    
 
 
     /////////// INVENTORY EVENTS /////////

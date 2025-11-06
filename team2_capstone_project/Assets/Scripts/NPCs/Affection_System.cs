@@ -167,7 +167,6 @@ public class Affection_System : MonoBehaviour
 {
     // Store affection data for customers
     private List<AffectionEntry> CustomerAffectionEntries = new List<AffectionEntry>(); // Change to using enum
-    public event System.Action<CustomerData, int> OnAffectionChanged;
 
     // Constants
     [Header("Constants")]
@@ -245,7 +244,7 @@ public class Affection_System : MonoBehaviour
 
         // Fire event if affection lvl changed
         if (entryToUpdate.AffectionLevel != affectionBefore)
-            OnAffectionChanged?.Invoke(customer, entryToUpdate.AffectionLevel);
+            Game_Events_Manager.Instance.AffectionChanged(customer, entryToUpdate.AffectionLevel);
 
         if (tryPlayEvent)
             entryToUpdate.TryPlayEvent();
