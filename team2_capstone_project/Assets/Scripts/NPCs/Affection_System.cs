@@ -35,7 +35,11 @@ public class AffectionEntry {
     {
         // If currently in the middle of an event, keep playing it instead
         if (dialogueIndex > 0 && dialogueIndex < dialogKeys.Count)
+        {
             PlayDialogueEvent();
+            return;
+        }
+
             
         int milestone = NextEligibleEvent(); // 0 - 3 for 25 - 100 level events
         Event_Data selectedCutscene = null;
@@ -52,11 +56,13 @@ public class AffectionEntry {
                 dialogKeys = customerData.Dialogue_25;
                 dialogueIndex = 0;
                 PlayDialogueEvent();
+                EventsPlayed[milestone] = true;
                 break;
             case 2:
                 dialogKeys = customerData.Dialogue_75;
                 dialogueIndex = 0;
                 PlayDialogueEvent();
+                EventsPlayed[milestone] = true;
                 break;
             default:
                 break;
