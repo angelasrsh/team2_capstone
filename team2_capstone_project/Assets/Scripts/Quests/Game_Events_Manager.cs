@@ -42,6 +42,16 @@ public class Game_Events_Manager : MonoBehaviour
         //Debug.Log("[G_E_M] Player Moved");
     }
 
+    public event Action onPlayerSprint;
+    /// <summary>
+    /// Broadcast the onPlayerSprint event
+    /// </summary>
+    public void PlayerSprinted()
+    {
+        onPlayerSprint?.Invoke();
+        Debug.Log("[G_E_M] Player sprinted");
+    }
+
 
     public event Action<bool> onInventoryToggle;
     /// <summary>
@@ -226,10 +236,18 @@ public class Game_Events_Manager : MonoBehaviour
     public event Action<string> onDialogueComplete;
     public void DialogueComplete(string dialogKey)
     {
+        Debug.Log($"[G_E_M] DialogueComplete called with key {dialogKey}");
         onDialogueComplete?.Invoke(dialogKey);
     }
-    
+
+    public event System.Action<CustomerData, int> OnAffectionChanged;
+    public void AffectionChanged(CustomerData customer, int level)
+    {
+        OnAffectionChanged?.Invoke(customer, level);
+    }
+
     #endregion
+    
 
 
     /////////// INVENTORY EVENTS /////////

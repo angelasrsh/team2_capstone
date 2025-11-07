@@ -32,14 +32,18 @@ public class Affection_Event_Item_Tracker : MonoBehaviour
 
     private void OnEnable()
     {
-        if (Affection_System.Instance != null)
-            Affection_System.Instance.OnAffectionChanged += HandleAffectionChanged;
+        if (Game_Events_Manager.Instance != null)
+            Game_Events_Manager.Instance.OnAffectionChanged += HandleAffectionChanged;
+        else
+            Helpers.printLabeled(this, "Game_Events_Manager is null");
     }
 
     private void OnDisable()
     {
-        if (Affection_System.Instance != null)
-            Affection_System.Instance.OnAffectionChanged -= HandleAffectionChanged;
+        if (Game_Events_Manager.Instance != null)
+            Game_Events_Manager.Instance.OnAffectionChanged -= HandleAffectionChanged;
+        else
+            Helpers.printLabeled(this, "Game_Events_Manager is null");
     }
 
     private void HandleAffectionChanged(CustomerData npc, int newAffection)

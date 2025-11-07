@@ -165,6 +165,8 @@ public class Player_Controller : MonoBehaviour
         // Unsubscribe previous bindings safely
         if (moveAction != null)
             moveAction.performed -= onMove;
+        if (sprintAction != null)
+            sprintAction.performed -= OnSprint;
 
         playerInput = input;
 
@@ -176,6 +178,9 @@ public class Player_Controller : MonoBehaviour
 
         if (moveAction != null)
             moveAction.performed += onMove;
+
+        if (sprintAction != null)
+            sprintAction.performed += OnSprint;
 
         playerInput.onActionTriggered -= HandleGlobalInputTriggered;
         playerInput.onActionTriggered += HandleGlobalInputTriggered;
@@ -471,6 +476,12 @@ public class Player_Controller : MonoBehaviour
                 BindInputActions(input);
             }
         }
+    }
+
+   private void OnSprint(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            Game_Events_Manager.Instance.PlayerSprinted();
     }
     #endregion
 }
