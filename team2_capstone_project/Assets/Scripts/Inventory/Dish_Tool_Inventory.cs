@@ -10,8 +10,8 @@ using UnityEngine;
 public class Dish_Tool_Inventory : Inventory
 {
   public static Dish_Tool_Inventory Instance { get; protected set; }
-    private bool leftSlotSelected = true;
-  private static int dishesPerSlot = 1;
+  private bool leftSlotSelected = true;
+  // private static int dishesPerSlot = 1;
 
   // How many stacks this inventory can have
   [field: System.NonSerialized] public override int InventorySizeLimit { get; set; } = 2;
