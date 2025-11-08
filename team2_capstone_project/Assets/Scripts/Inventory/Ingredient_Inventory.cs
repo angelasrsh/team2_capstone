@@ -46,6 +46,8 @@ public class Ingredient_Inventory : Inventory
         }
     }
 
+    #region Add Resources
+
     /// <summary>
     /// Overload AddResources to allow for using the IngredientType enum
     /// </summary>
@@ -79,6 +81,8 @@ public class Ingredient_Inventory : Inventory
             if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
             {
                 InventoryStacks[i] = new Item_Stack();
+                InventoryStacks[i].stackLimit = ItemStackLimit;
+
                 int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
                 InventoryStacks[i].amount = amtToAdd;
                 InventoryStacks[i].resource = IngrEnumToData(type);
@@ -93,9 +97,11 @@ public class Ingredient_Inventory : Inventory
 
         updateInventory();
         Debug.Log($"[Invtory] Added {amtAdded} {IngrEnumToData(type).Name}");
-        TotalIngCount += (amtAdded);
         return amtAdded; // Return how many items were actually added
     }
+    #endregion
+
+    #region Remove Resources
 
     /// <summary>
     /// Overload base inventory RemoveResources function to allow removing ingredients using type enum
@@ -132,10 +138,11 @@ public class Ingredient_Inventory : Inventory
 
         int amtRemoved = count - amtLeftToRemove;
         Debug.Log($"[Invtory] Removed {amtRemoved} {IngrEnumToData(type).Name}");
-        TotalIngCount -= amtRemoved;
         // Return however much was added
         return amtRemoved;
     }
+
+    #endregion
 
     public bool CanMakeDish(Dish_Data dish)
     {
@@ -465,7 +472,6 @@ public class Ingredient_Inventory : Inventory
             });
         }
 
-        data.TotalIngCount = this.TotalIngCount;
         return data;
     }
 
@@ -474,11 +480,11 @@ public class Ingredient_Inventory : Inventory
         if (data == null)
         {
             Debug.LogWarning("[Ingredient_Inventory] No ingredient inventory data found — initializing empty.");
-            InitializeInventoryStacks<Item_Stack>();
+            InitializeInventoryStacks();
             return;
         }
 
-        InitializeInventoryStacks<Item_Stack>();
+        InitializeInventoryStacks();
 
         int index = 0;
         foreach (var s in data.stacks)
@@ -499,8 +505,6 @@ public class Ingredient_Inventory : Inventory
                 Debug.LogWarning($"[Ingredient_Inventory] Could not find ingredient '{s.ingredientName}' in dictionary during load.");
             }
         }
-
-        this.TotalIngCount = data.TotalIngCount;
         updateInventory();
 
         Debug.Log($"[Ingredient_Inventory] Loaded {data.stacks.Count} ingredient stacks from save.");
