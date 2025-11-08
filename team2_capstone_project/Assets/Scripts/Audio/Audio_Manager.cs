@@ -51,6 +51,7 @@ namespace Grimoire
     public AudioClip openShopSFX;
     public AudioClip closeShopSFX;
     public AudioClip pianoHit;
+    public AudioClip lampSwitch;
 
     [Header("Footstep Clips")]
     public AudioClip grassLeftFootstep;

@@ -5869,6 +5869,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1472445157}
   - component: {fileID: 1472445158}
+  - component: {fileID: 1472445160}
+  - component: {fileID: 1472445159}
   m_Layer: 0
   m_Name: LampLight
   m_TagString: Untagged
@@ -5953,6 +5955,31 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!65 &1472445159
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1472445156}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.969565, y: 2.5461516, z: 2.7555778}
+  m_Center: {x: -0.9847827, y: -0.77307916, z: 0.8777956}
+--- !u!114 &1472445160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1472445156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bd63c003cf954a4e870d72132c666df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1472778638
 GameObject:
   m_ObjectHideFlags: 0
