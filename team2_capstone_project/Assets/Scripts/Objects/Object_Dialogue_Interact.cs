@@ -10,13 +10,15 @@ public class Object_Dialogue_Interact : MonoBehaviour
     [Header("Dialogue Interaction Key")]
     public string dialogKey;
 
-    private InputAction interactAction;
+    private InputAction talkAction;
     private bool playerInsideTrigger;
     private Dialogue_Manager dm;
+    private Dialog_UI_Manager dialogUIManager;
 
     private void Start()
     {
         dm = FindObjectOfType<Dialogue_Manager>();
+        dialogUIManager = FindObjectOfType<Dialog_UI_Manager>();
     }
 
     private void OnEnable()
@@ -47,26 +49,28 @@ public class Object_Dialogue_Interact : MonoBehaviour
             return;
         }
 
-        interactAction = playerInput.actions["Interact"];
-        if (interactAction == null)
+        talkAction = playerInput.actions["Talk"];
+        if (talkAction == null)
         {
-            Debug.LogWarning("[Object_Dialogue_Interact] Could not find 'Interact' action in PlayerInput!");
+            Debug.LogWarning("[Object_Dialogue_Interact] Could not find 'Talk' action in PlayerInput!");
             return;
         }
 
-        interactAction.performed += ctx => PlayDialogInteraction();
-        interactAction.Enable();
+        talkAction.performed += ctx => PlayDialogInteraction();
+        talkAction.Enable();
 
         Debug.Log("[Object_Dialogue_Interact] Input bound successfully.");
     }
 
-    private void PlayDialogInteraction()
+    public void PlayDialogInteraction()
     {
-        if (playerInsideTrigger)
+        if (playerInsideTrigger && dialogUIManager.textTyping == false)
+        {
             dm.PlayScene(dialogKey);
+        }
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
             playerInsideTrigger = true;
