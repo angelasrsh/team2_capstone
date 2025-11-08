@@ -72,7 +72,8 @@ public class CustomerData : ScriptableObject
         Phrog,
         Elf,
         Satyr,
-        Journal
+        Journal,
+        Default
     }
 
     [Header("Dating Events")]

@@ -17,6 +17,7 @@ public class Panel_Cutscene : MonoBehaviour
     // [Header("Set using Affection_System")]
     private Event_Data DatingCutsceneData;
     private int panelIndex = 0;
+    private bool loadingRoom = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,9 +28,8 @@ public class Panel_Cutscene : MonoBehaviour
         if (DatingCutsceneData == null)
         {
             Helpers.printLabeled(this, "Warning: No cutscene has been set in the Affection System on GameManager");
-            SceneManager.LoadScene("Updated_Restaurant");
+            StartCoroutine(TransitionBackToRestaurant());
         }
-
 
         panelObjects = GetComponentsInChildren<UnityEngine.UI.Image>();
 
@@ -54,7 +54,6 @@ public class Panel_Cutscene : MonoBehaviour
             displayPanel(panelIndex);
 
         panelIndex++;
-
     }
 
     /// <summary>
@@ -107,8 +106,11 @@ public class Panel_Cutscene : MonoBehaviour
             // Save immediately to persist this
             Save_Manager.instance?.AutoSave();
 
-            Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Dating_Events, DatingCutsceneData.roomToReturnTo);
-            // StartCoroutine(TransitionBackToRestaurant());
+            if (!loadingRoom)
+            {
+                Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Dating_Events, DatingCutsceneData.roomToReturnTo);
+                loadingRoom = true;
+            }
         }
     }
 

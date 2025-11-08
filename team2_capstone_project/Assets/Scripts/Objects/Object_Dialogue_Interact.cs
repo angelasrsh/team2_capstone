@@ -66,6 +66,7 @@ public class Object_Dialogue_Interact : MonoBehaviour
     {
         if (playerInsideTrigger && dialogUIManager.textTyping == false)
         {
+            dialogUIManager.HidePortrait();
             dm.PlayScene(dialogKey);
         }
     }
@@ -79,6 +80,9 @@ public class Object_Dialogue_Interact : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             playerInsideTrigger = false;
+            dm.EndDialog();  // Safety call to ensure dialog box is closed
+        }
     }
 }
