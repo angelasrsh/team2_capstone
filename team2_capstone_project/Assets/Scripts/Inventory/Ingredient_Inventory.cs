@@ -211,13 +211,13 @@ public class Ingredient_Inventory : Inventory
             case IngredientType.Uncut_Slime:
                 return "Slime Gelatin";
             case IngredientType.Uncooked_Patty:
-                return "Uncooked Patty";
+                return "Patty";
             case IngredientType.Uncut_Fermented_Eye:
-                return "Uncut Fermented Eye";
+                return "Fermented Eye";
             case IngredientType.Uncut_Fogshroom:
-                return "Uncut Fogshroom";
+                return "Fogshroom";
             case IngredientType.Uncut_Mandrake:
-                return "Uncut Mandrake";
+                return "Mandrake";
             case IngredientType.Water:
                 return "Water";
             case IngredientType.Burnt_Blob:
@@ -227,11 +227,11 @@ public class Ingredient_Inventory : Inventory
             case IngredientType.Cut_Ficklegourd:
                 return "Cut Ficklegourd";
             case IngredientType.Uncut_Ficklegourd:
-                return "Uncut Ficklegourd";
+                return "Ficklegourd";
             case IngredientType.Cooked_Cut_Ficklegourd:
                 return "Cooked Ficklegourd";
             case IngredientType.PreWashed_Rice:
-                return "Pre-Washed Rice";
+                return "Rice";
             case IngredientType.Steamed_Rice:
                 return "Steamed Rice";
             default:
@@ -274,17 +274,17 @@ public class Ingredient_Inventory : Inventory
                 return IngredientType.Honey;
             case "Milk":
                 return IngredientType.Milk;
-            case "Oil":
+            case "Eleonora Oil":
                 return IngredientType.Oil;
             case "Slime Gelatin":
                 return IngredientType.Uncut_Slime;
-            case "Uncooked Patty":
+            case "Patty":
                 return IngredientType.Uncooked_Patty;
-            case "Uncut Fermented Eye":
+            case "Fermented Eye":
                 return IngredientType.Uncut_Fermented_Eye;
-            case "Uncut Fogshroom":
+            case "Fogshroom":
                 return IngredientType.Uncut_Fogshroom;
-            case "Uncut Mandrake":
+            case "Mandrake":
                 return IngredientType.Uncut_Mandrake;
             case "Water":
                 return IngredientType.Water;
@@ -294,11 +294,11 @@ public class Ingredient_Inventory : Inventory
                 return IngredientType.Cut_Slime;
             case "Cut Ficklegourd":
                 return IngredientType.Cut_Ficklegourd;
-            case "Uncut Ficklegourd":
+            case "Ficklegourd":
                 return IngredientType.Uncut_Ficklegourd;
             case "Cooked Ficklegourd":
                 return IngredientType.Cooked_Cut_Ficklegourd;
-            case "Pre-Washed Rice":
+            case "Rice":
                 return IngredientType.PreWashed_Rice;
             case "Steamed Rice":
                 return IngredientType.Steamed_Rice;
@@ -356,10 +356,10 @@ public class Ingredient_Inventory : Inventory
     /// Return the number of ingredients of that type in the inventory
     public int GetItemCount(Ingredient_Data ingredient)
     {
-        if (ingredient == null) return 0;
+        if (ingredient == null) 
+            return 0;
 
         int total = 0;
-
         foreach (Item_Stack stack in InventoryStacks)
         {
             if (stack == null || stack.resource == null)

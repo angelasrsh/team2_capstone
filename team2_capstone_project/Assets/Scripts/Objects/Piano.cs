@@ -54,7 +54,7 @@ public class Piano : MonoBehaviour
     private void TryPlayPianoNote()
     {
         if (playerInsideTrigger)
-            Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.pianoHit, 0.75f, Random.Range(0.8f, 1.2f));
+            Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.pianoHit, 0.75f, Random.Range(0.6f, 1.4f));
     }
 
     private void OnTriggerEnter(Collider other)

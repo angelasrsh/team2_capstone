@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 namespace Grimoire
@@ -6,12 +7,15 @@ namespace Grimoire
     [System.Serializable]
     public struct SpawnArea
     {
-        public Vector3 centerOffset; 
-        public Vector3 size;        
+        public Vector3 centerOffset;
+        public Vector3 size;
 
         [Header("Spawn Limits")]
-        public int minSpawn; 
+        public int minSpawn;
         public int maxSpawn;
+
+        [Header("Resources in This Area")]
+        public Ingredient_Data[] possibleResources;
     }
 
     public class Resource_Spawner : MonoBehaviour
@@ -21,7 +25,6 @@ namespace Grimoire
         public int globalMaxSpawn = 30;
 
         [Header("Spawner Settings")]
-        public Ingredient_Data[] possibleResources;
         public GameObject interactablePrefab;
         public int totalToSpawn = 10;
 
@@ -38,70 +41,68 @@ namespace Grimoire
         /// </summary>
         private void SpawnResources()
         {
-            // Step 1: Weighted pool creation (unchanged)
-            List<Ingredient_Data> spawnPool = new List<Ingredient_Data>();
-
-            foreach (var resource in possibleResources)
-            {
-                int amount = Random.Range(resource.minSpawn, resource.maxSpawn + 1);
-                int weight = Mathf.RoundToInt(resource.rarityWeight * 100);
-
-                for (int i = 0; i < amount; i++)
-                {
-                    for (int w = 0; w < weight; w++)
-                        spawnPool.Add(resource);
-                }
-            }
-
-            if (spawnPool.Count == 0 || spawnAreas.Count == 0)
+            if (spawnAreas.Count == 0)
                 return;
 
-            // Step 2: Determine total to spawn (global limits)
+            // Step 1: Determine total global spawn count
             int totalGlobal = Random.Range(globalMinSpawn, globalMaxSpawn + 1);
 
-            // Step 3: Distribute spawns across zones proportionally
-            int remaining = totalGlobal;
+            // Step 2: Randomize how many to spawn per area within its own limits
             List<int> zoneSpawnCounts = new List<int>();
+            int totalRequested = 0;
 
-            // First pass: Assign random count per zone within its min/max
             foreach (var area in spawnAreas)
             {
                 int count = Random.Range(area.minSpawn, area.maxSpawn + 1);
                 zoneSpawnCounts.Add(count);
+                totalRequested += count;
             }
 
-            // Normalize so total doesn’t exceed global limit
-            int sum = 0;
-            foreach (int c in zoneSpawnCounts) sum += c;
-
-            if (sum > totalGlobal)
+            // Normalize if total exceeds global limit
+            if (totalRequested > totalGlobal)
             {
-                float scale = totalGlobal / (float)sum;
+                float scale = totalGlobal / (float)totalRequested;
                 for (int i = 0; i < zoneSpawnCounts.Count; i++)
                     zoneSpawnCounts[i] = Mathf.RoundToInt(zoneSpawnCounts[i] * scale);
             }
 
-            // Step 4: Spawn per zone with overlap + collision checks
+            // Step 3: Spawn for each area independently
             List<Vector3> usedPositions = new List<Vector3>();
-            float minDistanceBetweenSpawns = 1.5f; // buffer between resources
+            float minDistanceBetweenSpawns = 1.5f;
 
             for (int z = 0; z < spawnAreas.Count; z++)
             {
                 SpawnArea area = spawnAreas[z];
                 int toSpawn = zoneSpawnCounts[z];
 
+                // Create a local spawn pool for this area
+                List<Ingredient_Data> localPool = new List<Ingredient_Data>();
+
+                foreach (var resource in area.possibleResources)
+                {
+                    // Assuming Ingredient_Data has these fields:
+                    // int minSpawn, int maxSpawn, float rarityWeight
+                    int amount = Random.Range(1, 4); // Or use minSpawn/maxSpawn if defined on resource
+                    int weight = Mathf.RoundToInt(resource.rarityWeight * 100);
+
+                    for (int i = 0; i < amount; i++)
+                        for (int w = 0; w < weight; w++)
+                            localPool.Add(resource);
+                }
+
+                // Skip area if no resources configured
+                if (localPool.Count == 0)
+                    continue;
+
+                // Step 4: Actually spawn within this area
                 for (int i = 0; i < toSpawn; i++)
                 {
-                    if (spawnPool.Count == 0) return;
-
-                    Ingredient_Data chosen = spawnPool[Random.Range(0, spawnPool.Count)];
-
+                    Ingredient_Data chosen = localPool[Random.Range(0, localPool.Count)];
                     Vector3? pos = GetSafeSpawnPosition(area, usedPositions, minDistanceBetweenSpawns);
 
                     if (pos.HasValue)
                     {
                         usedPositions.Add(pos.Value);
-
                         GameObject obj = Instantiate(interactablePrefab, pos.Value, Quaternion.identity);
                         var pickup = obj.GetComponent<Collectible_Object>() ?? obj.AddComponent<Collectible_Object>();
                         pickup.Initialize(chosen);
@@ -109,6 +110,7 @@ namespace Grimoire
                 }
             }
         }
+
 
         /// <summary>
         /// Attempts to find a safe spawn position within the given area that does not overlap with existing positions or colliders.

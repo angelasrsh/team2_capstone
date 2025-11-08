@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -23280,7 +23280,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.85, y: 0.03}
   m_AnchorMax: {x: 0.95, y: 0.1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 53, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1738293652
@@ -23961,6 +23961,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1372324078442186424, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916181833177398701, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1916181834801853610, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -24048,6 +24056,22 @@ PrefabInstance:
     - target: {fileID: 1916181834801853614, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
       propertyPath: m_Name
       value: Temp_Recipe_Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 1916181834801853614, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5218224084821706481, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
+      propertyPath: m_Color.b
+      value: 0.4306396
+      objectReference: {fileID: 0}
+    - target: {fileID: 5218224084821706481, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
+      propertyPath: m_Color.g
+      value: 0.61471635
+      objectReference: {fileID: 0}
+    - target: {fileID: 5218224084821706481, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
+      propertyPath: m_Color.r
+      value: 0.7169812
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2199e3873bf3609428aa02d1171e33b0, type: 3}
