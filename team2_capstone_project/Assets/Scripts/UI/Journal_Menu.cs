@@ -172,10 +172,10 @@ public class Journal_Menu : MonoBehaviour
   
   private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
   {
-    if (scene.name == "Main_Menu")
-      gameObject.SetActive(false);
-    else
-      gameObject.SetActive(true);
+    // if (scene.name == "Main_Menu")
+    //   gameObject.SetActive(false);
+    // else
+    //   gameObject.SetActive(true);
   }
 
   private IEnumerator WaitAndBind()
