@@ -49,7 +49,7 @@ public class Game_Events_Manager : MonoBehaviour
     public void PlayerSprinted()
     {
         onPlayerSprint?.Invoke();
-        Debug.Log("[G_E_M] Player sprinted");
+        // Debug.Log("[G_E_M] Player sprinted");
     }
 
 

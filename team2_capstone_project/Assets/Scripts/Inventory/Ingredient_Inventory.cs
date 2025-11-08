@@ -46,6 +46,8 @@ public class Ingredient_Inventory : Inventory
         }
     }
 
+    #region Add Resources
+
     /// <summary>
     /// Overload AddResources to allow for using the IngredientType enum
     /// </summary>
@@ -79,6 +81,8 @@ public class Ingredient_Inventory : Inventory
             if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
             {
                 InventoryStacks[i] = new Item_Stack();
+                InventoryStacks[i].stackLimit = ItemStackLimit;
+
                 int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
                 InventoryStacks[i].amount = amtToAdd;
                 InventoryStacks[i].resource = IngrEnumToData(type);
@@ -93,9 +97,11 @@ public class Ingredient_Inventory : Inventory
 
         updateInventory();
         Debug.Log($"[Invtory] Added {amtAdded} {IngrEnumToData(type).Name}");
-        TotalIngCount += (amtAdded);
         return amtAdded; // Return how many items were actually added
     }
+    #endregion
+
+    #region Remove Resources
 
     /// <summary>
     /// Overload base inventory RemoveResources function to allow removing ingredients using type enum
@@ -132,10 +138,11 @@ public class Ingredient_Inventory : Inventory
 
         int amtRemoved = count - amtLeftToRemove;
         Debug.Log($"[Invtory] Removed {amtRemoved} {IngrEnumToData(type).Name}");
-        TotalIngCount -= amtRemoved;
         // Return however much was added
         return amtRemoved;
     }
+
+    #endregion
 
     public bool CanMakeDish(Dish_Data dish)
     {
@@ -211,13 +218,13 @@ public class Ingredient_Inventory : Inventory
             case IngredientType.Uncut_Slime:
                 return "Slime Gelatin";
             case IngredientType.Uncooked_Patty:
-                return "Uncooked Patty";
+                return "Patty";
             case IngredientType.Uncut_Fermented_Eye:
-                return "Uncut Fermented Eye";
+                return "Fermented Eye";
             case IngredientType.Uncut_Fogshroom:
-                return "Uncut Fogshroom";
+                return "Fogshroom";
             case IngredientType.Uncut_Mandrake:
-                return "Uncut Mandrake";
+                return "Mandrake";
             case IngredientType.Water:
                 return "Water";
             case IngredientType.Burnt_Blob:
@@ -227,11 +234,11 @@ public class Ingredient_Inventory : Inventory
             case IngredientType.Cut_Ficklegourd:
                 return "Cut Ficklegourd";
             case IngredientType.Uncut_Ficklegourd:
-                return "Uncut Ficklegourd";
+                return "Ficklegourd";
             case IngredientType.Cooked_Cut_Ficklegourd:
                 return "Cooked Ficklegourd";
             case IngredientType.PreWashed_Rice:
-                return "Pre-Washed Rice";
+                return "Rice";
             case IngredientType.Steamed_Rice:
                 return "Steamed Rice";
             default:
@@ -274,17 +281,17 @@ public class Ingredient_Inventory : Inventory
                 return IngredientType.Honey;
             case "Milk":
                 return IngredientType.Milk;
-            case "Oil":
+            case "Eleonora Oil":
                 return IngredientType.Oil;
             case "Slime Gelatin":
                 return IngredientType.Uncut_Slime;
-            case "Uncooked Patty":
+            case "Patty":
                 return IngredientType.Uncooked_Patty;
-            case "Uncut Fermented Eye":
+            case "Fermented Eye":
                 return IngredientType.Uncut_Fermented_Eye;
-            case "Uncut Fogshroom":
+            case "Fogshroom":
                 return IngredientType.Uncut_Fogshroom;
-            case "Uncut Mandrake":
+            case "Mandrake":
                 return IngredientType.Uncut_Mandrake;
             case "Water":
                 return IngredientType.Water;
@@ -294,11 +301,11 @@ public class Ingredient_Inventory : Inventory
                 return IngredientType.Cut_Slime;
             case "Cut Ficklegourd":
                 return IngredientType.Cut_Ficklegourd;
-            case "Uncut Ficklegourd":
+            case "Ficklegourd":
                 return IngredientType.Uncut_Ficklegourd;
             case "Cooked Ficklegourd":
                 return IngredientType.Cooked_Cut_Ficklegourd;
-            case "Pre-Washed Rice":
+            case "Rice":
                 return IngredientType.PreWashed_Rice;
             case "Steamed Rice":
                 return IngredientType.Steamed_Rice;
@@ -356,10 +363,10 @@ public class Ingredient_Inventory : Inventory
     /// Return the number of ingredients of that type in the inventory
     public int GetItemCount(Ingredient_Data ingredient)
     {
-        if (ingredient == null) return 0;
+        if (ingredient == null) 
+            return 0;
 
         int total = 0;
-
         foreach (Item_Stack stack in InventoryStacks)
         {
             if (stack == null || stack.resource == null)
@@ -465,7 +472,6 @@ public class Ingredient_Inventory : Inventory
             });
         }
 
-        data.TotalIngCount = this.TotalIngCount;
         return data;
     }
 
@@ -474,11 +480,11 @@ public class Ingredient_Inventory : Inventory
         if (data == null)
         {
             Debug.LogWarning("[Ingredient_Inventory] No ingredient inventory data found — initializing empty.");
-            InitializeInventoryStacks<Item_Stack>();
+            InitializeInventoryStacks();
             return;
         }
 
-        InitializeInventoryStacks<Item_Stack>();
+        InitializeInventoryStacks();
 
         int index = 0;
         foreach (var s in data.stacks)
@@ -499,8 +505,6 @@ public class Ingredient_Inventory : Inventory
                 Debug.LogWarning($"[Ingredient_Inventory] Could not find ingredient '{s.ingredientName}' in dictionary during load.");
             }
         }
-
-        this.TotalIngCount = data.TotalIngCount;
         updateInventory();
 
         Debug.Log($"[Ingredient_Inventory] Loaded {data.stacks.Count} ingredient stacks from save.");
