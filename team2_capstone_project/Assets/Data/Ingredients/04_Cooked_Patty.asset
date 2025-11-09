@@ -20,13 +20,14 @@ MonoBehaviour:
   rarityWeight: 0
   minSpawn: 0
   maxSpawn: 0
-  countsAs: []
+  countsAs:
+  - {fileID: 11400000, guid: 8b7cb872142e2234eb85044271bb059e, type: 2}
   cookThresholds:
     rawEnd: 0.2
     almostEnd: 0.4
     cookedEnd: 0.6
     overcookedEnd: 0.8
-  description: 
+  description: Cooked patty.
   CutIngredientImages: []
   usedInDishes:
   - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}

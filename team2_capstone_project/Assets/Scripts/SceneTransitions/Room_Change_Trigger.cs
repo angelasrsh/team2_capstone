@@ -23,21 +23,13 @@ public class Room_Change_Trigger : MonoBehaviour
       player = other.GetComponent<Player_Controller>();
       if (player != null)
         player.DisablePlayerMovement();
-          
+
       // Game_Events_Manager.Instance.RoomChange(exitingTo);
-      Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);    
+      Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+      Save_Manager.instance.AutoSave();
     }
   }
 
-  public void OnPlayButtonPressed()
-  {
-    if (isSceneTransitioning) return;
-    isSceneTransitioning = true;
-
-    // Game_Events_Manager.Instance.RoomChange(exitingTo);
-    Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
-  }
-  
   public void OnBackButtonPressedForMinigame()
   {
     if (isSceneTransitioning) return;
@@ -48,5 +40,6 @@ public class Room_Change_Trigger : MonoBehaviour
     Drag_All.ResetMinigame();
     // Game_Events_Manager.Instance.RoomChange(exitingTo);
     Room_Change_Manager.instance.GoToRoom(currentRoom.roomID, exitingTo);
+    Save_Manager.instance.AutoSave();
   }
 }

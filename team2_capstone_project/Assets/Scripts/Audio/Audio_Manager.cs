@@ -19,7 +19,7 @@ namespace Grimoire
     [Header("Audio Mixer Routing")]
     [SerializeField] private AudioMixer masterMixer;
     [SerializeField] private AudioMixerGroup musicGroup;
-    [SerializeField] private AudioMixerGroup ambientGroup;
+    public AudioMixerGroup ambientGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
     [SerializeField] private AudioMixerGroup footstepsGroup;
 
@@ -32,7 +32,6 @@ namespace Grimoire
     public AudioClip menuClose;
     public AudioClip bookClose;
     public AudioClip doorBell;
-    public AudioClip firstAreaWalkingSFX;
     public AudioClip sparkle;
     public AudioClip errorBuzz;
     public AudioClip bagPutIn;
@@ -47,6 +46,20 @@ namespace Grimoire
     public AudioClip lockedGateOpen;
     public AudioClip pageFlip;
     public AudioClip journalTabSelect;
+    public AudioClip teleport;
+    public AudioClip orderServed;
+    public AudioClip openShopSFX;
+    public AudioClip closeShopSFX;
+    public AudioClip pianoHit;
+    public AudioClip lampSwitch;
+
+    [Header("Footstep Clips")]
+    public AudioClip grassLeftFootstep;
+    public AudioClip grassRightFootstep;
+    public AudioClip woodLeftFootstep;
+    public AudioClip woodRightFootstep;
+    public AudioClip stoneLeftFootstep;
+    public AudioClip stoneRightFootstep;
 
     [Header("Cauldron Specific")]
     public AudioClip addingOneIngredient;
@@ -59,6 +72,9 @@ namespace Grimoire
     [SerializeField] private AudioClip bubbling;
     [SerializeField] private AudioClip startFire;
     [SerializeField] private AudioClip ambientFire;
+
+    private AudioSource dishLoopSource;
+    [SerializeField] private AudioClip dishLoopClip;
 
     private void Awake()
     {
@@ -78,14 +94,12 @@ namespace Grimoire
       // --------------------------
       sfxSources = new List<AudioSource>(sfxPoolSize);
 
-      // Inside Awake(), after adding your sources
-
       for (int i = 0; i < sfxPoolSize; i++)
       {
-          AudioSource src = gameObject.AddComponent<AudioSource>();
-          src.playOnAwake = false;
-          src.outputAudioMixerGroup = sfxGroup; // 👈 Route SFX pool
-          sfxSources.Add(src);
+        AudioSource src = gameObject.AddComponent<AudioSource>();
+        src.playOnAwake = false;
+        src.outputAudioMixerGroup = sfxGroup; // 👈 Route SFX pool
+        sfxSources.Add(src);
       }
 
       // Ambient
@@ -137,21 +151,16 @@ namespace Grimoire
     // SFX
     public void PlaySFX(AudioClip clip, float volume = 1f, float pitch = 1f)
     {
-        if (clip == null) return;
+      if (clip == null) return;
 
-        AudioSource src = sfxSources[nextSfxIndex];
-        nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
+      AudioSource src = sfxSources[nextSfxIndex];
+      nextSfxIndex = (nextSfxIndex + 1) % sfxSources.Count;
 
-        src.Stop(); // prevent leftover state
-        src.clip = clip;
-        src.volume = Mathf.Clamp01(volume);
-        src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
-        src.Play();
-    }
-
-    public void ForestWalk()
-    {
-      PlaySFX(firstAreaWalkingSFX, 0.1f, Random.Range(0.9f, 1.1f));
+      src.Stop(); // prevent leftover state
+      src.clip = clip;
+      src.volume = Mathf.Clamp01(volume);
+      src.pitch = Mathf.Clamp(pitch, 0.1f, 3f);
+      src.Play();
     }
 
     public void StopAllSFX()
@@ -240,7 +249,7 @@ namespace Grimoire
 
     public void AddOneIngredient()
     {
-      float randomPitch = Random.Range(0.8f, 1.2f);
+      float randomPitch = Random.Range(0.95f, 1.35f);
       PlaySFX(addingOneIngredient, 0.5f, randomPitch);
     }
 
@@ -252,21 +261,21 @@ namespace Grimoire
     }
     #endregion
 
-    #region Footsteps SFX
+    #region Footsteps
     // -------------------------------------------------------
     // FOOTSTEPS
     public void PlayFootsteps(AudioClip clip, float speed = 1.6f)
     {
-        if (clip == null) return;
+      if (clip == null) return;
 
-        if (!footstepsSource.isPlaying)
-        {
-            footstepsSource.clip = clip;
-            footstepsSource.loop = true;
-            footstepsSource.volume = 0.1f;
-            footstepsSource.pitch = Random.Range(speed - 0.1f, speed + 0.1f);
-            footstepsSource.Play();
-        }
+      if (!footstepsSource.isPlaying)
+      {
+        footstepsSource.clip = clip;
+        footstepsSource.loop = true;
+        footstepsSource.volume = 0.1f;
+        footstepsSource.pitch = Random.Range(speed - 0.1f, speed + 0.1f);
+        footstepsSource.Play();
+      }
     }
 
     public void StopFootsteps()
@@ -276,19 +285,76 @@ namespace Grimoire
     }
     #endregion
 
+
+    #region Weather
+    // -----------------------------------------------------------------------
+    // Weather Ambient Methods
+    public void CrossfadeAmbient(AudioClip newClip, float fadeDuration = 2f)
+    {
+        if (newClip == null)
+        {
+            Debug.LogWarning("[Audio_Manager] Tried to crossfade to a null ambient clip.");
+            return;
+        }
+
+        // Use the Music_Persistence system directly
+        if (Music_Persistence.instance != null)
+            Music_Persistence.instance.CheckAmbient(newClip, fadeDuration);
+        else
+            Debug.LogWarning("[Audio_Manager] No Music_Persistence instance found for CrossfadeAmbient.");
+    }
+
+    private IEnumerator CrossfadeAmbientCoroutine(AudioClip newClip, float fadeDuration)
+    {
+        if (ambientSource == null)
+        {
+            Debug.LogWarning("[Audio_Manager] Ambient source not initialized.");
+            yield break;
+        }
+
+        float startVol = ambientSource.volume;
+
+        // If currently playing, fade out
+        if (ambientSource.isPlaying && ambientSource.clip != newClip)
+        {
+            for (float t = 0f; t < fadeDuration; t += Time.deltaTime)
+            {
+                ambientSource.volume = Mathf.Lerp(startVol, 0f, t / fadeDuration);
+                yield return null;
+            }
+            ambientSource.Stop();
+        }
+
+        // Assign new clip and fade in
+        ambientSource.clip = newClip;
+        ambientSource.volume = 0f;
+        ambientSource.loop = true;
+        ambientSource.Play();
+
+        for (float t = 0f; t < fadeDuration; t += Time.deltaTime)
+        {
+            ambientSource.volume = Mathf.Lerp(0f, 1f, t / fadeDuration);
+            yield return null;
+        }
+    }
+    #endregion
+
+
+    #region Unique SFX Methods
     public void PlayDoorbell()
     {
       float randomPitch = Random.Range(0.9f, 1.05f);
       PlaySFX(doorBell, 0.32f, randomPitch);
     }
-    
+
     public void PlaySparkleSFX()
     {
-        float[] allowedPitches = { 1.5f, 1.7f };
-        float chosenPitch = allowedPitches[Random.Range(0, allowedPitches.Length)];
+      float[] allowedPitches = { 1.5f, 1.7f };
+      float chosenPitch = allowedPitches[Random.Range(0, allowedPitches.Length)];
 
-        PlaySFX(sparkle, 0.3f, chosenPitch);
+      PlaySFX(sparkle, 0.3f, chosenPitch);
     }
   }
+  #endregion
 }
 

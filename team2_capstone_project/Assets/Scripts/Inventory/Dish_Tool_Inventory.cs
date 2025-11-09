@@ -3,14 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// An Item_Stack (used by Inventory) for dishes since they can't stack (need a different stack limit)
-/// </summary>
-public class Dish_Tool_Stack : Item_Stack
-{
-    public override int stackLimit { get; set; } = 1;
-}
-
-/// <summary>
 /// You can currently store dishes indefinitely. Probably not desired behavior,
 /// but I'm leaving it for now. We probably change it semi-easily later.
 /// 
@@ -19,6 +11,7 @@ public class Dish_Tool_Inventory : Inventory
 {
   public static Dish_Tool_Inventory Instance { get; protected set; }
   private bool leftSlotSelected = true;
+  // private static int dishesPerSlot = 1;
 
   // How many stacks this inventory can have
   [field: System.NonSerialized] public override int InventorySizeLimit { get; set; } = 2;
@@ -38,9 +31,10 @@ public class Dish_Tool_Inventory : Inventory
     Instance = this;
     DontDestroyOnLoad(gameObject);
 
-    // Initialize Dish_Tool inventory specifically
+        // Initialize Dish_Tool inventory specifically
     InventorySizeLimit = 2;
-    InitializeInventoryStacks<Dish_Tool_Stack>();
+    ItemStackLimit = 1;
+    InitializeInventoryStacks();
 
     // AddResources(TEST_DISH, 1);
     // AddResources(TEST_DISH, 3);
@@ -60,9 +54,16 @@ public class Dish_Tool_Inventory : Inventory
   /// <param name="type"></param>
   /// <param name="count"></param>
   /// <returns>How many items were added</returns>
-  public override int AddResources(Item_Data type, int count)
+ public override int AddResources(Item_Data type, int count)
   {
-    return addResourcesOfType<Dish_Tool_Stack>(type, count);
+      if (InventoryStacks == null || InventoryStacks.Length != InventorySizeLimit)
+      {
+          Debug.LogWarning("[Dish_Tool_Inventory] InventoryStacks not initialized properly — rebuilding.");
+          InitializeInventoryStacks();
+      }
+
+      Debug.Log($"[Dish_Tool_Inventory]: Adding {count} of {type.name} to dish inventory.");
+      return addResourcesOfType(type, count);
   }
 
   /// <summary>
@@ -99,24 +100,67 @@ public class Dish_Tool_Inventory : Inventory
     updateInventory();
   }
 
-  /// <summary>
-  /// Returns Dish_Data for the selected dish. If selectedSlot has no dish, returns null.
-  /// This function is in Dish_Tool_Inventory. Used in Customer_Controller.
-  /// </summary>
-  /// <returns></returns>
-  public Dish_Data GetSelectedDishData()
-  {
-    if (leftSlotSelected)
+    /// <summary>
+    /// Returns Dish_Data for the selected dish. If selectedSlot has no dish, returns null.
+    /// This function is in Dish_Tool_Inventory. Used in Customer_Controller.
+    /// </summary>
+    /// <returns></returns>
+    public Dish_Data GetSelectedDishData()
     {
-      if (InventoryStacks[0] == null)
-        return null;
+        // Ensure array is initialized and valid
+        if (InventoryStacks == null || InventoryStacks.Length < 2)
+        {
+            Debug.LogWarning("[Dish_Tool_Inventory] InventoryStacks was null or wrong size — rebuilding.");
+            InventorySizeLimit = 2;
+            InitializeInventoryStacks();
+        }
 
-      return (Dish_Data)(InventoryStacks[0].resource);
+        if (leftSlotSelected)
+        {
+            if (InventoryStacks[0] == null)
+                return null;
+
+            return (Dish_Data)InventoryStacks[0].resource;
+        }
+
+        if (InventoryStacks[1] == null)
+            return null;
+
+        return (Dish_Data)InventoryStacks[1].resource;
+    }
+    
+  
+      #region Save / Load
+    public DishInventoryData GetSaveData()
+    {
+        DishInventoryData data = new DishInventoryData();
+
+        data.InventoryStacks = this.InventoryStacks;
+
+        return data;
     }
 
-    if (InventoryStacks[1] == null)
-      return null;
+    public void LoadFromSaveData(DishInventoryData data)
+    {
+        if (data == null)
+        {
+            Helpers.printLabeled(this, "No dish data to load; initializing defaults.");
+            return;
+        }
 
-    return (Dish_Data)(InventoryStacks[1].resource);
-  }
+        this.InventoryStacks = data.InventoryStacks;
+
+        Debug.Log("Dish Inventory data loaded successfully.");
+    }
+    #endregion
 }
+
+#region Dish_Inventory_Save_Data
+[System.Serializable]
+public class DishInventoryData
+{
+    [field: SerializeField] public Item_Stack[] InventoryStacks;
+
+}
+#endregion
+

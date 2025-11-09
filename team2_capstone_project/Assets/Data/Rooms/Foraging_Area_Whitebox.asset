@@ -15,9 +15,14 @@ MonoBehaviour:
   roomID: 8
   isOverworldScene: 1
   music: {fileID: 8300000, guid: 5418322616f68f3429c1635520f8f5dc, type: 3}
-  ambientSound: {fileID: 8300000, guid: f3f4445f1373f9c4ca71452facc20792, type: 3}
+  ambientSound: {fileID: 8300000, guid: b55c54e09bea211408047da0b93b28b7, type: 3}
   musicVolume: 0.5
-  ambientVolume: 0.68
+  ambientVolume: 0.165
+  isOutdoorScene: 1
+  rainMusic: {fileID: 8300000, guid: a0437e1d0fa6a9849a36a0e9d61329b2, type: 3}
+  rainMusicVolume: 0.47
+  rainAmbient: {fileID: 8300000, guid: 64ee9f8b28191c947889d7513849b050, type: 3}
+  rainAmbientVolume: 0.15
   exits:
   - exitingTo: 0
     spawnPointID: 0
@@ -27,5 +32,10 @@ MonoBehaviour:
   - exitingTo: 9
     spawnPointID: 0
     targetRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
+    overrideTimeOfDay: 1
+    overrideValue: 1
+  - exitingTo: 10
+    spawnPointID: 6
+    targetRoom: {fileID: 11400000, guid: 5f118692621034e49b39ec07232ebc46, type: 2}
     overrideTimeOfDay: 1
     overrideValue: 1

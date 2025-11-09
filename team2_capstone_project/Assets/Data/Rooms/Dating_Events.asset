@@ -12,13 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c46729041eb5a744a7c78cb0ec82b78, type: 3}
   m_Name: Dating_Events
   m_EditorClassIdentifier: 
-  roomID: 0
+  roomID: 11
   isOverworldScene: 0
   music: {fileID: 0}
   ambientSound: {fileID: 0}
   musicVolume: 1
   ambientVolume: 1
+  isOutdoorScene: 1
+  rainMusic: {fileID: 0}
+  rainMusicVolume: 1
+  rainAmbient: {fileID: 0}
+  rainAmbientVolume: 1
   exits:
-  - exitingTo: 0
+  - exitingTo: 9
     spawnPointID: 0
-    targetRoom: {fileID: 0}
+    targetRoom: {fileID: 11400000, guid: f15fb393a108f0a4daa66a243ad7c4e3, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0
+  - exitingTo: 3
+    spawnPointID: 0
+    targetRoom: {fileID: 11400000, guid: 2087315a944dcc7459fafc7060a208b9, type: 2}
+    overrideTimeOfDay: 0
+    overrideValue: 0

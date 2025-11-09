@@ -72,6 +72,13 @@ public class CustomerData : ScriptableObject
         Phrog,
         Elf,
         Satyr,
-        Journal
+        Journal,
+        Default
     }
+
+    [Header("Dating Events")]
+    public Event_Data Cutscene_50;
+    public Event_Data Cutscene_100;
+    public List<string> Dialogue_25;
+    public List<string> Dialogue_75;
 }

@@ -17,7 +17,9 @@ public class Room_Data : ScriptableObject
     Frying_Pan_Minigame,
     Combine_Minigame,
     Foraging_Area_Whitebox,
-    Updated_Restaurant
+    Updated_Restaurant,
+    Outside_Restaurant,
+    Dating_Events
   }
 
   public enum SpawnPointID
@@ -26,7 +28,9 @@ public class Room_Data : ScriptableObject
     Cauldron,
     Cutting_Board,
     Frying_Pan,
-    Combine_Table
+    Combine_Table,
+    Door,
+    Carriage
   }
 
   [Header("Room Info")]
@@ -38,6 +42,13 @@ public class Room_Data : ScriptableObject
   public AudioClip ambientSound;
   [Range(0f, 1f)] public float musicVolume = 1f;
   [Range(0f, 1f)] public float ambientVolume = 1f;
+
+  [Header("Weather Settings")]
+  public bool isOutdoorScene = true;  // whether to show/hide rain visuals
+  public AudioClip rainMusic;
+  [Range(0f, 1f)] public float rainMusicVolume = 1f;
+  public AudioClip rainAmbient;
+  [Range(0f, 1f)] public float rainAmbientVolume = 1f;
 
   [Header("Room Exits")]
   public RoomExitOptions[] exits;

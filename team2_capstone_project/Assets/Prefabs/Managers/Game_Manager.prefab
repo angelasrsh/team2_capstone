@@ -10,15 +10,19 @@ GameObject:
   m_Component:
   - component: {fileID: 6958590387895689388}
   - component: {fileID: 7322542354820229773}
+  - component: {fileID: 7704440638169076200}
+  - component: {fileID: 8020379076965656209}
   - component: {fileID: 3461038497445604444}
   - component: {fileID: 4670473249970048115}
   - component: {fileID: 1934729213419131961}
+  - component: {fileID: 5655443232972654566}
+  - component: {fileID: 5038698954576781126}
   - component: {fileID: 6642626054669146854}
   - component: {fileID: 3228094000564085673}
+  - component: {fileID: 1137200243691017696}
   - component: {fileID: 6113680877637856580}
   - component: {fileID: 6958590387895689391}
   - component: {fileID: 2041556558690807774}
-  - component: {fileID: 7704440638169076200}
   - component: {fileID: 4060353126230224005}
   - component: {fileID: 3085461530528901281}
   m_Layer: 0
@@ -61,6 +65,34 @@ MonoBehaviour:
   playerProgress: {fileID: 11400000, guid: f2c59ef6e9041524e924df3048a855ee, type: 2}
   UIManager: {fileID: 0}
   roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
+--- !u!114 &7704440638169076200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  openUICount: 0
+  pauseMenuOn: 0
+  uiInputCooldownDuration: 0.25
+--- !u!114 &8020379076965656209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57e8df7ba10f24c45b81066e2b26df6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomCollection: {fileID: 11400000, guid: 7e9377f3776282943a4f12929bc18558, type: 2}
 --- !u!114 &3461038497445604444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,8 +131,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LikedDishAffection: 25
-  NeutralDishAffection: 5
+  NeutralDishAffection: 10
   DislikedDishAffection: -5
+  Cutscene: {fileID: 0}
+--- !u!114 &5655443232972654566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 036c3ea661094cf439aa1dc327c0b083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5038698954576781126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bf711841b518e84faa97645a016ca87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items:
+  - npc: {fileID: 11400000, guid: 6948a6b7da01dc545b67fe99a9a71dc1, type: 2}
+    eventItem: {fileID: 11400000, guid: ae71f304ef3036142af93177ce087fbd, type: 2}
+    affectionThreshold: 75
+    unlocked: 0
+    collected: 0
 --- !u!114 &6642626054669146854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +180,7 @@ MonoBehaviour:
   maxPoolSize: 5
   minSelect: 1
   maxSelect: 2
-  minCustomersForDay: 2
+  minCustomersForDay: 3
   maxCustomersForDay: 4
 --- !u!114 &3228094000564085673
 MonoBehaviour:
@@ -131,6 +194,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9858dd33a8c2dd4fa636e5f6c8937fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1137200243691017696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6958590387895689390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ab716bd0326804b954a9e364ebb82a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rainChance: 1
+  isRaining: 0
+  clearSkybox: {fileID: 2100000, guid: 9ca22510633fbfd4399f1704cd9d5c72, type: 2}
+  cloudySkybox: {fileID: 2100000, guid: b5a27fa4b11bfb24cbc6daff3802c229, type: 2}
+  rainSystemPrefab: {fileID: 160098, guid: 69b40ef7ee16c834c844b3fa26e0fdda, type: 3}
+  fadeDuration: 2
 --- !u!114 &6113680877637856580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,21 +249,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 386980fe1bac74840b4b5f98f4c2ada7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7704440638169076200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6958590387895689390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 293880701551e1c4884ba787e005b1f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  openUICount: 0
-  pauseMenuOn: 0
-  uiInputCooldownDuration: 0.25
 --- !u!114 &4060353126230224005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,20 +392,41 @@ MonoBehaviour:
     m_ActionName: Player/EndDialog[/Simulated Touchscreen/primaryTouch/tap]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 253ced77-a953-48d3-8d7c-8c818a96bc7d
-    m_ActionName: Journal/Click[/Keyboard/e,/Mouse/leftButton,/Simulated Touchscreen/primaryTouch/tap]
+    m_ActionId: aeea286f-9c73-4880-b9f3-8becb2068c48
+    m_ActionName: UI/FlipRight[/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 64bab8b5-f68f-4017-9c08-2aaa07432d03
-    m_ActionName: Journal/FlipLeft[/Keyboard/a,/Keyboard/leftArrow]
+    m_ActionId: bf8afbe1-bcb3-443a-a0de-ab6baca06426
+    m_ActionName: UI/FlipLeft[/Keyboard/a,/Keyboard/leftArrow]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 65fd1754-d588-4b1d-9c9c-5635e4c2b81d
-    m_ActionName: Journal/FlipRight[/Keyboard/d,/Keyboard/rightArrow]
+    m_ActionId: bb07e1d3-7dba-4ff2-a495-3dfaebcb941a
+    m_ActionName: UI/ClickJournal[/Keyboard/e,/Mouse/leftButton,/Simulated Touchscreen/primaryTouch/tap]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 0b55d02f-6679-46aa-ad99-f1f47a44e275
-    m_ActionName: Journal/CloseJournal[/Keyboard/j,/Keyboard/escape]
+    m_ActionId: 34a8d78f-ebac-4282-a177-fa12bf1cb47b
+    m_ActionName: Player/Sprint[/Keyboard/shift,/Simulated Touchscreen/press]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 734c3198-1714-44ed-8a90-08990f54be78
+    m_ActionName: Player/Talk[/Mouse/leftButton,/Keyboard/x,/Keyboard/space,/Simulated
+      Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c5db2a79-ad5f-4f08-94d4-fff2c2c1b184
+    m_ActionName: Player/SpeedDialog[/Mouse/rightButton,/Keyboard/space,/Simulated
+      Touchscreen/press]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4c9d7b91-d207-4ec7-8537-e6e8deb350b7
+    m_ActionName: Player/SkipDialog[/Mouse/leftButton,/Keyboard/x,/Simulated Touchscreen/touch0/press,/Simulated
+      Touchscreen/touch1/press,/Simulated Touchscreen/touch2/press,/Simulated Touchscreen/touch3/press,/Simulated
+      Touchscreen/touch4/press,/Simulated Touchscreen/touch5/press,/Simulated Touchscreen/touch6/press,/Simulated
+      Touchscreen/touch7/press,/Simulated Touchscreen/touch8/press,/Simulated Touchscreen/touch9/press]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 72b0c1d2-71ad-4d84-a6ee-d5ea8d575864
+    m_ActionName: Player/Confirm[/Keyboard/enter]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

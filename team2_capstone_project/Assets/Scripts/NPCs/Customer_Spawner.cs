@@ -22,6 +22,7 @@ public class Customer_Spawner : MonoBehaviour
     // Track which customers are currently present this evening
     private HashSet<string> uniqueCustomersPresent = new HashSet<string>();
     private List<CustomerData> validCustomers = new List<CustomerData>();
+    public static event System.Action<int> OnCustomerCountChanged;
 
     private void OnEnable()
     {
@@ -65,11 +66,24 @@ public class Customer_Spawner : MonoBehaviour
 
     private void RestoreCustomersFromState()
     {
-        foreach (var cState in Restaurant_State.Instance.customers)
+        if (Restaurant_State.Instance == null)
+        {
+            Debug.LogWarning("Customer_Spawner: No Restaurant_State found during restore.");
+            return;
+        }
+
+        var savedCustomers = new List<Customer_State>(Restaurant_State.Instance.customers);
+
+        foreach (var cState in savedCustomers)
         {
             Transform seat = Seat_Manager.Instance.GetSeatByIndex(cState.seatIndex);
-            CustomerData data = FindCustomerData(cState.customerName);
+            if (seat == null)
+            {
+                Debug.LogWarning($"Seat index {cState.seatIndex} invalid for {cState.customerName}!");
+                continue;
+            }
 
+            CustomerData data = FindCustomerData(cState.customerName);
             if (data == null)
             {
                 Debug.LogWarning($"CustomerData for {cState.customerName} not found!");
@@ -77,16 +91,21 @@ public class Customer_Spawner : MonoBehaviour
             }
 
             Customer_Controller customer = Instantiate(customerPrefab, seat.position, Quaternion.identity);
-            customer.Init(data, seat, Dish_Tool_Inventory.Instance, true);
+            customer.Init(data, seat, Dish_Tool_Inventory.Instance, spawnSeated: true);
 
-            if (cState.hasRequestedDish)
-                customer.Debug_ForceRequestDish(cState.requestedDishName);
+            if (cState.hasRequestedDish && !string.IsNullOrEmpty(cState.requestedDishName))
+                Debug.Log($"Restored {cState.customerName}'s requested dish: {cState.requestedDishName}");
+
+            if (cState.hasBeenServed)
+                customer.LeaveRestaurant();
 
             if (data.datable)
                 uniqueCustomersPresent.Add(data.customerName);
 
             customer.OnCustomerLeft += HandleCustomerLeft;
         }
+
+        Debug.Log($"Customer_Spawner: Restored {Restaurant_State.Instance.customers.Count} customers from state.");
     }
 
     private CustomerData FindCustomerData(string name)
@@ -128,6 +147,15 @@ public class Customer_Spawner : MonoBehaviour
         List<CustomerData> validCustomers = new List<CustomerData>();
         foreach (var data in possibleCustomers)
         {
+            if (data == null)
+                continue;
+
+            // Skip if NPC isn't unlocked yet
+            if (Player_Progress.Instance != null && !Player_Progress.Instance.IsNPCUnlocked(data.npcID))
+            {
+                continue;
+            }
+
             if (data.datable && uniqueCustomersPresent.Contains(data.customerName))
                 continue;
 
@@ -136,7 +164,7 @@ public class Customer_Spawner : MonoBehaviour
 
         if (validCustomers.Count == 0)
         {
-            Debug.LogWarning("No valid customers to spawn.");
+            Debug.LogWarning("No valid customers to spawn (possibly all locked or already present).");
             return;
         }
 
@@ -149,6 +177,7 @@ public class Customer_Spawner : MonoBehaviour
         Audio_Manager.instance.PlayDoorbell();
         customer.Init(chosen, seat, Dish_Tool_Inventory.Instance);
         customer.OnCustomerLeft += HandleCustomerLeft;
+        OnCustomerCountChanged?.Invoke(GetCurrentCustomerCount());
 
         Debug.Log($"Spawned customer: {chosen.customerName}");
     }
@@ -158,10 +187,15 @@ public class Customer_Spawner : MonoBehaviour
         CustomerData data = FindCustomerData(customerName);
         if (data != null && data.datable)
             uniqueCustomersPresent.Remove(customerName);
+
+        OnCustomerCountChanged?.Invoke(GetCurrentCustomerCount());
     }
 
-    public void StartNewDay()
+    // Helper function
+    private int GetCurrentCustomerCount()
     {
-        uniqueCustomersPresent.Clear();
+        return FindObjectsOfType<Customer_Controller>().Length;
     }
+
+    public void StartNewDay() => uniqueCustomersPresent.Clear();
 }

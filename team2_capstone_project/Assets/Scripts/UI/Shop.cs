@@ -15,7 +15,7 @@ public class Shop : MonoBehaviour
   Player_Progress playerProgress;
   [SerializeField] private GameObject shopUI;
   [SerializeField] private GameObject grid;
-  [SerializeField] private GameObject shopItemPrefab;
+  // [SerializeField] private GameObject shopItemPrefab;
   [SerializeField] private TextMeshProUGUI shopkeeperText; // Shopkeeper's "dialogue" text
   [SerializeField] public List<Shop_Item> items; // assign 6 slots in inspector
   [SerializeField] public Shop_Database shopDatabase;
@@ -29,11 +29,10 @@ public class Shop : MonoBehaviour
 
   [Header("Player Input Info")]
   private Player_Controller player;
-  private InputAction interactAction;
-  private InputAction closeAction;
+  private InputAction interactAction, closeAction;
   private PlayerInput playerInput;
 
-  private void Awake()
+  private void Start()
   {
     if (shopDatabase == null)
     {
@@ -55,7 +54,7 @@ public class Shop : MonoBehaviour
       closeAction = playerInput.actions.FindAction("CloseInteract", true); // From UI Input Map
     }
     
-    CloseShopUI();
+    CloseShopUI(false);
     CreateShopItemCards();
     firstOpen = true;
   }
@@ -99,21 +98,27 @@ public class Shop : MonoBehaviour
   {
     shopUI.SetActive(true);
     shopOpen = true;
+    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.openShopSFX, 0.65f, 1.25f);
     Game_Manager.Instance.UIManager.OpenUI();
 
     if (!firstOpen)
       shopkeeperText.text = otherOpenText;
   }
 
-  private void CloseShopUI()
+  private void CloseShopUI(bool playSound = true)
   {
-    shopUI.SetActive(false);
-    if (shopOpen)
-      Game_Manager.Instance.UIManager.CloseUI();
-    shopOpen = false;
+      shopUI.SetActive(false);
 
-    if (firstOpen)
-      firstOpen = false;
+      if (shopOpen)
+          Game_Manager.Instance.UIManager.CloseUI();
+
+      shopOpen = false;
+
+      if (playSound)
+          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.closeShopSFX, 0.65f, 1.3f);
+
+      if (firstOpen)
+          firstOpen = false;
   }
 
   /// <summary>
@@ -236,7 +241,7 @@ public class Shop : MonoBehaviour
       if (currentAmount == 0) // Ignore buy button press if buying 0 amount
         return;
 
-      if(shop.BuyItem(currentItem, currentAmount))
+      if (shop.BuyItem(currentItem, currentAmount))
       {
         currentAmount = 0;
         amountText.text = currentAmount.ToString();

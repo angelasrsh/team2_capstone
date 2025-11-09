@@ -8,16 +8,15 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
 {
-    public Item_Data checkfor; //temp
-    void OnEnable()
+    public Item_Data checkfor; // temp
+
+    protected override void OnEnable()
     {
         SceneManager.sceneLoaded += onSceneLoaded;
         base.OnEnable();
-
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         SceneManager.sceneLoaded -= onSceneLoaded;
         base.OnDisable();
@@ -27,7 +26,6 @@ public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
     {
         DelayedDialogue(0, 0);
     }
-
 
     private void onSceneLoaded(Scene scene, LoadSceneMode mode)
     {

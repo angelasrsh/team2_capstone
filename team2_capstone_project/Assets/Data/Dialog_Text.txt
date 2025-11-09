@@ -1,55 +1,104 @@
-Elf.LikedDish = In a few more hundred years, this establishment might really grow into something. Hm? Ah, my apologies; I forgot how long humans live. (+10 Affection)
-Elf.NeutralDish = Your culinary experience is evident, though I do wish you’d use a bit more oregano. Regardless, this will do. (+5 Affection)
-Elf.DislikedDish = It will take a few centuries to forget this dreadful experience I had today. (-5 Affection)
-Elf.Filler = What a… quaint abode you have! It’s very nice, for a human. A bit more help on the woodwork and it could be a serviceable little cafe.
+--- DISH SERVING ---
 
-Phrog.LikedDish = I’ve heard of this place from around the pond, I’m glad it’s as good as they say it is!
+Elf.LikedDish1 = In a few more hundred years, this establishment might really grow into something. Hm? Ah, my apologies; I forgot how long humans live. (+10 Affection)
+Elf.LikedDish2 = Reminds me a lot of my mother’s cooking. She was a very disagreeable woman, but at least she knew how to whip up something tasty. Hopefully you won’t prove as obnoxious.
+Elf.LikedDish3 = My father taught me two things in life; to speak up when something is wrong, and to never take no as an answer. Thankfully, I don’t need to exercise the first lesson today. Seconds, now.
+Elf.LikedDish4 = An adequate meal, perhaps even fit for an Elf. Continue to serve food of this caliber and you will keep my patronage, [player].
+Elf.LikedDish5 = This will stave me over until ‘morrow. Congratulations, [player].
+Elf.NeutralDish = Your culinary experience is evident, [player], though I do wish you’d use a bit more oregano. Regardless, this will do. (+5 Affection)
+Elf.DislikedDish1 = It will take a few centuries to forget this dreadful experience I had today. (-5 Affection)
+Elf.DislikedDish2 = This defies all known rules of culinary science, [player]. In an extraordinarily negative manner.
+Elf.BlindingStew = Is... is that an eyeball staring back at me? In spite of all my years of living, you truly have managed to craft something... unique, [player].
+Elf.WrongDish1 = This wasn't on your menu today, but shall still scarcely suffice, I suppose. 
+Elf.WrongDish2 = I did not request this of you, but appears appealing enough, I suppose.
+Elf.Filler = What a… quaint abode you have, [player]! It’s very nice, for a human. A bit more help on the woodwork and this could be a serviceable little café.
+
+Phrog.LikedDish1 = I’ve heard of this place from around the pond, I’m glad it’s as good as they say it is!
+Phrog.LikedDish2 = Just the right amount of bug and slime! Thank you, [player]!
 Phrog.NeutralDish = Could use a bit more bug bits, I think.
-Phrog.DislikedDish = Chef! I said I wanted flies in my food!
-Phrog.Filler = Gurp! (Good afternoon! Today I would like to eat...)
+Phrog.DislikedDish1 = [player]! I said I wanted flies in my food!
+Phrog.DislikedDish2 = Gurp?! (What... what *is* this?!)
+Phrog.BlindingStew1 = Ahhh, what bitter spores! I can’t see straight! I love it!
+Phrog.BlindingStew2 = Ah, a refreshing blinding stew — and you even gave me extra eyeballs! You've made my day, [player].
+Phrog.Filler = Gurp! (Good afternoon, [player]! Today, I would like to eat...)
 
-Journal.Bedroom = Good morning! Time for another day of foraging, cooking, serving customers, and making money!
-Journal.Bedroom = Looks like you've got a few Expected Customers planning to come in later today, so when you're ready let's head outside to gather ingredients!
-Journal.Bedroom = (Press <sprite name="WASD"> to move and 'E' to close)
+Satyr.DislikeddDish1 = Hmph. This is why you should've used some of *my* ingredients, [player].
+Satyr.DislikedDish2 = I would've liked to spend the money I wasted on this dish elsewhere. 
+Satyr.Filler = Ah, hello, [player]. Hopefully one of your dishes can satitate me before I have to hit the road again.
 
-Journal.Open_Journal_PC = Okay, let's look at that dish we're going to make. You can tell me to open and close with "J"
-Journal.Open_Journal_Mobile = Okay, let's look at that dish we're going to make. You can tell me to open by tapping <sprite name="travel-journal"> and <sprite name="remove"> to close.
-Journal.Click_Journal_Recipe = On the dishes tab <sprite name="Pink_Dishes_Tab">, look at the recipe for One-Day Blinding Stew.
-Journal.Click_Journal_Recipe_Text = Each dish takes 1 fogshroom, 1 fermented eye, and 1 bone. Let's gather enough to serve all your expected customers!
-Journal.Close_Journal_PC = (Press "J" to close me)
-Journal.Close_Journal_Mobile = (tap <sprite name="remove"> to close journal)
-Journal.Harvest_Mobile = Let's collect some ingredients. Go to an object and tap and hold to forage.
-Journal.Harvest_PC = Let's collect some ingredients. Go to an object and hold "E" to forage!
-Journal.Open_Inventory_PC = Once you've collected items, you can press "I" to see them in your inventory.
-Journal.Open_Inventory_Mobile = Nice! Tap <sprite name="backpack" to see it in your inventory.
-Journal.Open_Inventory_Text = You have 12 slots and can store 20 items in each slot in your pack.
-Journal.Close_Inventory_PC = (Press "I" again to close your inventory!)
-Journal.Close_Inventory_Mobile = (Tap <sprite name="backpack"> again to close your inventory!)
-Journal.Collect_Ingredients = Let's explore! When you've gathered enough ingredients, head back to the carriage and press "E" to head back!
+
+--- NPC FORAGING AREA ---
+
+Elf.ForagingArea1 = Ah, [player]. Out gathering ingredients before this evening, hm? Humans' amount of perserverance can be quite commendable.
+Elf.ForagingArea2 = I will never tire of the winds that blow through these lands. Me and... never mind, pay no heed to my musings. 
+Satyr.ForagingArea1 = Heh, not to worry, [player]. I won’t take any of the ingredients you’re after. If you do happen to come up short, though, you can always buy them from me later.
+
+
+--- AFFECTION EVENTS ---
+
+Elf.RingReturn = ...I am unsure where you would ever find this, [player], but I am endlessly grateful it is back in my hands now. Thank you.
+none.1_25 = (To get your attention, Asper lets out a shrill whistle, like the kind used to call a dog. The empty plate sat before her… clean. Only the glisten of leftovers on her cutlery suggested there was ever food at all, which she methodically begins licking clean .)
+Elf.2_25 = Really, I’m surprised that someone like you was willing to try and open a restaurant this far out from your kin. Many upstart human chefs try their hardest but fail to appeal to a more nuanced palette afforded by an Elvish constitution.
+Elf.3_25 = If that isn’t simple enough for your kind, it means your limited human palette could never impress an elf who is worth their salt.. like myself.
+Player.4_25 = What do you mean “like you?”
+Elf.5_25 = You know very well what I mean by like you. Or do I need to repeat myself to get it through your thick, human skull?
+Elf.6_25 = Either way, it is surprising that you are capable of creating… edible foods. I had only ever been to the human realms once, and the cuisine was horrid. Except for when I ate with…
+none.7_25 = (Asper’s eyes glazed over slightly as she thought of something else. A far-off memory? But the moment would pass so quickly that you almost doubted it happened. She’d shake her head and focus her gaze again, now refocusing her disdain towards you.)
+Elf.8_25 = Whatever. You know, when you live as long as I do, all of you humans start to look the same. Perhaps if you continue to improve, you will be worth enough to exist as a footnote in my memory. Clean up my planes.
+Player.9_25 = A simple “thank you” would suffice.
+Elf.10_25 = No.
+none.11_25 = (Asper would leave the door open behind her, letting the cold wind blow in from the outside. Asshole.)
+
+
+--- OBJECT INTERACTIONS ---
+
+Default.Dresser = (Filled with clothes, including your old McDragons uniform. You should probably get rid of this.)
+Default.ChalkBoard = (You could brainstorm lots of different recipes on this board!)
+Default.Journal = (Your journal filled with cooking recipes you've taught yourself, ingredients you can find in the wild, and... a catalogue of your customers? Probably best not to show them.)
+Default.Bed = (It's not time to go to bed yet!)
+
+
+
+
+--- TUTORIAL ---
+
+Journal.Hands_Full = You don't have space to make anything else! Serve a dish or throw it into the trash to clear up space.
+
+Journal.Bedroom = Good morning! It seems you've settled into this new home quickly; I'm sure it must be exciting to finally be running your own restaurant! (Press 'Z' or Left Click to continue.)
+Journal.Bedroom = Let’s make it a success! Once you’re ready, let's go outside and start gathering ingredients for tonight’s customers.
+Journal.Bedroom = (Use WASD or arrow keys to move, and press 'E' near the door to go outside.)
+
+Journal.Open_Journal_PC = Ah, the great outdoors! To get started on your first dish, open your journal with 'J' and check the recipe.
+Journal.Open_Journal_Mobile = Ah, the great outdoors! To get started on your first dish, open your journal by tapping <sprite name="travel-journal">. (Tap <sprite name="remove"> to close me afterwards.)
+Journal.Click_Journal_Recipe = On the Dishes tab <sprite name="Pink_Dishes_Tab">, find the recipe for One-Day Blinding Stew.
+Journal.Click_Journal_Recipe_Text = Hmm… looks like we’ll need one fogshroom, one bone, and one fermented eye. Better gather a few extras for all our hungry customers!
+Journal.Close_Journal_PC = (Press "J" to close me!)
+Journal.Close_Journal_Mobile = (Tap <sprite name="remove"> to close me!)
+Journal.Harvest_PC = Time to gather ingredients! Approach a resource and hold 'E' to forage.
+Journal.Harvest_Mobile = Time to gather ingredients! Tap and hold the right-hand button to forage.
+Journal.Open_Inventory_PC = Once you’ve picked up a few items, press 'I' to check your inventory.
+Journal.Open_Inventory_Mobile = Once you’ve picked up a few items, tap <sprite name="backpack"> to open your inventory.
+Journal.Open_Inventory_Text = You have 12 slots, and each slot can hold up to 20 items.
+Journal.Close_Inventory_PC = (Press 'I' again to close your inventory.)
+Journal.Close_Inventory_Mobile = (Tap <sprite name="backpack"> again to close your inventory.)
+Journal.Collect_Ingredients = Let's explore the area and gather everything we need! When you’re ready to leave, head back to the carriage and press 'E' to go back home and start cooking!
+Journal.Collect_Ingredients = (Hold 'Shift' to sprint!)
+
 
 Journal.Frying_Pan_Instruction = Let's cook! Drag an uncooked patty on the pan, click when the arrow reaches the green bar to flip it. Catch, then repeat on the other side!
-Journal.Combine_Minigame_Instruction = Use the recipe to place the right ingredients on the board, then press "Combine!" Position doesn't matter. ("E" to close dialogue)
+Journal.Combine_Minigame_Instruction = Use the recipe to place the right ingredients on the board, then press "Combine!" Position doesn't matter. ("Z" to close dialogue)
 Journal.Cooking_Minigame_Instruction = Check the recipe, drag ingredients in the cauldron, then stir continuously to make a dish!
-Journal.Cooking_Minigame_Instruction = Make sure to check if you need water and which (cut / uncut) ingredient forms you need. ("E" to close dialogue)
+Journal.Cooking_Minigame_Instruction = Make sure to check if you need water and which (cut / uncut) ingredient forms you need. ("Z" to close dialogue)
 
 
-Journal.Get_Order = Now you cook and serve the food using the recipe in your journal! But first, get orders from customers by pressing "E"
-Journal.Get_Order2 = Get orders from customers by pressing "E"
-Journal.Make_Food = Chop up ingredients on the chopping board then cook them in the cauldron!
-Journal.Serve_Customer = To serve a customer once you have a dish, press 1 or 2 to select a slot, then "E" to serve.
-Journal.Make_Money = Nice job! You can use the money you earn to buy more ingredients at the Satyr's Shop.
-Journal.Make_Money = Good work today! When you're done, head to the blue box and get some rest (Press "E" near blue box, then bed) before tomorrow!
+Journal.Get_Order = Time to open for business! Speak to a customer to take their order by walking up to them and left clicking.
+Journal.Get_Order2 = Go ahead and try it! Left click a customer to see what they’d like to eat.
+Journal.Make_Food = Once you have an order, prepare the ingredients at the chopping board by pressing 'E', then cook them in the cauldron!
+Journal.Serve_Customer = When a dish is ready, press '1' or '2' to select its slot, then left click the waiting customer to serve!
+Journal.Make_Money = Great job! You can use your earnings to buy more ingredients at the Satyr’s Shop.
+Journal.End_Day = Good work today! When you’re done serving, head to your bedroom by entering the door to the left of the cooking stations and pressing 'E' to close up for the day.
 
-Other elf liked dish lines:
-Reminds me a lot of my mother’s cooking. She was a very disagreeable woman, but at least she knew how to whip up something tasty. Hopefully you won’t prove as obnoxious.
 
-My father taught me two things in life; to speak up when something is wrong, and to never take no as an answer. Thankfully I don’t need to exercise the first lesson today. Seconds, now.
-
-An adequate meal, perhaps even fit for an Elf. Continue to serve food of this caliber and you will keep my patronage.
-
-In a few more hundred years this establishment might really grow into something. Hm? Ah, my apologies; I forgot how long humans live.
-
-This will stave me over until ‘morrow. Congratulations.
 
 Journal.sGet_Order = Now you cook and serve the food! To get an order, go to a customer and press "E"
 Journal.sMake_Food = To cook, you'll have to follow the recipe. Chop up ingredients, then cook them in the cauldron!

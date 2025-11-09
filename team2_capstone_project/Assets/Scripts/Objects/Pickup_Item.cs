@@ -147,6 +147,7 @@ public class Pickup_Item : MonoBehaviour
         collected = true;
 
         Ingredient_Inventory.Instance.AddResources(data, 1);
+        Save_Manager.instance.AutoSave();
         Audio_Manager.instance.PlaySFX(Audio_Manager.instance.pickupSFX, 0.6f, 1f);
 
         sr.enabled = false;

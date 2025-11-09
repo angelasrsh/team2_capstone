@@ -15,9 +15,10 @@ MonoBehaviour:
   npcID: 1
   customerName: Phrog
   overworldSprite: {fileID: 21300000, guid: c03bc1f1287c1bf4e9aa855360c9dc7f, type: 3}
+  walkAnimatorController: {fileID: 0}
   datable: 0
   lore: Part of a large family of frogs.
-  dialogClipSound: {fileID: 8300000, guid: aab5491747f1ed0489e77481c7e6aa7d, type: 3}
+  dialogClipSound: {fileID: 8300000, guid: c8d87bb724967a0449abe00c80d332b8, type: 3}
   pitchMin: 1
   pitchMax: 1.15
   textSpeed: 0.02
@@ -29,8 +30,12 @@ MonoBehaviour:
     portrait: {fileID: 21300000, guid: 961327fb620d10b43943cc18170a3dda, type: 3}
   - emotion: 3
     portrait: {fileID: 21300000, guid: 961327fb620d10b43943cc18170a3dda, type: 3}
+  - emotion: 4
+    portrait: {fileID: 21300000, guid: 961327fb620d10b43943cc18170a3dda, type: 3}
   favoriteDishes:
   - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
   neutralDishes: []
   dislikedDishes:
   - {fileID: 11400000, guid: c64e5753c27a7f1499958a0f420b36b8, type: 2}
+  Cutscene_50: {fileID: 0}
+  Cutscene_100: {fileID: 0}

@@ -4,24 +4,22 @@ using UnityEngine;
 
 public class Combine_Minigame_Quest_Step : Dialogue_Quest_Step
 {
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onCombineAddToTable += CombineAddToTable;
         base.OnEnable();   
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onCombineAddToTable -= CombineAddToTable;
-        base.OnEnable();
+        base.OnDisable();
     }
 
     void Start()
     {
         DelayedDialogue(0, 0, false);
     }
-
 
     private void CombineAddToTable(Ingredient_Data ing, int zone)
     {

@@ -6,27 +6,23 @@ public class Harvest_Quest_Step : Dialogue_Quest_Step
 {
 
 
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onResourceAdd += Harvest;
-
-        
     }
 
-    void Start()
-    {
-        if (Ingredient_Inventory.Instance.TotalIngCount > 3)
-            FinishQuestStep();
-        else
-            DelayedDialogue(0, 0, false);
-    }
-
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onResourceAdd -= Harvest;
     }
 
+    void Start()
+    {
+        if (Ingredient_Inventory.Instance.GetTotalIngredientCount() > 3)
+            FinishQuestStep();
+        else
+            DelayedDialogue(0, 0, false);
+    }
 
     private void Harvest(Ingredient_Data ing)
     {        

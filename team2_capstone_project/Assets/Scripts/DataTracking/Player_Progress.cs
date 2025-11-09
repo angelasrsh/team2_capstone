@@ -1,88 +1,205 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using System;
 
 [CreateAssetMenu(menuName = "Saves/PlayerProgress")]
 public class Player_Progress : ScriptableObject
 {
   public static Player_Progress Instance;
+
+  [SerializeField] private string playerName = "Chef";
+  [SerializeField] private static bool introPlayed = false;
+
+  [Header("Default Unlocks")]
+  [SerializeField] private Dish_Data.Dishes[] defaultDishes;
+  [SerializeField] private CustomerData.NPCs[] defaultNPCs;
+  [SerializeField] private IngredientType[] defaultIngredients;
+
   // HashSet ensures no duplicates and fast lookups
   [SerializeField] private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
   [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
   [SerializeField] private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
-  [SerializeField] private float startingMoney;
-  public event System.Action<float> OnMoneyChanged;
-  [HideInInspector] public float money;
-  
-  public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used )
-  public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used )
-  public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used )
 
+  [Header("Money Variables")]
+  [SerializeField] private float startingMoney;
+  [HideInInspector] public float money;
+  public static event System.Action<float> OnMoneyChanged;  
+
+  [Header("Daily Recipe Spawner Tracking")]
+  [SerializeField] private int lastRecipeSpawnedDay = -1;   // Monday=0, Tuesday=1, etc.
+  [SerializeField] private Dish_Data.Dishes? activeDailyRecipe = null;
+  public static event Action OnRecipesUpdated;
+  [SerializeField] private bool hasCollectedRecipeToday = false;
+  
+  // public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used)
+  public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used)
+  public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used)
+
+
+  /// <summary>
+  /// Data to unlock at game start
+  /// </summary>
   private void OnEnable()
   {
     Instance = this;
-    // Initialize with default unlocks if needed
-    UnlockDish(Dish_Data.Dishes.Blinding_Stew);
-    // UnlockDish(Dish_Data.Dishes.Mc_Dragons_Burger);
-    UnlockNPC(CustomerData.NPCs.Elf);
-    UnlockNPC(CustomerData.NPCs.Phrog);
-    UnlockIngredient(IngredientType.Uncut_Slime);
-    UnlockIngredient(IngredientType.Cut_Slime);
-    UnlockIngredient(IngredientType.Water);
-    UnlockIngredient(IngredientType.Bone_Broth);
-    UnlockIngredient(IngredientType.Bone);
-    UnlockIngredient(IngredientType.Uncut_Fogshroom);
-    UnlockIngredient(IngredientType.Uncut_Fermented_Eye);
-    UnlockIngredient(IngredientType.Cut_Fogshroom);
-    UnlockIngredient(IngredientType.Cut_Fermented_Eye);
-    UnlockIngredient(IngredientType.Milk);
-    UnlockIngredient(IngredientType.Honey);
-    UnlockIngredient(IngredientType.Cut_Ficklegourd);
-    UnlockIngredient(IngredientType.Cooked_Cut_Ficklegourd);
+    InitializeDefaults();
     money = startingMoney;
   }
+
+  private void InitializeDefaults()
+  {
+    foreach (var d in defaultDishes) UnlockDish(d);
+    foreach (var n in defaultNPCs) UnlockNPC(n);
+    foreach (var i in defaultIngredients) UnlockIngredient(i);
+  }
+
+
+  #region Getters and Setters for Save Data
+  public PlayerProgressData GetSaveData()
+  {
+      return new PlayerProgressData
+      {
+        playerName = playerName,
+        introPlayedData = introPlayed,
+        money = money,
+        unlockedDishes = new List<Dish_Data.Dishes>(unlockedDishes),
+        unlockedNPCs = new List<CustomerData.NPCs>(unlockedNPCs),
+        unlockedIngredients = new List<IngredientType>(unlockedIngredients),
+        lastRecipeSpawnedDay = lastRecipeSpawnedDay,
+        activeDailyRecipe = activeDailyRecipe,
+        hasCollectedRecipeToday = hasCollectedRecipeToday
+      };
+  }
+
+  public void LoadFromSaveData(PlayerProgressData data)
+  {
+      if (data == null)
+      {
+          Debug.LogWarning("PlayerProgressData is null, loading defaults.");
+          InitializeDefaults();
+          lastRecipeSpawnedDay = -1;
+          hasCollectedRecipeToday = false;
+          activeDailyRecipe = null;
+          return;
+      }
+
+      playerName = string.IsNullOrWhiteSpace(data.playerName) ? "Chef" : data.playerName;
+      introPlayed = data.introPlayedData;
+      unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
+      unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
+      unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
+      money = data.money;
+      lastRecipeSpawnedDay = data.lastRecipeSpawnedDay;
+      activeDailyRecipe = data.activeDailyRecipe;
+      hasCollectedRecipeToday = data.hasCollectedRecipeToday;
+
+      OnMoneyChanged?.Invoke(money);
+  }
+  #endregion
+
+
+  #region Player Info
+  public void SetPlayerName(string name)
+  {
+      // Trim leading/trailing spaces
+      name = name?.Trim();
+
+      // If empty or null, fall back to default
+      if (string.IsNullOrWhiteSpace(name))
+      {
+          playerName = "Chef";
+      }
+      else
+      {
+          // Limit to 16 characters max
+          if (name.Length > 16)
+          {
+              Debug.LogWarning($"Player name '{name}' is too long — trimming to 16 characters.");
+              name = name.Substring(0, 16);
+          }
+
+          playerName = name;
+      }
+
+      // Auto-save when name changes
+      Save_Manager.instance?.SaveGameData();
+  }
+
+  public string GetPlayerName() => playerName;
+
+  public void SetIntroPlayed(bool played)
+  {
+    introPlayed = played;
+    Save_Manager.instance?.SaveGameData();
+  }
+
+  public bool GetIntroPlayed() => introPlayed;
+
+  #endregion
 
 
   #region Money
   /// <summary>
-  /// Add amount to player's money.
+  /// Add amount to player's money (float-safe)
   /// </summary>
   public void AddMoney(float amount)
   {
-    money += amount;
-    OnMoneyChanged?.Invoke(money);
+      money += amount;
+      OnMoneyChanged?.Invoke(money);
   }
 
   /// <summary>
-  /// Subtract amount from player's money.
+  /// Subtract amount from player's money (float-safe)
   /// </summary>
   public void SubtractMoney(float amount)
   {
-     money -= amount;
-     OnMoneyChanged?.Invoke(money);
+      money -= amount;
+      OnMoneyChanged?.Invoke(money);
   }
 
   /// <summary>
-  /// Used to get the current amount of money the player has.
+  /// Directly sets player's money to specific value
   /// </summary>
-  public float GetMoneyAmount()
+  public void SetMoney(float amount)
   {
-    return money;
+      money = amount;
+      OnMoneyChanged?.Invoke(money);
   }
+
+  /// <summary>
+  /// Returns player's current money
+  /// </summary>
+  public float GetMoneyAmount() => money;
   #endregion
 
 
   #region Dishes
   /// <summary>
-  /// Unlock a dish by enum
+  /// Unlock a dish by enum (old version)
   /// </summary>
-  public void UnlockDish(Dish_Data.Dishes dish)
+  // public void UnlockDish(Dish_Data.Dishes dish)
+  // {
+  //   // HashSet.Add returns true if item was actually added
+  //   if (unlockedDishes.Add(dish))
+  //   {
+  //     // Fire event only if a new dish was added
+  //     OnDishUnlocked?.Invoke();
+  //     Save_Manager.instance?.SaveGameData();  // auto-save on new dish unlock
+  //   }
+  // }
+
+  /// <summary>
+  /// Unlock a dish by enum (new version)
+  /// </summary>
+  public void UnlockDish(Dish_Data.Dishes newDish)
   {
-    // HashSet.Add returns true if item was actually added
-    if (unlockedDishes.Add(dish))
+    if (!unlockedDishes.Contains(newDish))
     {
-      // Fire event only if a new dish was added
-      OnDishUnlocked?.Invoke();
+      unlockedDishes.Add(newDish);
+      OnRecipesUpdated?.Invoke();
+      Save_Manager.instance?.SaveGameData();  // auto-save on new dish unlock
     }
   }
 
@@ -95,6 +212,25 @@ public class Player_Progress : ScriptableObject
   /// Get all unlocked dishes as a list
   /// </summary>
   public List<Dish_Data.Dishes> GetUnlockedDishes() => new List<Dish_Data.Dishes>(unlockedDishes);
+
+  public bool HasCollectedRecipeToday() => hasCollectedRecipeToday;
+
+  public void MarkRecipeCollectedToday()
+  {
+      hasCollectedRecipeToday = true;
+      Save_Manager.instance?.SaveGameData();
+  }
+
+ public void ResetDailyRecipeFlags(bool fullReset = false)
+  {
+      activeDailyRecipe = null;
+      hasCollectedRecipeToday = false;
+
+      if (fullReset)
+          lastRecipeSpawnedDay = -1; // resets day tracking completely
+
+      Save_Manager.instance?.SaveGameData();
+  }
   #endregion
 
 
@@ -147,4 +283,44 @@ public class Player_Progress : ScriptableObject
   public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
 
   #endregion
+
+
+  #region Daily Recipe Spawner Tracking
+  public int GetLastRecipeSpawnedDay() => lastRecipeSpawnedDay;
+  public Dish_Data.Dishes? GetActiveDailyRecipe() => activeDailyRecipe;
+
+  public void SetDailyRecipe(Dish_Data.Dishes dish)
+  {
+      activeDailyRecipe = dish;
+      Save_Manager.instance?.SaveGameData();
+  }
+
+  public void MarkDailyRecipeSpawned(int dayIndex)
+  {
+      lastRecipeSpawnedDay = dayIndex;
+      Save_Manager.instance?.SaveGameData();
+  }
+
+  public void ClearDailyRecipe()
+  {
+      activeDailyRecipe = null;
+      Save_Manager.instance?.SaveGameData();
+  }
+  #endregion
 }
+
+#region PlayerProgressData
+[System.Serializable]
+public class PlayerProgressData
+{
+    public string playerName = "Chef";
+    public bool introPlayedData = false;
+    public List<Dish_Data.Dishes> unlockedDishes = new();
+    public List<CustomerData.NPCs> unlockedNPCs = new();
+    public List<IngredientType> unlockedIngredients = new();
+    public float money;
+    public int lastRecipeSpawnedDay = -1;
+    public Dish_Data.Dishes? activeDailyRecipe = null;
+    public bool hasCollectedRecipeToday = false; 
+}
+#endregion

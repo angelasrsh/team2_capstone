@@ -20,7 +20,7 @@ public class Choose_Menu_UI : MonoBehaviour
 
     private void Start()
     {
-        if (Day_Turnover_Manager.Instance != null && 
+        if (Day_Turnover_Manager.Instance != null &&
             Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Morning)
         {
             menuBox.SetActive(true);
@@ -153,26 +153,44 @@ public class Choose_Menu_UI : MonoBehaviour
         errorText.SetActive(false);
     }
 
-    // Pass-through methods for UI buttons
-   public void AddDish(Dish_Data.Dishes dishType)
+    public void ShowSelectionError(string message)
     {
-        if (Choose_Menu_Items.instance.GetSelectedDishes().Count >= 2)
+        if (errorText == null)
         {
-            Debug.Log("You can only select up to 2 dishes!");
-            errorText.SetActive(true);
-            PlayErrorSound();
-            StartCoroutine(HideMessageAfterDelay(4f));
-            return;
+            var found = menuBox.transform.Find("Error_Text");
+            if (found != null)
+                errorText = found.gameObject;
         }
 
-        Choose_Menu_Items.instance.AddDish(dishType);
+        if (errorText != null)
+        {
+            errorText.SetActive(true);
+            var tmp = errorText.GetComponent<TMPro.TextMeshProUGUI>();
+            if (tmp != null) tmp.text = message;
+
+            Audio_Manager.instance.PlaySFX(Audio_Manager.instance.errorBuzz, 0.09f, Random.Range(0.95f, 1.05f));
+            StartCoroutine(HideMessageAfterDelay(4f));
+        }
     }
 
-    public void RemoveDish(Dish_Data.Dishes dishType) =>
-        Choose_Menu_Items.instance.RemoveDish(dishType);
-
-    private void PlayErrorSound()
-    {
+    private void PlayErrorSound() =>
         Audio_Manager.instance.PlaySFX(Audio_Manager.instance.errorBuzz, 0.09f, Random.Range(0.95f, 1.05f));
-    }
+
+    // Pass-through methods for UI buttons
+    //    public void AddDish(Dish_Data.Dishes dishType)
+    //     {
+    //         if (Choose_Menu_Items.instance.GetSelectedDishes().Count >= 2)
+    //         {
+    //             Debug.Log("You can only select up to 2 dishes!");
+    //             errorText.SetActive(true);
+    //             PlayErrorSound();
+    //             StartCoroutine(HideMessageAfterDelay(4f));
+    //             return;
+    //         }
+
+    //         Choose_Menu_Items.instance.AddDish(dishType);
+    //     }
+
+    //     public void RemoveDish(Dish_Data.Dishes dishType) =>
+    //         Choose_Menu_Items.instance.RemoveDish(dishType);
 }

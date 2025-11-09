@@ -7,7 +7,7 @@ public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
 {
     
     // Start is called before the first frame update
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onRoomChange += LeaveBedroom;
         Choose_Menu_Items.OnDailyMenuSelected += BeginDialogue;
@@ -17,7 +17,7 @@ public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
     }
 
     // Update is called once per frame
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onRoomChange -= LeaveBedroom;
         Choose_Menu_Items.OnDailyMenuSelected -= BeginDialogue;

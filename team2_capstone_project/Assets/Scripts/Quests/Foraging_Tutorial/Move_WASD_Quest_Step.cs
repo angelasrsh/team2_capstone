@@ -10,17 +10,15 @@ using UnityEngine;
 public class Move_WASD_Quest_Step : Dialogue_Quest_Step
 {
 
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onPlayerMove += PlayerMoved;
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onPlayerMove -= PlayerMoved;
     }
-
 
     private void PlayerMoved()
     {

@@ -6,15 +6,14 @@ using UnityEngine;
 public class Serve_Customer_Quest_Step : Dialogue_Quest_Step
 {
 
-    void OnEnable()
+    protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onServeCustomer += ServeCustomer;
         base.OnEnable();
 
     }
 
-    // Unsubscribe to clean up
-    void OnDisable()
+    protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onServeCustomer -= ServeCustomer;
         base.OnDisable();
@@ -24,8 +23,6 @@ public class Serve_Customer_Quest_Step : Dialogue_Quest_Step
     {
         DelayedDialogue(0, 0, false);
     }
-
-   
 
     private void ServeCustomer()
     {

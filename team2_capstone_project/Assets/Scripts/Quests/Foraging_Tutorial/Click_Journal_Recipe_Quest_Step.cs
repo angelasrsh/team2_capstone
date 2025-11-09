@@ -10,8 +10,10 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     private bool journalRecipeClickFirstDialogueComplete = false;
     private bool journalRecipeClickDialogueComplete = false;
     private bool journalRecipeClickDialogueStarted = false;
-
+    private bool journalRecipeClickFirstDialogueStarted = false;
     [SerializeField] private Dish_Data DishToMake; // Which dish the player must click. Set to one-day blinding stew.
+
+
     override protected void OnEnable()
     {
         Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
@@ -35,11 +37,13 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
 
     private void Start()
     {
-        DelayedDialogue(0, 0, false);        
+        DelayedDialogue(0, 0, false);
     }
 
     private void onDialogComplete(string dialogKey)
     {
+        Debug.Log($"[Tutorial] onDialogComplete called with key {dialogKey}");
+       
         // So we don't start the next dialogue too soon
         if (dialogKey == "Journal.Click_Journal_Recipe")
             journalRecipeClickFirstDialogueComplete = true; 
@@ -53,12 +57,17 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     }
 
     /// <summary>
-    /// Track which dialogue to give
+    /// Track which dialogue to give. Would really like to simplify this code; it's so messy >:'(
     /// </summary>
     private void checkPlayDialog()
     {
-        if (journalHasBeenOpened && !recipeClicked) // Opened journal but didn't click recipe
+        Debug.Log($"[Tutorial] CheckPlayDialog | Opened={journalHasBeenOpened} Closed={journalHasBeenClosed} Clicked={recipeClicked} FirstDialogue={journalRecipeClickFirstDialogueComplete} SecondDialogue={journalRecipeClickDialogueComplete}");
+        
+        if (journalHasBeenOpened && !recipeClicked && !journalRecipeClickFirstDialogueStarted)
+        { // Opened journal but didn't click recipe
             DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe");
+            journalRecipeClickFirstDialogueStarted = true;
+        }
         else if (recipeClicked && !journalRecipeClickDialogueStarted && journalRecipeClickFirstDialogueComplete)
         { // Opened journal and clicked recipe but didn't get instruction yet
             DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe_Text");
@@ -70,14 +79,11 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
             else
                 DelayedDialogue(10, 0, false, "Journal.Close_Journal_Mobile"); // Play in 10 secs (or not if quest is finished and destroyed)
 
-        if (journalRecipeClickDialogueComplete && journalHasBeenClosed && journalHasBeenOpened && recipeClicked)
-                FinishQuestStep();
-
+        if (journalRecipeClickDialogueComplete && recipeClicked)
+            FinishQuestStep();
     }
     
    
-
-
     #region Events
     /// <summary>
     /// Step 1 - player must open journal
@@ -86,10 +92,17 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     private void JournalToggled(bool isOpen)
     {
         if (isOpen)
-            journalHasBeenOpened = true; // Finish and destroy this object
+        {
+            journalHasBeenOpened = true;
+
+            if (!journalRecipeClickFirstDialogueStarted)
+            {
+                DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe");
+                journalRecipeClickFirstDialogueStarted = true;
+            }
+        }
         else if (journalHasBeenOpened && !isOpen)
             journalHasBeenClosed = true;
-
         checkPlayDialog();
     }
 
@@ -102,11 +115,19 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     private void RecipeClick(Dish_Data dishData)
     {
         if (dishData == DishToMake)
+        {
             recipeClicked = true;
+            Debug.Log("Recipe clicked!");
 
-        checkPlayDialog();
+            // Manually close any open dialogue box
+            if (dm != null)
+            {
+                Debug.Log("[Tutorial] Manually ending current dialogue.");
+                dm.EndDialog();
+            }
+            checkPlayDialog();
+            Game_Events_Manager.Instance.DialogueComplete("Journal.Click_Journal_Recipe");
+        }
     }
-
     #endregion
-
 }

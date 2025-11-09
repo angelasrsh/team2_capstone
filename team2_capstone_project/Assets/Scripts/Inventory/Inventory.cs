@@ -20,7 +20,7 @@ public class Item_Stack
 {
     public Item_Data resource;
     public int amount;
-    public virtual int stackLimit { get; set; } = 20;
+    public int stackLimit;
 }
 
 /// <summary>
@@ -40,20 +40,19 @@ public class Inventory : MonoBehaviour
 
   [field: SerializeField] public Item_Stack[] InventoryStacks { get; protected set; }
 
-    // Count total amount of items
-    public int TotalIngCount = 0;
-
-  /// <summary>
-  /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
-  /// </summary>
-  public Inventory_Grid InventoryGrid;
+    /// <summary>
+    /// An inventoryGrid will add itself to an Ingredient or Dish inventory on Start() to display its contents.
+    /// </summary>
+    public Inventory_Grid InventoryGrid;
+  
+    public int ItemStackLimit = 20;
 
   /// <summary>
   /// Initialize Inventory to be size InventorySizeLimit
   /// </summary>
   protected virtual void Awake()
   {
-    InitializeInventoryStacks<Item_Stack>();
+    InitializeInventoryStacks();
     updateInventory();
   }
 
@@ -70,21 +69,20 @@ public class Inventory : MonoBehaviour
 
     if (InventoryStacks == null || InventoryStacks.Length != InventorySizeLimit)
     {
-      InitializeInventoryStacks<Item_Stack>();
+      InitializeInventoryStacks();
       Debug.Log("[Inventory] Rebuilt inventory stack array.");
 
     }
-    return addResourcesOfType<Item_Stack>(type, count);
+    return addResourcesOfType(type, count);
   }
 
   /// <summary>
   /// Internal implementation of AddResources that allows for adding resources of a different type by overriding this method
   /// </summary>
-  /// <typeparam name="Stack_Type"></typeparam>
   /// <param name="type"></param>
   /// <param name="count"></param>
   /// <returns>How many items were added</returns>
-  protected int addResourcesOfType<Stack_Type>(Item_Data type, int count) where Stack_Type : Item_Stack, new()
+  protected int addResourcesOfType(Item_Data type, int count)
   {
     // Error-checking
     if (count < 0)
@@ -110,10 +108,13 @@ public class Inventory : MonoBehaviour
     {
       if ((InventoryStacks[i] == null || InventoryStacks[i].resource == null) && amtLeftToAdd > 0)
       {
-        InventoryStacks[i] = new Stack_Type();
+        InventoryStacks[i] = new Item_Stack();
+        InventoryStacks[i].stackLimit = ItemStackLimit;
+
         int amtToAdd = Math.Min(InventoryStacks[i].stackLimit, amtLeftToAdd);
         InventoryStacks[i].amount = amtToAdd;
         InventoryStacks[i].resource = type;
+        
         amtLeftToAdd -= amtToAdd;
       }
     }
@@ -126,7 +127,6 @@ public class Inventory : MonoBehaviour
 
 
     int amtAdded = count - amtLeftToAdd;
-    TotalIngCount += amtAdded;
     updateInventory();
     Debug.Log($"[Inventory] Added {amtAdded} {type.Name}");
     return amtAdded; // Return how many items were actually added
@@ -166,8 +166,7 @@ public class Inventory : MonoBehaviour
       Game_Events_Manager.Instance.DishRemove((Dish_Data)type);
 
     int amtRemoved = count - amtLeftToRemove;
-    TotalIngCount += amtRemoved;
-        updateInventory(); // Remove empty elements
+    updateInventory(); // Remove empty elements
     Debug.Log($"[Invtory] Removed {amtRemoved} {type.Name}");
     // Return however much was added
     return amtRemoved;
@@ -180,8 +179,14 @@ public class Inventory : MonoBehaviour
   {
     for (int i = 0; i < InventoryStacks.Length; i++)
     {
-      if (InventoryStacks[i] != null && InventoryStacks[i].amount <= 0)
-        InventoryStacks[i] = null;
+        if (InventoryStacks[i] != null && InventoryStacks[i].amount <= 0)
+            {
+                InventoryStacks[i].resource = null;
+                InventoryStacks[i].stackLimit = ItemStackLimit;
+                
+            }
+            
+        
       // Display inventory update code here maybe (real not fake, UI stuff)  
     }
     //PrintInventory();  
@@ -189,20 +194,68 @@ public class Inventory : MonoBehaviour
       InventoryGrid.PopulateInventory();
   }
 
-  /// <summary>
-  /// Check if the inventory contains the requested item
-  /// </summary>
-  /// <param name="item"> Item to search for </param>
-  /// <returns> True if the item is in inventory, false otherwise. </returns>
-  public bool HasItem(Item_Data item)
-  {
-    foreach (Item_Stack i in InventoryStacks)
+    /// <summary>
+    /// Check if the inventory contains the requested item
+    /// </summary>
+    /// <param name="item"> Item to search for </param>
+    /// <returns> True if the item is in inventory, false otherwise. </returns>
+    public bool HasItem(Item_Data item)
     {
-      if (i != null && i.resource == item)
-        return true;
+        foreach (Item_Stack i in InventoryStacks)
+        {
+            if (i != null && i.resource == item)
+                return true;
+        }
+        return false;
     }
-    return false;
-  }
+
+
+    
+    /// <summary>
+    /// Returns true if the inventory is completely full
+    /// </summary>
+    /// <returns> true if # items = total possible number of items </returns>
+    public bool IsFull()
+    {
+        updateInventory();
+        
+        bool isFull = true;
+
+        foreach (Item_Stack stk in InventoryStacks)
+        {
+            if (stk == null || stk.amount < stk.stackLimit)
+                isFull = false;
+        }
+        return isFull;
+
+    }
+
+    /// <summary>
+    /// Count the total number of items in the inventory
+    /// </summary>
+    public int GetTotalIngredientCount()
+    {
+        int total = 0;
+        foreach (Item_Stack stack in InventoryStacks)
+        {
+            total += stack.amount;
+        }
+        return total;
+    }
+    
+    /// <summary>
+    /// Count the total number of items in the inventory
+    /// </summary>
+    public int GetTotalPossibleIngredientCount()
+    {
+        int total = 0;
+        foreach (Item_Stack stack in InventoryStacks)
+        {
+            total += stack.stackLimit;
+        }
+        return total;
+    }
+  
 
   /// <summary>
   /// Print inventory contents
@@ -214,28 +267,53 @@ public class Inventory : MonoBehaviour
       if (i == null)
         Debug.Log($"[Invtry] {i} null");
       else
-        Debug.Log($"[Invtry] {i.resource.Name} {i.amount}");
+        Debug.Log($"[Invtry] {i.resource.Name} {i.amount} of {i.stackLimit} size stack");
     }
   }
 
   /// <summary>
   /// Generic functions to initialize the inventory with some sort of Inventory stack
   /// </summary>
-  /// <typeparam name="T"> must be of or child of Item_Stack type</typeparam>
-  protected void InitializeInventoryStacks<T>() where T : Item_Stack
+  protected void InitializeInventoryStacks()
   {
-    if (InventoryStacks == null)
-      InventoryStacks = new T[InventorySizeLimit];
-    else if (InventoryStacks.Length != InventorySizeLimit)
-    {
-      Item_Stack[] temp = InventoryStacks; // not super efficient but oh well
-      InventoryStacks = new T[InventorySizeLimit];
-
-      for (int i = 0; i < temp.Length; i++) // copy over elements
+      if (InventoryStacks == null)
       {
-        InventoryStacks[i] = temp[i]; // Todo: Item_Stacks are trying to go into dish_tool_stacks and that's not great
+            InventoryStacks = new Item_Stack[InventorySizeLimit];
+            foreach (Item_Stack stk in InventoryStacks)
+            {
+                stk.stackLimit = ItemStackLimit;
+            }
+          return;
       }
-    }
+
+      if (InventoryStacks.Length != InventorySizeLimit)
+      {
+        Item_Stack[] temp = InventoryStacks;
+        InventoryStacks = new Item_Stack[InventorySizeLimit];
+
+        for (int i = 0; i < InventoryStacks.Length; i++)
+            {
+                if (i < temp.Length && temp[i] != null)
+                {
+                    InventoryStacks[i] = new Item_Stack
+                    {
+                        resource = temp[i].resource,
+                        amount = temp[i].amount,
+                        stackLimit = (temp[i].stackLimit > 0)?temp[i].stackLimit:ItemStackLimit
+                    };
+                    
+                } else
+                {
+                    InventoryStacks[i] = new Item_Stack
+                    {
+                        resource = null,
+                        amount = 0,
+                        stackLimit = ItemStackLimit
+                    };
+                    
+                }
+          }
+      }
   }
 }
 

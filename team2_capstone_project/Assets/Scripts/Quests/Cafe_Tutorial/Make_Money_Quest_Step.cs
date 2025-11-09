@@ -6,19 +6,9 @@ using UnityEngine;
 public class Make_Money_Quest_Step : Dialogue_Quest_Step
 {
 
-    void OnEnable()
-    {
-        base.OnEnable();
+    protected override void OnEnable() => base.OnEnable();
 
-    }
-
-    // Unsubscribe to clean up
-    void OnDisable()
-    {
-        base.OnDisable();
-    }
-
-   
+    protected override void OnDisable() => base.OnDisable();
 
     private void Start()
     {
