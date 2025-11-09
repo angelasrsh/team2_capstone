@@ -232,7 +232,7 @@ namespace Grimoire
         return;
 
       fireAmbientSource.clip = ambientFire;
-      fireAmbientSource.volume = 0.5f;
+      fireAmbientSource.volume = 0.29f;
 
       if (!fireAmbientSource.isPlaying) // Play if not already playing
       {
