@@ -84,6 +84,7 @@ public class Quest_Manager : MonoBehaviour
     private void ChangeQuestState(string id, Quest_State state)
     {
         Quest quest = GetQuestByID(id);
+        Helpers.printLabeled(this, $"Changed {id} from {quest.state} to {state}");
         quest.state = state;
         Game_Events_Manager.Instance.QuestStateChange(quest);
     }
@@ -115,16 +116,22 @@ public class Quest_Manager : MonoBehaviour
         foreach (Quest q in questMap.Values)
         {
             if (q.state == Quest_State.REQUIREMENTS_NOT_MET && CheckRequirementsMet(q))
+            {
                 ChangeQuestState(q.Info.id, Quest_State.CAN_START);
+                Helpers.printLabeled(this, $"Unlocked quest {q.Info.id}");
+                
+            }
+                
         }
     }
 
     private void StartQuest(string id)
     {
-        // Debug.Log($"[Q_MAN] started quest {id}");
+        Debug.Log($"[Q_MAN] started quest {id}");
         Quest quest = GetQuestByID(id);
-        quest.InstantiateCurrentQuestStep(this.transform);
         ChangeQuestState(quest.Info.id, Quest_State.IN_PROGRESS);
+        quest.InstantiateCurrentQuestStep(this.transform); // Resends the quest state change command 
+        // so instantiation must be called after changing state to avoid infinite loops
     }
 
     private void AdvanceQuest(string id)
