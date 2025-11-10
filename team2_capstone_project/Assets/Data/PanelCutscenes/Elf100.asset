@@ -17,8 +17,23 @@ MonoBehaviour:
   Customer: {fileID: 11400000, guid: 6948a6b7da01dc545b67fe99a9a71dc1, type: 2}
   MilestonePercent: 100
   Panels:
-  - {fileID: 21300000, guid: 99a8e5999f0700a4d91de7a600513cb7, type: 3}
-  - {fileID: 21300000, guid: a7a474f41b48fd34baa99ca74b4e8a07, type: 3}
-  - {fileID: 21300000, guid: a5f46eb2fef043a41b9c41977b56394e, type: 3}
-  - {fileID: 21300000, guid: a47cd42c9c66fef4e9f6c39cf82ecb97, type: 3}
+  - Panel: {fileID: 21300000, guid: 99a8e5999f0700a4d91de7a600513cb7, type: 3}
+    DialogKeys:
+    - Elf.1_1_100
+    - Elf.1_2_100
+    - Player.1_3_100
+  - Panel: {fileID: 21300000, guid: a7a474f41b48fd34baa99ca74b4e8a07, type: 3}
+    DialogKeys:
+    - Elf.2_1_100
+  - Panel: {fileID: 21300000, guid: a5f46eb2fef043a41b9c41977b56394e, type: 3}
+    DialogKeys:
+    - none.3_1_100
+  - Panel: {fileID: 21300000, guid: a47cd42c9c66fef4e9f6c39cf82ecb97, type: 3}
+    DialogKeys:
+    - Elf.4_1_100
+    - Elf.4_2_100
+    - none.4_3_100
+    - Elf.4_4_100
+    - Elf.4_5_100
+    - Elf.4_6_100
   Music: {fileID: 8300000, guid: 5c3c7e65ea51b4a4794ca1ec903f3463, type: 3}
