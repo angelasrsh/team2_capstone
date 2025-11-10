@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
 using Grimoire;
+using Ink.Runtime;
+using Unity.VisualScripting;
 
 public class Dialogue_Manager : MonoBehaviour
 {
@@ -37,13 +39,111 @@ public class Dialogue_Manager : MonoBehaviour
     private InputAction talkAction;
     
 
-    // Components    
+    // Components    INK stuff
+
     private Player_Controller playerOverworld;
+    [Header("Ink Story")]
+    [SerializeField] private TextAsset inkJson;
+    private Story story;
+
+
+    private bool dialgouePlaying = false;
+    private int currentChoiceIndex = -1;
+
+    //new ink dialogue methods
+
+    private void OnEnable()
+    {
+        Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue += EnterDialogue;
+        Game_Events_Manager.Instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
+    }
+
+    private void OnDisable()
+    {
+        Game_Events_Manager.Instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
+        Game_Events_Manager.Instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;  
+    }
+    private void UpdateChoiceIndex(int choiceIndex)
+    {
+        this.currentChoiceIndex = choiceIndex;
+    }
+
+    private void SubmitPressed()
+    {
+        if (!dialgouePlaying)
+        {
+            return;
+        }
+        else
+        {
+            ContinueStory();
+        }
+    }
+    
+    private void EnterDialogue(string knotName)
+    {
+        if (dialgouePlaying)
+        {
+            return;
+        }
+        dialgouePlaying = true;
+
+        //inform other parts of our system
+        Game_Events_Manager.Instance.dialogueEvents.DialogueStarted();
+        if (!knotName.Equals(""))
+        {
+            story.ChoosePathString(knotName);
+            Debug.Log("Entering Dialogue for Knot name:" + knotName);
+        }
+        else
+        {
+            Debug.Log("KnotName Not found");
+        }
+        //kick off the story
+        DisplayNextLine();
+    }
+
+    private void DisplayNextLine()
+    {
+        //make a choice if applciable
+        if(story.currentChoices.Count > 0 && currentChoiceIndex != -1)
+        {
+            story.ChooseChoiceIndex(currentChoiceIndex);
+            currentChoiceIndex = -1;
+        }
+        if (story.canContinue)
+        {
+            string dialogueLine = story.Continue();
+            Debug.Log(dialogueLine);
+            Game_Events_Manager.Instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
+        }
+        else if (story.currentChoices.Count == 0)
+        {
+            // No more lines, exit dialogue
+            ExitDialogue();
+        }
+    }
+
+    private void ContinueStory()
+    {
+        // When player presses submit, show next line or exit
+        DisplayNextLine();
+    }
+
+    private void ExitDialogue()
+    {
+        Debug.Log("Exiting Dialogue from new ver");
+        Game_Events_Manager.Instance.dialogueEvents.DialogueFinished();
+        dialgouePlaying = false;
+        story.ResetState();
+    }
+    //
 
     private void Awake()
     {
         playerOverworld = FindObjectOfType<Player_Controller>();
         dialogMap = new Dictionary<string, string>();
+        story = new Story(inkJson.text);
 
         Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
         if (pic != null)
@@ -66,21 +166,25 @@ public class Dialogue_Manager : MonoBehaviour
 
             PopulateDialogMap();
         }
+
     }
     
     private void Update()
     {
         if (talkAction == null) return;
-
+        if (dialgouePlaying && talkAction != null && talkAction.WasPerformedThisFrame())
+        {
+            ContinueStory();
+        }
         if (talkAction.triggered)
         {
-            // If still typing, skip to full line
-            if (uiManager.textTyping)
-                uiManager.SkipCurrentLineInstant();
-            else if (dialogQueue.Count > 0)
-                PlayNextDialog();
-            else
-                EndDialog();
+            // // If still typing, skip to full line
+            // if (uiManager.textTyping)
+            //     uiManager.SkipCurrentLineInstant();
+            // else if (dialogQueue.Count > 0)
+            //     PlayNextDialog();
+            // else
+            //     EndDialog();
         }
     }
 
@@ -271,6 +375,7 @@ public class Dialogue_Manager : MonoBehaviour
     /// </summary>
     public void PlayScene(string aDialogKey, bool disablePlayerInput = false)
     {
+        
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0)
@@ -372,6 +477,8 @@ public class Dialogue_Manager : MonoBehaviour
     /// </summary>
     public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion)
     {
+        //INk NEW DIalogue events
+        
         // Tell Game events manager so we don't overlap the dialogue box
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 

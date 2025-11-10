@@ -24,6 +24,9 @@ public class Game_Events_Manager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+        
+        dialogueEvents = new Dialogue_Events(); //so that any other page can access this script
+
     }
 
     // Tell objects when a quest state changes (and which quest, by ID)
@@ -213,9 +216,27 @@ public class Game_Events_Manager : MonoBehaviour
         if (onServeCustomer != null)
             onServeCustomer();
     }
+    public event Action onOverworldNPCDialogue;
+    public void OverworldNPCDialogue()
+    {
+        // Debug.Log("Overwolrd called");
+        if (onOverworldNPCDialogue != null)
+        {
+            
+            onOverworldNPCDialogue();
+            // Debug.Log($"[Overworld] Starting quest ");
+        }
+            
+        
+    }
+    #endregion
+    /////////// Dialogue EVENTS /////////
+    #region Dialogue Events
+    //ink NEW DIalogue
+    public Dialogue_Events dialogueEvents;
 
-    
     public event Action<string> onBeginDialogBox;
+
     public void BeginDialogueBox(string dialogKey)
     {
         if (onBeginDialogBox != null)

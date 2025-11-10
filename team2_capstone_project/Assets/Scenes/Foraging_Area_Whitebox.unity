@@ -2232,7 +2232,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6948a6b7da01dc545b67fe99a9a71dc1, type: 2}
   - {fileID: 11400000, guid: 9ba4d4b104b79fd42acb35743285fd17, type: 2}
   spawnPoints:
-  - {fileID: 1167049365}
+  - {fileID: 2059840748}
+  - {fileID: 576510232}
+  - {fileID: 2059840748}
+  - {fileID: 576510232}
+  - {fileID: 2059840748}
   - {fileID: 576510232}
   - {fileID: 873512241}
   - {fileID: 588881096}
@@ -2240,7 +2244,7 @@ MonoBehaviour:
   npcPrefab: {fileID: 1639534359494503863, guid: 9212b5a127d723d4698c2b617033740f, type: 3}
   maxNPCs: 3
   baseSpawnChance: 0.75
-  affectionThreshold: 25
+  affectionThreshold: 0
   guaranteedSpawnAffection: 75
   requireUnlockedNPC: 1
 --- !u!4 &265821217
@@ -4701,7 +4705,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163328, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 80635596018163356, guid: ab80c3782350c15448beb23c57544ffa, type: 3}
       propertyPath: m_Pivot.x
@@ -7405,7 +7409,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!223 &708894103
 Canvas:
   m_ObjectHideFlags: 0
@@ -22032,10 +22036,6 @@ PrefabInstance:
     - target: {fileID: 8320050664616803440, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8320050664616803441, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
-      propertyPath: m_SortingOrder
-      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8320050664616803444, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
       propertyPath: m_Name

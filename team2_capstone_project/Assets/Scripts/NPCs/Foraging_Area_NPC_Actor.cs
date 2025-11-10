@@ -26,6 +26,9 @@ public class Foraging_Area_NPC_Actor : MonoBehaviour
     [SerializeField] private Transform spriteTransform;
     [SerializeField] private GameObject thoughtBubbleUI;
 
+    [Header("Quest Integration")]
+    public Elf_Ring_Quest_Step elf_ring_quest_knot;
+
     private void Awake()
     {
         if (spriteTransform != null)
@@ -99,15 +102,46 @@ public class Foraging_Area_NPC_Actor : MonoBehaviour
     private void Update()
     {
         if (!playerInRange || !canTalk || talkAction == null || hasTalked)
+        {
+            if (hasTalked)
+            {
+                Game_Events_Manager.Instance.OverworldNPCDialogue();
+
+            }
             return;
+        }
+
 
         if (talkAction.WasPerformedThisFrame())
         {
+            
             StartCoroutine(HandleTalk());
         }
 
         HandleIdleAnimation();
     }
+
+    // Helper method to safely get the knot name
+    private string GetDialogueKnotName()
+    {
+        // First, try to get it from the quest step reference
+        if (elf_ring_quest_knot != null)
+        {
+            return elf_ring_quest_knot.dialogueKnotName;
+        }
+        
+        // Fallback: Try to find it in the scene
+        var questStep = FindObjectOfType<Elf_Ring_Quest_Step>();
+        if (questStep != null)
+        {
+            elf_ring_quest_knot = questStep; // Cache it for next time
+            return questStep.dialogueKnotName;
+        }
+        
+        Debug.LogWarning("[Foraging_Area_NPC_Actor] Could not find Elf_Ring_Quest_Step!");
+        return string.Empty;
+    }
+
 
     private IEnumerator HandleTalk()
     {
@@ -122,6 +156,8 @@ public class Foraging_Area_NPC_Actor : MonoBehaviour
             var emotion = CustomerData.EmotionPortrait.Emotion.Neutral;
 
             dm.PlayScene(resolvedKey, emotion);
+            Game_Events_Manager.Instance.StartQuest("Elf_Ring_Quest");
+
             Debug.Log($"[Foraging_Area_NPC_Actor] Playing dialogue key: {resolvedKey}");
         }
         else
