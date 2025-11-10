@@ -14,6 +14,7 @@ public class Dialogue_Manager : MonoBehaviour
     public Dialog_UI_Manager uiManager;
     public System.Action onDialogComplete;
     public Queue<string> dialogQueue = new Queue<string>();
+    public Queue<string> dialogKeyQueue = new Queue<string>(); // Only if playing multiple characters' lines at once
 
     [Header("Auto-Advancing Dialog Settings")]
     public bool autoAdvanceDialog = false; // Enable auto mode
@@ -34,6 +35,7 @@ public class Dialogue_Manager : MonoBehaviour
     [HideInInspector] public enum DialogueState { Normal, Waiting }
     [HideInInspector] public DialogueState currentState = DialogueState.Normal;
     private InputAction talkAction;
+    
 
     // Components    
     private Player_Controller playerOverworld;
@@ -206,7 +208,7 @@ public class Dialogue_Manager : MonoBehaviour
         {
             if (key.StartsWith(baseKey, StringComparison.OrdinalIgnoreCase))
             {
-               // Don't include baseKey itself
+                // Don't include baseKey itself
                 if (!key.Equals(baseKey, StringComparison.OrdinalIgnoreCase))
                     variantKeys.Add(key);
             }
@@ -222,18 +224,58 @@ public class Dialogue_Manager : MonoBehaviour
 
     #endregion
 
+    #region Play Multiple Scenes (Normal)
+    /// <summary>
+    /// Play a list of dialogue that may have different characters in them
+    /// </summary>
+    /// <param name="dialogKeys"> A list of dialogue keys </param>
+    public void PlaySceneMultiple(List<string> dialogKeys)
+    {
+
+        Game_Events_Manager.Instance.BeginDialogueBox(dialogKeys[0]); // Only alerts with first dialogue in the list
+
+        if (completedDialogKeys.Contains(dialogKeys[0]) || dialogQueue.Count > 0) // currently only checks first key in list
+        {
+            PlayNextDialog();
+            return;
+        }
+
+        string characterKey = "";
+
+        foreach (string aDialogKey in dialogKeys)
+        {
+            string dialogText = GetDialogFromKey(aDialogKey);
+            string[] lines = dialogText.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            characterKey = aDialogKey.Split('.')[0];
+
+            foreach (string line in lines)
+            {
+                dialogQueue.Enqueue(line);
+                dialogKeyQueue.Enqueue(characterKey);
+            }
+            completedDialogKeys.Add(aDialogKey);
+            Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
+        }
+
+
+        StartCoroutine(PlayNextDialogWithDelay());
+    }
+    
+    
+    #endregion
+
     #region Play Scene (Normal)
     /// <summary>
     /// Starts a dialog sequence from the given key.
     /// Parses emotions from {Braces} in lines if present.
     /// </summary>
-    public void PlayScene(string aDialogKey, bool disablePlayerInput = true)
+    public void PlayScene(string aDialogKey, bool disablePlayerInput = false)
     {
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0)
         {
-            PlayNextDialog(disablePlayerInput);
+            PlayNextDialog();
             return;
         }
 
@@ -253,7 +295,7 @@ public class Dialogue_Manager : MonoBehaviour
     /// <summary>
     /// Plays the next line of dialog, parsing emotion from the text itself.
     /// </summary>
-    public void PlayNextDialog(bool disablePlayerInput = true)
+    public void PlayNextDialog()
     {
         if (uiManager.textTyping || currentState == DialogueState.Waiting) return;
 
@@ -276,7 +318,12 @@ public class Dialogue_Manager : MonoBehaviour
             }
 
             // Character from key
-            string characterKey = myDialogKey.Split('.')[0];
+            string characterKey = "";
+            if (dialogKeyQueue.Count > 0)
+                characterKey = dialogKeyQueue.Dequeue(); // playing multiple keys at once
+            else
+                characterKey = myDialogKey.Split('.')[0]; // default key
+
             if (TryResolveCharacterKey(characterKey, out CustomerData.NPCs charEnum))
             {
                 if (customerDataDict.TryGetValue(charEnum, out CustomerData customer))
@@ -300,11 +347,11 @@ public class Dialogue_Manager : MonoBehaviour
                 }
             }
 
-            uiManager.ShowText(dialogText, disablePlayerInput);
+            uiManager.ShowText(dialogText);
 
             if (autoAdvanceDialog)
             {
-                StartCoroutine(AutoAdvanceNextLine(disablePlayerInput));
+                StartCoroutine(AutoAdvanceNextLine());
             }
         }
         else
@@ -322,7 +369,7 @@ public class Dialogue_Manager : MonoBehaviour
     /// Starts a dialog sequence from the given key, but forces the portrait to a given emotion.
     /// Useful for reactions to liked/disliked/neutral dishes.
     /// </summary>
-    public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
+    public void PlayScene(string aDialogKey, CustomerData.EmotionPortrait.Emotion forcedEmotion)
     {
         // Tell Game events manager so we don't overlap the dialogue box
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
@@ -344,7 +391,7 @@ public class Dialogue_Manager : MonoBehaviour
         }
 
         Debug.Log($"Queue populated with {dialogQueue.Count} lines for key: {aDialogKey}");
-        StartCoroutine(PlayNextForcedEmotionDialogWithDelay(forcedEmotion, disablePlayerInput));
+        StartCoroutine(PlayNextForcedEmotionDialogWithDelay(forcedEmotion));
     }
 
 
@@ -391,7 +438,7 @@ public class Dialogue_Manager : MonoBehaviour
                 }
             }
 
-            uiManager.ShowText(dialogText, disablePlayerInput);
+            uiManager.ShowText(dialogText);
 
             if (autoAdvanceDialog)
             {
@@ -413,7 +460,7 @@ public class Dialogue_Manager : MonoBehaviour
     {
         yield return new WaitUntil(() => uiManager.textTyping == false);
         yield return new WaitForSeconds(autoAdvanceDelay);
-        PlayNextDialog(disablePlayerInput);
+        PlayNextDialog();
     }
 
     public void EndDialog()
@@ -458,7 +505,7 @@ public class Dialogue_Manager : MonoBehaviour
     private IEnumerator PlayNextDialogWithDelay(bool disablePlayerInput = true)
     {
         yield return null; // wait one frame for Player_Progress.Instance to initialize
-        PlayNextDialog(disablePlayerInput);
+        PlayNextDialog();
     }
 
     private IEnumerator PlayNextForcedEmotionDialogWithDelay(CustomerData.EmotionPortrait.Emotion forcedEmotion, bool disablePlayerInput = true)
@@ -466,5 +513,6 @@ public class Dialogue_Manager : MonoBehaviour
         yield return null; // wait one frame for Player_Progress.Instance to initialize
         PlayNextDialog(forcedEmotion, disablePlayerInput);
     }
+
     #endregion
 }

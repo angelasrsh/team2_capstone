@@ -190,7 +190,7 @@ public class Dialog_UI_Manager : MonoBehaviour
         textBoxText.text = "";
     }
 
-    public void ShowText(string aText, bool disablePlayerInput = true)
+    public void ShowText(string aText)
     {
         if (openRoutine != null) StopCoroutine(openRoutine);
         openRoutine = StartCoroutine(AnimateOpenBox());
