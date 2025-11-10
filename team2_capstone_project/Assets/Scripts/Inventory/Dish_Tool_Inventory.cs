@@ -3,14 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// An Item_Stack (used by Inventory) for dishes since they can't stack (need a different stack limit)
-/// </summary>
-public class Dish_Tool_Stack : Item_Stack
-{
-    public override int stackLimit { get; set; } = 1;
-}
-
-/// <summary>
 /// You can currently store dishes indefinitely. Probably not desired behavior,
 /// but I'm leaving it for now. We probably change it semi-easily later.
 /// 
@@ -19,6 +11,7 @@ public class Dish_Tool_Inventory : Inventory
 {
   public static Dish_Tool_Inventory Instance { get; protected set; }
   private bool leftSlotSelected = true;
+  // private static int dishesPerSlot = 1;
 
   // How many stacks this inventory can have
   [field: System.NonSerialized] public override int InventorySizeLimit { get; set; } = 2;
@@ -38,9 +31,10 @@ public class Dish_Tool_Inventory : Inventory
     Instance = this;
     DontDestroyOnLoad(gameObject);
 
-    // Initialize Dish_Tool inventory specifically
+        // Initialize Dish_Tool inventory specifically
     InventorySizeLimit = 2;
-    InitializeInventoryStacks<Dish_Tool_Stack>();
+    ItemStackLimit = 1;
+    InitializeInventoryStacks();
 
     // AddResources(TEST_DISH, 1);
     // AddResources(TEST_DISH, 3);
@@ -60,9 +54,16 @@ public class Dish_Tool_Inventory : Inventory
   /// <param name="type"></param>
   /// <param name="count"></param>
   /// <returns>How many items were added</returns>
-  public override int AddResources(Item_Data type, int count)
+ public override int AddResources(Item_Data type, int count)
   {
-    return addResourcesOfType<Dish_Tool_Stack>(type, count);
+      if (InventoryStacks == null || InventoryStacks.Length != InventorySizeLimit)
+      {
+          Debug.LogWarning("[Dish_Tool_Inventory] InventoryStacks not initialized properly — rebuilding.");
+          InitializeInventoryStacks();
+      }
+
+      Debug.Log($"[Dish_Tool_Inventory]: Adding {count} of {type.name} to dish inventory.");
+      return addResourcesOfType(type, count);
   }
 
   /// <summary>
@@ -111,7 +112,7 @@ public class Dish_Tool_Inventory : Inventory
         {
             Debug.LogWarning("[Dish_Tool_Inventory] InventoryStacks was null or wrong size — rebuilding.");
             InventorySizeLimit = 2;
-            InitializeInventoryStacks<Dish_Tool_Stack>();
+            InitializeInventoryStacks();
         }
 
         if (leftSlotSelected)
@@ -127,18 +128,7 @@ public class Dish_Tool_Inventory : Inventory
 
         return (Dish_Data)InventoryStacks[1].resource;
     }
-
-
-    /// <summary>
-    /// Returns true if the inventory is completely full
-    /// </summary>
-    /// <returns> true if # items = total possible number of items </returns>
-    public bool IsFull()
-    {
-        bool isFull = (TotalIngCount == InventorySizeLimit);
-        return isFull;
-        
-    }
+    
   
       #region Save / Load
     public DishInventoryData GetSaveData()
@@ -146,7 +136,6 @@ public class Dish_Tool_Inventory : Inventory
         DishInventoryData data = new DishInventoryData();
 
         data.InventoryStacks = this.InventoryStacks;
-        data.TotalIngCount = this.TotalIngCount;
 
         return data;
     }
@@ -160,7 +149,6 @@ public class Dish_Tool_Inventory : Inventory
         }
 
         this.InventoryStacks = data.InventoryStacks;
-        this.TotalIngCount = data.TotalIngCount;
 
         Debug.Log("Dish Inventory data loaded successfully.");
     }
@@ -173,8 +161,6 @@ public class DishInventoryData
 {
     [field: SerializeField] public Item_Stack[] InventoryStacks;
 
-    // Count total amount of items
-    public int TotalIngCount = 0;
 }
 #endregion
 

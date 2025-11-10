@@ -10,6 +10,7 @@ public class Player_Progress : ScriptableObject
   public static Player_Progress Instance;
 
   [SerializeField] private string playerName = "Chef";
+  [SerializeField] private static bool introPlayed = false;
 
   [Header("Default Unlocks")]
   [SerializeField] private Dish_Data.Dishes[] defaultDishes;
@@ -21,18 +22,18 @@ public class Player_Progress : ScriptableObject
   [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
   [SerializeField] private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
 
-  // Money vars
+  [Header("Money Variables")]
   [SerializeField] private float startingMoney;
   [HideInInspector] public float money;
   public static event System.Action<float> OnMoneyChanged;  
 
-  // Daily Recipe Spawner tracking
+  [Header("Daily Recipe Spawner Tracking")]
   [SerializeField] private int lastRecipeSpawnedDay = -1;   // Monday=0, Tuesday=1, etc.
   [SerializeField] private Dish_Data.Dishes? activeDailyRecipe = null;
   public static event Action OnRecipesUpdated;
   [SerializeField] private bool hasCollectedRecipeToday = false;
   
-  public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used)
+  // public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used)
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used)
   public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used)
 
@@ -60,14 +61,15 @@ public class Player_Progress : ScriptableObject
   {
       return new PlayerProgressData
       {
-          playerName = playerName,
-          money = money,
-          unlockedDishes = new List<Dish_Data.Dishes>(unlockedDishes),
-          unlockedNPCs = new List<CustomerData.NPCs>(unlockedNPCs),
-          unlockedIngredients = new List<IngredientType>(unlockedIngredients),
-          lastRecipeSpawnedDay = lastRecipeSpawnedDay,
-          activeDailyRecipe = activeDailyRecipe,
-          hasCollectedRecipeToday = hasCollectedRecipeToday
+        playerName = playerName,
+        introPlayedData = introPlayed,
+        money = money,
+        unlockedDishes = new List<Dish_Data.Dishes>(unlockedDishes),
+        unlockedNPCs = new List<CustomerData.NPCs>(unlockedNPCs),
+        unlockedIngredients = new List<IngredientType>(unlockedIngredients),
+        lastRecipeSpawnedDay = lastRecipeSpawnedDay,
+        activeDailyRecipe = activeDailyRecipe,
+        hasCollectedRecipeToday = hasCollectedRecipeToday
       };
   }
 
@@ -84,6 +86,7 @@ public class Player_Progress : ScriptableObject
       }
 
       playerName = string.IsNullOrWhiteSpace(data.playerName) ? "Chef" : data.playerName;
+      introPlayed = data.introPlayedData;
       unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
       unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
       unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
@@ -97,7 +100,7 @@ public class Player_Progress : ScriptableObject
   #endregion
 
 
-  #region Player Name
+  #region Player Info
   public void SetPlayerName(string name)
   {
       // Trim leading/trailing spaces
@@ -125,7 +128,15 @@ public class Player_Progress : ScriptableObject
   }
 
   public string GetPlayerName() => playerName;
-  
+
+  public void SetIntroPlayed(bool played)
+  {
+    introPlayed = played;
+    Save_Manager.instance?.SaveGameData();
+  }
+
+  public bool GetIntroPlayed() => introPlayed;
+
   #endregion
 
 
@@ -303,6 +314,7 @@ public class Player_Progress : ScriptableObject
 public class PlayerProgressData
 {
     public string playerName = "Chef";
+    public bool introPlayedData = false;
     public List<Dish_Data.Dishes> unlockedDishes = new();
     public List<CustomerData.NPCs> unlockedNPCs = new();
     public List<IngredientType> unlockedIngredients = new();

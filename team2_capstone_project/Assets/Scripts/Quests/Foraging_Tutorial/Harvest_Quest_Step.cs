@@ -18,7 +18,7 @@ public class Harvest_Quest_Step : Dialogue_Quest_Step
 
     void Start()
     {
-        if (Ingredient_Inventory.Instance.TotalIngCount > 3)
+        if (Ingredient_Inventory.Instance.GetTotalIngredientCount() > 3)
             FinishQuestStep();
         else
             DelayedDialogue(0, 0, false);

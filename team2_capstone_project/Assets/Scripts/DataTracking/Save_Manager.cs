@@ -50,6 +50,11 @@ public class Save_Manager : MonoBehaviour
         Debug.Log($"Active save slot set to: {slot}");
     }
 
+
+    /// <summary>
+    /// Get the current game data, or load from specified slot if none is active.
+    /// </summary>
+    /// <param name="slot"></param>
     public static GameData GetGameData(int slot = -1)
     {
         // Default to currentSaveSlot if no slot is specified
@@ -69,6 +74,10 @@ public class Save_Manager : MonoBehaviour
             return null;  // No save data found
     }
 
+    /// <summary>
+    /// Set the current game data to the provided data.
+    /// </summary>
+    /// <param name="aData"></param>
     public static void SetGameData(GameData aData) => currentGameData = aData;
 
     #region Save + Load
@@ -130,6 +139,9 @@ public class Save_Manager : MonoBehaviour
     #endregion
 
 
+    /// <summary>
+    /// Create a new save slot, overwriting any existing data in that slot.
+    /// </summary>
     public void CreateNewSaveSlot(int slot)
     {
         currentGameData = new GameData
@@ -139,6 +151,13 @@ public class Save_Manager : MonoBehaviour
 
         // Reset player progress daily recipe flags
         Player_Progress.Instance?.ResetDailyRecipeFlags(fullReset: true);
+
+        // Reset affection event tracker when starting a new save
+        if (Affection_Event_Item_Tracker.instance != null)
+        {
+            Affection_Event_Item_Tracker.instance.ResetTracker();
+            Affection_Event_Item_Tracker.instance.RecheckUnlocks();
+        }
 
         SetCurrentSlot(slot);
         SaveGameData(slot);
@@ -266,6 +285,26 @@ public class Save_Manager : MonoBehaviour
         else
             Debug.LogWarning("[Save_Manager] Day_Turnover_Manager.Instance was null during save — keeping previous day value.");
 
+        // --- Affection reward tracker ---
+        if (Affection_Event_Item_Tracker.instance != null)
+        {
+            currentGameData.affectionEventItems = Affection_Event_Item_Tracker.instance.GetSaveData();
+            Debug.Log($"[Save_Manager] Saved {currentGameData.affectionEventItems.Count} affection event items.");
+        }
+
+        // --- Chest ---
+        if (Chest.Instance != null)
+        {
+            currentGameData.chestData = Chest.Instance.GetChestSaveData();
+            // Debug.Log($"[Save_Manager] Saved {currentGameData.chestData.itemsInChest.Count} items in chest.");
+        }
+        else
+            Debug.LogWarning("[Save_Manager] Chest.Instance was null during save — chest data not saved.");
+          
+        // --- Cutscenes ---
+        if (Cutscene_Manager.Instance != null)
+            Cutscene_Manager.Instance.SaveToGameData(currentGameData);
+
         // --- Elapsed time ---
         currentGameData.elapsedTime += Time.deltaTime;
     }
@@ -329,6 +368,27 @@ public class Save_Manager : MonoBehaviour
         // Restore current day
         if (Day_Turnover_Manager.Instance != null)
             Day_Turnover_Manager.Instance.SetCurrentDay(currentGameData.currentDay);
+
+        // Restore affection rewards
+        if (currentGameData.affectionEventItems != null && Affection_Event_Item_Tracker.instance != null)
+        {
+            Affection_Event_Item_Tracker.instance.LoadFromSaveData(currentGameData.affectionEventItems);
+            Affection_Event_Item_Tracker.instance.RecheckUnlocks();
+            Debug.Log($"[Save_Manager] Restored {currentGameData.affectionEventItems.Count} affection event items.");
+        }
+
+        // Restore expected customers count/UI
+        if (Expected_Customers_UI.Instance != null && Day_Plan_Manager.instance != null)
+        {
+            int planned = Day_Plan_Manager.instance.customersPlannedForEvening;
+            Expected_Customers_UI.Instance.ShowExpectedCustomerCount(planned, animate: false);
+            Debug.Log($"[Save_Manager] Refreshed Expected Customers UI after load: {planned}");
+        }
+
+        // Restore cutscene data
+        if (Cutscene_Manager.Instance != null)
+            Cutscene_Manager.Instance.LoadFromSave(currentGameData);
+
 
         // Handle room loading
         string roomKey = string.IsNullOrEmpty(currentGameData.currentRoom) 
@@ -447,6 +507,9 @@ public class GameData
     public DailyMenuData dailyMenuData;
     public bool isRaining = false;
     public Day_Turnover_Manager.WeekDay currentDay = Day_Turnover_Manager.WeekDay.Monday;
+    public List<AffectionEventItemsSaveData> affectionEventItems = new();
+    public ChestSaveData chestData;
+    public List<string> playedCutscenes = new List<string>();
 }
 
 /// <summary>
@@ -486,6 +549,36 @@ public class DailyMenuData
     public List<Dish_Data.Dishes> dailyPool = new();
     public List<Dish_Data.Dishes> dishesSelected = new();
     public int customersPlanned = 0;
+}
+
+[System.Serializable]
+public class AffectionEventItemsSaveData
+{
+    public string npcID;
+    public string itemName;
+    public bool unlocked;
+    public bool collected;
+}
+
+[System.Serializable]
+public class ChestSaveData
+{
+  public List<ChestItemData> itemsInChest = new();
+}
+
+[System.Serializable]
+public class ChestItemData
+{
+    public ItemCategory category;
+    public Dish_Data.Dishes dishType; // only used if category is Dish
+    public IngredientType ingredientType; // only used if category is Ingredient
+    public int amount;
+}
+
+public enum ItemCategory
+{
+  Dish,
+  Ingredient
 }
 
 

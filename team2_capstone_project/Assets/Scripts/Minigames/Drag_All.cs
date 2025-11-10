@@ -49,7 +49,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private static RectTransform trashRedZone;
 
   [Header("Chest")]
-  private static Chest chest; // Static reference to Trash script in scene
+  private static Chest chest; // Static reference to Chest script in scene
   private static RectTransform chestRedZone;
 
   [Header("Inventory Slot Info")]
@@ -288,43 +288,42 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         Destroy(gameObject);
         return;
       }
-      else if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && (IsOverlapping(rectTransform, trashRedZone) || IsOverlapping(rectTransform, chestRedZone)) ) // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
+      else if (SceneManager.GetActiveScene().name == "Updated_Restaurant") // CHANGE THIS IF LATER CHANGING NAME OF UPDATED RESTAURANT
       {
-        if (trash == null || chest == null)
+        if (trash == null)
         {
           trash = FindObjectOfType<Trash>();
           trashRedZone = trash.redZone;
+        }
+        if (chest == null)
+        {
           chest = FindObjectOfType<Chest>();
           chestRedZone = chest.redZone;
         }
 
-        if (!trash.trashOpen) // just a safety check. Shouldn't need to do this if canDrag is set up properly
+        if (IsOverlapping(rectTransform, trashRedZone) || IsOverlapping(rectTransform, chestRedZone))
         {
-          rectTransform.position = ingrOriginalPos;
+          DuplicateInventorySlot();
+          if (chest.chestOpen)
+          {
+            int placedInChest = chest.AddItemToChest((Ingredient_Data)(ParentSlot.stk.resource), 1);
+            if (placedInChest > 0) // Only remove ingredient actually added to chest
+              Ingredient_Inventory.Instance.RemoveResources(ingredientType, placedInChest);
+            else
+              rectTransform.position = ingrOriginalPos;
+          }
+          else if (trash.trashOpen)
+          {
+            int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
+            if (trashed > 0) // Only remove ingredient actually added to trash
+              Ingredient_Inventory.Instance.RemoveResources(ingredientType, trashed);
+            else
+              rectTransform.position = ingrOriginalPos;
+          }
+
+          Destroy(gameObject);
           return;
-        } else if (!chest.chestOpen)
-        {
-          rectTransform.position = ingrOriginalPos;
-          return;
         }
-
-
-        DuplicateInventorySlot();
-        if (chest.chestOpen)
-        {
-          int placedInChest = chest.AddItemToChest((Ingredient_Data)(ParentSlot.stk.resource), 1);
-
-        }
-        else
-        {
-          int trashed = trash.AddItemToTrash((Ingredient_Data)(ParentSlot.stk.resource), 1);
-          if (trashed > 0) // Only remove ingredient actually added to trash
-            Ingredient_Inventory.Instance.RemoveResources(ingredientType, trashed);
-          else
-            rectTransform.position = ingrOriginalPos;
-        }
-        
-        Destroy(gameObject);
         return;
       }
 

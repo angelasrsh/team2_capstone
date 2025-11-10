@@ -27,7 +27,7 @@ public class Dialogue_Quest_Step : Quest_Step
     private bool postStepTextKeyDialogStarted = false;
 
 
-    private Dialogue_Manager dm;
+    [HideInInspector] public Dialogue_Manager dm;
 
     virtual protected void OnEnable()
     {

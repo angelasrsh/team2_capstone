@@ -68,15 +68,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ebf489641c51d914d9f0411494d9b865, type: 2}
-  m_sharedMaterial: {fileID: -1683724804013077447, guid: ebf489641c51d914d9f0411494d9b865, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e17e99cf1873a6b449c73a3cc243a38e, type: 2}
+  m_sharedMaterial: {fileID: -1547044878149234192, guid: e17e99cf1873a6b449c73a3cc243a38e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4282006074
+  m_fontColor: {r: 0.22745098, g: 0.22745098, b: 0.22745098, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -93,8 +93,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -273,7 +273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -349,7 +349,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 0.6862745}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -428,7 +428,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.9843137, b: 0.9372549, a: 0.90588236}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -514,13 +514,14 @@ MonoBehaviour:
   dialogFile: {fileID: 4900000, guid: a6534ce45819f0f418c4aebf888f41f2, type: 3}
   uiManager: {fileID: 8320050664616803454}
   autoAdvanceDialog: 0
-  autoEndDialogue: 0
+  autoEndDialogue: 1
   autoAdvanceDelay: 3
   customerDataList:
   - {fileID: 11400000, guid: 6948a6b7da01dc545b67fe99a9a71dc1, type: 2}
   - {fileID: 11400000, guid: 135398e50e07f6c4ca66ad3835c5958e, type: 2}
   - {fileID: 11400000, guid: ec82f4bc3922c8e41bb290e739a421ef, type: 2}
   - {fileID: 11400000, guid: 9ba4d4b104b79fd42acb35743285fd17, type: 2}
+  - {fileID: 11400000, guid: 8e54b730b571cff4bbc5792d9af42626, type: 2}
   currentState: 0
 --- !u!114 &8320050664616803454
 MonoBehaviour:

@@ -5,32 +5,36 @@ using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Grimoire;
 
 public class Panel_Cutscene : MonoBehaviour
 {
-    //[Header("Scene panels")]
-
-    //public Scene returnScene; // Temp: Delete later
-
+    
     // For scene-fading- must be gameobjects with ImageComponents on them
     //private GameObject[] panels = new GameObject[2];
     UnityEngine.UI.Image[] panelObjects;
 
-    private Event_Data DatingCutsceneData;
+    // [Header("Set using Affection_System")]
+    [SerializeField] private Event_Data DatingCutsceneData;
     private int panelIndex = 0;
+    private bool loadingRoom = false;
+
+    private Dialogue_Manager dm;
 
     // Start is called before the first frame update
     void Start()
     {
+
+        //dm =  UnityEngine.Object.FindObjectOfType<Dialogue_Manager>();
+        dm = FindObjectOfType<Dialogue_Manager>();
 
         // Get cutscene to play
         DatingCutsceneData = Affection_System.Instance.Cutscene;
         if (DatingCutsceneData == null)
         {
             Helpers.printLabeled(this, "Warning: No cutscene has been set in the Affection System on GameManager");
-            SceneManager.LoadScene("Updated_Restaurant");
+            StartCoroutine(TransitionBackToRestaurant());
         }
-
 
         panelObjects = GetComponentsInChildren<UnityEngine.UI.Image>();
 
@@ -38,6 +42,8 @@ public class Panel_Cutscene : MonoBehaviour
             Debug.LogWarning($"[P_CUT] panels array contains {panelObjects.Length} panel gameObjects with image components instead of 2");
 
         ChangePanel();
+
+        Audio_Manager.instance?.PlayMusic(DatingCutsceneData.Music);
 
     }
 
@@ -49,11 +55,13 @@ public class Panel_Cutscene : MonoBehaviour
             hidePanel(panelIndex - 1);
 
         // If not the last panel, display a new panel
-        if (panelIndex < DatingCutsceneData.panels.Length)
+        if (panelIndex < DatingCutsceneData.Panels.Length)
             displayPanel(panelIndex);
 
-        panelIndex++;
+        if (DatingCutsceneData.Panels[panelIndex].DialogKeys.Count > 0)
+            dm.PlaySceneMultiple(DatingCutsceneData.Panels[panelIndex].DialogKeys);
 
+        panelIndex++;
     }
 
     /// <summary>
@@ -63,10 +71,10 @@ public class Panel_Cutscene : MonoBehaviour
     public void displayPanel(int index)
     {
         int panelObjIndex = index % 2; // Alternate between the two panels
-        if (index < DatingCutsceneData.panels.Length)
+        if (index < DatingCutsceneData.Panels.Length)
         {
             // Change image
-            panelObjects[panelObjIndex].sprite = DatingCutsceneData.panels[index];
+            panelObjects[panelObjIndex].sprite = DatingCutsceneData.Panels[index].Panel;
 
             // Set opacity of image to 1
             UnityEngine.UI.Image image = panelObjects[panelObjIndex];
@@ -92,11 +100,39 @@ public class Panel_Cutscene : MonoBehaviour
 
     public void onClickNext()
     {
-        if (panelIndex < DatingCutsceneData.panels.Length)
+        if (panelIndex < DatingCutsceneData.Panels.Length)
+        {
             ChangePanel();
+        }
         else
-            SceneManager.LoadScene("Updated_Restaurant");
+        {
+            if (DatingCutsceneData.Customer == null) // global event like intro cutscene
+                Player_Progress.Instance.SetIntroPlayed(true);
+            else if (Cutscene_Manager.Instance != null) // Mark cutscene as played
+                Cutscene_Manager.Instance.MarkAsPlayed(DatingCutsceneData.CutsceneID);
+
+            // Save immediately to persist this
+            Save_Manager.instance?.AutoSave();
+
+            if (!loadingRoom)
+            {
+                Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Dating_Events, DatingCutsceneData.roomToReturnTo);
+                loadingRoom = true;
+            }
+        }
     }
+
+    private IEnumerator TransitionBackToRestaurant()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Updated_Restaurant", LoadSceneMode.Single);
+
+        // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        Debug.Log("[Panel_Cutscene] Returned to restaurant from cutscene.");
+    }
+
 
     // TODO: Would like to try fading the cutscene panels for a smoother transition
     // IEnumerator FadeSprites(UnityEngine.UI.Image sprite, float newAlpha, float fadeDuration)

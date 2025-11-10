@@ -52,10 +52,21 @@ public class Collectible_Object : Interactable_Object
             var pickup = pickupObj.GetComponent<Pickup_Item>();
             if (pickup != null)
                 pickup.Initialize(data);
+
+            // Mark as collected in affection event tracker if applicable
+            if (Affection_Event_Item_Tracker.instance != null && data != null)
+            {
+                var entry = Affection_Event_Item_Tracker.instance.items.Find(r => r.eventItem == data);
+                if (entry != null && !entry.collected)
+                {
+                    Affection_Event_Item_Tracker.instance.MarkCollected(entry);
+                    Debug.Log($"[Collectible_Object] Marked {data.Name} as collected in event tracker.");
+                }
+            }
         }
 
-        // --- Hide interact icon reliably ---
-        playerInside = false; // stop any base-class logic
+        // --- Hide interact icon ---
+        playerInside = false;
         if (InteractIcon != null)
         {
             // prefer destroy if it's a child instance

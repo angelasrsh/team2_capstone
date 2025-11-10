@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
+  m_Name: 23_Pre-Washed_Rice
+  m_EditorClassIdentifier: 
+  Name: Rice
+  Amount: 0
+  Image: {fileID: 21300000, guid: 8e33e4294355c7e479e774a36edb1ce1, type: 3}
+  tier: 0
+  price: 15
+  rarityWeight: 1
+  minSpawn: 0
+  maxSpawn: 5
+  countsAs: []
+  cookThresholds:
+    rawEnd: 0
+    almostEnd: 0
+    cookedEnd: 0
+    overcookedEnd: 0
+  description: A sack of washed white rice. Can be purchased from Satyr's shop.
+  CutIngredientImages: []
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: 2b049ef314bf4b647b24f3a7b5dad8a4, type: 2}
+    amountRequired: 1
+    method: 1
+  ingredientsNeeded: []
+  ingredientType: 24
+  CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 0

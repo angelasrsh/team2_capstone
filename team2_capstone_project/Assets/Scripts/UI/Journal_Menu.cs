@@ -14,7 +14,7 @@ public class Journal_Menu : MonoBehaviour
   public static Journal_Menu Instance;
   public bool isPaused = false;
   private bool haveTabsInitialized = false;
-  private int objectsPerPage = 6; // right page only fits 6 objects per page with current cell size (if changed, change slots list in inspector too)
+  [SerializeField] private int objectsPerPage = 8; // right page only fits 8 objects per page with current cell size (if changed, change slots list in inspector too)
   private Choose_Menu_Items dailyMenu;
 
   [Header("Player Info")]
@@ -172,10 +172,10 @@ public class Journal_Menu : MonoBehaviour
   
   private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
   {
-    if (scene.name == "Main_Menu")
-      gameObject.SetActive(false);
-    else
-      gameObject.SetActive(true);
+    // if (scene.name == "Main_Menu")
+    //   gameObject.SetActive(false);
+    // else
+    //   gameObject.SetActive(true);
   }
 
   private IEnumerator WaitAndBind()
@@ -525,9 +525,9 @@ public class Journal_Menu : MonoBehaviour
     icon.preserveAspect = true;
 
     // Build the description text
-    string npcText = "Background Info: \n" + npcData.lore + "\n\n";
+    string npcText = npcData.lore + "\n\n";
 
-    npcText += "Dateable: " + (npcData.datable ? "YES" : "no") + "\n";
+    npcText += "Dateable: " + (npcData.datable ? "Yes" : "No") + "\n";
 
     npcText += "Favorite Dishes: " +
         (npcData.favoriteDishes.Length > 0
