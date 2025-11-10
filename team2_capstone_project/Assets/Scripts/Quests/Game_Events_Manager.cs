@@ -246,6 +246,14 @@ public class Game_Events_Manager : MonoBehaviour
         OnAffectionChanged?.Invoke(customer, level);
     }
 
+    /// <summary>
+    /// Triggers when the player enters or exits the Satyr's shop
+    /// </summary>
+    public event Action<bool> onInShop;
+    public void InShop(bool isInShop)
+    {
+        onInShop?.Invoke(isInShop);
+    }
     #endregion
     
 

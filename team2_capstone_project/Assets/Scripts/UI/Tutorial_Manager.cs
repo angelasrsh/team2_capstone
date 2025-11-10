@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 // using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -41,7 +42,7 @@ public class Tutorial_Manager : MonoBehaviour
    
 
     ////// Private variables //////
-    private Dictionary<String, Quest_Info_SO> RoomTutorialMap = new Dictionary<String, Quest_Info_SO>();
+    private Dictionary<Quest_Info_SO, String> RoomTutorialMap = new Dictionary<Quest_Info_SO, String>();
     private Dictionary<String, Quest_State> QuestIDQuestStateMap = new Dictionary<String, Quest_State>(); // Map quest IDs to quest states
 
 
@@ -65,7 +66,7 @@ public class Tutorial_Manager : MonoBehaviour
 
         // Initialize room tutorial map
         for (int i = 0; i < TutorialList.Length; i++)
-            RoomTutorialMap[TutorialRoomIDs[i].ToString()] = TutorialList[i]; // Map Tutorial S_O to RoomID key
+            RoomTutorialMap[TutorialList[i]] = TutorialRoomIDs[i].ToString(); // Map Tutorial S_O to RoomID key
 
         for (int i = 0; i < TutorialList.Length; i++)
         {
@@ -116,20 +117,26 @@ public class Tutorial_Manager : MonoBehaviour
 #if !TUTORIAL_ENABLE
         return;
 #endif
-        Helpers.printLabeled(this, "");
+        //Helpers.printLabeled(this, "");
         // End search if this isn't a room that is listed to have a tutorial
-        if (!RoomTutorialMap.ContainsKey(scene.name))
+        if (!RoomTutorialMap.ContainsValue(scene.name))
             return;
 
-        String tutorialID = RoomTutorialMap[scene.name].id;
-
-        // If a tutorial exists and is ready to start, start it
-        if (QuestIDQuestStateMap.ContainsKey(tutorialID) && QuestIDQuestStateMap[tutorialID] == Quest_State.CAN_START)
+        // Start all tutorials with the given room start ID
+        foreach (var kvp in RoomTutorialMap)
         {
-            //Debug.Log($"[T_MAN] Auto-starting tutorial {tutorialID}");
-            StartTutorial(tutorialID);
-            // Helpers.printLabeled(this, "Starting" + tutorialID);
+            String tutorialID = kvp.Key.id;
+
+            // If the room matches and the tutorial quest is ready to start, start it
+            if (kvp.Value == scene.name && QuestIDQuestStateMap[tutorialID] == Quest_State.CAN_START)
+            {
+                //Debug.Log($"[T_MAN] Auto-starting tutorial {tutorialID}");
+                StartTutorial(tutorialID);
+                // Helpers.printLabeled(this, "Starting" + tutorialID);
+            }
+
         }
+        
     }
 
 
@@ -154,10 +161,12 @@ public class Tutorial_Manager : MonoBehaviour
     private void questStateChange(Quest q)
     {
         // If we are tracking this quest's state, update our tutorial state dictionary
-        if (RoomTutorialMap.ContainsValue(q.Info))
+        if (RoomTutorialMap.ContainsKey(q.Info))
         {
             QuestIDQuestStateMap[q.Info.id] = q.state;
         }
+
+        CheckStartTutorial(SceneManager.GetActiveScene(), LoadSceneMode.Single); // check if we can start any new tutorial quests
     }
 
     /// <summary>

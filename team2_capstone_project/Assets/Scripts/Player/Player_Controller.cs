@@ -379,6 +379,9 @@ public class Player_Controller : MonoBehaviour
         // --- Sprint conditions ---
         if (sprintHeld && isMoving && !staminaDepleted && currentStamina > 0f)
         {
+            if (!isSprinting) // Send event on start of sprint
+                Game_Events_Manager.Instance.IsSprintingChange(true);
+
             isSprinting = true;
             currentStamina -= Time.deltaTime;
             currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
@@ -393,6 +396,8 @@ public class Player_Controller : MonoBehaviour
         }
         else
         {
+            if (isSprinting) // Send event on end of sprint
+                Game_Events_Manager.Instance.IsSprintingChange(true);
             isSprinting = false;
         }
 

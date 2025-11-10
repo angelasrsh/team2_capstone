@@ -100,6 +100,7 @@ public class Shop : MonoBehaviour
     shopOpen = true;
     Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.openShopSFX, 0.65f, 1.25f);
     Game_Manager.Instance.UIManager.OpenUI();
+    Game_Events_Manager.Instance.InShop(true);
 
     if (!firstOpen)
       shopkeeperText.text = otherOpenText;
@@ -107,18 +108,19 @@ public class Shop : MonoBehaviour
 
   private void CloseShopUI(bool playSound = true)
   {
-      shopUI.SetActive(false);
+        shopUI.SetActive(false);
+        Game_Events_Manager.Instance.InShop(false);
 
-      if (shopOpen)
-          Game_Manager.Instance.UIManager.CloseUI();
+        if (shopOpen)
+            Game_Manager.Instance.UIManager.CloseUI();
 
-      shopOpen = false;
+        shopOpen = false;
 
-      if (playSound)
-          Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.closeShopSFX, 0.65f, 1.3f);
+        if (playSound)
+            Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.closeShopSFX, 0.65f, 1.3f);
 
-      if (firstOpen)
-          firstOpen = false;
+        if (firstOpen)
+            firstOpen = false;
   }
 
   /// <summary>

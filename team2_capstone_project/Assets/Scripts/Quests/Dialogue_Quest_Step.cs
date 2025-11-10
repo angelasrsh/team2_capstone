@@ -17,7 +17,7 @@ public class Dialogue_Quest_Step : Quest_Step
     public string textKeyPC;
     public string postStepTextKey;
     public int InstructionWaitTime = 0;
-    public int PopupWaitTime = 10;
+    public int PopupWaitTime = 10; // Not currently used(?)
 
     public bool QuestStepComplete { get; set; } = false;
 
@@ -76,7 +76,7 @@ public class Dialogue_Quest_Step : Quest_Step
         // Given alternative text
         if (text != "")
         {
-            StartCoroutine(displayTextDelayed(text, delayStart, delayEnd, disablePlayerInput));
+            StartCoroutine(displayTextDelayed(text, delayStart, disablePlayerInput));
             return;
         }
 
@@ -86,7 +86,7 @@ public class Dialogue_Quest_Step : Quest_Step
         else if ((textKey == "") || (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile && (textKeyPC != "")))
             textKey = textKeyPC;
         // Wait for delayStart, then show text and textbox, then disappear
-        StartCoroutine(displayTextDelayed(textKey, delayStart, delayEnd, disablePlayerInput));
+        StartCoroutine(displayTextDelayed(textKey, delayStart, disablePlayerInput));
 
     }
 
@@ -100,7 +100,7 @@ public class Dialogue_Quest_Step : Quest_Step
     /// <param name="delayStart"></param>
     /// <param name="delayHide"> Input 0 to never hide </param>
     /// <returns></returns>
-    IEnumerator displayTextDelayed(string key, float delayStart, float delayHide, bool disablePlayerInput = true)
+    IEnumerator displayTextDelayed(string key, float delayStart, bool disablePlayerInput = false)
     {
         dm = FindObjectOfType<Dialogue_Manager>();
 
@@ -115,11 +115,6 @@ public class Dialogue_Quest_Step : Quest_Step
             Helpers.printLabeled(this, "Dialogue manager is null");
         }
         
-        if (delayHide > 0)
-        {
-            yield return new WaitForSeconds(delayHide);
-            // Somehow disable text automatically
-        }
     }
 
 
