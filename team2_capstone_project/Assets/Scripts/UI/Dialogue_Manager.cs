@@ -344,6 +344,7 @@ public class Dialogue_Manager : MonoBehaviour
                 else
                 {
                     Debug.LogWarning($"Dialogue_Manager: Could not resolve character key '{characterKey}' from dialog key '{myDialogKey}'.");
+                    uiManager.ShowOrHidePortrait(null); // hide portrait
                 }
             }
 
