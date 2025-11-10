@@ -17,7 +17,7 @@ public class Dialogue_Manager : MonoBehaviour
 
     [Header("Auto-Advancing Dialog Settings")]
     public bool autoAdvanceDialog = false; // Enable auto mode
-    public bool autoEndDialogue = false; // Enable auto on dialogue close on end
+    public bool autoEndDialogue = true; // Enable auto on dialogue close on end
     public float autoAdvanceDelay = 2.5f;  // Time between lines
 
     [Header("Character Data")]
