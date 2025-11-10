@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.OnScreen;
 
 public class Mobile_Icon_UI : MonoBehaviour
 {
@@ -15,6 +16,10 @@ public class Mobile_Icon_UI : MonoBehaviour
   [SerializeField] private Button closePauseButton;
   [SerializeField] private Button closeInventoryButton;
   [SerializeField] private Button closeJournalButton;
+
+  [Header("Movement References")]
+  private OnScreenStick joystick;
+  private OnScreenButton actionButton;
 
   public static Mobile_Icon_UI instance;
   private Journal_Menu journalMenu;
@@ -68,6 +73,9 @@ public class Mobile_Icon_UI : MonoBehaviour
     closePauseButton.gameObject.SetActive(false);
     closeInventoryButton.gameObject.SetActive(false);
     closeJournalButton.gameObject.SetActive(false);
+
+    joystick = FindObjectOfType<OnScreenStick>();
+    actionButton = FindObjectOfType<OnScreenButton>();
   }
 
   private void OnEnable()
@@ -252,6 +260,10 @@ public class Mobile_Icon_UI : MonoBehaviour
     settingsButton.gameObject.SetActive(false);
     inventoryButton.gameObject.SetActive(false);
     journalButton.gameObject.SetActive(false);
+
+    joystick.enabled = false;
+    actionButton.enabled = false;
+    actionButton.gameObject.GetComponent<Button>().interactable = false;
   }
 
   private void EnableMainButtons()
@@ -263,5 +275,9 @@ public class Mobile_Icon_UI : MonoBehaviour
     settingsButton.gameObject.SetActive(true);
     inventoryButton.gameObject.SetActive(true);
     journalButton.gameObject.SetActive(true);
+
+    joystick.enabled = true;
+    actionButton.enabled = true;
+    actionButton.gameObject.GetComponent<Button>().interactable = true;
   }
 }
