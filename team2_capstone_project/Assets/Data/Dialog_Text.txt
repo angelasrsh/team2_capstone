@@ -27,6 +27,13 @@ Satyr.DislikedDish2 = I would've liked to spend the money I wasted on this dish 
 Satyr.Filler = Ah, hello, [player]. Hopefully one of your dishes can satitate me before I have to hit the road again.
 
 
+--- NPC INTRODUCTIONS ---
+
+Elf.Intro = Hello, human. My name is Asper Agis. Hopefully your cuisine can meet the standards necessitated by a High Elf.
+Phrog.Intro = Hello, hello! I am one of many Phrogs in our family. I'm sure you'll meet the rest of us eventually!
+Satyr.Intro = Ah, we meet again, [player]. I have high hopes that your dishes will satisfy, but I'm sure they will if you've been using my ingredients.
+
+
 --- NPC FORAGING AREA ---
 
 Elf.ForagingArea1 = Ah, [player]. Out gathering ingredients before this evening, hm? Humans' amount of perserverance can be quite commendable.
@@ -38,10 +45,12 @@ Satyr.ForagingArea1 = Heh, not to worry, [player]. I won’t take any of the ing
 
 Elf.RingReturn = ...I am unsure where you would ever find this, [player], but I am endlessly grateful it is back in my hands now. Thank you.
 
---- Elf 25 event ---
-none.1_25 = (To get your attention, Asper lets out a shrill whistle, like the kind used to call a dog. The empty plate sat before her… clean. Only the glisten of leftovers on her cutlery suggested there was ever food at all, which she methodically begins licking clean .)
+
+--- Elf 25 Event ---
+
+none.1_25 = (To get your attention, Asper lets out a shrill whistle, like the kind used to call a dog. The empty plate sat before her… clean. Only the glisten of leftovers on her cutlery suggested there was ever food at all, which she methodically begins licking clean.)
 Elf.2_25 = Really, I’m surprised that someone like you was willing to try and open a restaurant this far out from your kin. Many upstart human chefs try their hardest but fail to appeal to a more nuanced palette afforded by an Elvish constitution.
-Elf.3_25 = If that isn’t simple enough for your kind, it means your limited human palette could never impress an elf who is worth their salt.. like myself.
+Elf.3_25 = If that isn’t simple enough for your kind, it means your limited human palette could never impress an elf who is worth their salt... like myself.
 Player.4_25 = What do you mean “like you?”
 Elf.5_25 = You know very well what I mean by like you. Or do I need to repeat myself to get it through your thick, human skull?
 Elf.6_25 = Either way, it is surprising that you are capable of creating… edible foods. I had only ever been to the human realms once, and the cuisine was horrid. Except for when I ate with…
@@ -51,7 +60,8 @@ Player.9_25 = A simple “thank you” would suffice.
 Elf.10_25 = No.
 none.11_25 = (Asper would leave the door open behind her, letting the cold wind blow in from the outside. Asshole.)
 
---- Elf 50 event ---
+--- Elf 50 Event ---
+
 none.1_1_50 = (Asper would stare down at the food in front of her with disgust, as if she didn’t go through the effort to order something which was nearly impossible to construct without direct access to a human supermarket. The gall!)
 Elf.1_2_50 = …I should have known that you worked at a McDragons. You definitely seem like the kind of person who would have spent a long time there. I haven’t walked into one for decades—but it still feels the same as it did all that time ago.
 Elf.1_3_50 = Greasy. Turgid. Soft and hard in the wrong places. Ingredients chosen through convenience and cost rather than flavor or taste. Bundled together in a soggy, wet paper wrapper. It’s “food” constructed to fill a quota rather than a belly.
@@ -66,7 +76,9 @@ none.7_3_50 = (For some reason you have the urge to hand her a napkin, but refra
 none.7_4_50 = (Asper would finish her meal with a methodic efficiency. Like she had lived through before, and was simply going through the motions. For some reason, you feel that she has replayed this moment in her head many, many times.)
 none.7_5_50 = (Asper would silently rise from her seat and leave a bag of gold on the table, before departing. A sizable tip, which you suspect will be the first and last time you see such a thing from her.)
 
---- Elf 75 event ---
+
+--- Elf 75 Event ---
+
 Journal.RingFound = It’s a ring that is unmistakably Elvish!
 Journal.RingFound = It is rare for elves to part with such a well-kept looking token.
 Journal.RingFound = We should look around to see if anyone has lost it.
@@ -89,7 +101,9 @@ Elf.16_75 = I refuse to mourn so weakly in front of you. So humanly.
 none.17_75 = (She looks at you with tears in her eyes) 
 Elf.18_75 = …Thank you, for returning it.  
 
+
 --- Elf 100 Event ---
+
 Elf.1_1_100 = So you know this place too.
 Elf.1_2_100 = He always wanted to be buried somewhere quiet. 
 Player.1_3_100 = Sorry for intruding
@@ -102,14 +116,13 @@ Elf.4_4_100 = I don’t think I want to come here anymore.
 Elf.4_5_100 = Thank you for tolerating me, chef.
 Elf.4_6_100 = You have reminded me that even centuries later, I can still feel full.
 
+
 --- OBJECT INTERACTIONS ---
 
 Default.Dresser = (Filled with clothes, including your old McDragons uniform. You should probably get rid of this.)
 Default.ChalkBoard = (You could brainstorm lots of different recipes on this board!)
 Default.Journal = (Your journal filled with cooking recipes you've taught yourself, ingredients you can find in the wild, and... a catalogue of your customers? Probably best not to show them.)
 Default.Bed = (It's not time to go to bed yet!)
-
-
 
 
 --- TUTORIAL ---

@@ -36,6 +36,7 @@ public class Player_Progress : ScriptableObject
   // public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used)
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used)
   public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used)
+  [SerializeField] private HashSet<CustomerData.NPCs> introducedNPCs = new HashSet<CustomerData.NPCs>();
 
 
   /// <summary>
@@ -69,7 +70,8 @@ public class Player_Progress : ScriptableObject
         unlockedIngredients = new List<IngredientType>(unlockedIngredients),
         lastRecipeSpawnedDay = lastRecipeSpawnedDay,
         activeDailyRecipe = activeDailyRecipe,
-        hasCollectedRecipeToday = hasCollectedRecipeToday
+        hasCollectedRecipeToday = hasCollectedRecipeToday,
+        introducedNPCs = new List<CustomerData.NPCs>(introducedNPCs)
       };
   }
 
@@ -94,6 +96,7 @@ public class Player_Progress : ScriptableObject
       lastRecipeSpawnedDay = data.lastRecipeSpawnedDay;
       activeDailyRecipe = data.activeDailyRecipe;
       hasCollectedRecipeToday = data.hasCollectedRecipeToday;
+      introducedNPCs = new HashSet<CustomerData.NPCs>(data.introducedNPCs);
 
       OnMoneyChanged?.Invoke(money);
   }
@@ -282,6 +285,18 @@ public class Player_Progress : ScriptableObject
   /// </summary>
   public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
 
+  public bool HasMetNPC(CustomerData.NPCs npc)
+  {
+      return introducedNPCs.Contains(npc);
+  }
+
+  public void MarkNPCIntroduced(CustomerData.NPCs npc)
+  {
+      if (introducedNPCs.Add(npc))
+      {
+          Save_Manager.instance?.SaveGameData();
+      }
+  }
   #endregion
 
 
@@ -322,5 +337,6 @@ public class PlayerProgressData
     public int lastRecipeSpawnedDay = -1;
     public Dish_Data.Dishes? activeDailyRecipe = null;
     public bool hasCollectedRecipeToday = false; 
+    public List<CustomerData.NPCs> introducedNPCs = new();
 }
 #endregion

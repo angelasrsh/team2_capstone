@@ -142,11 +142,19 @@ public class Customer_Controller : MonoBehaviour
             {
                 if (hasSatDown && !hasRequestedDish)
                 {
+                    if (Player_Progress.Instance != null && !Player_Progress.Instance.HasMetNPC(data.npcID))
+                    {
+                        PlayFirstMeetingDialogue();
+                        return;
+                    }
+
                     if (TryPlayRingReturnDialogue())
                         return;
+
                     RequestDishAfterDialogue();
                     Game_Events_Manager.Instance.GetOrder();
                 }
+
                 else if (hasRequestedDish)
                 {
                     TryServeDish(playerInventory);
@@ -546,6 +554,29 @@ public class Customer_Controller : MonoBehaviour
     /// If successful, removes the ring from inventory and marks it as collected.
     /// </summary>
     /// <returns></returns>
+    private void PlayFirstMeetingDialogue()
+    {
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+        {
+            Debug.LogWarning("Dialogue_Manager not found for first meeting.");
+            return;
+        }
+
+        dm.onDialogComplete = () =>
+        {
+            dm.onDialogComplete = null;
+            Player_Progress.Instance.MarkNPCIntroduced(data.npcID);
+
+            // After introduction, continue like normal
+            RequestDishAfterDialogue();
+            Game_Events_Manager.Instance.GetOrder();
+        };
+
+        // e.g. "Elf.Intro"
+        dm.PlayScene($"{data.npcID}.Intro", CustomerData.EmotionPortrait.Emotion.Happy);
+    }
+    
     private bool TryPlayRingReturnDialogue()
     {
         if (Affection_Event_Item_Tracker.instance == null)
