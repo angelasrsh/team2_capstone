@@ -15,13 +15,18 @@ public class Panel_Cutscene : MonoBehaviour
     UnityEngine.UI.Image[] panelObjects;
 
     // [Header("Set using Affection_System")]
-    private Event_Data DatingCutsceneData;
+    [SerializeField] private Event_Data DatingCutsceneData;
     private int panelIndex = 0;
     private bool loadingRoom = false;
+
+    private Dialogue_Manager dm;
 
     // Start is called before the first frame update
     void Start()
     {
+
+        //dm =  UnityEngine.Object.FindObjectOfType<Dialogue_Manager>();
+        dm = FindObjectOfType<Dialogue_Manager>();
 
         // Get cutscene to play
         DatingCutsceneData = Affection_System.Instance.Cutscene;
@@ -53,6 +58,9 @@ public class Panel_Cutscene : MonoBehaviour
         if (panelIndex < DatingCutsceneData.Panels.Length)
             displayPanel(panelIndex);
 
+        if (DatingCutsceneData.Panels[panelIndex].DialogKeys.Count > 0)
+            dm.PlaySceneMultiple(DatingCutsceneData.Panels[panelIndex].DialogKeys);
+
         panelIndex++;
     }
 
@@ -66,7 +74,7 @@ public class Panel_Cutscene : MonoBehaviour
         if (index < DatingCutsceneData.Panels.Length)
         {
             // Change image
-            panelObjects[panelObjIndex].sprite = DatingCutsceneData.Panels[index];
+            panelObjects[panelObjIndex].sprite = DatingCutsceneData.Panels[index].Panel;
 
             // Set opacity of image to 1
             UnityEngine.UI.Image image = panelObjects[panelObjIndex];
