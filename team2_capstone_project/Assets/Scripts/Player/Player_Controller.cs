@@ -315,39 +315,38 @@ public class Player_Controller : MonoBehaviour
 
   private void HandleWalkAnimation()
   {
-    if (animator == null || spriteRenderer == null)
-      return;
+      if (animator == null || spriteRenderer == null)
+          return;
 
-    // Calculate horizontal move speed
-    float horizontalSpeed = new Vector3(currentMoveVelocity.x, 0f, currentMoveVelocity.z).magnitude;
-    if (animator.HasParameterOfType("speed", AnimatorControllerParameterType.Float))
-      animator.SetFloat("speed", horizontalSpeed);
+      float horizontalSpeed = new Vector3(currentMoveVelocity.x, 0f, currentMoveVelocity.z).magnitude;
 
-    // --- Facing Direction Handling ---
-    if (horizontalSpeed > 0.05f)
-    {
-      // Update facing only when player is actually moving
-      if (movement.x > 0.05f)
-        facingRight = true;
-      else if (movement.x < -0.05f)
-        facingRight = false;
-    }
+      if (animator.HasParameterOfType("speed", AnimatorControllerParameterType.Float))
+          animator.SetFloat("speed", horizontalSpeed);
 
-    // Apply stored facing direction consistently (even when idle)
-    spriteRenderer.flipX = facingRight;
+      if (animator.HasParameterOfType("isSprinting", AnimatorControllerParameterType.Bool))
+          animator.SetBool("isSprinting", isSprinting);
 
-    if (animator.HasParameterOfType("facingRight", AnimatorControllerParameterType.Bool))
-      animator.SetBool("facingRight", facingRight);
+      // --- Facing Direction Handling ---
+      if (horizontalSpeed > 0.05f)
+      {
+          if (movement.x > 0.05f)
+              facingRight = true;
+          else if (movement.x < -0.05f)
+              facingRight = false;
+      }
 
-    // --- Animation speed adjustments ---
-    if (isSprinting)
-    {
-      float targetAnimSpeed = 1.5f;
-      animator.speed = Mathf.Lerp(animator.speed, targetAnimSpeed, Time.deltaTime * 8f);
-    }
-    else
-      animator.speed = 1f;
+      spriteRenderer.flipX = facingRight;
+
+      if (animator.HasParameterOfType("facingRight", AnimatorControllerParameterType.Bool))
+          animator.SetBool("facingRight", facingRight);
+
+      // --- Animation Speed Adjustment ---
+      if (isSprinting)
+          animator.speed = Mathf.Lerp(animator.speed, 1.5f, Time.deltaTime * 8f);
+      else
+          animator.speed = Mathf.Lerp(animator.speed, 1f, Time.deltaTime * 8f);
   }
+
 
   /// <summary>
   /// Called by the input action when the player moves.
