@@ -89,9 +89,9 @@ public class Player_Controller : MonoBehaviour
     SendStaminaProgress();
     onMobile = SystemInfo.deviceType == DeviceType.Handheld;
 
-    #if UNITY_EDITOR
-      onMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
-    #endif
+    // #if UNITY_EDITOR
+    //   onMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+    // #endif
 
     if (spriteTransform == null)
 

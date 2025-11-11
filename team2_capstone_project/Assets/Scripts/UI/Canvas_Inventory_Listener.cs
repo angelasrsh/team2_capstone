@@ -25,9 +25,9 @@ public class Canvas_Inventory_Listener : MonoBehaviour
     else
       isMobile = false;
 
-#if UNITY_EDITOR
-      isMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
-#endif
+// #if UNITY_EDITOR
+//       isMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+// #endif
 
     if (playerInput != null)
     {

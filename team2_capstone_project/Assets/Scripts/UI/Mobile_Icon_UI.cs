@@ -48,9 +48,9 @@ public class Mobile_Icon_UI : MonoBehaviour
     // Hide automatically on non-mobile platforms
     bool simulateMobile = false;
       
-    #if UNITY_EDITOR
-      simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
-    #endif
+    // #if UNITY_EDITOR
+    //   simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+    // #endif
     
     if (simulateMobile == false && SystemInfo.deviceType != DeviceType.Handheld)
     {
