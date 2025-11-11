@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Holds the sprite images (ordered) for a dating event
 /// </summary>
-[CreateAssetMenu(menuName = "NPCs/Event", fileName = "Event")] 
+[CreateAssetMenu(menuName = "NPCs/Event", fileName = "Event")]
 public class Event_Data : ScriptableObject
 {
     public Room_Data.RoomID roomToReturnTo;
@@ -16,8 +16,17 @@ public class Event_Data : ScriptableObject
     public int MilestonePercent;
 
     [Header("Panel Images")]
-    public Sprite[] Panels;
+    // public Sprite[] Panels;
+    [Header("Panel Data")]
+    public PanelData[] Panels;
 
     [Header("Music")]
     public AudioClip Music;
+}
+
+[System.Serializable]
+public class PanelData
+{
+    public Sprite Panel;
+    public List<string> DialogKeys;
 }

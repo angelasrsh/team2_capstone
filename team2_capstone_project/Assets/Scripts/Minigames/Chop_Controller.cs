@@ -189,7 +189,7 @@ public class Chop_Controller : MonoBehaviour
         // FERMENTED EYE
         ingredientConfigs.Add(new IngredientCuttingConfig
         {
-            ingredientName = "Uncut Fermented Eye",
+            ingredientName = "Fermented Eye",
             cutGroupName = "F_Cut_Group",
             requiredCuts = 2,
             cutLines = new List<CutLineConfig>
@@ -224,7 +224,7 @@ public class Chop_Controller : MonoBehaviour
         // FOGSHROOM
         ingredientConfigs.Add(new IngredientCuttingConfig
         {
-            ingredientName = "Uncut Fogshroom",
+            ingredientName = "Fogshroom",
             cutGroupName = "Fog_Cut_Group",
             requiredCuts = 3,
             cutLines = new List<CutLineConfig>
@@ -252,7 +252,7 @@ public class Chop_Controller : MonoBehaviour
         // FICKLEGOURD
         ingredientConfigs.Add(new IngredientCuttingConfig
         {
-            ingredientName = "Uncut Ficklegourd",
+            ingredientName = "Ficklegourd",
             cutGroupName = "Fickle_Cut_Group",
             requiredCuts = 2,
             cutLines = new List<CutLineConfig>
@@ -352,7 +352,7 @@ public class Chop_Controller : MonoBehaviour
             cutGroupTransform.gameObject.SetActive(true);
             
             // Special case handling for specific ingredients
-            if (currentConfig.ingredientName == "Uncut Ficklegourd")
+            if (currentConfig.ingredientName == "Ficklegourd")
             {
                 cutGroupTransform.Find("Fkl_Uncut")?.gameObject.SetActive(false);
             }
@@ -759,7 +759,7 @@ public class Chop_Controller : MonoBehaviour
         k_script.ReturnToOriginalPosition();
 
         // Temporary shortcut for Fogshroom
-        if (currentConfig?.ingredientName == "Uncut Fogshroom")
+        if (currentConfig?.ingredientName == "Fogshroom")
         {
             cuts_left = 0;
         }

@@ -15,21 +15,26 @@ public class Panel_Cutscene : MonoBehaviour
     UnityEngine.UI.Image[] panelObjects;
 
     // [Header("Set using Affection_System")]
-    private Event_Data DatingCutsceneData;
+    [SerializeField] private Event_Data DatingCutsceneData;
     private int panelIndex = 0;
+    private bool loadingRoom = false;
+
+    private Dialogue_Manager dm;
 
     // Start is called before the first frame update
     void Start()
     {
+
+        //dm =  UnityEngine.Object.FindObjectOfType<Dialogue_Manager>();
+        dm = FindObjectOfType<Dialogue_Manager>();
 
         // Get cutscene to play
         DatingCutsceneData = Affection_System.Instance.Cutscene;
         if (DatingCutsceneData == null)
         {
             Helpers.printLabeled(this, "Warning: No cutscene has been set in the Affection System on GameManager");
-            SceneManager.LoadScene("Updated_Restaurant");
+            StartCoroutine(TransitionBackToRestaurant());
         }
-
 
         panelObjects = GetComponentsInChildren<UnityEngine.UI.Image>();
 
@@ -53,8 +58,10 @@ public class Panel_Cutscene : MonoBehaviour
         if (panelIndex < DatingCutsceneData.Panels.Length)
             displayPanel(panelIndex);
 
-        panelIndex++;
+        if (DatingCutsceneData.Panels[panelIndex].DialogKeys.Count > 0)
+            dm.PlaySceneMultiple(DatingCutsceneData.Panels[panelIndex].DialogKeys);
 
+        panelIndex++;
     }
 
     /// <summary>
@@ -67,7 +74,7 @@ public class Panel_Cutscene : MonoBehaviour
         if (index < DatingCutsceneData.Panels.Length)
         {
             // Change image
-            panelObjects[panelObjIndex].sprite = DatingCutsceneData.Panels[index];
+            panelObjects[panelObjIndex].sprite = DatingCutsceneData.Panels[index].Panel;
 
             // Set opacity of image to 1
             UnityEngine.UI.Image image = panelObjects[panelObjIndex];
@@ -107,8 +114,11 @@ public class Panel_Cutscene : MonoBehaviour
             // Save immediately to persist this
             Save_Manager.instance?.AutoSave();
 
-            Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Dating_Events, DatingCutsceneData.roomToReturnTo);
-            // StartCoroutine(TransitionBackToRestaurant());
+            if (!loadingRoom)
+            {
+                Room_Change_Manager.instance.GoToRoom(Room_Data.RoomID.Dating_Events, DatingCutsceneData.roomToReturnTo);
+                loadingRoom = true;
+            }
         }
     }
 

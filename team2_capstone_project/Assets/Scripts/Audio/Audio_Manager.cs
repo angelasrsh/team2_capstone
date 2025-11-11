@@ -51,6 +51,7 @@ namespace Grimoire
     public AudioClip openShopSFX;
     public AudioClip closeShopSFX;
     public AudioClip pianoHit;
+    public AudioClip lampSwitch;
 
     [Header("Footstep Clips")]
     public AudioClip grassLeftFootstep;
@@ -231,7 +232,7 @@ namespace Grimoire
         return;
 
       fireAmbientSource.clip = ambientFire;
-      fireAmbientSource.volume = 0.5f;
+      fireAmbientSource.volume = 0.29f;
 
       if (!fireAmbientSource.isPlaying) // Play if not already playing
       {
