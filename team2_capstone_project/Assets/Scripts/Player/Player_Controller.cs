@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Animations;
 
-// [RequireComponent(typeof(Rigidbody))]
 public class Player_Controller : MonoBehaviour
 {
   [Header("Movement")]
