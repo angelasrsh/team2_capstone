@@ -14,11 +14,19 @@ public class Cauldron : MonoBehaviour
   public UIParticle waterParticle1;
   public UIParticle waterParticle2;
 
+  [Header("Ingredient Drop Visuals")]
+  public GameObject ingredientDropPrefab;  
+  public RectTransform ingredientDropParent;
+  public Vector3 ingredientDropStartOffset = new Vector3(0, 100, 0);
+
+  [Header("Cauldron Settings")]
+  [SerializeField] private TextMeshProUGUI errorText;
+  [SerializeField] private int maxIngredients = 6; // max number of ingredients you can put in a pot at once
+
+
   private Dictionary<Ingredient_Data, int> ingredientInPot = new Dictionary<Ingredient_Data, int>();
   private List<Dish_Data> possibleDishes; // not a deep copy, but clearing this won't affect original list in Ingredient_Data
   private List<Ingredient_Requirement> possibleIngredients;
-  [SerializeField] private TextMeshProUGUI errorText;
-  [SerializeField] private int maxIngredients = 6; // max number of ingredients you can put in a pot at once
   private int numIngredients = 0;
   private Dish_Data dishMade;
   private Ingredient_Data ingredientMade;
@@ -192,6 +200,22 @@ public class Cauldron : MonoBehaviour
       ingredientInPot[ingredient]++;
     else
       ingredientInPot[ingredient] = 1;
+
+    if (ingredientDropPrefab != null && ingredientDropParent != null && ingredient != null)
+    {
+        GameObject dropObj = Instantiate(ingredientDropPrefab, ingredientDropParent);
+        Ingredient_Drop_UI drop = dropObj.GetComponent<Ingredient_Drop_UI>();
+
+        if (drop != null)
+        {
+            // Use the sprite from your Ingredient_Data (use CutIngredientImages[0] if available, otherwise use Image)
+            Sprite ingredientSprite = ingredient.CutIngredientImages != null && ingredient.CutIngredientImages.Length > 0
+                ? ingredient.CutIngredientImages[0]
+                : ingredient.Image;
+
+            drop.Initialize(ingredientSprite, ingredientDropStartOffset);
+        }
+    }
 
     if (ingredient.Name == "Water")
     {
