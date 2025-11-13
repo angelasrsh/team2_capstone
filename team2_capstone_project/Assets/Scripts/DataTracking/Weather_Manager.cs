@@ -15,6 +15,7 @@ public class Weather_Manager : MonoBehaviour
     [Header("Shared Visuals")]
     public Material clearSkybox;
     public Material cloudySkybox;
+    public Material sunsetSkybox;
     public GameObject rainSystemPrefab;
 
     [Header("Audio")]
@@ -81,6 +82,13 @@ public class Weather_Manager : MonoBehaviour
         }
 
         Debug.Log($"[WeatherManager] Applying weather for scene: {room.name}, isRaining={isRaining}");
+
+        if (room.roomID == Room_Data.RoomID.Outside_Restaurant)
+        {
+            RenderSettings.skybox = sunsetSkybox;
+            HandleRainVisuals(room);
+            return;  // Exit early so weather logic below doesn't override it
+        }
 
         // --- Skybox and visuals ---
         RenderSettings.skybox = isRaining ? cloudySkybox : clearSkybox;
