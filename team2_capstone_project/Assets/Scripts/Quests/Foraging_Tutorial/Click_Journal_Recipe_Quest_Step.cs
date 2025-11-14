@@ -16,7 +16,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
 
     override protected void OnEnable()
     {
-        Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
+        // Game_Events_Manager.Instance.onJournalToggle += JournalToggled;
         Game_Events_Manager.Instance.onDishDetailsClick += RecipeClick;
         Game_Events_Manager.Instance.onDialogueComplete += onDialogComplete;
         // Game_Events_Manager.Instance.onEndDialogBox += endQuest;
@@ -27,7 +27,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     // Unsubscribe to clean up
     override protected void OnDisable()
     {
-        Game_Events_Manager.Instance.onJournalToggle -= JournalToggled;
+        // Game_Events_Manager.Instance.onJournalToggle -= JournalToggled;
         Game_Events_Manager.Instance.onDishDetailsClick -= RecipeClick;
         Game_Events_Manager.Instance.onDialogueComplete -= onDialogComplete;
         // Game_Events_Manager.Instance.onEndDialogBox -= endQuest;
@@ -42,18 +42,18 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
 
     private void onDialogComplete(string dialogKey)
     {
-        Debug.Log($"[Tutorial] onDialogComplete called with key {dialogKey}");
-       
-        // So we don't start the next dialogue too soon
-        if (dialogKey == "Journal.Click_Journal_Recipe")
-            journalRecipeClickFirstDialogueComplete = true; 
-        // Need to make sure player actually sees this instruction
-        if (dialogKey == "Journal.Click_Journal_Recipe_Text")
-            journalRecipeClickDialogueComplete = true;
+        // // So we don't start the next dialogue too soon
+        // if (dialogKey == "Journal.Click_Journal_Recipe")
+        //     journalRecipeClickFirstDialogueComplete = true; 
+        // // Need to make sure player actually sees this instruction
+        // if (dialogKey == "Journal.Click_Journal_Recipe_Text")
+        //     journalRecipeClickDialogueComplete = true;
         
 
             
-        checkPlayDialog();
+        // checkPlayDialog();
+        if (dialogKey == "Journal.Click_Journal_Recipe_Text")
+            FinishQuestStep(); 
     }
 
     /// <summary>
@@ -107,11 +107,11 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
     }
 
 
-    /// <summary>
-    /// Step 2- click on recipe
-    /// Note that recipe has been clicked and finish quest step if the journal is done talking
-    /// </summary>
-    /// <param name="dishData"></param>
+//     /// <summary>
+//     /// Step 2- click on recipe
+//     /// Note that recipe has been clicked and finish quest step if the journal is done talking
+//     /// </summary>
+//     /// <param name="dishData"></param>
     private void RecipeClick(Dish_Data dishData)
     {
         if (dishData == DishToMake)

@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2465d5537d1c6440bb04b0064addaa4, type: 3}
-  m_Name: Chopping_Tutorial
+  m_Name: Sprint_Quest
   m_EditorClassIdentifier: 
-  <id>k__BackingField: Chopping_Tutorial
+  <id>k__BackingField: Sprint_Quest
   DisplayName: 
   InactiveRooms: 
-  QuestPrerequisites: []
+  QuestPrerequisites:
+  - {fileID: 11400000, guid: b67a0c1f08bf57b49a4b8cd2688a31d1, type: 2}
   QuestStepPrefabs:
-  - {fileID: 0}
+  - {fileID: 2042760886097165005, guid: 66b68c9be50eb7145af9a232777eda6d, type: 3}

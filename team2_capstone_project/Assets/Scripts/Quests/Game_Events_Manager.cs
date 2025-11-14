@@ -42,7 +42,17 @@ public class Game_Events_Manager : MonoBehaviour
         //Debug.Log("[G_E_M] Player Moved");
     }
 
-    public event Action onPlayerSprint;
+    public event Action<bool> onIsSprintingChange;
+    /// <summary>
+    /// Broadcast the IsPlayerSprinting event
+    /// </summary>
+    public void IsSprintingChange(bool isSprinting)
+    {
+        onIsSprintingChange?.Invoke(isSprinting);
+        // Debug.Log("[G_E_M] Player sprinted");
+    }
+
+    public event Action onPlayerSprint;         /// Can probably combine with above
     /// <summary>
     /// Broadcast the onPlayerSprint event
     /// </summary>
@@ -246,6 +256,14 @@ public class Game_Events_Manager : MonoBehaviour
         OnAffectionChanged?.Invoke(customer, level);
     }
 
+    /// <summary>
+    /// Triggers when the player enters or exits the Satyr's shop
+    /// </summary>
+    public event Action<bool> onInShop;
+    public void InShop(bool isInShop)
+    {
+        onInShop?.Invoke(isInShop);
+    }
     #endregion
     
 
