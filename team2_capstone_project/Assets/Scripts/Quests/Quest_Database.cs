@@ -20,6 +20,7 @@ public class Quest_Database : ScriptableObject
 
     public void PopulateQuests()
     {
+        #if UNITY_EDITOR
         allQuests.Clear();
 
         string t = "t:" + typeof(Quest_Info_SO).Name;
@@ -38,6 +39,7 @@ public class Quest_Database : ScriptableObject
 
         EditorUtility.SetDirty(this);
         AssetDatabase.SaveAssets();
+        #endif
     }
 
     private void OnValidate()
