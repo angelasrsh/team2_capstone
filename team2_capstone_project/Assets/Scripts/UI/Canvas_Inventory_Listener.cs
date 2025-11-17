@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class Canvas_Inventory_Listener : MonoBehaviour
 {
   private Canvas InventoryCanvas;
+  private Inventory_Slide_Animator inventoryAnimator;
   private InputAction openInventory; // open inventory action from player map
   private InputAction openInventoryUI; // open inventory action from ui map
   private PlayerInput playerInput;
@@ -19,15 +20,16 @@ public class Canvas_Inventory_Listener : MonoBehaviour
   void Start()
   {
     InventoryCanvas = this.gameObject.GetComponent<Canvas>();
+    inventoryAnimator = GetComponentInChildren<Inventory_Slide_Animator>(true);
     playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
     if (SystemInfo.deviceType == DeviceType.Handheld)
       isMobile = true;
     else
       isMobile = false;
 
-#if UNITY_EDITOR
-      isMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
-#endif
+// #if UNITY_EDITOR
+//       isMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+// #endif
 
     if (playerInput != null)
     {
@@ -46,20 +48,26 @@ public class Canvas_Inventory_Listener : MonoBehaviour
         Debug.LogWarning("[Canv_Inv_Lis] Error: no InventoryCanvas assigned!");
       else if (InventoryCanvas.enabled == true || mobileCloseCalled)
       {
-        // If open, close the inventory
-        // Debug.Log("[Canvas_Inventory_Listener] Closing Inventory Canvas.");
-        InventoryCanvas.enabled = false;
-        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagClose, 0.28f);
-        Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
-        mobileCloseCalled = false;
+          // Close inventory
+          if (inventoryAnimator != null)
+              inventoryAnimator.SlideOut(() => InventoryCanvas.enabled = false);
+          else
+              InventoryCanvas.enabled = false;
+
+          Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagClose, 0.28f);
+          Game_Events_Manager.Instance.InventoryToggled(false);
+          mobileCloseCalled = false;
       }
       else
       {
-        // Debug.Log("[Canvas_Inventory_Listener] Opening Inventory Canvas.");
-        InventoryCanvas.enabled = true; // If closed, open the inventory
-        Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagOpen, 0.28f);
-        Game_Events_Manager.Instance.InventoryToggled(InventoryCanvas.enabled);
-        mobileOpenCalled = false;
+          // Open inventory
+          InventoryCanvas.enabled = true;
+          if (inventoryAnimator != null)
+              inventoryAnimator.SlideIn();
+
+          Audio_Manager.instance.PlaySFX(Audio_Manager.instance.bagOpen, 0.28f);
+          Game_Events_Manager.Instance.InventoryToggled(true);
+          mobileOpenCalled = false;
       }
     }
   }

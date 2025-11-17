@@ -54,6 +54,18 @@ public class Journal_Menu : MonoBehaviour
   [SerializeField] public Sprite LockedIcon; // generic locked icon for locked items (just a question mark)
   public Tabs currentTab { get; private set; } = Tabs.None;
 
+  [Header("Animation Settings")]
+  [SerializeField] private float animationDuration = 0.3f;
+  [SerializeField] private float liftAmount = 30f; // upward movement in pixels
+  [SerializeField] private AnimationCurve animationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+  private CanvasGroup journalCanvasGroup;
+  private Vector3 initialJournalPos;
+  private CanvasGroup tabsCanvasGroup;
+  private Vector3 initialTabsPos;
+  private Coroutine animationRoutine;
+  private CanvasGroup overlayCanvasGroup;
+
+
   // Dictionary allows players to open to last page they had open in each tab
   private Dictionary<Tabs, int> tabCurrentPage = new Dictionary<Tabs, int>()
   {
@@ -105,6 +117,7 @@ public class Journal_Menu : MonoBehaviour
     darkOverlay = transform.GetChild(0).gameObject;
     journalContents = transform.GetChild(1).gameObject;
     tabs = transform.GetChild(2).gameObject;
+    InitializeJournalAnimation();
 
     if (detailsText == null)
       Debug.LogError("[Journal_Menu]: detailsText not assigned in inspector!");
@@ -130,11 +143,34 @@ public class Journal_Menu : MonoBehaviour
     StartCoroutine(WaitAndBind());
     StartCoroutine(DelayedHideJournal());
 
-    Player_Progress.OnRecipesUpdated += () => 
+    Player_Progress.OnRecipesUpdated += () =>
     {
-        if (currentTab == Tabs.Dish)
-            PopulateDishes();
+      if (currentTab == Tabs.Dish)
+        PopulateDishes();
     };
+  }
+  
+  private void InitializeJournalAnimation()
+  {
+    journalCanvasGroup = journalContents.GetComponent<CanvasGroup>();
+    if (journalCanvasGroup == null)
+        journalCanvasGroup = journalContents.AddComponent<CanvasGroup>();
+
+    initialJournalPos = journalContents.transform.localPosition;
+    journalCanvasGroup.alpha = 0f;
+
+    tabsCanvasGroup = tabs.GetComponent<CanvasGroup>();
+    if (tabsCanvasGroup == null)
+        tabsCanvasGroup = tabs.AddComponent<CanvasGroup>();
+
+    initialTabsPos = tabs.transform.localPosition;
+    tabsCanvasGroup.alpha = 0f;
+
+    overlayCanvasGroup = darkOverlay.GetComponent<CanvasGroup>();
+    if (overlayCanvasGroup == null)
+        overlayCanvasGroup = darkOverlay.AddComponent<CanvasGroup>();
+
+    overlayCanvasGroup.alpha = 0f;
   }
 
   private void OnEnable()
@@ -282,11 +318,16 @@ public class Journal_Menu : MonoBehaviour
   {
     Debug.Log("Opening journal and pausing game...");
     Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookOpen, 0.75f);
-    darkOverlay.SetActive(true);
-    journalContents.SetActive(true);
-    tabs.SetActive(true);
-    isPaused = true;
     Game_Manager.Instance.UIManager.OpenUI();
+    isPaused = true;
+
+    darkOverlay.SetActive(true);
+    tabs.SetActive(true);
+
+    // Start animation (fade in + lift up)
+    if (animationRoutine != null)
+        StopCoroutine(animationRoutine);
+    animationRoutine = StartCoroutine(AnimateJournal(true));
 
     // Get current PlayerInput
     playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
@@ -305,9 +346,10 @@ public class Journal_Menu : MonoBehaviour
     if (playSound)
       Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.bookClose, 0.75f);
 
-    darkOverlay.SetActive(false);
-    journalContents.SetActive(false);
-    tabs.SetActive(false);
+    if (animationRoutine != null)
+      StopCoroutine(animationRoutine);
+    animationRoutine = StartCoroutine(AnimateJournal(false));
+
     isPaused = false;
     Game_Manager.Instance.UIManager.CloseUI();
     
@@ -751,12 +793,77 @@ public class Journal_Menu : MonoBehaviour
       else if (currentItem is CustomerData npc)
         Instance.DisplayNPCDetails(npc);
 
-      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.clickSFX, 0.8f);
+      Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.clickSFX, 0.75f);
     }
   }
-  
-  private void PlayJournalTabSelectSound()
+
+  private void PlayJournalTabSelectSound() => Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.3f);
+  private IEnumerator AnimateJournal(bool opening)
   {
-    Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.journalTabSelect, 0.4f);
+      float elapsed = 0f;
+      Vector3 startPosJournal, endPosJournal;
+      Vector3 startPosTabs, endPosTabs;
+      float startAlpha, endAlpha;
+
+      if (opening)
+      {
+          darkOverlay.SetActive(true);
+          journalContents.SetActive(true);
+          tabs.SetActive(true);
+
+          startPosJournal = initialJournalPos - new Vector3(0, liftAmount, 0);
+          endPosJournal = initialJournalPos;
+
+          startPosTabs = initialTabsPos - new Vector3(0, liftAmount, 0);
+          endPosTabs = initialTabsPos;
+
+          startAlpha = 0f;
+          endAlpha = 1f;
+      }
+      else
+      {
+          startPosJournal = journalContents.transform.localPosition;
+          endPosJournal = initialJournalPos - new Vector3(0, liftAmount, 0);
+
+          startPosTabs = tabs.transform.localPosition;
+          endPosTabs = initialTabsPos - new Vector3(0, liftAmount, 0);
+
+          startAlpha = 1f;
+          endAlpha = 0f;
+      }
+
+      while (elapsed < animationDuration)
+      {
+          elapsed += Time.unscaledDeltaTime;
+          float t = Mathf.Clamp01(elapsed / animationDuration);
+          float curveT = animationCurve.Evaluate(t);
+
+          // Move up + fade
+          journalContents.transform.localPosition = Vector3.Lerp(startPosJournal, endPosJournal, curveT);
+          tabs.transform.localPosition = Vector3.Lerp(startPosTabs, endPosTabs, curveT);
+
+          journalCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, curveT);
+          tabsCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, curveT);
+
+          // Overlay fade
+          overlayCanvasGroup.alpha = Mathf.Lerp(startAlpha * 0.8f, endAlpha * 0.8f, curveT);
+
+          yield return null;
+      }
+
+      // Snap to final state
+      journalContents.transform.localPosition = endPosJournal;
+      tabs.transform.localPosition = endPosTabs;
+
+      journalCanvasGroup.alpha = endAlpha;
+      tabsCanvasGroup.alpha = endAlpha;
+      overlayCanvasGroup.alpha = endAlpha * 0.8f;
+
+      if (!opening)
+      {
+          journalContents.SetActive(false);
+          tabs.SetActive(false);
+          darkOverlay.SetActive(false);
+      }
   }
 }

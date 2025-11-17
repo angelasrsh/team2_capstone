@@ -18,10 +18,15 @@ public class Dialog_UI_Manager : MonoBehaviour
     public float highRandomRange = 1.1f;
     public float textTypingSpeed = 0.025f;
     public float fastForwardMultiplier = 0.2f;  // smaller = faster typing
-
     private float currentLowRange;
     private float currentHighRange;
     private float currentTypingSpeed;
+
+    [Header("Next Arrow Indicator")]
+    [SerializeField] private Image nextArrow;
+    [SerializeField] private float arrowMoveDistance = 10f; // pixels left-right
+    [SerializeField] private float arrowMoveSpeed = 2f;
+    private Coroutine arrowRoutine;
 
     [Header("Character Portrait")]
     public Image characterPortraitImage;
@@ -124,9 +129,7 @@ public class Dialog_UI_Manager : MonoBehaviour
             skipAction.Enable();
         }
         else
-        {
             Debug.LogWarning("[Dialog_UI_Manager] SkipDialog action not found in InputActionAsset.");
-        }
 
         // Debug.Log("[Dialog_UI_Manager] Input successfully bound to PlayerInput.");
     }
@@ -163,15 +166,15 @@ public class Dialog_UI_Manager : MonoBehaviour
 
     private void OnSkipPerformed(InputAction.CallbackContext ctx)
     {
-        // Debug.Log($"[Dialog_UI_Manager] >>> Skip Pressed (this={this.name}) | textTyping={textTyping}");
+        if (this == null || gameObject == null) return;  // destroyed
+        if (!isActiveAndEnabled) return;
 
         if (textTyping)
-        {
             skipCurrentLine = true;
-        }
         else
         {
-            dialogManager?.PlayNextDialog();
+            if (dialogManager != null)
+                dialogManager.PlayNextDialog();
         }
     }
 
@@ -192,6 +195,8 @@ public class Dialog_UI_Manager : MonoBehaviour
 
     public void ShowText(string aText)
     {
+        HideNextArrow();
+
         if (openRoutine != null) StopCoroutine(openRoutine);
         openRoutine = StartCoroutine(AnimateOpenBox());
 
@@ -207,12 +212,19 @@ public class Dialog_UI_Manager : MonoBehaviour
 
     public void HideTextBox()
     {
-        if (openRoutine != null) StopCoroutine(openRoutine);
-        openRoutine = StartCoroutine(AnimateCloseBox());
+        if (!this || !gameObject) return;  // destroyed
+        if (!isActiveAndEnabled) return;
 
+        if (openRoutine != null)
+        {
+            try { StopCoroutine(openRoutine); }
+            catch { /* do nothing */ }
+            openRoutine = null;
+        }
+
+        openRoutine = StartCoroutine(AnimateCloseBox());
         ClearText();
     }
-
 
     private IEnumerator AddOneCharEnumerator(string aText)
     {
@@ -284,6 +296,7 @@ public class Dialog_UI_Manager : MonoBehaviour
         skipCurrentLine = false;
         typingCoroutine = null;
         fastForwarding = false;
+        ShowNextArrow();
     }
 
     public void SkipCurrentLineInstant()
@@ -403,6 +416,49 @@ public class Dialog_UI_Manager : MonoBehaviour
 
         textBoxTransform.localScale = Vector3.zero;
         textBoxCanavasGroup.alpha = 0f;
+    }
+    #endregion
+
+
+    #region Next Arrow
+    public void ShowNextArrow()
+    {
+        if (nextArrow == null) return;
+
+        nextArrow.enabled = true;
+
+        if (arrowRoutine != null)
+            StopCoroutine(arrowRoutine);
+
+        arrowRoutine = StartCoroutine(AnimateArrow());
+    }
+
+    public void HideNextArrow()
+    {
+        if (nextArrow == null) return;
+
+        nextArrow.enabled = false;
+
+        if (arrowRoutine != null)
+        {
+            StopCoroutine(arrowRoutine);
+            arrowRoutine = null;
+        }
+    }
+
+    private IEnumerator AnimateArrow()
+    {
+        RectTransform arrowRect = nextArrow.rectTransform;
+        Vector2 startPos = arrowRect.anchoredPosition;
+        float timer = 0f;
+
+        while (true)
+        {
+            timer += Time.unscaledDeltaTime * arrowMoveSpeed;
+            float offset = Mathf.Sin(timer) * arrowMoveDistance;
+            arrowRect.anchoredPosition = startPos + new Vector2(offset, 0f);
+            yield return null;
+        }
     }
     #endregion
 }

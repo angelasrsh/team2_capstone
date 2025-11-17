@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using Unity.VisualScripting;
 
 // Credit for the quest system goes to https://www.youtube.com/watch?v=UyTJLDGcT64 (with modification)
 
@@ -18,9 +19,9 @@ using System.IO;
 /// 4) Make a folder in Prefabs/Quests to hold quest step prefabs that will use step scripts
 /// 5) Create a GameObject prefab with a Quest_Step for each step in the quest
 /// 6) Add the Quest_Step prefabs to the Quest_Info_SO for the quest
-/// 7) Add the Quest_Info_SO to the Quest_Database so the manager can see it
+/// 7) Toggle to refresh the Quest_Database so the manager can see it
 /// 8) Make sure there is something that triggers the start of the quest (...StartQuest(...))
-///    If it is a tutorial, add it to the Tutorial_Manager to start when a certain room is first loaded
+///    If it is a room-based tutorial, add it to the Tutorial_Manager to start when a certain room is first loaded
 /// </summary>
 public class Quest_Manager : MonoBehaviour
 {
@@ -83,6 +84,7 @@ public class Quest_Manager : MonoBehaviour
     private void ChangeQuestState(string id, Quest_State state)
     {
         Quest quest = GetQuestByID(id);
+        Helpers.printLabeled(this, $"Changed {id} from {quest.state} to {state}");
         quest.state = state;
         Game_Events_Manager.Instance.QuestStateChange(quest);
     }
@@ -96,7 +98,12 @@ public class Quest_Manager : MonoBehaviour
     {
         bool meetsRequirements = true;
 
-        // Can later check requirements and set meetsRequirements to false if not met
+        foreach (Quest_Info_SO q in quest.Info.QuestPrerequisites)
+        {
+            if (GetQuestByID(q.id).state != Quest_State.FINISHED)
+                meetsRequirements = false;
+
+        }
 
         return meetsRequirements;
     }
@@ -109,16 +116,22 @@ public class Quest_Manager : MonoBehaviour
         foreach (Quest q in questMap.Values)
         {
             if (q.state == Quest_State.REQUIREMENTS_NOT_MET && CheckRequirementsMet(q))
-                ChangeQuestState(q.Info.id, Quest_State.CAN_START); // May later want to use CAN_START to not auto-start
+            {
+                ChangeQuestState(q.Info.id, Quest_State.CAN_START);
+                Helpers.printLabeled(this, $"Unlocked quest {q.Info.id}");
+                
+            }
+                
         }
     }
 
     private void StartQuest(string id)
     {
-        // Debug.Log($"[Q_MAN] started quest {id}");
+        Debug.Log($"[Q_MAN] started quest {id}");
         Quest quest = GetQuestByID(id);
-        quest.InstantiateCurrentQuestStep(this.transform);
         ChangeQuestState(quest.Info.id, Quest_State.IN_PROGRESS);
+        quest.InstantiateCurrentQuestStep(this.transform); // Resends the quest state change command 
+        // so instantiation must be called after changing state to avoid infinite loops
     }
 
     private void AdvanceQuest(string id)
@@ -144,6 +157,7 @@ public class Quest_Manager : MonoBehaviour
         Quest quest = GetQuestByID(id);
         // claim rewards if applicable
         ChangeQuestState(quest.Info.id, Quest_State.FINISHED);
+        UnlockQuests();
     }
 
     /// <summary>
@@ -168,14 +182,14 @@ public class Quest_Manager : MonoBehaviour
         foreach (KeyValuePair<string, Quest> questkvp in questMap)
         {
             Quest q = questkvp.Value;
-            q.IsPaused = true; // Assume not an active room (pause)
+            q.IsPaused = false; // Assume not an inactive room (don't pause)
 
-            for (int i = 0; i < q.Info.ActiveRooms.Count; i++)
+            for (int i = 0; i < q.Info.InactiveRooms.Count; i++)
             {
-                // Is an active room - unpause
-                if (q.Info.ActiveRooms[i].ToString().Equals(scene.name))
+                // Is an active room - pause
+                if (q.Info.InactiveRooms[i].ToString().Equals(scene.name))
                 {
-                    q.IsPaused = false;
+                    q.IsPaused = true;
                 }
 
             }

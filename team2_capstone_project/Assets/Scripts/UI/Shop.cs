@@ -101,6 +101,9 @@ public class Shop : MonoBehaviour
     Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.openShopSFX, 0.65f, 1.25f);
     Game_Manager.Instance.UIManager.OpenUI();
 
+    if (player != null)
+        player.DisablePlayerMovement(); 
+
     if (!firstOpen)
       shopkeeperText.text = otherOpenText;
   }
@@ -113,6 +116,9 @@ public class Shop : MonoBehaviour
           Game_Manager.Instance.UIManager.CloseUI();
 
       shopOpen = false;
+      
+      if (player != null)
+        player.EnablePlayerMovement();
 
       if (playSound)
           Audio_Manager.instance?.PlaySFX(Audio_Manager.instance.closeShopSFX, 0.65f, 1.3f);

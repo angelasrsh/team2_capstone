@@ -225,7 +225,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2b246db0e7dfb784abcae3c48d6f8bcc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d59e7806aa6e6a64c8f721252c89bcf7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -980,6 +980,32 @@ MonoBehaviour:
     starImage: {fileID: 2259840496010950222}
   objectGrid: {fileID: 5673050285729268535}
   LockedIcon: {fileID: 21300000, guid: a0e03ef292d5569458197cab38d5f589, type: 3}
+  animationDuration: 0.3
+  liftAmount: 30
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &6282747232703118471
 GameObject:
   m_ObjectHideFlags: 0
