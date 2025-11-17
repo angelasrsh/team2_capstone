@@ -22,7 +22,7 @@ public class Canvas_Inventory_Listener : MonoBehaviour
     InventoryCanvas = this.gameObject.GetComponent<Canvas>();
     inventoryAnimator = GetComponentInChildren<Inventory_Slide_Animator>(true);
     playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
-    if (SystemInfo.deviceType == DeviceType.Handheld)
+    if (Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld)
       isMobile = true;
     else
       isMobile = false;

@@ -13,7 +13,7 @@ public class Hide_If_Not_Mobile : MonoBehaviour
     //   simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
     // #endif
     
-    if (simulateMobile == false && SystemInfo.deviceType != DeviceType.Handheld)
+    if (simulateMobile == false && !(Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld))
     {
       Destroy(this.gameObject);
       return;

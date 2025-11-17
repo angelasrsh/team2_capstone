@@ -52,13 +52,13 @@ public class Mobile_Icon_UI : MonoBehaviour
     //   simulateMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
     // #endif
     
-    if (simulateMobile == false && SystemInfo.deviceType != DeviceType.Handheld)
+    if (simulateMobile == false && !(Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld))
     {
       Destroy(this.gameObject);
       return;
     }
 
-    if (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile)
+    if (!(Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld) && !simulateMobile)
       gameObject.SetActive(false);
 
     playerInput = FindObjectOfType<PlayerInput>();

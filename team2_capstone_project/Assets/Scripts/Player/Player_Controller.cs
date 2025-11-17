@@ -86,7 +86,7 @@ public class Player_Controller : MonoBehaviour
     controller = GetComponent<CharacterController>();
     currentStamina = maxStamina;
     SendStaminaProgress();
-    onMobile = SystemInfo.deviceType == DeviceType.Handheld;
+    onMobile = Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld;
 
     // #if UNITY_EDITOR
     //   onMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
