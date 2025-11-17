@@ -246,12 +246,18 @@ public class Save_Manager : MonoBehaviour
         // --- Restaurant state ---
         if (Restaurant_State.Instance != null)
         {
-            Restaurant_State.Instance.SaveCustomers(); // ensure data is current
-            currentGameData.restaurantStateData = new RestaurantStateData
+            Room_Data currentRoom = Room_Manager.GetRoom(activeRoom.roomID);
+
+            // only save if in restaurant
+            if (currentRoom.roomID == Room_Data.RoomID.Updated_Restaurant)
             {
-                customers = new List<Customer_State>(Restaurant_State.Instance.customers)
-            };
-            Debug.Log($"[Save_Manager] Saved {currentGameData.restaurantStateData.customers.Count} customers in restaurant state.");
+                Restaurant_State.Instance.SaveCustomers(); // ensure data is current
+                currentGameData.restaurantStateData = new RestaurantStateData
+                {
+                    customers = new List<Customer_State>(Restaurant_State.Instance.customers)
+                };
+                Debug.Log($"[Save_Manager] Saved {currentGameData.restaurantStateData.customers.Count} customers in restaurant state.");
+            }
         }
         else
         {
