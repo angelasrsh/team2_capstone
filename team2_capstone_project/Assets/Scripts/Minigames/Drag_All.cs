@@ -124,7 +124,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
       if (chopScript == null)
       {
-        Debug.LogError("Chop_Controller not found in scene!");
+        Debug.LogError("R_Chop_Controller not found in scene!");
       }
     }
     else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")

@@ -150,7 +150,7 @@ public class Knife_Script : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
         knifeImage = GetComponent<UnityEngine.UI.Image>();
         GameObject chop_script_obj = GameObject.Find("ChopController");
-        chop_script = chop_script_obj.GetComponent<Chop_Controller>();
+        chop_script = chop_script_obj.GetComponent<Chop_Controller>(); //Changed from R_Chop_Controller
 
         //store position and rotation
         firstOriginalRotation = transform.rotation;
