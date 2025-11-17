@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Inventory_Slide_Animator : MonoBehaviour
 {
@@ -51,6 +52,11 @@ public class Inventory_Slide_Animator : MonoBehaviour
         }
 
         offScreenPos = onScreenPos + offset;
+
+        // keep inventory open for all minigames
+        if (SceneManager.GetActiveScene().name == "Combine_Minigame" || SceneManager.GetActiveScene().name == "Chopping_Minigame" || 
+            SceneManager.GetActiveScene().name == "Frying_Pan_Minigame" || SceneManager.GetActiveScene().name == "Cooking_Minigame")
+            return;
         rectTransform.anchoredPosition = offScreenPos;
     }
 

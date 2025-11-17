@@ -86,6 +86,14 @@ public class Hover_Info : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         }
     }
 
+    public void DraggingSlot()
+    {
+        Debug.Log("[Hover_Info]: getting to draggingslot");
+        if (!isMobile)
+            isHovering = false;
+        HideInfo();
+    }
+
     private void ShowInfo()
     {
         if (currentItem == null)
