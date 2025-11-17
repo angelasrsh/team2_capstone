@@ -188,11 +188,22 @@ public class Player_Controller : MonoBehaviour
     playerInput.onActionTriggered += HandleGlobalInputTriggered;
 
     Debug.Log("[Player_Controller] Input actions bound successfully in scene: " + SceneManager.GetActiveScene().name);
+    // if (onMobile)
+    // {
+    //   playerInput.neverAutoSwitchControlSchemes = true;
+    //   playerInput.SwitchCurrentControlScheme(
+    //       "Gamepad",
+    //       Gamepad.current, 
+    //       Touchscreen.current, 
+    //       Pointer.current
+    //   );
+    // }
   }
 
   private void Update()
   {
     Vector2 raw = moveAction.ReadValue<Vector2>();
+    Debug.Log($"[MOVE RAW] {raw}  scheme={playerInput?.currentControlScheme}");
     HandleSprint();
 
     // --- Sprint Lines Control ---

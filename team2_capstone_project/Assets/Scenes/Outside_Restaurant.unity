@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.36318347, g: 0.1646612, b: 0.16022632, a: 1}
+  m_IndirectSpecularColor: {r: 0.36292648, g: 0.16444899, b: 0.16029945, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4873,6 +4873,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1716558852276595942, guid: f81634ae896445a41a65e794bf476f62, type: 3}
+      propertyPath: m_Behaviour
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1716558852276595942, guid: f81634ae896445a41a65e794bf476f62, type: 3}
+      propertyPath: m_ControlPath
+      value: <Gamepad>/leftStick
+      objectReference: {fileID: 0}
+    - target: {fileID: 1716558852276595942, guid: f81634ae896445a41a65e794bf476f62, type: 3}
+      propertyPath: m_MovementRange
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1716558852276595942, guid: f81634ae896445a41a65e794bf476f62, type: 3}
+      propertyPath: m_DynamicOriginRange
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f81634ae896445a41a65e794bf476f62, type: 3}
 --- !u!1 &958532297
@@ -7611,6 +7627,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a9db83d03b19ec3488d2ce172fec1544, type: 3}
+--- !u!114 &1742761617 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1716558852276595942, guid: f81634ae896445a41a65e794bf476f62, type: 3}
+  m_PrefabInstance: {fileID: 946275046}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9d677f1681015749b15c436eec6d880, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1799467049
 GameObject:
   m_ObjectHideFlags: 0
@@ -7868,6 +7895,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 9083165254151032947, guid: a528dae7b7a186148851741358f9be21, type: 3}
+      propertyPath: onScreenStick
+      value: 
+      objectReference: {fileID: 1742761617}
     - target: {fileID: 9083165254151032959, guid: a528dae7b7a186148851741358f9be21, type: 3}
       propertyPath: m_RootOrder
       value: 30
@@ -9487,6 +9518,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -130.35004
       objectReference: {fileID: 0}
+    - target: {fileID: 5673050285729268535, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -12.36438
+      objectReference: {fileID: 0}
     - target: {fileID: 6253369461454272783, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -9658,6 +9693,10 @@ PrefabInstance:
     - target: {fileID: 8162473363276121860, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8627475584083206246, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -10.600525
       objectReference: {fileID: 0}
     - target: {fileID: 8634952286395889685, guid: edf10c2c872c89b4786d10be1256ecf4, type: 3}
       propertyPath: m_AnchorMax.x

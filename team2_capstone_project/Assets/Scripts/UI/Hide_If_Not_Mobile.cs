@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Hide_If_Not_Mobile : MonoBehaviour
 {
+  private static Hide_If_Not_Mobile Instance;
   void Awake()
   {
     // Disable this UI if the device isn't a handheld/mobile device
@@ -18,5 +19,14 @@ public class Hide_If_Not_Mobile : MonoBehaviour
       Destroy(this.gameObject);
       return;
     }
+
+    if (Instance != null && Instance != this)
+    {
+      Destroy(gameObject);
+      return;
+    }
+
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
   }
 }
