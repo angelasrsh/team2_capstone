@@ -35,7 +35,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   private Canvas canvas;
   private Image currentImage;
   public GameObject newImagePrefab; // Complete prefab to replace with when item is placed on the cutting board for the first time
-  public R_Chop_Controller chopScript;
+  public Chop_Controller chopScript;
   public static bool cuttingBoardActive = false; // So that only one ingredient can be on cutting board at a time
 
   [Header("Frying Pan Minigame")]
@@ -120,7 +120,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     if (SceneManager.GetActiveScene().name == "Chopping_Minigame")
     {
       // Find the ChopController script in the scene
-      chopScript = FindObjectOfType<R_Chop_Controller>();
+      chopScript = FindObjectOfType<Chop_Controller>();
 
       if (chopScript == null)
       {
