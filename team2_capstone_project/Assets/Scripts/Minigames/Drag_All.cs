@@ -55,6 +55,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
   [Header("Inventory Slot Info")]
   public Inventory_Slot ParentSlot; // Since the parent is the UI Canvas otherwise
   [SerializeField] IngredientType ingredientType; // Set in code by parent Inventory_Slot
+  private Hover_Info hoverInfo;
 
   [Header("Audio")]
   private static Audio_Manager audioManager;
@@ -123,7 +124,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
       if (chopScript == null)
       {
-        Debug.LogError("Chop_Controller not found in scene!");
+        Debug.LogError("R_Chop_Controller not found in scene!");
       }
     }
     else if (SceneManager.GetActiveScene().name == "Frying_Pan_Minigame")
@@ -137,6 +138,8 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       chest ??= FindObjectOfType<Chest>();
       chestRedZone = chest.redZone;
     }
+
+    hoverInfo = GetComponentInParent<Hover_Info>();
   }
   
   private void OnEnable()
@@ -245,6 +248,7 @@ public class Drag_All : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
       transform.SetParent(transform.root);
       transform.SetAsLastSibling();
       ingrOriginalPos = rectTransform.position;
+      hoverInfo.DraggingSlot();
     }
   }
 
