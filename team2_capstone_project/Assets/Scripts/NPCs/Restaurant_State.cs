@@ -51,6 +51,11 @@ public class Restaurant_State : MonoBehaviour
 
     public void SaveCustomers()
     {
+        // Only change saved customers if in the restaurant
+        if (SceneManager.GetActiveScene().name != "Updated_Restaurant")
+            return;
+
+
         customers.Clear();
 
         // include inactive objects just in case
