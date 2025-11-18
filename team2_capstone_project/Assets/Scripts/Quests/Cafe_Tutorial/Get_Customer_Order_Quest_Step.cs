@@ -29,7 +29,7 @@ public class Get_Customer_Order_Quest_Step : Dialogue_Quest_Step
         }
 
 
-        DelayedDialogue(1, 0, false, key);
+        DelayedDialogue(0, 0, false, key);
         DelayedDialogue(10, 0, false, "Journal.Get_Order2"); // Second reminder if they still haven't gotten an order
     }
 

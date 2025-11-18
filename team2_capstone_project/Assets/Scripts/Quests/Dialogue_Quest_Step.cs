@@ -15,9 +15,11 @@ public class Dialogue_Quest_Step : Quest_Step
     [Header("Quest step fields")]
     public string textKey;
     public string textKeyPC;
+    public string repeatTextKey;
+    public string repeatTextKeyPC;
     public string postStepTextKey;
     public int InstructionWaitTime = 0;
-    public int PopupWaitTime = 10; // Not currently used(?)
+    public int RepeatPromptDelay = 10; // Not currently used(?)
 
     public bool QuestStepComplete { get; set; } = false;
 
@@ -52,14 +54,26 @@ public class Dialogue_Quest_Step : Quest_Step
             dialogueComplete = true;
         else if (postStepTextKey == "" && (dialogKey == textKey || dialogKey == textKeyPC))
             dialogueComplete = true;
-        else if (postStepTextKey != "" && !postStepTextKeyDialogStarted)
-        {
-            DelayedDialogue(0, 0, false, postStepTextKey);
-            postStepTextKeyDialogStarted = true;
-        }
+        // else if (postStepTextKey != "" && !postStepTextKeyDialogStarted)
+        // {
+        //     DelayedDialogue(0, 0, false, postStepTextKey);
+        //     postStepTextKeyDialogStarted = true;
+        // }
        
         if (dialogueComplete && QuestStepComplete)
             FinishQuestStep();
+
+        string key = repeatTextKey;
+        if (!(repeatTextKey != "" || repeatTextKeyPC != ""))
+        {
+            if (repeatTextKey == "" && repeatTextKeyPC == "")
+                Helpers.printLabeled(this, "Please assign a dialog.txt textKey in the inspector!");
+            else if ((repeatTextKey == "") || (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile && (textKeyPC != "")))
+                key = repeatTextKeyPC;
+            // Wait for delayStart, then show text and textbox, then disappear
+            StartCoroutine(displayTextDelayed(key, RepeatPromptDelay));
+            
+        }
     }
     
 
@@ -90,6 +104,30 @@ public class Dialogue_Quest_Step : Quest_Step
 
     }
 
+    IEnumerator RepeatPrompt(string dialogKey)
+    {
+        string promptKey;
+        if ((repeatTextKey == "") || (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile && (repeatTextKeyPC != "")))
+            promptKey = repeatTextKeyPC;
+        else
+            promptKey = repeatTextKey;
+
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
+
+        yield return new WaitForSeconds(RepeatPromptDelay);
+
+        if (dm != null)
+        {
+            dm.PlayScene(promptKey);
+        }
+        else
+        {
+            Helpers.printLabeled(this, "Dialogue manager is null");
+        }
+        
+    }
+
     
 
     
@@ -102,7 +140,10 @@ public class Dialogue_Quest_Step : Quest_Step
     /// <returns></returns>
     IEnumerator displayTextDelayed(string key, float delayStart, bool disablePlayerInput = false)
     {
-        dm = FindObjectOfType<Dialogue_Manager>();
+        UnityEngine.Debug.Log($"[D_Q_S] displayTextDelayed called for {key} by {GetType()}");
+
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
 
         yield return new WaitForSeconds(delayStart);
 

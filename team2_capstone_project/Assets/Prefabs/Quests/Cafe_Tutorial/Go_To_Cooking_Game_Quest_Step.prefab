@@ -44,7 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16a59fe3cf4bdb240bbfc8e70363d635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textKey: 
+  textKey: Journal.Go_To_Cauldron
   textKeyPC: 
+  repeatTextKey: 
+  repeatTextKeyPC: 
+  postStepTextKey: 
   InstructionWaitTime: 0
-  PopupWaitTime: 10
+  RepeatPromptDelay: 10
+  dm: {fileID: 0}

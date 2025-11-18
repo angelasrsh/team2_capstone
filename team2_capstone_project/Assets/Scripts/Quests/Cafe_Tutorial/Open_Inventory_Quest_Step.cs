@@ -30,7 +30,7 @@ public class Open_Inventory_Quest_Step : Dialogue_Quest_Step
         // if (Tutorial_Manager.Instance.hasOpenedInventory)
         //     FinishQuestStep();
         // else
-            DelayedDialogue(0, 0, false);
+        DelayedDialogue(0, 0, false);
     }
 
     private void InventoryOpened(bool isOpen)

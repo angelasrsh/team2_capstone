@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6200707804114755666}
-  - component: {fileID: 6525995814366690553}
+  - component: {fileID: 3618023443071831722}
   m_Layer: 0
-  m_Name: Open_Inventory_Quest_Step
+  m_Name: Click_Journal_Recipe_Quest_Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6525995814366690553
+--- !u!114 &3618023443071831722
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,11 +41,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7026085292084513843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6daf05d2cef5c9543b8976a8350ca8d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 942db8050f829784c84c4f182e31cb32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textKey: Journal.Open_Inventory_Mobile
-  textKeyPC: Journal.Open_Inventory_PC
-  postStepTextKey: Journal.Open_Inventory_Text
+  textKey: Journal.Click_Journal_Recipe
+  textKeyPC: Journal.Click_Journal_Recipe
+  repeatTextKey: 
+  repeatTextKeyPC: 
+  postStepTextKey: Journal.Click_Journal_Recipe_Text
   InstructionWaitTime: 0
-  PopupWaitTime: 10
+  RepeatPromptDelay: 10
+  dm: {fileID: 0}
+  DishToMake: {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
