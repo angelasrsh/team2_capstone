@@ -203,7 +203,7 @@ public class Player_Controller : MonoBehaviour
   private void Update()
   {
     Vector2 raw = moveAction.ReadValue<Vector2>();
-    Debug.Log($"[MOVE RAW] {raw}  scheme={playerInput?.currentControlScheme}");
+    // Debug.Log($"[MOVE RAW] {raw}  scheme={playerInput?.currentControlScheme}");
     HandleSprint();
 
     // --- Sprint Lines Control ---
@@ -454,6 +454,8 @@ public class Player_Controller : MonoBehaviour
   public void DisablePlayerMovement()
   {
     movementLocked = true;
+    animator.enabled = false;
+    
     if (playerInput != null && moveAction != null)
     {
       moveAction.Disable();
@@ -465,9 +467,14 @@ public class Player_Controller : MonoBehaviour
 
   public void EnablePlayerMovement()
   {
-    movementLocked = false;
-    if (playerInput != null && moveAction != null)
-      moveAction.Enable();
+      movementLocked = false;
+      animator.enabled = true;
+
+      if (playerInput != null)
+          playerInput.enabled = true; 
+
+      if (moveAction != null)
+          moveAction.Enable();
   }
 
   public void UpdatePlayerRoom(Room_Data.RoomID newRoomID)

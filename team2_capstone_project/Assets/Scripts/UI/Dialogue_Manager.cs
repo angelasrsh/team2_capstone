@@ -472,7 +472,7 @@ public class Dialogue_Manager : MonoBehaviour
         uiManager.ClearText();
         uiManager.HidePortrait();
         ResetDialogForKey(myDialogKey);
-        Player_Input_Controller.instance.EnablePlayerInput();
+        playerOverworld.EnablePlayerMovement();
 
         onDialogComplete?.Invoke();
         Game_Events_Manager.Instance.EndDialogBox(myDialogKey); // Could probably merge with above
@@ -514,6 +514,5 @@ public class Dialogue_Manager : MonoBehaviour
         yield return null; // wait one frame for Player_Progress.Instance to initialize
         PlayNextDialog(forcedEmotion, disablePlayerInput);
     }
-
     #endregion
 }

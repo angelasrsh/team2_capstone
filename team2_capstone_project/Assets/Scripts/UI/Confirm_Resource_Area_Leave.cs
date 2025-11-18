@@ -151,6 +151,7 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     {
         Room_Change_Manager.instance?.GoToRoom(currentRoom.roomID, exitingTo);
         CloseConfirmation();
+        player.DisablePlayerMovement();
     }
 
     public void ClickNo()
