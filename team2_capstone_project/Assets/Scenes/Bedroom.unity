@@ -1056,6 +1056,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6631250610495168028, guid: 6120f7c24b95f784c815dfc7bef4c08c, type: 3}
+      propertyPath: TutorialList.Array.size
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6631250610495168028, guid: 6120f7c24b95f784c815dfc7bef4c08c, type: 3}
+      propertyPath: TutorialList.Array.data[11]
+      value: 
+      objectReference: {fileID: 11400000, guid: b67a0c1f08bf57b49a4b8cd2688a31d1, type: 2}
     - target: {fileID: 6631250610495168029, guid: 6120f7c24b95f784c815dfc7bef4c08c, type: 3}
       propertyPath: m_Name
       value: Tutorial_Manager
@@ -9123,7 +9131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentRoom: {fileID: 11400000, guid: 2087315a944dcc7459fafc7060a208b9, type: 2}
-  exitingTo: 8
+  exitingTo: 9
   BlockIfInventoryFull: 0
 --- !u!1001 &6510135554216177959
 PrefabInstance:
