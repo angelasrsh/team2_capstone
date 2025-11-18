@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 using Unity.VisualScripting;
 
-public class Confirm_Resource_Area_Leave : MonoBehaviour
+public class Confirm_Restaurant_Area_Leave : MonoBehaviour
 {
     [Header("References")]
     public Canvas leaveResourceAreaCanvas;
@@ -117,10 +117,7 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
     private void OpenConfirmation(Player_Controller playerController)
     {
         ///////////// Specific exiting cases
-        
-        if (SceneManager.GetActiveScene().name == "Foraging_Area_Whitebox")
-            leaveResourceAreaCanvas.GetComponent<Leave_Resource_Area_Canvas_Script>().SetText();
-
+    
         // Case: Don't go outside if it's late
         if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && exitingTo == Room_Data.RoomID.Foraging_Area_Whitebox
             && Day_Turnover_Manager.Instance.currentTimeOfDay != Day_Turnover_Manager.TimeOfDay.Morning)
@@ -162,9 +159,6 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     public void ClickYes()
     {
-        if (!confirmationActive)
-            return;
-            
         Room_Change_Manager.instance?.GoToRoom(currentRoom.roomID, exitingTo);
         CloseConfirmation();
     }

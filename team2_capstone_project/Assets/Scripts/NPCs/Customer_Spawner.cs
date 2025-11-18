@@ -44,8 +44,12 @@ public class Customer_Spawner : MonoBehaviour
         }
         else
         {
-            Debug.Log("Customer_Spawner: Spawning fresh customers for new day...");
-            StartCoroutine(SpawnCustomersCoroutine());
+            
+            // Spawn new customers for the day
+            if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening) {
+                Debug.Log("Customer_Spawner: Spawning fresh customers for new day...");
+                StartCoroutine(SpawnCustomersCoroutine());
+            }
         }
     }
 
@@ -60,8 +64,9 @@ public class Customer_Spawner : MonoBehaviour
         if (Restaurant_State.Instance != null)
             Restaurant_State.Instance.ResetRestaurantState();
 
-        // Spawn new customers for the day
-        StartCoroutine(SpawnCustomersCoroutine());
+        // Spawn new customers for the day in the evening only
+        if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
+            StartCoroutine(SpawnCustomersCoroutine());
     }
 
     private void RestoreCustomersFromState()
@@ -181,6 +186,35 @@ public class Customer_Spawner : MonoBehaviour
 
         Debug.Log($"Spawned customer: {chosen.customerName}");
     }
+
+    /// <summary>
+    /// Spawn a customer using the given CustomerData
+    /// </summary>
+    /// <param name="chosen"></param>
+    public void SpawnSingleCustomer(CustomerData chosen)
+    {
+        if (chosen == null)
+            Helpers.printLabeled(this, "Please assign a customer before spawning it");
+
+        Transform seat = Seat_Manager.Instance.GetRandomAvailableSeat();
+        if (seat == null)
+        {
+            Debug.Log("No free seats!");
+            return;
+        }
+
+        if (chosen.datable)
+            uniqueCustomersPresent.Add(chosen.customerName);
+
+        Customer_Controller customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
+        Audio_Manager.instance.PlayDoorbell();
+        customer.Init(chosen, seat, Dish_Tool_Inventory.Instance);
+        customer.OnCustomerLeft += HandleCustomerLeft;
+        OnCustomerCountChanged?.Invoke(GetCurrentCustomerCount());
+
+        Debug.Log($"Spawned customer: {chosen.customerName}");
+    }
+
 
     private void HandleCustomerLeft(string customerName)
     {

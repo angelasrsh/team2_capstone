@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6200707804114755666}
-  - component: {fileID: 3618023443071831722}
+  - component: {fileID: -5539919750963130355}
   m_Layer: 0
-  m_Name: Click_Journal_Recipe_Quest_Step
+  m_Name: Open_Journal_Quest_Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3618023443071831722
+--- !u!114 &-5539919750963130355
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,13 +41,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 7026085292084513843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 942db8050f829784c84c4f182e31cb32, type: 3}
+  m_Script: {fileID: 11500000, guid: 080b9d01f3c684a418b1364bef65d46d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   textKey: Journal.Open_Journal_Mobile
   textKeyPC: Journal.Open_Journal_PC
+  repeatTextKey: Journal.Open_Journal_Mobile
+  repeatTextKeyPC: Journal.Open_Journal_Mobile
   postStepTextKey: 
   InstructionWaitTime: 0
-  PopupWaitTime: 10
+  RepeatPromptDelay: 10
   dm: {fileID: 0}
-  DishToMake: {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
