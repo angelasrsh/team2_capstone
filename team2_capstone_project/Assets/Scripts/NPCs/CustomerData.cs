@@ -75,7 +75,8 @@ public class CustomerData : ScriptableObject
         Journal,
         Default,
         Minion,
-        Tanuki
+        Tanuki,
+        Chef
     }
 
     [Header("Dating Events")]
