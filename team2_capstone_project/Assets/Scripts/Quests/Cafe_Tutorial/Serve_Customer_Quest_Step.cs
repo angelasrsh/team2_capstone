@@ -29,6 +29,7 @@ public class Serve_Customer_Quest_Step : Dialogue_Quest_Step
         Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Jelly_Drink);
         Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Glazed_Eleonoras);
         Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Boba_Milk_Drink);
+        DelayedDialogue(0, 0, false, "Journal.End_Day");
         FinishQuestStep(); // Finish and destroy this object
     }
 }
