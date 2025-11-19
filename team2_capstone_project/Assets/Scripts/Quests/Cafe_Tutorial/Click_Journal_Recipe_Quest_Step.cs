@@ -81,6 +81,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
 
         if (/*journalRecipeClickDialogueComplete && */recipeClicked) {
             DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe_Text");
+            WaitFinishQuestStep(5); // Hard code ten seconds because issues :(
         }
             
     }

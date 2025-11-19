@@ -96,6 +96,16 @@ public class Game_Events_Manager : MonoBehaviour
             onDishDetailsClick(dishData);
     }
 
+    public event Action<CustomerData> onCustomerDetailsClick;
+    /// <summary>
+    /// Broadcast the CustomerDetailsClick event and send the customer being sent
+    /// </summary>
+    public void CustomerDetailsClick(CustomerData customerData)
+    {
+        if (onCustomerDetailsClick != null)
+            onCustomerDetailsClick(customerData);
+    }
+
     public event Action onHarvestRequirementsMet;
     /// <summary>
     /// Broadcast event for unblocking the exit to the world map

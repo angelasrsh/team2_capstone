@@ -46,11 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textKey: Journal.Open_Inventory_Mobile
   textKeyPC: Journal.Open_Inventory_PC
-  repeatTextKey: 
-  repeatTextKeyPC: 
+  repeatTextKey: Journal.Open_Inventory_Mobile
+  repeatTextKeyPC: Journal.Open_Inventory_PC
   postStepTextKey: Journal.Open_Inventory_Text
   InstructionWaitTime: 0
-  RepeatPromptDelay: 10
+  RepeatPromptDelay: 5
   dm: {fileID: 0}
   startingIngredients:
   - ingredient: {fileID: 11400000, guid: 97586fec84298c7489d081880a485db5, type: 2}

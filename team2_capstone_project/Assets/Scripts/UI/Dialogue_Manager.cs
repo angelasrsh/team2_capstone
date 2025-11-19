@@ -472,7 +472,7 @@ public class Dialogue_Manager : MonoBehaviour
         uiManager.ClearText();
         uiManager.HidePortrait();
         ResetDialogForKey(myDialogKey);
-        playerOverworld.EnablePlayerMovement();
+        playerOverworld?.EnablePlayerMovement();
 
         onDialogComplete?.Invoke();
         Game_Events_Manager.Instance.EndDialogBox(myDialogKey); // Could probably merge with above

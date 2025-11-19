@@ -597,6 +597,9 @@ public class Journal_Menu : MonoBehaviour
     }
     else
       affectionGauge.gameObject.SetActive(false);
+
+    // Broadcast event
+    Game_Events_Manager.Instance.CustomerDetailsClick(npcData);
   }
   #endregion
 

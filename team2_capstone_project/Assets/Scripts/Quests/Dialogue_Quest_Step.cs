@@ -83,7 +83,7 @@ public class Dialogue_Quest_Step : Quest_Step
     /// <param name="key"></param>
     /// <param name="delayStart">  Seconds to wait before displaying; default 0; doesn't do anything right now </param>
     /// <param name="delayEnd"> Seconds to wait before hiding. Text will remain on screen until user action if delayHide is 0 or unused </param>
-    protected void DelayedDialogue(float delayStart = 0, float delayEnd = 0, bool disablePlayerInput = true, string text = "")
+    protected void DelayedDialogue(float delayStart = 0, float delayEnd = 0, bool disablePlayerInput = false, string text = "")
     {
         // Order or preference for text: any given text, or mobile/PC based on platform if not empty, or any non-empty text field (textKey or textKeyPC)
 
@@ -156,6 +156,22 @@ public class Dialogue_Quest_Step : Quest_Step
             Helpers.printLabeled(this, "Dialogue manager is null");
         }
         
+    }
+
+    protected void WaitFinishQuestStep(int secondsToWait)
+    {
+        StartCoroutine(waitFinishQuestStep(secondsToWait));
+    }
+    IEnumerator waitFinishQuestStep(int secondsToWait)
+    {
+        yield return new WaitForSeconds(secondsToWait);
+           // Manually close any open dialogue box
+        if (dm != null)
+        {
+            UnityEngine.Debug.Log("[Tutorial] Manually ending current dialogue.");
+            dm.EndDialog();
+        }
+        FinishQuestStep();
     }
 
 
