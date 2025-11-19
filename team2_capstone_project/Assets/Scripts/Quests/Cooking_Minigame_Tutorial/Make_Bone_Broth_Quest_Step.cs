@@ -24,6 +24,7 @@ public class Make_Bone_Broth_Quest_Step : Dialogue_Quest_Step
     {
         dialogueManager = FindObjectOfType<Dialogue_Manager>();
         DelayedDialogue(0, 0, false);
+        StartRepeatPrompt();
     }
 
     private void TryBindInput()

@@ -20,6 +20,7 @@ public class Chopping_Instructions_Quest_Step : Dialogue_Quest_Step
     void Start()
     {
         DelayedDialogue(0, 0, false);
+        StartRepeatPrompt();
     }
 
     void ItemCut(Ingredient_Data ing)

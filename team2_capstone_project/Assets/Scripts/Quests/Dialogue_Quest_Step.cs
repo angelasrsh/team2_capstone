@@ -44,14 +44,10 @@ public class Dialogue_Quest_Step : Quest_Step
         // Game_Events_Manager.Instance.onEndDialogBox += endQuest;
     }
 
-    private void Start()
+    protected void StartRepeatPrompt()
     {
         string key = repeatTextKey; // Not used- delete?
         if (!(repeatTextKey == "" && repeatTextKeyPC == ""))
-        {
-            if ((repeatTextKey == "") || (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile && (textKeyPC != "")))
-                key = repeatTextKeyPC;
-        }
             StartCoroutine(RepeatPrompt(key));
             
     }

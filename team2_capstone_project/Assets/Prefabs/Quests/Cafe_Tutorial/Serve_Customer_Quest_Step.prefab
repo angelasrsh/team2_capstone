@@ -46,7 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textKey: Journal.Serve_Customer
   textKeyPC: 
+  repeatTextKey: Journal.Serve_Customer
+  repeatTextKeyPC: Journal.Serve_Customer
   postStepTextKey: 
   InstructionWaitTime: 0
-  PopupWaitTime: 10
-  ticket: {fileID: 0}
+  RepeatPromptDelay: 10
+  dm: {fileID: 0}
