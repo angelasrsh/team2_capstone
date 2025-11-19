@@ -65,7 +65,7 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
         
         if (journalHasBeenOpened && !recipeClicked && !journalRecipeClickFirstDialogueStarted)
         { // Opened journal but didn't click recipe
-            DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe");
+            DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe2");
             journalRecipeClickFirstDialogueStarted = true;
         }
         else if (recipeClicked && !journalRecipeClickDialogueStarted && journalRecipeClickFirstDialogueComplete)
@@ -79,8 +79,10 @@ public class Click_Journal_Recipe_Quest_Step : Dialogue_Quest_Step
             else
                 DelayedDialogue(10, 0, false, "Journal.Close_Journal_Mobile"); // Play in 10 secs (or not if quest is finished and destroyed)
 
-        if (journalRecipeClickDialogueComplete && recipeClicked)
-            FinishQuestStep();
+        if (/*journalRecipeClickDialogueComplete && */recipeClicked) {
+            DelayedDialogue(0, 0, false, "Journal.Click_Journal_Recipe_Text");
+        }
+            
     }
     
    
