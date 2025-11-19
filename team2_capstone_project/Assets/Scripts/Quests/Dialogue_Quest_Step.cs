@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -43,6 +44,18 @@ public class Dialogue_Quest_Step : Quest_Step
         // Game_Events_Manager.Instance.onEndDialogBox += endQuest;
     }
 
+    private void Start()
+    {
+        string key = repeatTextKey; // Not used- delete?
+        if (!(repeatTextKey == "" && repeatTextKeyPC == ""))
+        {
+            if ((repeatTextKey == "") || (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile && (textKeyPC != "")))
+                key = repeatTextKeyPC;
+        }
+            StartCoroutine(RepeatPrompt(key));
+            
+    }
+
     /// <summary>
     /// Note whether all this quest's dialogue has been finished or not. 
     /// Add functionality to end quest in child classes if desired
@@ -63,7 +76,7 @@ public class Dialogue_Quest_Step : Quest_Step
         if (dialogueComplete && QuestStepComplete)
             FinishQuestStep();
 
-        string key = repeatTextKey;
+        string key = repeatTextKey; // Not used- delete?
         if (!(repeatTextKey != "" || repeatTextKeyPC != ""))
         {
             if (repeatTextKey == "" && repeatTextKeyPC == "")
@@ -104,7 +117,7 @@ public class Dialogue_Quest_Step : Quest_Step
 
     }
 
-    IEnumerator RepeatPrompt(string dialogKey)
+    IEnumerator RepeatPrompt(string dialogKey) 
     {
         string promptKey;
         if ((repeatTextKey == "") || (SystemInfo.deviceType != DeviceType.Handheld && !simulateMobile && (repeatTextKeyPC != "")))
@@ -125,6 +138,8 @@ public class Dialogue_Quest_Step : Quest_Step
         {
             Helpers.printLabeled(this, "Dialogue manager is null");
         }
+
+        StartCoroutine(RepeatPrompt(dialogKey));
         
     }
 
