@@ -203,7 +203,7 @@ public class Player_Controller : MonoBehaviour
   private void Update()
   {
     Vector2 raw = moveAction.ReadValue<Vector2>();
-    Debug.Log($"[MOVE RAW] {raw}  scheme={playerInput?.currentControlScheme}");
+    // Debug.Log($"[MOVE RAW] {raw}  scheme={playerInput?.currentControlScheme}");
     HandleSprint();
 
     // --- Sprint Lines Control ---
