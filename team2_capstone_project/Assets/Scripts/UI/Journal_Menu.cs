@@ -116,7 +116,10 @@ public class Journal_Menu : MonoBehaviour
 
     darkOverlay = transform.GetChild(0).gameObject;
     journalContents = transform.GetChild(1).gameObject;
-    tabs = transform.GetChild(2).gameObject;
+    // tabs = transform.GetChild(2).gameObject;
+    Transform journalGroup = journalContents.transform.GetChild(0);
+    tabs = journalGroup.GetChild(1).gameObject;
+
     InitializeJournalAnimation();
 
     if (detailsText == null)
