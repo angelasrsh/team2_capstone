@@ -26,7 +26,7 @@ public class Dialogue_Quest_Step : Quest_Step
     protected bool dialogueComplete { get; set; } = false;
     
     // private state variables
-    private bool postStepTextKeyDialogStarted = false;
+    // private bool postStepTextKeyDialogStarted = false;
 
 
     [HideInInspector] public Dialogue_Manager dm;
