@@ -62,7 +62,7 @@ public class Object_Dialogue_Interact : MonoBehaviour
         Debug.Log("[Object_Dialogue_Interact] Input bound successfully.");
     }
 
-    public void PlayDialogInteraction()
+    public virtual void PlayDialogInteraction()
     {
         if (playerInsideTrigger && dialogUIManager.textTyping == false)
         {

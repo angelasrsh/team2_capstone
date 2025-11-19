@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9984a113d3db8934cbed6028d499cb5e, type: 3}
+  m_Name: Tanuki
+  m_EditorClassIdentifier: 
+  npcID: 7
+  customerName: Tanuki
+  overworldSprite: {fileID: 1076015852, guid: a736bfded1795a64d8e8c8c05ef4a052, type: 3}
+  walkAnimatorController: {fileID: 9100000, guid: bdaaecb00640fed47b80fcbfe520ea3e, type: 2}
+  datable: 0
+  lore: 
+  dialogClipSound: {fileID: 8300000, guid: 5656e9bcdb4af7e408ef02d75434e3dd, type: 3}
+  pitchMin: 0.95
+  pitchMax: 1.05
+  textSpeed: 0.025
+  defaultPortrait: {fileID: 21300000, guid: 180116eb2feb0bc4a9db6756b1dbcebd, type: 3}
+  emotionPortraitList:
+  - emotion: 0
+    portrait: {fileID: 21300000, guid: 180116eb2feb0bc4a9db6756b1dbcebd, type: 3}
+  - emotion: 1
+    portrait: {fileID: 21300000, guid: 180116eb2feb0bc4a9db6756b1dbcebd, type: 3}
+  - emotion: 2
+    portrait: {fileID: 21300000, guid: 180116eb2feb0bc4a9db6756b1dbcebd, type: 3}
+  - emotion: 3
+    portrait: {fileID: 21300000, guid: 180116eb2feb0bc4a9db6756b1dbcebd, type: 3}
+  - emotion: 5
+    portrait: {fileID: 21300000, guid: 180116eb2feb0bc4a9db6756b1dbcebd, type: 3}
+  favoriteDishes: []
+  neutralDishes: []
+  dislikedDishes: []
+  Cutscene_50: {fileID: 0}
+  Cutscene_100: {fileID: 0}
+  Dialogue_25: []
+  Dialogue_75: []

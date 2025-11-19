@@ -69,6 +69,8 @@ public class Room_Change_Manager : MonoBehaviour
                 Debug.LogWarning("Room_Change_Manager: Restaurant_State.Instance is null when trying to save.");
             }
         }
+        // else
+        //     Debug.Log("Room_Change_Manager: Not leaving restaurant, no need to save state.");
 
         // Try to get the exit
         RoomExitOptions exit = Exit(currentRoom, exitingTo);

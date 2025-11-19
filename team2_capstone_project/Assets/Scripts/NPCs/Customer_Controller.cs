@@ -29,6 +29,8 @@ public class Customer_Controller : MonoBehaviour
     private bool hasSatDown = false;
     private bool hasRequestedDish = false;
     public event Action<string> OnCustomerLeft;
+    private bool firstIntroDialogPlaying = false;
+    private Player_Controller player;
 
     // Animation
     private Animator animator;
@@ -315,7 +317,12 @@ public class Customer_Controller : MonoBehaviour
         // Play filler dialogue
         Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
         if (dm != null)
+        {
             dm.PlayScene($"{data.npcID}.Filler", CustomerData.EmotionPortrait.Emotion.Neutral);
+            player = FindObjectOfType<Player_Controller>();
+            if (player != null)
+                player.DisablePlayerMovement();
+        }
 
         // Pick a daily menu dish (always)
         requestedDish = ChooseDailyMenuDish();
@@ -374,7 +381,6 @@ public class Customer_Controller : MonoBehaviour
             return false;
         }
 
-        // Make sure we're working with Dish_Tool_Inventory
         var dishInventory = Dish_Tool_Inventory.Instance;
         if (dishInventory == null)
         {
@@ -567,13 +573,19 @@ public class Customer_Controller : MonoBehaviour
         {
             dm.onDialogComplete = null;
             Player_Progress.Instance.MarkNPCIntroduced(data.npcID);
+            firstIntroDialogPlaying = false;
+            player.EnablePlayerMovement();
 
             // After introduction, continue like normal
             RequestDishAfterDialogue();
             Game_Events_Manager.Instance.GetOrder();
         };
 
+        if (firstIntroDialogPlaying)
+            return;
+
         // e.g. "Elf.Intro"
+        firstIntroDialogPlaying = true;
         dm.PlayScene($"{data.npcID}.Intro", CustomerData.EmotionPortrait.Emotion.Happy);
     }
     
@@ -590,7 +602,6 @@ public class Customer_Controller : MonoBehaviour
             Debug.LogWarning("[RingReturn] CustomerData missing on NPC.");
             return false;
         }
-
         var tracker = Affection_Event_Item_Tracker.instance;
 
         // Find the relevant entry in the tracker
@@ -646,6 +657,7 @@ public class Customer_Controller : MonoBehaviour
         dm.onDialogComplete = () =>
         {
             dm.onDialogComplete = null;
+            player.EnablePlayerMovement();
 
             // Remove the item from the player's inventory and mark collected
             inventory.RemoveResources(entry.eventItem, 1);
@@ -726,6 +738,7 @@ public class Customer_Controller : MonoBehaviour
         dm.onDialogComplete = () =>
         {
             dm.onDialogComplete = null;
+            player.EnablePlayerMovement();
             LeaveRestaurant();
         };
         dm.PlayScene(dialogueKey, emotion);
@@ -754,8 +767,10 @@ public class Customer_Controller : MonoBehaviour
             Debug.Log("[Customer_Controller]: requested dish is null");
         else
             Debug.Log("[Customer_Controller]: requested dish: " + requestedDish.name + " being saved.");
+
         // Debug.Log("[Customer_Controller]: hasRequestedDish: " + hasRequestedDish + ".");
         // Debug.Log("[Customer_Controller]: served: " + (requestedDish == null && hasRequestedDish) + ".");
+
         return new Customer_State
         {
             customerName = data.customerName,
@@ -768,6 +783,7 @@ public class Customer_Controller : MonoBehaviour
     #endregion
 }
 
+#region Animator Extensions
 public static class AnimatorExtensions
 {
     public static bool HasParameterOfType(this Animator self, string name, AnimatorControllerParameterType type)
@@ -781,4 +797,5 @@ public static class AnimatorExtensions
         return false;
     }
 }
+#endregion
 

@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Bed_Morning_Interact : Object_Dialogue_Interact
 {
-    private void CheckIfMorning()
+    public override void PlayDialogInteraction()
     {
-        if (Day_Turnover_Manager.Instance == null) return;
+        if (Day_Turnover_Manager.Instance == null)
+            return;
 
-        var tod = Day_Turnover_Manager.Instance.currentTimeOfDay;
-        if (tod != Day_Turnover_Manager.TimeOfDay.Morning)
+        if (Day_Turnover_Manager.Instance.currentTimeOfDay != Day_Turnover_Manager.TimeOfDay.Morning)
         {
-            this.enabled = false;
+            Debug.Log("[Bed] Interaction blocked because it is not morning.");
             return;
         }
 
-        // Play morning dialogue
-        PlayDialogInteraction();
+        base.PlayDialogInteraction();
     }
 }
+

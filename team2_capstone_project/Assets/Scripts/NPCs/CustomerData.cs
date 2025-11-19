@@ -73,7 +73,10 @@ public class CustomerData : ScriptableObject
         Elf,
         Satyr,
         Journal,
-        Default
+        Default,
+        Minion,
+        Tanuki,
+        Chef
     }
 
     [Header("Dating Events")]

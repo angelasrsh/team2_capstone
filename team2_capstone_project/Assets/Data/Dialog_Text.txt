@@ -26,6 +26,10 @@ Satyr.DislikeddDish1 = Hmph. This is why you should've used some of *my* ingredi
 Satyr.DislikedDish2 = I would've liked to spend the money I wasted on this dish elsewhere. 
 Satyr.Filler = Ah, hello, [player]. Hopefully one of your dishes can satitate me before I have to hit the road again.
 
+Minion.Filler = Hello... everything on your menu looks great!
+
+Tanuki.Filler = 
+
 
 --- NPC INTRODUCTIONS ---
 
@@ -41,24 +45,36 @@ Elf.ForagingArea2 = I will never tire of the winds that blow through these lands
 Satyr.ForagingArea1 = Heh, not to worry, [player]. I won’t take any of the ingredients you’re after. If you do happen to come up short, though, you can always buy them from me later.
 
 
+--- INTRO SCENE EVENT ---
+Chef.Start = It seems like fantasy to find this abandoned house and journal, but...
+Chef.Start = I can feel that this is where I'm meant to be.
+Chef.Start = Yeah! It really is the start of something new.
+Chef.Start = A new life...
+Chef.Start = A new leaf...
+Chef.Start = Maybe even........ a new love?
+Chef.Start = Maybe...
+Chef.Start = ........Just maybe.
+
+
 --- AFFECTION EVENTS ---
 
 Elf.RingReturn = ...I am unsure where you would ever find this, [player], but I am endlessly grateful it is back in my hands now. Thank you.
 
 
+
 --- Elf 25 Event ---
 
-none.1_25 = (To get your attention, Asper lets out a shrill whistle, like the kind used to call a dog. The empty plate sat before her… clean. Only the glisten of leftovers on her cutlery suggested there was ever food at all, which she methodically begins licking clean.)
+Default.1_25 = (To get your attention, Asper lets out a shrill whistle, like the kind used to call a dog. The empty plate sat before her… clean. Only the glisten of leftovers on her cutlery suggested there was ever food at all, which she methodically begins licking clean.)
 Elf.2_25 = Really, I’m surprised that someone like you was willing to try and open a restaurant this far out from your kin. Many upstart human chefs try their hardest but fail to appeal to a more nuanced palette afforded by an Elvish constitution.
 Elf.3_25 = If that isn’t simple enough for your kind, it means your limited human palette could never impress an elf who is worth their salt... like myself.
-Player.4_25 = What do you mean “like you?”
+Chef.4_25 = What do you mean “like you?”
 Elf.5_25 = You know very well what I mean by like you. Or do I need to repeat myself to get it through your thick, human skull?
 Elf.6_25 = Either way, it is surprising that you are capable of creating… edible foods. I had only ever been to the human realms once, and the cuisine was horrid. Except for when I ate with…
-none.7_25 = (Asper’s eyes glazed over slightly as she thought of something else. A far-off memory? But the moment would pass so quickly that you almost doubted it happened. She’d shake her head and focus her gaze again, now refocusing her disdain towards you.)
+Default.7_25 = (Asper’s eyes glazed over slightly as she thought of something else. A far-off memory? But the moment would pass so quickly that you almost doubted it happened. She’d shake her head and focus her gaze again, now refocusing her disdain towards you.)
 Elf.8_25 = Whatever. You know, when you live as long as I do, all of you humans start to look the same. Perhaps if you continue to improve, you will be worth enough to exist as a footnote in my memory. Clean up my planes.
-Player.9_25 = A simple “thank you” would suffice.
+Chef.9_25 = A simple “thank you” would suffice.
 Elf.10_25 = No.
-none.11_25 = (Asper would leave the door open behind her, letting the cold wind blow in from the outside. Asshole.)
+Default.11_25 = (Asper would leave the door open behind her, letting the cold wind blow in from the outside. Asshole.)
 
 --- Elf 50 Event ---
 
@@ -83,16 +99,16 @@ Journal.RingFound = It’s a ring that is unmistakably Elvish!
 Journal.RingFound = It is rare for elves to part with such a well-kept looking token.
 Journal.RingFound = We should look around to see if anyone has lost it.
 Elf.1_75 = Ah yes the human chef is out on their daily forage, taking all of nature’s resources just to disrespect them later. (She laughs) I am messing with you, but you still have a thing or two to learn before you can fully impress me.
-Player.2_75 = I found this on the ground. Would you happen to know anything about it? Its look... reminds me of you.
+Chef.2_75 = I found this on the ground. Would you happen to know anything about it? Its look... reminds me of you.
 Elf.3_75 = ... Where did you get that? 
-Player.4_75 = It seemed important. 
+Chef.4_75 = It seemed important. 
 Elf.5_75 = Hand that to me.
 none.6_75 = (She takes the ring and examines it for a moment, brushing over the band)
-Player.7_75 = It’s surely Elven, right? It’s very distinct.
+Chef.7_75 = It’s surely Elven, right? It’s very distinct.
 Elf.8_75 = It’s a ring that symbolizes a bond between two elves. Forming a pair who choose each other above time, family, faction. Elves only exchange them with those they plan to spend eternity with.
-Player.9_75 = So like marriage for humans I guess?
+Chef.9_75 = So like marriage for humans I guess?
 Elf.10_75 = Yes, but it's more serious than that. I do suppose humans call it marriage… which makes me such a fool that I gave one to a mortal like yourself. 
-Player.11_75 = Did it belong to someone you loved?
+Chef.11_75 = Did it belong to someone you loved?
 Elf.12_75 = I believed some things were worth defying ages of expectation for. Even though elves so disrespectfully defy the laws of time, it still punished me for it.
 Elf.13_75 = Us Elves… we pay for memory.
 none.14_75 = (She clenches the ring in her hand)
@@ -106,7 +122,7 @@ Elf.18_75 = …Thank you, for returning it.
 
 Elf.1_1_100 = So you know this place too.
 Elf.1_2_100 = He always wanted to be buried somewhere quiet. 
-Player.1_3_100 = Sorry for intruding
+Chef.1_3_100 = Sorry for intruding
 Elf.2_1_100 = When I start to hear his voice too clearly. I visit every few decades or so, or whenever I am reminded of him. 
 none.3_1_100 = (She places the ring on the stone it catches a ray of light)
 Elf.4_1_100 = The cruelest part of an elf's lifespan is that eventually you outlive the grief too. I hate myself for it.
@@ -123,20 +139,24 @@ Default.Dresser = (Filled with clothes, including your old McDragons uniform. Yo
 Default.ChalkBoard = (You could brainstorm lots of different recipes on this board!)
 Default.Journal = (Your journal filled with cooking recipes you've taught yourself, ingredients you can find in the wild, and... a catalogue of your customers? Probably best not to show them.)
 Default.Bed = (It's not time to go to bed yet!)
+Default.ExitDoor = (It's too late to go back outside!)
+Default.Bedroom_Door_Evening = (It's late- you should go to bed before heading out again!)
 
 
 --- TUTORIAL ---
 
 Journal.Hands_Full = You don't have space to make anything else! Serve a dish or throw it into the trash to clear up space.
 
+--- LINEAR TUTORIAL ---
 Journal.Bedroom = Good morning! It seems you've settled into this new home quickly; I'm sure it must be exciting to finally be running your own restaurant! (Press 'Z' or Left Click to continue.)
 Journal.Bedroom = Let’s make it a success! Once you’re ready, let's go outside and start gathering ingredients for tonight’s customers.
 Journal.Bedroom = (Use WASD or arrow keys to move, and press 'E' near the door to go outside.)
 
-Journal.Open_Journal_PC = Ah, the great outdoors! To get started on your first dish, open your journal with 'J' and check the recipe.
-Journal.Open_Journal_Mobile = Ah, the great outdoors! To get started on your first dish, open your journal by tapping <sprite name="travel-journal">. (Tap <sprite name="remove"> to close me afterwards.)
+Journal.Open_Journal_PC = To get started on your first dish, open your journal with 'J' and check the recipe.
+Journal.Open_Journal_Mobile = To get started on your first dish, open your journal by tapping <sprite name="travel-journal">. (Tap <sprite name="remove"> to close me afterwards.)
 Journal.Click_Journal_Recipe = On the Dishes tab <sprite name="Pink_Dishes_Tab">, find the recipe for One-Day Blinding Stew.
-Journal.Click_Journal_Recipe_Text = Hmm… looks like we’ll need one fogshroom, one bone, and one fermented eye. Better gather a few extras for all our hungry customers!
+Journal.Click_Journal_Recipe2 = Click the recipe to see how to make it.
+Journal.Click_Journal_Recipe_Text = Hmm… looks like we’ll need one fogshroom, one bone, and one fermented eye, and we'll need to chop and stew them. Let's see what you have!
 Journal.Close_Journal_PC = (Press "J" to close me!)
 Journal.Close_Journal_Mobile = (Tap <sprite name="remove"> to close me!)
 Journal.Harvest_PC = Time to gather ingredients! Approach a resource and hold 'E' to forage.
@@ -155,10 +175,14 @@ Journal.Combine_Minigame_Instruction = Use the recipe to place the right ingredi
 Journal.Cooking_Minigame_Instruction = Check the recipe, drag ingredients in the cauldron, then stir continuously to make a dish!
 Journal.Cooking_Minigame_Instruction = Make sure to check if you need water and which (cut / uncut) ingredient forms you need. ("Z" to close dialogue)
 
-
+Elf.Get_Order_Asper = What's this? A new human trying to become a chef? I had to see what activity was going on in this old place, and this is just hilarious.
+Elf.Get_Order_Asper = Well. I am hungry, so why don't you show off your skills and make me something?
+Journal.Get_Order_Asper = So she's a bit demanding, but this is as good a time as any to refresh your skills. Walk up and left click to take her order!
 Journal.Get_Order = Time to open for business! Speak to a customer to take their order by walking up to them and left clicking.
 Journal.Get_Order2 = Go ahead and try it! Left click a customer to see what they’d like to eat.
-Journal.Make_Food = Once you have an order, prepare the ingredients at the chopping board by pressing 'E', then cook them in the cauldron!
+Journal.Go_To_Chopping_Board_Mobile = You have the ingredients. Remember the recipe diagram? It said to cut the fogshroom and eye, so let's go to the chopping board and interact with it to start preparing them.
+Journal.Go_To_Chopping_Board_PC = You have the ingredients. Remember the recipe diagram? It said to cut the fogshroom and eye, so let's go to the chopping board and press 'E' to start preparing them.
+Journal.Go_To_Cauldron = Now go to the cauldron to cook them!
 Journal.Serve_Customer = When a dish is ready, press '1' or '2' to select its slot, then left click the waiting customer to serve!
 Journal.Make_Money = Great job! You can use your earnings to buy more ingredients at the Satyr’s Shop.
 Journal.End_Day = Good work today! When you’re done serving, head to your bedroom by entering the door to the left of the cooking stations and pressing 'E' to close up for the day.

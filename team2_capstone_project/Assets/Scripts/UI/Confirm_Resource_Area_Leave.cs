@@ -116,8 +116,21 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     private void OpenConfirmation(Player_Controller playerController)
     {
+        ///////////// Specific exiting cases
+        
         if (SceneManager.GetActiveScene().name == "Foraging_Area_Whitebox")
             leaveResourceAreaCanvas.GetComponent<Leave_Resource_Area_Canvas_Script>().SetText();
+
+        // Case: Don't go outside if it's late
+        if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && exitingTo == Room_Data.RoomID.Foraging_Area_Whitebox
+            && Day_Turnover_Manager.Instance.currentTimeOfDay != Day_Turnover_Manager.TimeOfDay.Morning)
+        {
+            Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+            dm.PlayScene("Default.ExitDoor");
+            return;
+        }
+        /////////////
+            
             
         leaveResourceAreaCanvas.enabled = true;
         confirmationActive = true;
@@ -149,8 +162,12 @@ public class Confirm_Resource_Area_Leave : MonoBehaviour
 
     public void ClickYes()
     {
+        if (!confirmationActive)
+            return;
+            
         Room_Change_Manager.instance?.GoToRoom(currentRoom.roomID, exitingTo);
         CloseConfirmation();
+        player.DisablePlayerMovement();
     }
 
     public void ClickNo()

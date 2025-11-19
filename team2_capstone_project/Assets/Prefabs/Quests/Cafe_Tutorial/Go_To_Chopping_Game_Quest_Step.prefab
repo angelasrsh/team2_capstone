@@ -44,9 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ec86d739ebd9d24488385dc8d705d43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textKey: Journal.Make_Food
-  textKeyPC: 
+  textKey: Journal.Go_To_Chopping_Board_Mobile
+  textKeyPC: Journal.Go_To_Chopping_Board_PC
+  repeatTextKey: Journal.Go_To_Chopping_Board_Mobile
+  repeatTextKeyPC: Journal.Go_To_Chopping_Board_PC
   postStepTextKey: 
   InstructionWaitTime: 0
-  PopupWaitTime: 10
+  RepeatPromptDelay: 10
+  dm: {fileID: 0}
   checkfor: {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
