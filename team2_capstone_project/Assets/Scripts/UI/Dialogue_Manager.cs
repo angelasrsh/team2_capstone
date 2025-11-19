@@ -271,6 +271,7 @@ public class Dialogue_Manager : MonoBehaviour
     /// </summary>
     public void PlayScene(string aDialogKey, bool disablePlayerInput = false)
     {
+
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0)

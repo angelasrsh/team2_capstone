@@ -117,14 +117,23 @@ public class Dish_Tool_Inventory : Inventory
 
         if (leftSlotSelected)
         {
-            if (InventoryStacks[0] == null)
+            if (InventoryStacks[0].resource == null)
+            {
+                Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+                dm.PlayScene("Default.LeftHandEmpty");
                 return null;
+            }
+                
 
             return (Dish_Data)InventoryStacks[0].resource;
         }
 
-        if (InventoryStacks[1] == null)
+        if (InventoryStacks[1].resource == null)
+        {
+            Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+            dm.PlayScene("Default.RightHandEmpty");
             return null;
+        }
 
         return (Dish_Data)InventoryStacks[1].resource;
     }
