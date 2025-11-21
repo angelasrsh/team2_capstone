@@ -119,8 +119,13 @@ public class Dish_Tool_Inventory : Inventory
         {
             if (InventoryStacks[0].resource == null)
             {
-                Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
-                dm.PlayScene("Default.LeftHandEmpty");
+                if (InventoryStacks[1].resource != null)
+                {
+                    Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+                    dm.PlayScene("Default.LeftHandEmpty");
+                    
+                }
+                
                 return null;
             }
                 
@@ -130,8 +135,11 @@ public class Dish_Tool_Inventory : Inventory
 
         if (InventoryStacks[1].resource == null)
         {
-            Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
-            dm.PlayScene("Default.RightHandEmpty");
+            if (InventoryStacks[0].resource != null)
+            {
+                Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+                dm.PlayScene("Default.RightHandEmpty");
+            }
             return null;
         }
 

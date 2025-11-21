@@ -24,6 +24,13 @@ public class Go_To_Chopping_Board_Quest_Step : Dialogue_Quest_Step
 
     void Start()
     {
+        dm = FindObjectOfType<Dialogue_Manager>();
+
+        if (dm != null)
+        {
+            UnityEngine.Debug.Log("[Tutorial] Manually ending current dialogue.");
+            dm.EndDialog();
+        }
         DelayedDialogue(0, 0);
     }
 
