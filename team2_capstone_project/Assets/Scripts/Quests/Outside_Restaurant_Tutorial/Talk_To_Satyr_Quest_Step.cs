@@ -22,7 +22,7 @@ public class Talk_To_Satyr_Quest_Step : Dialogue_Quest_Step
 
      void Start()
     {
-        DelayedDialogue(10, 0, false);
+        DelayedDialogue(0, 0, false);
     }
 
 

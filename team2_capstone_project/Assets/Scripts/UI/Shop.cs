@@ -106,6 +106,8 @@ public class Shop : MonoBehaviour
 
     if (!firstOpen)
       shopkeeperText.text = otherOpenText;
+
+    Game_Events_Manager.Instance.InShop(true);
   }
 
   private void CloseShopUI(bool playSound = true)
@@ -125,6 +127,8 @@ public class Shop : MonoBehaviour
 
       if (firstOpen)
           firstOpen = false;
+
+    Game_Events_Manager.Instance.InShop(false);
   }
 
   /// <summary>

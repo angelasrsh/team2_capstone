@@ -58,6 +58,13 @@ public class UI_Manager : MonoBehaviour
             // Cursor.lockState = CursorLockMode.None;
             // Cursor.visible = true;
         }
+
+        // Rebind Talk Action
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+            Debug.Log("Cannot bind talkAction: no dialogue manager found.");
+        else
+            dm.BindTalkAction();
     }
 
     public void CloseUI()
@@ -75,5 +82,12 @@ public class UI_Manager : MonoBehaviour
             // Start input cooldown after returning to Player map
             inputCooldown = uiInputCooldownDuration;
         }
+
+        // Rebind Talk Action
+        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+            Debug.Log("Cannot bind talkAction: no dialogue manager found.");
+        else
+            dm.BindTalkAction();
     }
 }
