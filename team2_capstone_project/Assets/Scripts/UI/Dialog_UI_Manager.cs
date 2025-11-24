@@ -40,6 +40,9 @@ public class Dialog_UI_Manager : MonoBehaviour
     [SerializeField] private float idleAmplitude = 0.01f;
     [SerializeField] private float idleSpeed = 1.5f;
 
+    // State
+    public bool IsOpen {get { return textBoxCanavasGroup.alpha >= 0.5f;}}
+
     private Coroutine openRoutine;
     private Coroutine idleRoutine;
 

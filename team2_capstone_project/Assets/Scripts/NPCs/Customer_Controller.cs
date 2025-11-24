@@ -31,6 +31,8 @@ public class Customer_Controller : MonoBehaviour
     public event Action<string> OnCustomerLeft;
     private bool firstIntroDialogPlaying = false;
     private Player_Controller player;
+    Dialogue_Manager dm;
+    Dialog_UI_Manager duim;
 
     // Animation
     private Animator animator;
@@ -94,6 +96,10 @@ public class Customer_Controller : MonoBehaviour
             spriteRenderer = spriteTransform.GetComponent<SpriteRenderer>();
             animator = spriteTransform.GetComponent<Animator>();
         }
+
+        // Attach dialogue manager and dialogue UI manager
+        dm = FindObjectOfType<Dialogue_Manager>();
+        duim = FindObjectOfType<Dialog_UI_Manager>();
     }
 
     public void Init(CustomerData customerData, Transform targetSeat, Inventory inventory, bool spawnSeated = false)
@@ -157,7 +163,7 @@ public class Customer_Controller : MonoBehaviour
                     Game_Events_Manager.Instance.GetOrder();
                 }
 
-                else if (hasRequestedDish)
+                else if (hasRequestedDish && !duim.IsOpen)
                 {
                     TryServeDish(playerInventory);
                     Game_Events_Manager.Instance.ServeCustomer();
@@ -315,7 +321,9 @@ public class Customer_Controller : MonoBehaviour
             Player_Progress.Instance.UnlockNPC(data.npcID);
 
         // Play filler dialogue
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
+
         if (dm != null)
         {
             dm.PlayScene($"{data.npcID}.Filler", CustomerData.EmotionPortrait.Emotion.Neutral);
@@ -374,7 +382,8 @@ public class Customer_Controller : MonoBehaviour
     public bool TryServeDish(Inventory playerInventory)
     {
         Debug.Log("Attempting to serve dish...");
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
 
         if (requestedDish == null)
         {
@@ -563,7 +572,8 @@ public class Customer_Controller : MonoBehaviour
     /// <returns></returns>
     private void PlayFirstMeetingDialogue()
     {
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
         if (dm == null)
         {
             Debug.LogWarning("Dialogue_Manager not found for first meeting.");
@@ -651,7 +661,8 @@ public class Customer_Controller : MonoBehaviour
         }
 
         // Trigger ring return dialogue
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
         if (dm == null)
         {
             Debug.LogWarning("[RingReturn] Dialogue_Manager missing.");
@@ -734,7 +745,8 @@ public class Customer_Controller : MonoBehaviour
 
     private void PlayCustomerDialogue(string dialogueKey, string suffix)
     {
-        Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
         if (dm == null || string.IsNullOrEmpty(dialogueKey))
         {
             LeaveRestaurant();
