@@ -319,7 +319,8 @@ public class Customer_Controller : MonoBehaviour
         if (dm != null)
         {
             dm.PlayScene($"{data.npcID}.Filler", CustomerData.EmotionPortrait.Emotion.Neutral);
-            player = FindObjectOfType<Player_Controller>();
+            if (player == null)
+                player = FindObjectOfType<Player_Controller>();
             if (player != null)
                 player.DisablePlayerMovement();
         }
@@ -574,7 +575,10 @@ public class Customer_Controller : MonoBehaviour
             dm.onDialogComplete = null;
             Player_Progress.Instance.MarkNPCIntroduced(data.npcID);
             firstIntroDialogPlaying = false;
-            player.EnablePlayerMovement();
+            if (player == null)
+                player = FindObjectOfType<Player_Controller>();
+            if (player != null)
+                player.EnablePlayerMovement();
 
             // After introduction, continue like normal
             RequestDishAfterDialogue();
@@ -657,7 +661,10 @@ public class Customer_Controller : MonoBehaviour
         dm.onDialogComplete = () =>
         {
             dm.onDialogComplete = null;
-            player.EnablePlayerMovement();
+            if (player == null)
+                player = FindObjectOfType<Player_Controller>();
+            if (player != null)
+                player.EnablePlayerMovement();
 
             // Remove the item from the player's inventory and mark collected
             inventory.RemoveResources(entry.eventItem, 1);
@@ -738,7 +745,10 @@ public class Customer_Controller : MonoBehaviour
         dm.onDialogComplete = () =>
         {
             dm.onDialogComplete = null;
-            player.EnablePlayerMovement();
+            if (player == null)
+                player = FindObjectOfType<Player_Controller>();
+            if (player != null)
+                player.EnablePlayerMovement();
             LeaveRestaurant();
         };
         dm.PlayScene(dialogueKey, emotion);
