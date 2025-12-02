@@ -83,41 +83,37 @@ public class Player_Progress : ScriptableObject
       };
   }
 
-  public void LoadFromSaveData(PlayerProgressData data)
-  {
-    if (data == null)
+    public void LoadFromSaveData(PlayerProgressData data)
     {
-        Debug.LogWarning("PlayerProgressData is null, initializing new save data and tutorial progress.");
+        if (data == null)
+        {
+            Debug.LogWarning("PlayerProgressData is null, initializing new save data and tutorial progress.");
 
-        InitializeDefaults();
-        lastRecipeSpawnedDay = -1;
-        hasCollectedRecipeToday = false;
-        activeDailyRecipe = null;
+            InitializeDefaults();
+            lastRecipeSpawnedDay = -1;
+            hasCollectedRecipeToday = false;
+            activeDailyRecipe = null;
 
-        return;
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(data.playerName))
+            playerName = data.playerName;
+        introPlayed = data.introPlayedData;
+        isInGameplayTutorial = data.isInGameplayTutorial;
+        unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
+        unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
+        unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
+        money = data.money;
+        lastRecipeSpawnedDay = data.lastRecipeSpawnedDay;
+        activeDailyRecipe = data.activeDailyRecipe;
+        hasCollectedRecipeToday = data.hasCollectedRecipeToday;
+        introducedNPCs = new HashSet<CustomerData.NPCs>(data.introducedNPCs);
+        tutorialIngreidientsGiven = false;
+
+        OnMoneyChanged?.Invoke(money);
+        OnProgressLoaded?.Invoke();
     }
-
-    if (!string.IsNullOrWhiteSpace(data.playerName))
-        playerName = data.playerName;
-    else
-        playerName = "Chef";
-
-
-      introPlayed = data.introPlayedData;
-      isInGameplayTutorial = data.isInGameplayTutorial;
-      unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
-      unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
-      unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
-      money = data.money;
-      lastRecipeSpawnedDay = data.lastRecipeSpawnedDay;
-      activeDailyRecipe = data.activeDailyRecipe;
-      hasCollectedRecipeToday = data.hasCollectedRecipeToday;
-      introducedNPCs = new HashSet<CustomerData.NPCs>(data.introducedNPCs);
-      tutorialIngreidientsGiven = false;
-
-      OnMoneyChanged?.Invoke(money);
-      OnProgressLoaded?.Invoke();
-  }
   #endregion
 
 
