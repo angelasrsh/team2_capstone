@@ -16,6 +16,7 @@ public class Save_Manager : MonoBehaviour
     private string saveFilePath;
     private int currentSaveSlot = 1;
     private float tempElapsedTime = 0f;
+    public static bool HasLoadedGameData = false;
 
     private void Awake()
     {
@@ -122,6 +123,7 @@ public class Save_Manager : MonoBehaviour
                 // Reset temporary time
                 tempElapsedTime = 0f;
 
+                HasLoadedGameData = true;
                 RestoreGameData();
                 Debug.Log($"Game loaded from Slot {slot}!");
             }
@@ -141,16 +143,31 @@ public class Save_Manager : MonoBehaviour
 
     /// <summary>
     /// Create a new save slot, overwriting any existing data in that slot.
+    /// This also ensures the player is placed into tutorial mode for a new game.
     /// </summary>
     public void CreateNewSaveSlot(int slot)
     {
+        // Mark that we've "loaded" game data so systems waiting on this flag won't block.
+        HasLoadedGameData = true;
+
+        // Create a fresh GameData container
         currentGameData = new GameData
         {
             elapsedTime = 0f
         };
 
-        // Reset player progress daily recipe flags
-        Player_Progress.Instance?.ResetDailyRecipeFlags(fullReset: true);
+        if (Player_Progress.Instance != null)
+        {
+            // Load default (empty) save data into Player_Progress to clear previous state
+            Player_Progress.Instance.LoadFromSaveData(new PlayerProgressData());
+
+            Player_Progress.Instance.SetIntroPlayed(false); // for cutscene intro
+            Player_Progress.Instance.SetGameplayTutorial(true); // for restaurant tutorial
+            Player_Progress.Instance.CheckAndGiveTutorialIngredients();
+            Player_Progress.Instance.ResetDailyRecipeFlags(fullReset: true);
+        }
+        else
+            Debug.LogWarning("[Save_Manager] Player_Progress.Instance is null when creating new save slot.");
 
         // Reset affection event tracker when starting a new save
         if (Affection_Event_Item_Tracker.instance != null)
@@ -159,11 +176,11 @@ public class Save_Manager : MonoBehaviour
             Affection_Event_Item_Tracker.instance.RecheckUnlocks();
         }
 
+        // Set the active save slot and persist immediately
         SetCurrentSlot(slot);
         SaveGameData(slot);
-
-        Debug.Log($"New save slot {slot} created (overwritten if existed).");
     }
+
 
     // Old version, keeping this just in case
     // public void CreateNewSaveSlot(int slot)
@@ -411,6 +428,7 @@ public class Save_Manager : MonoBehaviour
     {
         SaveGameData(currentSaveSlot);
         Debug.Log("Auto-save completed.");
+        Debug.Log("Tutorial status: " + (Player_Progress.Instance != null && Player_Progress.Instance.InGameplayTutorial ? "In Gameplay Tutorial" : "Not in Gameplay Tutorial"));
     }
 
     // Coroutine to handle scene loading

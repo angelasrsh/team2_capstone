@@ -36,17 +36,30 @@ public class Expected_Customers_UI : MonoBehaviour
     {
         SceneManager.sceneLoaded += HandleSceneLoaded;
         Day_Plan_Manager.OnPlanUpdated += HandlePlanUpdated;
-        TryRefreshUI();
+
+        Player_Progress.OnProgressLoaded += RefreshAfterProgressLoads;
     }
 
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= HandleSceneLoaded;
-        Day_Plan_Manager.OnPlanUpdated -= HandlePlanUpdated;
+        Player_Progress.OnProgressLoaded -= RefreshAfterProgressLoads;
+    }
+
+    private void RefreshAfterProgressLoads()
+    {
+        TryRefreshUI();
     }
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        StartCoroutine(DelayedRefresh());
+    }
+
+    private IEnumerator DelayedRefresh()
+    {
+        // Wait 1 frame to ensure Player_Progress and Tutorial Manager finish initializing
+        yield return null;
+
         TryRefreshUI();
     }
 
@@ -59,11 +72,25 @@ public class Expected_Customers_UI : MonoBehaviour
 
     private void TryRefreshUI()
     {
+        Debug.Log(Player_Progress.Instance.InGameplayTutorial ? "In Gameplay Tutorial" : "Not in Gameplay Tutorial");
+
+        // If the player is in tutorial, always show 1 expected customer immediately
+        if (Player_Progress.Instance != null && Player_Progress.Instance.InGameplayTutorial)
+        {
+            ShowExpectedCustomerCount(1, animate: false);
+            return;
+        }
+        else if (Player_Progress.Instance == null)
+        {
+            Debug.LogWarning("Expected_Customers_UI: Player_Progress instance is null. Cannot determine tutorial state.");
+            return;
+        }
+
+        // Otherwise use the normal Day_Plan_Manager value when present
         if (Day_Plan_Manager.instance != null)
         {
             int planned = Day_Plan_Manager.instance.customersPlannedForEvening;
-            if (planned > 0)
-                ShowExpectedCustomerCount(planned, animate: !hasPlayedAnimationForToday);
+            ShowExpectedCustomerCount(planned, animate: !hasPlayedAnimationForToday);
         }
     }
 

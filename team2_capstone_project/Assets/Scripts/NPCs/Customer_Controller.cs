@@ -30,6 +30,12 @@ public class Customer_Controller : MonoBehaviour
     private bool hasRequestedDish = false;
     public event Action<string> OnCustomerLeft;
     private bool firstIntroDialogPlaying = false;
+
+    // Tutorial customer
+    private bool tutorialDialogPlayed = false;
+    [HideInInspector] public bool isTutorialCustomer = false; 
+    private const float tutorialTalkDistance = 5.0f;
+
     private Player_Controller player;
     Dialogue_Manager dm;
     Dialog_UI_Manager duim;
@@ -144,9 +150,21 @@ public class Customer_Controller : MonoBehaviour
 
     private void Update()
     {
+        // Tutorial dialogue check
+        if (isTutorialCustomer &&
+        Player_Progress.Instance.InGameplayTutorial &&
+        !tutorialDialogPlayed &&
+        PlayerIsCloseEnoughForTutorial())
+        {
+            tutorialDialogPlayed = true;
+            PlayTutorialDialogue();
+        }
+
+        // Standard interaction check
         if (playerInRange)
         {
-            if (talkAction.WasPerformedThisFrame() && playerInventory != null)
+            // --- Normal Talk Logic ---
+            if (talkAction != null && talkAction.WasPerformedThisFrame() && playerInventory != null)
             {
                 if (hasSatDown && !hasRequestedDish)
                 {
@@ -162,7 +180,6 @@ public class Customer_Controller : MonoBehaviour
                     RequestDishAfterDialogue();
                     Game_Events_Manager.Instance.GetOrder();
                 }
-
                 else if (hasRequestedDish && !duim.IsOpen)
                 {
                     TryServeDish(playerInventory);
@@ -180,6 +197,22 @@ public class Customer_Controller : MonoBehaviour
     }
 
     void LateUpdate() => transform.forward = Vector3.forward;
+
+    private bool PlayerIsCloseEnoughForTutorial()
+    {
+        if (player == null)
+            player = FindObjectOfType<Player_Controller>();
+
+        if (player == null)
+            return true;  // fallback, never block
+
+        float dist = Vector3.Distance(transform.position, player.transform.position);
+
+        if (dist > tutorialTalkDistance)
+            return false;
+
+        return true;
+    }
 
     private void HandleWalkAnimation()
     {
@@ -570,6 +603,21 @@ public class Customer_Controller : MonoBehaviour
     /// If successful, removes the ring from inventory and marks it as collected.
     /// </summary>
     /// <returns></returns>
+    private void PlayTutorialDialogue()
+    {
+        if (dm == null)
+            dm = FindObjectOfType<Dialogue_Manager>();
+
+        if (dm == null)
+        {
+            Debug.LogWarning("No Dialogue_Manager found for tutorial dialog.");
+            return;
+        }
+
+        string key = "Elf.Get_Order_Asper"; 
+        dm.PlayScene(key, CustomerData.EmotionPortrait.Emotion.Neutral);
+    }
+    
     private void PlayFirstMeetingDialogue()
     {
         if (dm == null)
@@ -579,6 +627,9 @@ public class Customer_Controller : MonoBehaviour
             Debug.LogWarning("Dialogue_Manager not found for first meeting.");
             return;
         }
+
+        if (player != null)
+                player.DisablePlayerMovement();
 
         dm.onDialogComplete = () =>
         {
@@ -600,7 +651,7 @@ public class Customer_Controller : MonoBehaviour
 
         // e.g. "Elf.Intro"
         firstIntroDialogPlaying = true;
-        dm.PlayScene($"{data.npcID}.Intro", CustomerData.EmotionPortrait.Emotion.Happy);
+        dm.PlayScene($"{data.npcID}.Intro", CustomerData.EmotionPortrait.Emotion.Neutral);
     }
     
     private bool TryPlayRingReturnDialogue()

@@ -23,6 +23,12 @@ public class Day_Plan_Manager : MonoBehaviour
 
     public void SetPlan(List<Dish_Data.Dishes> selectedDishes, int customerCount)
     {
+        if (Player_Progress.Instance != null && Player_Progress.Instance.InGameplayTutorial)
+        {
+            Debug.Log("[Day_Plan_Manager] Prevented a plan overwrite during tutorial.");
+            return;
+        }
+        
         todaySelectedDishes = new List<Dish_Data.Dishes>(selectedDishes);
         customersPlannedForEvening = customerCount;
 

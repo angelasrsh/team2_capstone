@@ -10,7 +10,9 @@ public class Player_Progress : ScriptableObject
   public static Player_Progress Instance;
 
   [SerializeField] private string playerName = "Chef";
-  [SerializeField] private static bool introPlayed = false;
+  [SerializeField] private bool introPlayed = false;
+  [HideInInspector] public bool isInGameplayTutorial = false;
+  [HideInInspector] public bool InGameplayTutorial => isInGameplayTutorial;
 
   [Header("Default Unlocks")]
   [SerializeField] private Dish_Data.Dishes[] defaultDishes;
@@ -37,16 +39,21 @@ public class Player_Progress : ScriptableObject
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used)
   public event System.Action OnIngredientUnlocked; // Event to notify when an ingredient is unlocked (not currently being used)
   [SerializeField] private HashSet<CustomerData.NPCs> introducedNPCs = new HashSet<CustomerData.NPCs>();
-
+  public static event Action OnProgressLoaded;
 
   /// <summary>
   /// Data to unlock at game start
   /// </summary>
   private void OnEnable()
   {
-    Instance = this;
-    InitializeDefaults();
-    money = startingMoney;
+      Instance = this;
+
+      // ONLY initialize defaults if no save is being restored
+      if (!Save_Manager.HasLoadedGameData)
+      {
+          InitializeDefaults();
+          money = startingMoney;
+      }
   }
 
   private void InitializeDefaults()
@@ -64,6 +71,7 @@ public class Player_Progress : ScriptableObject
       {
         playerName = playerName,
         introPlayedData = introPlayed,
+        isInGameplayTutorial = isInGameplayTutorial,
         money = money,
         unlockedDishes = new List<Dish_Data.Dishes>(unlockedDishes),
         unlockedNPCs = new List<CustomerData.NPCs>(unlockedNPCs),
@@ -77,18 +85,26 @@ public class Player_Progress : ScriptableObject
 
   public void LoadFromSaveData(PlayerProgressData data)
   {
-      if (data == null)
-      {
-          Debug.LogWarning("PlayerProgressData is null, loading defaults.");
-          InitializeDefaults();
-          lastRecipeSpawnedDay = -1;
-          hasCollectedRecipeToday = false;
-          activeDailyRecipe = null;
-          return;
-      }
+    if (data == null)
+    {
+        Debug.LogWarning("PlayerProgressData is null, initializing new save data and tutorial progress.");
 
-      playerName = string.IsNullOrWhiteSpace(data.playerName) ? "Chef" : data.playerName;
+        InitializeDefaults();
+        lastRecipeSpawnedDay = -1;
+        hasCollectedRecipeToday = false;
+        activeDailyRecipe = null;
+
+        return;
+    }
+
+    if (!string.IsNullOrWhiteSpace(data.playerName))
+        playerName = data.playerName;
+    else
+        playerName = "Chef";
+
+
       introPlayed = data.introPlayedData;
+      isInGameplayTutorial = data.isInGameplayTutorial;
       unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
       unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
       unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
@@ -97,13 +113,15 @@ public class Player_Progress : ScriptableObject
       activeDailyRecipe = data.activeDailyRecipe;
       hasCollectedRecipeToday = data.hasCollectedRecipeToday;
       introducedNPCs = new HashSet<CustomerData.NPCs>(data.introducedNPCs);
+      tutorialIngreidientsGiven = false;
 
       OnMoneyChanged?.Invoke(money);
+      OnProgressLoaded?.Invoke();
   }
   #endregion
 
 
-  #region Player Info
+  #region Player Name
   public void SetPlayerName(string name)
   {
       // Trim leading/trailing spaces
@@ -131,16 +149,46 @@ public class Player_Progress : ScriptableObject
   }
 
   public string GetPlayerName() => playerName;
+  #endregion
 
+
+  #region Intro Sequence
+  public bool GetIntroPlayed() => introPlayed;
   public void SetIntroPlayed(bool played)
   {
-    introPlayed = played;
-    Save_Manager.instance?.SaveGameData();
+      introPlayed = played;
+      Save_Manager.instance?.SaveGameData();
   }
-
-  public bool GetIntroPlayed() => introPlayed;
-
   #endregion
+
+
+    #region Tutorial Mode
+    public void SetGameplayTutorial(bool value)
+    {
+        isInGameplayTutorial = value;
+        Save_Manager.instance?.SaveGameData();
+    }
+
+    private bool tutorialIngreidientsGiven = false;
+    public void CheckAndGiveTutorialIngredients()
+    {
+        if (!tutorialIngreidientsGiven)
+        {
+            GiveTutorialStartingIngredients();
+            tutorialIngreidientsGiven = true;
+        }
+    }
+
+    private void GiveTutorialStartingIngredients()
+    {
+        Ingredient_Inventory inv = Ingredient_Inventory.Instance;
+        inv.AddResources(IngredientType.Bone, 3);
+        inv.AddResources(IngredientType.Uncut_Fogshroom, 5);
+        inv.AddResources(IngredientType.Uncut_Fermented_Eye, 5);
+
+        Debug.Log("Added tutorial starting ingredients to inventory.");
+    }
+    #endregion
 
 
   #region Money
@@ -233,6 +281,12 @@ public class Player_Progress : ScriptableObject
           lastRecipeSpawnedDay = -1; // resets day tracking completely
 
       Save_Manager.instance?.SaveGameData();
+  }
+
+  public void ResetRecipeUnlocks()
+  {
+      unlockedDishes.Clear();
+      InitializeDefaults();
   }
   #endregion
 
@@ -328,8 +382,9 @@ public class Player_Progress : ScriptableObject
 [System.Serializable]
 public class PlayerProgressData
 {
-    public string playerName = "Chef";
+    public string playerName = "";
     public bool introPlayedData = false;
+    public bool isInGameplayTutorial = false;
     public List<Dish_Data.Dishes> unlockedDishes = new();
     public List<CustomerData.NPCs> unlockedNPCs = new();
     public List<IngredientType> unlockedIngredients = new();
@@ -338,5 +393,6 @@ public class PlayerProgressData
     public Dish_Data.Dishes? activeDailyRecipe = null;
     public bool hasCollectedRecipeToday = false; 
     public List<CustomerData.NPCs> introducedNPCs = new();
+    public bool tutorialIngreidientsGiven = false;
 }
 #endregion
