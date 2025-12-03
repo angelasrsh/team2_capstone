@@ -40,7 +40,11 @@ public class Customer_Spawner : MonoBehaviour
 
         if(Player_Progress.Instance.InGameplayTutorial)
         {
-            yield break; // do NOT spawn normal daily customers
+            // still restore existing customers
+            if (Restaurant_State.Instance != null && Restaurant_State.Instance.customers.Count > 0)
+                RestoreCustomersFromState();
+
+            yield break; // but DO NOT spawn normal customers
         }
 
         // Restore saved customers (from previous evening if returning mid-day)
@@ -51,12 +55,9 @@ public class Customer_Spawner : MonoBehaviour
         }
         else
         {
-            
-            // Spawn new customers for the day
-            if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening) {
-                Debug.Log("Customer_Spawner: Spawning fresh customers for new day...");
-                StartCoroutine(SpawnCustomersCoroutine());
-            }
+            // if (Day_Turnover_Manager.Instance != null && Day_Turnover_Manager.Instance.currentTimeOfDay != Day_Turnover_Manager.TimeOfDay.Morning)
+            Debug.Log("Customer_Spawner: Spawning fresh customers for new day...");
+            StartCoroutine(SpawnCustomersCoroutine());
         }
     }
 
@@ -78,8 +79,8 @@ public class Customer_Spawner : MonoBehaviour
             return;
         }
 
-        // Spawn new customers for the day in the evening only
-        if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
+        // // Spawn new customers for the day in the evening only
+        // if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
             StartCoroutine(SpawnCustomersCoroutine());
     }
 
@@ -112,21 +113,10 @@ public class Customer_Spawner : MonoBehaviour
             Customer_Controller customer = Instantiate(customerPrefab, seat.position, Quaternion.identity);
             customer.Init(data, seat, Dish_Tool_Inventory.Instance, spawnSeated: true);
 
-            bool isTutorialRestored = false;
-
-            if (Player_Progress.Instance != null && Player_Progress.Instance.InGameplayTutorial)
-            {
-                // If ONLY one customer existed in Restaurant_State, this is the tutorial customer
-                if (Restaurant_State.Instance != null && Restaurant_State.Instance.customers.Count == 1)
-                {
-                    isTutorialRestored = true;
-                }
-            }
-
-            if (isTutorialRestored)
+            if (cState.isTutorialCustomer)
             {
                 customer.isTutorialCustomer = true;
-                Debug.Log($"Customer_Spawner: Marked restored customer {data.customerName} as tutorial customer.");
+                Debug.Log("Restored tutorial customer properly.");
             }
 
             if (cState.hasRequestedDish && !string.IsNullOrEmpty(cState.requestedDishName))

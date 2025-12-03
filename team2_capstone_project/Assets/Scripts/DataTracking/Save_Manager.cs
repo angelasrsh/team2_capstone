@@ -155,6 +155,12 @@ public class Save_Manager : MonoBehaviour
         {
             elapsedTime = 0f
         };
+        
+        // Initialize default quest data for new game
+        if (Quest_Manager.Instance != null)
+            currentGameData.questData = Quest_Manager.Instance.GetNewGameData();
+        else
+            Debug.LogError("[Save_Manager] Quest_Manager.Instance missing during new save creation!");
 
         if (Player_Progress.Instance != null)
         {
@@ -340,11 +346,17 @@ public class Save_Manager : MonoBehaviour
         else
             Debug.LogWarning("No PlayerProgress data found in save file.");
 
-        // Restore quests
-        if (currentGameData.questData != null)
-            Quest_Manager.Instance.LoadFromSaveData(currentGameData.questData);
-        else
-            Debug.LogWarning("No Quest data found in save file.");
+        // Restore quest data
+        if (currentGameData.questData == null ||
+            currentGameData.questData.allQuestData == null ||
+            currentGameData.questData.allQuestData.Count == 0)
+        {
+            Debug.LogWarning("[Save_Manager] Save file had NO QUEST DATA — creating new quest list.");
+            currentGameData.questData = Quest_Manager.Instance.GetNewGameData();
+        }
+
+        // finally load it
+        Quest_Manager.Instance.LoadFromSaveData(currentGameData.questData);
 
         // Restore ingredient inventory
         if (currentGameData.ingredientInventoryData != null)

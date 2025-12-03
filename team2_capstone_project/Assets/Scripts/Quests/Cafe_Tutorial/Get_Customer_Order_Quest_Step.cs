@@ -10,12 +10,14 @@ public class Get_Customer_Order_Quest_Step : Dialogue_Quest_Step
     public string key = "Asper.Get_Order_Asper";
     protected override void OnEnable()
     {
+        base.OnEnable();  
         Game_Events_Manager.Instance.onGetOrder += GetCustomerOrder;
     }
 
     protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onGetOrder -= GetCustomerOrder;
+        base.OnDisable(); 
     }
 
     // private void Start()

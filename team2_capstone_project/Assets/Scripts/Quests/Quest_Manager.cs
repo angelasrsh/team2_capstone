@@ -235,24 +235,31 @@ public class Quest_Manager : MonoBehaviour
     }
 
     #region Save / Load
-    public Quest_Manager_Data GetSaveData()
+    public Quest_Manager_Data GetNewGameData()
     {
         Quest_Manager_Data data = new Quest_Manager_Data();
 
+        // Every quest in the database gets a default entry
         foreach (var kvp in questMap)
         {
             Quest q = kvp.Value;
+
             Quest_Save_Data qData = new Quest_Save_Data
             {
                 questID = q.Info.id,
-                state = q.state,
-                currentStepIndex = q.CurrentStepIndex
+                state = q.Info.QuestPrerequisites.Length == 0
+                    ? Quest_State.CAN_START  // first quests can begin
+                    : Quest_State.REQUIREMENTS_NOT_MET,  // locked behind other quests
+                currentStepIndex = 0
             };
+
             data.allQuestData.Add(qData);
         }
 
+        Debug.Log("[Q_MAN] Built NEW GAME quest data");
         return data;
     }
+
 
     public void LoadFromSaveData(Quest_Manager_Data data)
     {

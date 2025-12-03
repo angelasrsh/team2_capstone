@@ -20,9 +20,12 @@ public class Player_Progress : ScriptableObject
   [SerializeField] private IngredientType[] defaultIngredients;
 
   // HashSet ensures no duplicates and fast lookups
-  [SerializeField] private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
-  [SerializeField] private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
-  [SerializeField] private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
+  [SerializeField] private List<Dish_Data.Dishes> unlockedDishesList = new List<Dish_Data.Dishes>();
+  private HashSet<Dish_Data.Dishes> unlockedDishes = new HashSet<Dish_Data.Dishes>();
+  [SerializeField] private List<CustomerData.NPCs> unlockedNPCsList = new List<CustomerData.NPCs>();
+  private HashSet<CustomerData.NPCs> unlockedNPCs = new HashSet<CustomerData.NPCs>();
+  [SerializeField] private List<IngredientType> unlockedIngredientsList = new List<IngredientType>();
+  private HashSet<IngredientType> unlockedIngredients = new HashSet<IngredientType>();
 
   [Header("Money Variables")]
   [SerializeField] private float startingMoney;
@@ -34,6 +37,8 @@ public class Player_Progress : ScriptableObject
   [SerializeField] private Dish_Data.Dishes? activeDailyRecipe = null;
   public static event Action OnRecipesUpdated;
   [SerializeField] private bool hasCollectedRecipeToday = false;
+  [SerializeField] private bool tutorialCustomerDialogDone = false;
+  public bool TutorialCustomerDialogDone => tutorialCustomerDialogDone;
   
   // public event System.Action OnDishUnlocked; // Event to notify when a dish is unlocked (not currently being used)
   public event System.Action OnNPCUnlocked; // Event to notify when an npc is unlocked (not currently being used)
@@ -41,6 +46,16 @@ public class Player_Progress : ScriptableObject
   [SerializeField] private HashSet<CustomerData.NPCs> introducedNPCs = new HashSet<CustomerData.NPCs>();
   public static event Action OnProgressLoaded;
 
+   public void OnAfterDeserialize()
+    {
+        unlockedDishes = new HashSet<Dish_Data.Dishes>(unlockedDishesList);
+    }
+
+    public void OnBeforeSerialize()
+    {
+        unlockedDishesList = new List<Dish_Data.Dishes>(unlockedDishes);
+    }
+  
   /// <summary>
   /// Data to unlock at game start
   /// </summary>
@@ -79,7 +94,8 @@ public class Player_Progress : ScriptableObject
         lastRecipeSpawnedDay = lastRecipeSpawnedDay,
         activeDailyRecipe = activeDailyRecipe,
         hasCollectedRecipeToday = hasCollectedRecipeToday,
-        introducedNPCs = new List<CustomerData.NPCs>(introducedNPCs)
+        introducedNPCs = new List<CustomerData.NPCs>(introducedNPCs),
+        tutorialCustomerDialogDone = this.tutorialCustomerDialogDone,
       };
   }
 
@@ -101,15 +117,29 @@ public class Player_Progress : ScriptableObject
             playerName = data.playerName;
         introPlayed = data.introPlayedData;
         isInGameplayTutorial = data.isInGameplayTutorial;
-        unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
-        unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
-        unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
+
+        if (data.unlockedDishes == null || data.unlockedDishes.Count == 0)
+            InitializeDefaults();
+        else
+            unlockedDishes = new HashSet<Dish_Data.Dishes>(data.unlockedDishes);
+
+        if (data.unlockedNPCs == null || data.unlockedNPCs.Count == 0)
+            InitializeDefaults();
+        else
+            unlockedNPCs = new HashSet<CustomerData.NPCs>(data.unlockedNPCs);
+
+        if (data.unlockedIngredients == null || data.unlockedIngredients.Count == 0)
+            InitializeDefaults();
+        else
+            unlockedIngredients = new HashSet<IngredientType>(data.unlockedIngredients);
+            
         money = data.money;
         lastRecipeSpawnedDay = data.lastRecipeSpawnedDay;
         activeDailyRecipe = data.activeDailyRecipe;
         hasCollectedRecipeToday = data.hasCollectedRecipeToday;
         introducedNPCs = new HashSet<CustomerData.NPCs>(data.introducedNPCs);
         tutorialIngreidientsGiven = false;
+        tutorialCustomerDialogDone = data.tutorialCustomerDialogDone;
 
         OnMoneyChanged?.Invoke(money);
         OnProgressLoaded?.Invoke();
@@ -312,42 +342,48 @@ public class Player_Progress : ScriptableObject
   #endregion
 
 
-  #region NPCs
-  /// <summary>
-  /// Unlock an NPC by enum
-  /// </summary>
-  public void UnlockNPC(CustomerData.NPCs npc)
-  {
-    if (unlockedNPCs.Add(npc))
+    #region NPCs
+    /// <summary>
+    /// Unlock an NPC by enum
+    /// </summary>
+    public void UnlockNPC(CustomerData.NPCs npc)
     {
-      // Fire event only if a new npc was added
-      OnNPCUnlocked?.Invoke();
+        if (unlockedNPCs.Add(npc))
+        {
+        // Fire event only if a new npc was added
+        OnNPCUnlocked?.Invoke();
+        }
     }
-  }
 
-  /// <summary>
-  /// Check if an NPC is unlocked
-  /// </summary>
-  public bool IsNPCUnlocked(CustomerData.NPCs npc) => unlockedNPCs.Contains(npc);
+    /// <summary>
+    /// Check if an NPC is unlocked
+    /// </summary>
+    public bool IsNPCUnlocked(CustomerData.NPCs npc) => unlockedNPCs.Contains(npc);
 
-  /// <summary>
-  /// Get all unlocked NPCs as a list
-  /// </summary>
-  public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
+    /// <summary>
+    /// Get all unlocked NPCs as a list
+    /// </summary>
+    public List<CustomerData.NPCs> GetUnlockedNPCs() => new List<CustomerData.NPCs>(unlockedNPCs);
 
-  public bool HasMetNPC(CustomerData.NPCs npc)
-  {
-      return introducedNPCs.Contains(npc);
-  }
+    public bool HasMetNPC(CustomerData.NPCs npc)
+    {
+        return introducedNPCs.Contains(npc);
+    }
 
-  public void MarkNPCIntroduced(CustomerData.NPCs npc)
-  {
-      if (introducedNPCs.Add(npc))
-      {
-          Save_Manager.instance?.SaveGameData();
-      }
-  }
-  #endregion
+    public void MarkNPCIntroduced(CustomerData.NPCs npc)
+    {
+        if (introducedNPCs.Add(npc))
+        {
+            Save_Manager.instance?.SaveGameData();
+        }
+    }
+
+    public void MarkTutorialDialogDone()
+    {
+        tutorialCustomerDialogDone = true;
+        Save_Manager.instance?.SaveGameData();
+    }
+    #endregion
 
 
   #region Daily Recipe Spawner Tracking
@@ -390,5 +426,6 @@ public class PlayerProgressData
     public bool hasCollectedRecipeToday = false; 
     public List<CustomerData.NPCs> introducedNPCs = new();
     public bool tutorialIngreidientsGiven = false;
+    public bool tutorialCustomerDialogDone;
 }
 #endregion

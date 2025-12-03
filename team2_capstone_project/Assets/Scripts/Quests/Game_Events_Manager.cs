@@ -231,6 +231,7 @@ public class Game_Events_Manager : MonoBehaviour
     public event Action onServeCustomer;
     public void ServeCustomer()
     {
+        Debug.Log("[G_E_M] ServeCustomer() called. Subscribers: " + (onServeCustomer?.GetInvocationList().Length ?? 0));
         if (onServeCustomer != null)
             onServeCustomer();
     }

@@ -10,4 +10,5 @@ public class Customer_State
     public string requestedDishName;
     public bool hasRequestedDish;
     public bool hasBeenServed;
+    public bool isTutorialCustomer;
 }

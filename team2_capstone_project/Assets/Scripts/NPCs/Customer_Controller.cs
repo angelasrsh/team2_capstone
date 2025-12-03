@@ -32,7 +32,7 @@ public class Customer_Controller : MonoBehaviour
     private bool firstIntroDialogPlaying = false;
 
     // Tutorial customer
-    private bool tutorialDialogPlayed = false;
+    private bool tutorialDialogPlayed => Player_Progress.Instance.TutorialCustomerDialogDone;
     [HideInInspector] public bool isTutorialCustomer = false; 
     private const float tutorialTalkDistance = 5.0f;
 
@@ -156,7 +156,7 @@ public class Customer_Controller : MonoBehaviour
         !tutorialDialogPlayed &&
         PlayerIsCloseEnoughForTutorial())
         {
-            tutorialDialogPlayed = true;
+            Player_Progress.Instance.MarkTutorialDialogDone();
             PlayTutorialDialogue();
         }
 
@@ -168,7 +168,7 @@ public class Customer_Controller : MonoBehaviour
             {
                 if (hasSatDown && !hasRequestedDish)
                 {
-                    if (Player_Progress.Instance != null && !Player_Progress.Instance.HasMetNPC(data.npcID))
+                    if (Player_Progress.Instance != null && !Player_Progress.Instance.HasMetNPC(data.npcID) && !isTutorialCustomer)
                     {
                         PlayFirstMeetingDialogue();
                         return;
@@ -182,8 +182,12 @@ public class Customer_Controller : MonoBehaviour
                 }
                 else if (hasRequestedDish && !duim.IsOpen)
                 {
-                    TryServeDish(playerInventory);
-                    Game_Events_Manager.Instance.ServeCustomer();
+                    bool served = TryServeDish(playerInventory);
+
+                    if (served)
+                    {
+                        Game_Events_Manager.Instance.ServeCustomer();
+                    }
                 }
             }
         }
@@ -487,6 +491,21 @@ public class Customer_Controller : MonoBehaviour
             return true;
         }
 
+        // --- Tutorial completion: if this is the tutorial customer and the player served a valid dish, end tutorial mode ---
+        if (isTutorialCustomer && Player_Progress.Instance != null && Player_Progress.Instance.InGameplayTutorial)
+        {
+            Debug.Log("[Customer_Controller] Tutorial customer served correctly — ending gameplay tutorial.");
+
+            Player_Progress.Instance.MarkTutorialDialogDone();
+
+            // Turn off tutorial mode 
+            Player_Progress.Instance.SetGameplayTutorial(false);
+            Player_Progress.Instance.SetIntroPlayed(true);
+
+             // Persist immediately
+            Save_Manager.instance?.SaveGameData();
+        }
+
         // Determine dialogue + affection logic
         if (isFailedDish)
         {
@@ -636,10 +655,10 @@ public class Customer_Controller : MonoBehaviour
             dm.onDialogComplete = null;
             Player_Progress.Instance.MarkNPCIntroduced(data.npcID);
             firstIntroDialogPlaying = false;
-            if (player == null)
-                player = FindObjectOfType<Player_Controller>();
-            if (player != null)
-                player.EnablePlayerMovement();
+            // if (player == null)
+            //     player = FindObjectOfType<Player_Controller>();
+            // if (player != null)
+            //     player.EnablePlayerMovement();
 
             // After introduction, continue like normal
             RequestDishAfterDialogue();
@@ -850,7 +869,8 @@ public class Customer_Controller : MonoBehaviour
             seatIndex = seatIndex, // use stored index
             requestedDishName = requestedDish != null ? requestedDish.name : null,
             hasRequestedDish = hasRequestedDish,
-            hasBeenServed = (requestedDish == null && hasRequestedDish)
+            hasBeenServed = (requestedDish == null && hasRequestedDish),
+            isTutorialCustomer = this.isTutorialCustomer
         };
     }
     #endregion
