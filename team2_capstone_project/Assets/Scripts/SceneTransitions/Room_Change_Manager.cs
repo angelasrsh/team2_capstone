@@ -171,6 +171,7 @@ public class Room_Change_Manager : MonoBehaviour
                     if (sp.spawnPointID == spawnPointID)
                     {
                         player.transform.position = sp.transform.position;
+                        // Debug.Log($"Player spawned at {spawnPointID} in {targetRoom.roomID}");
                         break;
                     }
                 }

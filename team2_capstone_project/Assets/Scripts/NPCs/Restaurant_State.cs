@@ -52,7 +52,7 @@ public class Restaurant_State : MonoBehaviour
     public void SaveCustomers()
     {
         // Only change saved customers if in a room that spawns them
-        if (GameObject.FindObjectOfType<Customer_Spawner>() == null)
+        if (SceneManager.GetActiveScene().name != "Updated_Restaurant")
             return;
 
 

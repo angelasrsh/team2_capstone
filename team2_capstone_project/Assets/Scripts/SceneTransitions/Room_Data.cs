@@ -30,7 +30,8 @@ public class Room_Data : ScriptableObject
     Frying_Pan,
     Combine_Table,
     Door,
-    Carriage
+    Carriage,
+    Bedroom
   }
 
   [Header("Room Info")]

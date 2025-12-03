@@ -515,5 +515,14 @@ public class Dialogue_Manager : MonoBehaviour
         yield return null; // wait one frame for Player_Progress.Instance to initialize
         PlayNextDialog(forcedEmotion, disablePlayerInput);
     }
+
+    public void BindTalkAction()
+    {
+        Player_Input_Controller pic = FindObjectOfType<Player_Input_Controller>();
+        if (pic != null)
+        {
+            talkAction = pic.GetComponent<PlayerInput>().currentActionMap.FindAction("Talk");
+        }
+    }
     #endregion
 }

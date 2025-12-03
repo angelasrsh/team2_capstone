@@ -32,16 +32,16 @@ Satyr.WrongDish2 = You’re lucky I like surprises almost as much as good food, 
 Satyr.Filler = Ah, hello, [player]. Hopefully one of your dishes can satitate me before I have to hit the road again.
 
 Minion.LikedDish1 = Oh! I wasn’t prepared for how good that was. My compliments… if that’s alright.
-Minion.LikedDish2 = Oh… this is really wonderful, [player]. Better than I expected. Thank you.
+Minion.LikedDish2 = Oh... this is really wonderful, [player]. Better than I expected. Thank you.
 Minion.NeutralDish = It’s good! Just… maybe a bit plain? Sorry, I didn’t mean that rudely.
-Minion.DislikedDish2 = S-sorry, [player], but this one… doesn’t sit right with me.
+Minion.DislikedDish2 = S-sorry, [player], but this one... doesn’t sit right with me.
 Minion.WrongDish1 = Oh! I didn’t order this… but I can try it, if that helps.
-Minion.WrongDish2 = Um… this isn’t what I asked for, but it looks okay… I think?
+Minion.WrongDish2 = Um... this isn’t what I asked for, but it looks okay… I think?
 Minion.Filler = Hello... everything on your menu looks great!
 
 Tanuki.LikedDish1 = The flavors settle nicely… like leaves drifting into a quiet pond. Quite comforting indeed.
 Tanuki.NeutralDish = It’s pleasant enough. A little simple, perhaps… but simple isn’t bad.
-Tanuki.DislikedDish1 = This one sits strangely on the tongue. Not to worry, [player] — learning is part of the process.
+Tanuki.DislikedDish1 = This one sits strangely on the tongue. Not to worry, [player]—learning is part of the process.
 Tanuki.WrongDish1 = A different order, hm? Maybe I was meant to taste this one instead.
 Tanuki.Filler = Your kitchen feels peaceful this evening. I think I’ll stay a bit.
 
@@ -63,14 +63,13 @@ Satyr.ForagingArea1 = Heh, not to worry, [player]. I won’t take any of the ing
 
 
 --- INTRO SCENE EVENT ---
+
 Chef.Start = It seems like fantasy to find this abandoned house and journal, but...
 Chef.Start = I can feel that this is where I'm meant to be.
 Chef.Start = Yeah! It really is the start of something new.
 Chef.Start = A new life...
 Chef.Start = A new leaf...
-Chef.Start = Maybe even........ a new love?
-Chef.Start = Maybe...
-Chef.Start = ........Just maybe.
+Chef.Start = Maybe even... a new love?
 
 
 --- AFFECTION EVENTS ---
@@ -156,20 +155,20 @@ Default.Dresser = (Filled with clothes, including your old McDragons uniform. Yo
 Default.ChalkBoard = (You could brainstorm lots of different recipes on this board!)
 Default.Journal = (Your journal filled with cooking recipes you've taught yourself, ingredients you can find in the wild, and... a catalogue of your customers? Probably best not to show them.)
 Default.Bed = (It's not time to go to bed yet!)
-Default.ExitDoor = (It's too late to go back outside!)
-Default.Bedroom_Door_Evening = (It's late- you should go to bed before heading out again!)
+Default.ExitDoor = (Better not go back outside this late.)
+Default.Bedroom_Door_Evening = (Better not go back outside this late.)
 
 
 --- TUTORIAL ---
 
 Journal.Hands_Full = You don't have space to make anything else! Serve a dish or throw it into the trash to clear up space.
-Default.LeftHandEmpty = Your left hand is empty! Did you mean to press 2 to switch to your right hand?
-Default.RightHandEmpty = Your right hand is empty! Did you mean to press 1 to switch to your left hand?
+Default.LeftHandEmpty = (Your left hand is empty! Did you mean to press 2 to switch to your right hand?)
+Default.RightHandEmpty = (Your right hand is empty! Did you mean to press 1 to switch to your left hand?)
+
 
 --- LINEAR TUTORIAL ---
-Journal.Bedroom = Good morning! It seems you've settled into this new home quickly; I'm sure it must be exciting to finally be running your own restaurant! (Press 'Z' or Left Click to continue.)
-Journal.Bedroom = Let’s make it a success! Once you’re ready, let's go outside and start gathering ingredients for tonight’s customers.
-Journal.Bedroom = (Use WASD or arrow keys to move, and press 'E' near the door to go outside.)
+Journal.Bedroom = Good morning! It seems you've settled into this new home quickly; I'm sure it must be exciting to finally be running your own restaurant! (Press 'Z' to continue.)
+Journal.Bedroom = Let’s make it a success! Once you’re ready, let's move with WASD or arrow keys to the door on the right and go into the restaurant by opening the door with 'E.'
 
 Journal.Open_Journal_PC = To get started on your first dish, open your journal with 'J' and check the recipe.
 Journal.Open_Journal_Mobile = To get started on your first dish, open your journal by tapping <sprite name="travel-journal">. (Tap <sprite name="remove"> to close me afterwards.)
@@ -214,7 +213,7 @@ Journal.Asper_Affection = See that bar? It represents how she's feeling towards 
 Journal.End_Day = Good work today! Usually when you’re done serving, head to your bedroom by entering the door to the left of the cooking stations and pressing 'E' to close up for the day.
 Journal.End_Day = But if it's morning, you can head out the front doors to go explore!
 Journal.Leave_Tutorial = Eventually, we'll need to go out the front door to get ingredients for the amount of expected customers shown, but if you're ready, let's do some cooking first!
-
+Journal.Enter_Restaurant = When you're ready, press 'E' at the front door to enter the restaurant!
 
 
 Journal.sGet_Order = Now you cook and serve the food! To get an order, go to a customer and press "E"

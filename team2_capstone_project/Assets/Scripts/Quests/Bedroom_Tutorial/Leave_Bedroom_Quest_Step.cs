@@ -5,18 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
 {
-    
-    // Start is called before the first frame update
     protected override void OnEnable()
     {
         Game_Events_Manager.Instance.onRoomChange += LeaveBedroom;
         Choose_Menu_Items.OnDailyMenuSelected += BeginDialogue;
 
         //DelayedInstructionStart();
-
     }
 
-    // Update is called once per frame
     protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onRoomChange -= LeaveBedroom;

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6200707804114755666}
-  - component: {fileID: 2723393054659639611}
+  - component: {fileID: 9105703458944087006}
   m_Layer: 0
   m_Name: Enter_Restaurant
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2723393054659639611
+--- !u!114 &9105703458944087006
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,15 +41,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7026085292084513843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1caaf1b4207934449520c2dfd9a5791, type: 3}
+  m_Script: {fileID: 11500000, guid: 4f4c92735e2bc1d46aab913acb783449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   textKey: Journal.Enter_Restaurant
   textKeyPC: 
+  repeatTextKey: Journal.Enter_Restaurant
+  repeatTextKeyPC: Journal.Enter_Restaurant
+  postStepTextKey: 
   InstructionWaitTime: 0
-  PopupWaitTime: 10
-  RequiredIngredients:
-  - {fileID: 11400000, guid: 0248f7d9930be414c826205da6381924, type: 2}
-  - {fileID: 11400000, guid: 97586fec84298c7489d081880a485db5, type: 2}
-  - {fileID: 11400000, guid: 2191f4af9672c914c834159dbf61834f, type: 2}
-  ItemCounts: 020000000200000002000000
+  RepeatPromptDelay: 10
+  dm: {fileID: 0}
+  FinishQuestToPrompt: {fileID: 11400000, guid: 338264dc9719a49479942f590e41df6b, type: 2}

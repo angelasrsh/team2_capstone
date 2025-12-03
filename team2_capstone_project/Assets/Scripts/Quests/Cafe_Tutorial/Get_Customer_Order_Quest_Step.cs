@@ -10,28 +10,73 @@ public class Get_Customer_Order_Quest_Step : Dialogue_Quest_Step
     public string key = "Asper.Get_Order_Asper";
     protected override void OnEnable()
     {
+        base.OnEnable();  
         Game_Events_Manager.Instance.onGetOrder += GetCustomerOrder;
     }
 
     protected override void OnDisable()
     {
         Game_Events_Manager.Instance.onGetOrder -= GetCustomerOrder;
+        base.OnDisable(); 
     }
 
-    private void Start()
+    // private void Start()
+    // {
+    //     customerSpawner = FindObjectOfType<Customer_Spawner>();
+    //     if (customerSpawner == null)
+    //     {
+    //         Helpers.printLabeled(this, "No Customer_Spawner found in scene");
+    //         return;
+    //     }
+
+    //     // --- Prevent duplicate spawns if loading from save ---
+    //     if (Restaurant_State.Instance != null)
+    //     {
+    //         bool alreadyExists = Restaurant_State.Instance.customers.Exists(c =>
+    //             c.customerName == customerToSpawn.customerName
+    //         );
+
+    //         if (alreadyExists)
+    //             Debug.Log($"Tutorial: Customer {customerToSpawn.customerName} already exists in Restaurant_State. Skipping spawn.");
+    //         else
+    //         {
+    //             var cc = customerSpawner.SpawnSingleCustomerReturn(customerToSpawn);
+    //             if (cc != null)
+    //                 cc.isTutorialCustomer = true;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         var cc = customerSpawner.SpawnSingleCustomerReturn(customerToSpawn);
+    //         if (cc != null)
+    //             cc.isTutorialCustomer = true;
+    //     }
+
+    //     //DelayedDialogue(0, 0, false, key);
+
+    //     // Reminder dialogues
+    //     DelayedDialogue(2, 0, false, "Journal.Leave_Tutorial");
+    //     DelayedDialogue(10, 0, false, "Journal.Get_Order2");
+    // }
+
+    private IEnumerator Start()
     {
-        Customer_Spawner customerSpawner = GameObject.FindObjectOfType<Customer_Spawner>();
-        if (customerSpawner == null) 
-            Helpers.printLabeled(this, "No Customer_Spawner found in scene");
-        else
+        yield return new WaitUntil(() => Save_Manager.HasLoadedGameData);
+
+        // Prevent double spawn after load
+        if(Restaurant_State.Instance.customers.Exists(c => 
+                c.customerName == customerToSpawn.customerName))
         {
-            customerSpawner.SpawnSingleCustomer(customerToSpawn);
+            Debug.Log("Tutorial: customer already exists, skipping spawn.");
+            yield break;
         }
 
+        customerSpawner = FindObjectOfType<Customer_Spawner>();
+        var cc = customerSpawner.SpawnSingleCustomerReturn(customerToSpawn);
+        cc.isTutorialCustomer = true;
 
-        DelayedDialogue(0, 0, false, key);
         DelayedDialogue(2, 0, false, "Journal.Leave_Tutorial");
-        DelayedDialogue(10, 0, false, "Journal.Get_Order2"); // Second reminder if they still haven't gotten an order
+        DelayedDialogue(10, 0, false, "Journal.Get_Order2");
     }
 
     private void GetCustomerOrder() => FinishQuestStep(); // Finish and destroy this object

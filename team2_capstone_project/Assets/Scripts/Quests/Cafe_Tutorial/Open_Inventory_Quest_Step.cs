@@ -25,6 +25,14 @@ public class Open_Inventory_Quest_Step : Dialogue_Quest_Step
         {
             Ingredient_Inventory.Instance.AddResources(ing.ingredient, ing.amount);    
         }
+
+        dm = FindObjectOfType<Dialogue_Manager>();
+
+        if (dm != null)
+        {
+            UnityEngine.Debug.Log("[Tutorial] Manually ending current dialogue.");
+            dm.EndDialog();
+        }
         
         // End if the player already knows the inventory for some reason
         // if (Tutorial_Manager.Instance.hasOpenedInventory)
@@ -38,11 +46,12 @@ public class Open_Inventory_Quest_Step : Dialogue_Quest_Step
         if (isOpen)
         {
             QuestStepComplete = true; // Finish and destroy this object
-            DelayedDialogue(0, 0, false, postStepTextKey);         
+            DelayedDialogue(0, 0, false, postStepTextKey); 
+            WaitFinishQuestStep(7);        
         }
             
         if (dialogueComplete)
-            FinishQuestStep();
+            WaitFinishQuestStep(7);
     }
 }
 

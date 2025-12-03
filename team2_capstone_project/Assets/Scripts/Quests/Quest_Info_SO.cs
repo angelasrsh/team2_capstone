@@ -31,12 +31,12 @@ public class Quest_Info_SO : ScriptableObject
     //public String[] dialogueList; Replaced with individual-step dialogue
 
     // Take identifier name from filename
-    private void OnValidate()
-    {
-#if UNITY_EDITOR
-        id = this.name;
-        UnityEditor.EditorUtility.SetDirty(this);
-#endif
-    }
+//     private void OnValidate()
+//     {
+// #if UNITY_EDITOR
+//         id = this.name;
+//         UnityEditor.EditorUtility.SetDirty(this);
+// #endif
+//     }
 
 }

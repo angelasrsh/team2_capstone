@@ -6,29 +6,44 @@ using UnityEngine;
 public class Serve_Customer_Quest_Step : Dialogue_Quest_Step
 {
 
-    protected override void OnEnable()
+    private void Start()
     {
-        Game_Events_Manager.Instance.onServeCustomer += ServeCustomer;
-        base.OnEnable();
+        // Delayed subscription, ensures this step is fully active
+        StartCoroutine(SubscribeNextFrame());
+    }
 
+    private IEnumerator SubscribeNextFrame()
+    {
+        yield return null; // wait one frame so QuestManager doesn't destroy it immediately
+        Debug.Log("[ServeQuestStep] Subscribing to onServeCustomer after initialization");
+        Game_Events_Manager.Instance.onServeCustomer += ServeCustomer;
+        
+        // Now run the tutorial dialogue 
+        DelayedDialogue(0, 0, false);
     }
 
     protected override void OnDisable()
     {
-        Game_Events_Manager.Instance.onServeCustomer -= ServeCustomer;
+        Debug.Log("[ServeQuestStep] OnDisable unsubscribing...");
+        if (Game_Events_Manager.Instance != null)
+            Game_Events_Manager.Instance.onServeCustomer -= ServeCustomer;
+
         base.OnDisable();
     }
 
-    void Start()
+    private void Update()
     {
-        DelayedDialogue(0, 0, false);
+        Debug.Log("[ServeQuestStep] I am alive in Update");
     }
 
     private void ServeCustomer()
     {
-        Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Jelly_Drink);
-        Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Glazed_Eleonoras);
-        Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Boba_Milk_Drink);
+        // Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Jelly_Drink);
+        // Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Glazed_Eleonoras);
+        // Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Boba_Milk_Drink);
+
+        Player_Progress.Instance.SetGameplayTutorial(false);
+        Debug.Log("Tutorial mode disabled in Serve_Customer_Quest_Step");
         DelayedDialogue(0, 0, false, "Journal.End_Day");
         FinishQuestStep(); // Finish and destroy this object
     }

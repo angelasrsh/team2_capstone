@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Player_Progress
   m_EditorClassIdentifier: 
   playerName: Chef
+  introPlayed: 1
+  isInGameplayTutorial: 1
   defaultDishes: 02000000
   defaultNPCs: 01000000020000000600000007000000
   defaultIngredients: 01000000020000000d000000140000000d0000001000000006000000120000000f000000070000000b0000000a000000150000001600000017000000
   startingMoney: 100
-  money: 100
-  lastRecipeSpawnedDay: 0
+  money: 0
+  lastRecipeSpawnedDay: -1
   hasCollectedRecipeToday: 0

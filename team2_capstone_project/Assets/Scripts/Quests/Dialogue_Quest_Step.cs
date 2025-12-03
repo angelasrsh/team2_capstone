@@ -177,6 +177,9 @@ public class Dialogue_Quest_Step : Quest_Step
     {
         yield return new WaitForSeconds(secondsToWait);
            // Manually close any open dialogue box
+
+        dm = FindObjectOfType<Dialogue_Manager>();
+
         if (dm != null)
         {
             UnityEngine.Debug.Log("[Tutorial] Manually ending current dialogue.");

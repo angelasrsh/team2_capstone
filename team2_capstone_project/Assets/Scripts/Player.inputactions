@@ -304,6 +304,17 @@
                 },
                 {
                     "name": "",
+                    "id": "59d5e127-40a1-45ef-8db1-f52134e5b1f8",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "OpenJournal",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "95209aa7-af2f-4a6c-b411-b3c4169aa4c4",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
@@ -565,6 +576,17 @@
                     "action": "Confirm",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "84078533-5bf7-4c8f-b4ae-814bf59b4c97",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "OpenInventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -738,6 +760,15 @@
                     "name": "ClickJournal",
                     "type": "Button",
                     "id": "bb07e1d3-7dba-4ff2-a495-3dfaebcb941a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Talk",
+                    "type": "Button",
+                    "id": "91d6dbbb-54e0-47c0-adfc-699aab4effd1",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -1209,6 +1240,17 @@
                 },
                 {
                     "name": "",
+                    "id": "085170c6-4024-480d-ad05-b253b8561417",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "CloseJournal",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "ce91bf5a-c7f8-4209-832c-84dd5858b225",
                     "path": "<Keyboard>/f",
                     "interactions": "",
@@ -1468,6 +1510,39 @@
                     "processors": "",
                     "groups": "Touch",
                     "action": "ClickJournal",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "65440d03-50f1-48c8-a666-2b64279c683b",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Talk",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "35aabbca-3c2b-4172-8a65-847dbac5202d",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Talk",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "70b17ad6-73fb-4274-bc5b-2da08cfc7569",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Talk",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

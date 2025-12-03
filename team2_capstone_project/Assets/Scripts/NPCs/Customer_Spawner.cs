@@ -34,8 +34,19 @@ public class Customer_Spawner : MonoBehaviour
         Day_Turnover_Manager.OnDayStarted -= HandleDayStarted;
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return new WaitUntil(() => Save_Manager.HasLoadedGameData);
+
+        if(Player_Progress.Instance.InGameplayTutorial)
+        {
+            // still restore existing customers
+            if (Restaurant_State.Instance != null && Restaurant_State.Instance.customers.Count > 0)
+                RestoreCustomersFromState();
+
+            yield break; // but DO NOT spawn normal customers
+        }
+
         // Restore saved customers (from previous evening if returning mid-day)
         if (Restaurant_State.Instance != null && Restaurant_State.Instance.customers.Count > 0)
         {
@@ -44,12 +55,9 @@ public class Customer_Spawner : MonoBehaviour
         }
         else
         {
-            
-            // Spawn new customers for the day
-            if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening) {
-                Debug.Log("Customer_Spawner: Spawning fresh customers for new day...");
-                StartCoroutine(SpawnCustomersCoroutine());
-            }
+            // if (Day_Turnover_Manager.Instance != null && Day_Turnover_Manager.Instance.currentTimeOfDay != Day_Turnover_Manager.TimeOfDay.Morning)
+            Debug.Log("Customer_Spawner: Spawning fresh customers for new day...");
+            StartCoroutine(SpawnCustomersCoroutine());
         }
     }
 
@@ -64,8 +72,15 @@ public class Customer_Spawner : MonoBehaviour
         if (Restaurant_State.Instance != null)
             Restaurant_State.Instance.ResetRestaurantState();
 
-        // Spawn new customers for the day in the evening only
-        if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
+        // Check if we're in the tutorial
+        if (Player_Progress.Instance != null && Player_Progress.Instance.InGameplayTutorial)
+        {
+            Debug.Log("Tutorial active, skipping daily customer spawn.");
+            return;
+        }
+
+        // // Spawn new customers for the day in the evening only
+        // if (Day_Turnover_Manager.Instance.currentTimeOfDay == Day_Turnover_Manager.TimeOfDay.Evening)
             StartCoroutine(SpawnCustomersCoroutine());
     }
 
@@ -97,6 +112,12 @@ public class Customer_Spawner : MonoBehaviour
 
             Customer_Controller customer = Instantiate(customerPrefab, seat.position, Quaternion.identity);
             customer.Init(data, seat, Dish_Tool_Inventory.Instance, spawnSeated: true);
+
+            if (cState.isTutorialCustomer)
+            {
+                customer.isTutorialCustomer = true;
+                Debug.Log("Restored tutorial customer properly.");
+            }
 
             if (cState.hasRequestedDish && !string.IsNullOrEmpty(cState.requestedDishName))
                 Debug.Log($"Restored {cState.customerName}'s requested dish: {cState.requestedDishName}");
@@ -215,6 +236,38 @@ public class Customer_Spawner : MonoBehaviour
         Debug.Log($"Spawned customer: {chosen.customerName}");
     }
 
+    /// <summary>
+    /// Spawns a customer and returns the Customer_Controller for cases like the tutorial.
+    /// </summary>
+    public Customer_Controller SpawnSingleCustomerReturn(CustomerData chosen)
+    {
+        if (chosen == null)
+        {
+            Helpers.printLabeled(this, "Please assign a customer before spawning it");
+            return null;
+        }
+
+        Transform seat = Seat_Manager.Instance.GetRandomAvailableSeat();
+        if (seat == null)
+        {
+            Debug.Log("No free seats!");
+            return null;
+        }
+
+        if (chosen.datable)
+            uniqueCustomersPresent.Add(chosen.customerName);
+
+        Customer_Controller customer = Instantiate(customerPrefab, entrancePoint.position, Quaternion.identity);
+        Audio_Manager.instance?.PlayDoorbell();
+
+        customer.Init(chosen, seat, Dish_Tool_Inventory.Instance);
+        customer.OnCustomerLeft += HandleCustomerLeft;
+
+        OnCustomerCountChanged?.Invoke(GetCurrentCustomerCount());
+
+        Debug.Log($"Spawned customer (RETURNING): {chosen.customerName}");
+        return customer;
+    }
 
     private void HandleCustomerLeft(string customerName)
     {

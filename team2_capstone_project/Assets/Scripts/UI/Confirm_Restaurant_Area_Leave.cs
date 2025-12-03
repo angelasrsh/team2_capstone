@@ -111,6 +111,9 @@ public class Confirm_Restaurant_Area_Leave : MonoBehaviour
         if (confirmationActive) return;
         if (player == null) return;
 
+        int currentDay = ((int)Day_Turnover_Manager.Instance.CurrentDay) + 1;
+        if (Player_Progress.Instance.isInGameplayTutorial || currentDay == 1) return;
+
         OpenConfirmation(player);
     }
 
@@ -119,8 +122,9 @@ public class Confirm_Restaurant_Area_Leave : MonoBehaviour
         ///////////// Specific exiting cases
     
         // Case: Don't go outside if it's late
-        if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && exitingTo == Room_Data.RoomID.Foraging_Area_Whitebox
-            && Day_Turnover_Manager.Instance.currentTimeOfDay != Day_Turnover_Manager.TimeOfDay.Morning)
+        if (SceneManager.GetActiveScene().name == "Updated_Restaurant" && 
+        exitingTo == Room_Data.RoomID.Foraging_Area_Whitebox && 
+        Day_Turnover_Manager.Instance.currentTimeOfDay != Day_Turnover_Manager.TimeOfDay.Morning)
         {
             Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
             dm.PlayScene("Default.ExitDoor");
@@ -159,6 +163,12 @@ public class Confirm_Restaurant_Area_Leave : MonoBehaviour
 
     public void ClickYes()
     {
+        if (currentRoom.roomID == Room_Data.RoomID.Updated_Restaurant)
+        {
+            Restaurant_State.Instance?.SaveCustomers();
+            Save_Manager.instance?.AutoSave();
+        }
+
         Room_Change_Manager.instance?.GoToRoom(currentRoom.roomID, exitingTo);
         CloseConfirmation();
     }
