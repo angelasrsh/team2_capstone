@@ -12,6 +12,10 @@ public class Dish_Data : Item_Data
   public Dishes dishType;
   public Recipe recipe;
 
+  // --- Mix Minigame Settings ---
+  public float mixDuration = 2f;      // how long the minigame lasts
+  public float targetClicksPerSecond = 8f; // player must average this CPS
+  public float tolerance = 2f;        // +- range allowed (optional)
 
 
   public enum Dishes
@@ -34,7 +38,8 @@ public enum Recipe
   Cauldron,
   Chop,
   Fry,
-  Combine
+  Combine,
+  Mix
 }
 
 // Alternative for tracking isGoodDish bool and other runtime stuff

@@ -19,11 +19,14 @@ MonoBehaviour:
   price: 100
   recipeImage: {fileID: 21300000, guid: 67f6581c21339b54e97cca282d46d23a, type: 3}
   dishType: 5
-  recipe: 4
+  recipe: 5
+  mixDuration: 5
+  targetClicksPerSecond: 8
+  tolerance: 2
   ingredientQuantities:
   - ingredient: {fileID: 11400000, guid: a1fc02a5ceb6c64459efb513a16d993e, type: 2}
     amountRequired: 1
-    method: 4
+    method: 5
   - ingredient: {fileID: 11400000, guid: 5e89dfe331c2b104d869c0d93d371939, type: 2}
     amountRequired: 1
-    method: 4
+    method: 5
