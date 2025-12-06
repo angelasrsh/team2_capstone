@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Grimoire;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,8 @@ public class Object_Dialogue_Interact : MonoBehaviour
     private bool playerInsideTrigger;
     private Dialogue_Manager dm;
     private Dialog_UI_Manager dialogUIManager;
+    private bool dialogueOpen = false;
+    
 
     private void Start()
     {
@@ -25,8 +28,14 @@ public class Object_Dialogue_Interact : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoadedRebind;
         TryBindInput();
+        Game_Events_Manager.Instance.onDialogueComplete += dialogCompleted;
     }
-    private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoadedRebind;
+        Game_Events_Manager.Instance.onDialogueComplete -= dialogCompleted;
+    }
+    
     private void OnSceneLoadedRebind(Scene scene, LoadSceneMode mode) => TryBindInput();
 
     private void TryBindInput()
@@ -68,6 +77,7 @@ public class Object_Dialogue_Interact : MonoBehaviour
         {
             dialogUIManager.HidePortrait();
             dm.PlayScene(dialogKey);
+            dialogueOpen = true;
         }
     }
 
@@ -82,7 +92,23 @@ public class Object_Dialogue_Interact : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInsideTrigger = false;
-            dm.EndDialog();  // Safety call to ensure dialog box is closed
+            if (dialogueOpen)  // To avoid accidentally closing tutorial dialog boxes
+            {
+                dm.EndDialog();  
+                dialogueOpen = false;
+            }
+                
         }
+    }
+
+    private void dialogCompleted(string myDialogKey)
+    {
+        if (myDialogKey.Equals(dialogKey))
+        {
+            dialogueOpen = false;
+        }
+            
+        
+        
     }
 }

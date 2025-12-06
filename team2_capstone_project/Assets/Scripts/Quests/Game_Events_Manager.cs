@@ -143,7 +143,7 @@ public class Game_Events_Manager : MonoBehaviour
         if (onStartQuest != null)
         {
             onStartQuest(id);
-            Debug.Log($"[G_E_M] Starting quest {id}");
+            // Debug.Log($"[G_E_M] Starting quest {id}");
         }
             
         
