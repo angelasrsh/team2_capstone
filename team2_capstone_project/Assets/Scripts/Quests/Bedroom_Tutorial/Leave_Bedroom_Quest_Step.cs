@@ -20,6 +20,13 @@ public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
 
     }
 
+    private void Start()
+    {
+        // Change the bedroom door exit to the Updated Restaurant for this instance only
+        Room_Change_Interact Bedroom_Door = FindAnyObjectByType<Room_Change_Interact>();
+        Bedroom_Door.exitingTo = Room_Data.RoomID.Updated_Restaurant;
+    }
+
     private void BeginDialogue(List<Dish_Data.Dishes> list)
     {
         DelayedDialogue(0, 0, false);
@@ -34,7 +41,7 @@ public class Leave_Bedroom_Quest_Step : Dialogue_Quest_Step
     /// <param name="exitingTo"> RoomID of the room being entered </param>
     void LeaveBedroom(Room_Data.RoomID currentRoom, Room_Data.RoomID exitingTo)
     {
-        if (currentRoom == Room_Data.RoomID.Bedroom && (exitingTo != Room_Data.RoomID.Main_Menu))
+        if (currentRoom == Room_Data.RoomID.Bedroom && (exitingTo != Room_Data.RoomID.Main_Menu)) 
             FinishQuestStep();
 
     }
