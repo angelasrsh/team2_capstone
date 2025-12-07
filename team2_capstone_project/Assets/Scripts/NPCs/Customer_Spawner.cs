@@ -19,6 +19,9 @@ public class Customer_Spawner : MonoBehaviour
     public Transform entrancePoint;
     public Customer_Controller customerPrefab;
 
+    // Avoiding saving before customers have been initialized
+    public bool customersInitialized {get; private set;}
+
     // Track which customers are currently present this evening
     private HashSet<string> uniqueCustomersPresent = new HashSet<string>();
     private List<CustomerData> validCustomers = new List<CustomerData>();
@@ -43,6 +46,7 @@ public class Customer_Spawner : MonoBehaviour
             // still restore existing customers
             if (Restaurant_State.Instance != null && Restaurant_State.Instance.customers.Count > 0)
                 RestoreCustomersFromState();
+                customersInitialized = true;
 
             yield break; // but DO NOT spawn normal customers
         }
@@ -59,6 +63,9 @@ public class Customer_Spawner : MonoBehaviour
             Debug.Log("Customer_Spawner: Spawning fresh customers for new day...");
             StartCoroutine(SpawnCustomersCoroutine());
         }
+        customersInitialized = true;
+        
+        
     }
 
     private void HandleDayStarted()

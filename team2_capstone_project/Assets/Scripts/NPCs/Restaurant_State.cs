@@ -55,6 +55,11 @@ public class Restaurant_State : MonoBehaviour
         if (SceneManager.GetActiveScene().name != "Updated_Restaurant")
             return;
 
+        // If in the restaurant, only save state if customers have been been initialized
+        Customer_Spawner customer_Spawner = FindAnyObjectByType<Customer_Spawner>();
+        if (customer_Spawner == null || !customer_Spawner.customersInitialized)
+            return;
+
 
         customers.Clear();
 
