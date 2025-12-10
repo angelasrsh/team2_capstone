@@ -49,21 +49,21 @@ public class Collect_Ingredients_Quest_Step : Dialogue_Quest_Step
 
     private void checkRequirementsMet()
     {
-        bool hasAllItems = true;
-        for (int i = 0; i < RequiredIngredients.Length; i++)
-        {
-            if (Ingredient_Inventory.Instance.GetItemCount(RequiredIngredients[i]) < ItemCounts[i])
-            {
-                hasAllItems = false;
-                break;
-            }
-        }
+        // bool hasAllItems = true;
+        // for (int i = 0; i < RequiredIngredients.Length; i++)
+        // {
+        //     if (Ingredient_Inventory.Instance.GetItemCount(RequiredIngredients[i]) < ItemCounts[i])
+        //     {
+        //         hasAllItems = false;
+        //         break;
+        //     }
+        // }
 
-        if (hasAllItems)
-        {
-            Game_Events_Manager.Instance.HarvestRequirementsMet();
-            FinishQuestStep();
-        }
+        // if (hasAllItems)
+        // {
+        //     Game_Events_Manager.Instance.HarvestRequirementsMet();
+        //     FinishQuestStep();
+        // }
     }
 
     private void onSceneLoaded(Scene scene, LoadSceneMode mode)
