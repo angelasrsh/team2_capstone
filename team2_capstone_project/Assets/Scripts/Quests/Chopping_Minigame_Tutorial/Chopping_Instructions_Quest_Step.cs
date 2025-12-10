@@ -9,12 +9,12 @@ public class Chopping_Instructions_Quest_Step : Dialogue_Quest_Step
 {
     protected override void OnEnable()
     {
-        Game_Events_Manager.Instance.onResourceAdd += ItemCut;
+        Game_Events_Manager.Instance.onItemCut += ItemCut;
     }
     
     protected override void OnDisable()
     {
-        Game_Events_Manager.Instance.onResourceAdd -= ItemCut;
+        Game_Events_Manager.Instance.onItemCut -= ItemCut;
     }
     
     void Start()

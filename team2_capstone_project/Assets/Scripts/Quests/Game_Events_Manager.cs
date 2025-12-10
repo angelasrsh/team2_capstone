@@ -319,6 +319,9 @@ public class Game_Events_Manager : MonoBehaviour
         onCombineAddToTable?.Invoke(ing, type);
     }
 
+    public event Action<Ingredient_Data> onItemCut;
+    public void ItemCut(Ingredient_Data ing) => onItemCut?.Invoke(ing);
+
     #endregion
 
     
