@@ -12,8 +12,10 @@ public class Mix_Minigame : MonoBehaviour
     public static Mix_Minigame Instance;
 
     private float duration;
-    private float targetCPS;
-    private float tolerance;
+    // private float targetCPS = 8f;
+    // private float tolerance = 2f;
+    private int tolerance = 10;
+    private int totalClicksNeeded;
     private float timer = 0f;
     private int clicks = 0;
 
@@ -27,12 +29,9 @@ public class Mix_Minigame : MonoBehaviour
     private float shakeSpeed = 0f;
     private float shakeAmount = 30f; // How far up/down the shaker moves
     private float shakeDecay = 5f; // How fast shake slows down when not spamming
-    // private float baseIdleBobSpeed = 1f; // Slow idle motion
-    // private float baseIdleBobAmount = 5f;
     private Vector2 shakerStartPos;
 
     [Header("Player Input Info")]
-    // private Player_Controller player;
     private InputAction interactAction;
     private PlayerInput playerInput;
 
@@ -53,12 +52,14 @@ public class Mix_Minigame : MonoBehaviour
             shakerStartPos = shakerPanel.anchoredPosition;
     }
 
-    public void StartMinigame(float duration, float targetCPS, float tolerance,
+    public void StartMinigame(int totalClicks,float duration,
+                                // float targetCPS, float tolerance,
                               System.Action success, System.Action<string> fail)
     {
         this.duration = duration;
-        this.targetCPS = targetCPS;
-        this.tolerance = tolerance;
+        // this.targetCPS = targetCPS;
+        // this.tolerance = tolerance;
+        totalClicksNeeded = totalClicks;
 
         onSuccess = success;
         onFail = fail;
@@ -73,7 +74,7 @@ public class Mix_Minigame : MonoBehaviour
 
         if (mixText != null)
         {
-            mixText.text = "Spam Interact Button!"; // might change to spam E for pc and spam action button in mobile later
+            mixText.text = "Spam Interact Button!";
             mixText.gameObject.SetActive(true);
         }
     }
@@ -107,16 +108,12 @@ public class Mix_Minigame : MonoBehaviour
 
         // Visual feedback
         if (mixText != null)
-            mixText.text = $"Clicks: {clicks}";
+            mixText.text = $"Target: {totalClicksNeeded}\nClicks: {clicks}";
     }
 
     private void UpdateShakerAnimation()
     {
-        if (shakerPanel == null)
-            return;
-
-        // idle mode
-        if (shakeSpeed < 0.1f)
+        if (shakerPanel == null || shakeSpeed < 0.1f)
             return;
 
         // shaking mode (based on spam speed)
@@ -129,24 +126,26 @@ public class Mix_Minigame : MonoBehaviour
 
     private void Finish()
     {
-        float cps = clicks / duration;
+        // float cps = clicks / duration;
         
         shakerPanel.anchoredPosition = shakerStartPos;
         shakeSpeed = 0f;
-
-        if (cps < targetCPS - tolerance)
-        {
+        active = false;
+        
+        // if (cps < targetCPS - tolerance)
+        if (clicks < totalClicksNeeded)
+        {    
             StartCoroutine(RestartAfterDelay());
             return;
         }
 
-        active = false;
         if (mixText != null)
             mixText.gameObject.SetActive(false);
 
-        if (cps > targetCPS + tolerance)
+        // if (cps > targetCPS + tolerance)
+        if (clicks > totalClicksNeeded + tolerance)
         {
-            onFail?.Invoke("Too fast!");
+            onFail?.Invoke($"Too fast! No more than {tolerance} above the target!");
             return;
         }
 
@@ -164,5 +163,6 @@ public class Mix_Minigame : MonoBehaviour
         shakeSpeed = 0f;
 
         mixText.text = "Spam Interact Button!";
+        active = true;
     }
 }

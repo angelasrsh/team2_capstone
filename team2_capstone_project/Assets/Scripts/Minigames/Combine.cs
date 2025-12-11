@@ -213,9 +213,10 @@ public class Combine : MonoBehaviour
 
     // Call the mix_minigame method
     Mix_Minigame.Instance.StartMinigame(
+      dish.totalClicks,
       dish.mixDuration,
-      dish.targetClicksPerSecond,
-      dish.tolerance,
+      // dish.targetClicksPerSecond,
+      // dish.tolerance,
       () =>
         {
           // success callback
