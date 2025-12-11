@@ -619,7 +619,7 @@ public class Chop_Controller : MonoBehaviour
             Debug.Log("Knife snapped to line!");
             if (firstSnap)
             {
-                SetTutorialText("Click and drag along the line back and forth until the line disappears.");
+                SetTutorialText("Drop the knife on the food. Then, click and drag back and forth until the line disappears.");
                 firstSnap = false;
             }
         }

@@ -108,11 +108,11 @@ public class Journal_Menu : MonoBehaviour
         allNPCs = Game_Manager.Instance.npcDatabase.allNPCs;
 
         tabMaxPages = new Dictionary<Tabs, int>()
-    {
-      { Tabs.Dish, Mathf.CeilToInt((float)allDishes.Count / objectsPerPage) },
-      { Tabs.Ingredient, Mathf.CeilToInt((float)allIngredients.Count / objectsPerPage) },
-      { Tabs.NPC, Mathf.CeilToInt((float)allNPCs.Count / objectsPerPage) }
-    };
+        {
+            { Tabs.Dish, Mathf.CeilToInt((float)allDishes.Count / objectsPerPage) },
+            { Tabs.Ingredient, Mathf.CeilToInt((float)allIngredients.Count / objectsPerPage) },
+            { Tabs.NPC, Mathf.CeilToInt((float)allNPCs.Count / objectsPerPage) }
+        };
 
         darkOverlay = transform.GetChild(0).gameObject;
         journalContents = transform.GetChild(1).gameObject;
@@ -150,6 +150,12 @@ public class Journal_Menu : MonoBehaviour
         {
             if (currentTab == Tabs.Dish)
                 PopulateDishes();
+        };
+
+        Player_Progress.OnNPCUnlocked += () =>
+        {
+            if (currentTab == Tabs.NPC)
+                PopulateNPCs();
         };
     }
 
@@ -347,10 +353,6 @@ public class Journal_Menu : MonoBehaviour
             Debug.Log("Cannot bind talkAction: no dialogue manager found.");
         else
             dm.BindTalkAction();
-
-
-
-        
     }
 
     public void ResumeGame(bool playSound = true)
@@ -372,10 +374,14 @@ public class Journal_Menu : MonoBehaviour
         // Switch back to Player map
         if (playerInput != null)
         {
-            if (flipLeftAction != null) flipLeftAction.Disable();
-            if (flipRightAction != null) flipRightAction.Disable();
-            if (closeJournalAction != null) closeJournalAction.Disable();
-            if (clickAction != null) clickAction.Disable();
+            if (flipLeftAction != null)
+                flipLeftAction.Disable();
+            if (flipRightAction != null)
+                flipRightAction.Disable();
+            if (closeJournalAction != null)
+                closeJournalAction.Disable();
+            if (clickAction != null)
+                clickAction.Disable();
 
             else if (flipLeftAction == null || flipRightAction == null || closeJournalAction == null || clickAction == null)
                 Debug.LogWarning("[Journal_Menu]: One or more journal input actions are null when trying to disable.");
