@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1885341892772831878}
   - component: {fileID: 1441067090258628715}
   - component: {fileID: 6879782171290687971}
-  - component: {fileID: 4444640161398441004}
   m_Layer: 9
   m_Name: Eleonora
   m_TagString: Untagged
@@ -90,21 +89,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 5.2613173, y: 4.4927087, z: 1.4141335}
   m_Center: {x: 1.7484236, y: 1.7463541, z: -3.5786028}
---- !u!114 &4444640161398441004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1885341892772831873}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 182caf5bb92bf7843822cdc627e677b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SpritePivot: {fileID: 4518174327885469292}
-  SpriteObject: {fileID: 5548709649547555559}
-  manualShift: 0
 --- !u!1 &4518174327885469292
 GameObject:
   m_ObjectHideFlags: 0
