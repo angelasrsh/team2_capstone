@@ -63,7 +63,13 @@ public class Dish_Tool_Inventory : Inventory
       }
 
       Debug.Log($"[Dish_Tool_Inventory]: Adding {count} of {type.name} to dish inventory.");
-      return addResourcesOfType(type, count);
+
+    int added = addResourcesOfType(type, count);
+
+    if (IsFull())
+        Game_Events_Manager.Instance.DishInventoryFull();
+        
+    return added;
   }
 
   /// <summary>

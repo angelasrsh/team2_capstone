@@ -310,6 +310,9 @@ public class Game_Events_Manager : MonoBehaviour
             onDishRemove(dish);
     }
 
+    public event Action onDishInventoryFull;
+    public void DishInventoryFull() => onDishInventoryFull?.Invoke();
+
     #endregion
 
     #region Minigame_Events
