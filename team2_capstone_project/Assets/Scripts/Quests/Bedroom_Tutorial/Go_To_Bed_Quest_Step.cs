@@ -29,6 +29,16 @@ public class Go_To_Bed_Quest_Step : Dialogue_Quest_Step
     /// <param name="exitingTo"> RoomID of the room being entered </param>
     void WentToBed(Day_Summary_Data summary)
     {
+        Debug.Log("[Leave_Restaurant_Q_S] Leaving restaurant — ending gameplay tutorial.");
+
+        Player_Progress.Instance.MarkTutorialDialogDone();
+
+        // Turn off tutorial mode 
+        Player_Progress.Instance.SetGameplayTutorial(false);
+        Player_Progress.Instance.SetIntroPlayed(true);
+
+            // Persist immediately
+        Save_Manager.instance?.SaveGameData();
         FinishQuestStep();
 
     }
