@@ -309,6 +309,32 @@ public class Chop_Controller : MonoBehaviour
                 }
             }
         });
+        // MANDARAKE
+        ingredientConfigs.Add(new IngredientCuttingConfig
+        {
+            ingredientName = "Mandrake",
+            cutGroupName = "Mand_Cut_Group",
+            requiredCuts = 1,
+            cutLines = new List<CutLineConfig>
+            {
+                new CutLineConfig { lineObjectName = "Mand_CL", redZoneObjectName = "CLRZMAND", lineRotation = 360f }
+            },
+            pieceNames = new List<string> 
+            { 
+                "Cut_Mand_R", 
+                "Cut_Mand_L" 
+            },
+            splitConfigs = new List<SplitConfig>
+            {
+                new SplitConfig 
+                { 
+                    cutIndex = 0, 
+                    leftPieceIndices = new List<int> { 0 }, 
+                    rightPieceIndices = new List<int> { 1 } 
+                }
+            }
+        });
+
     }
 
     public Ingredient_Data SetIngredientData(Ingredient_Data ingredientData, GameObject ing_gameOb)
