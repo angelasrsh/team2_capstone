@@ -12,8 +12,6 @@ public class Mix_Minigame : MonoBehaviour
     public static Mix_Minigame Instance;
 
     private float duration;
-    // private float targetCPS = 8f;
-    // private float tolerance = 2f;
     private int tolerance = 10;
     private int totalClicksNeeded;
     private float timer = 0f;
@@ -53,12 +51,9 @@ public class Mix_Minigame : MonoBehaviour
     }
 
     public void StartMinigame(int totalClicks,float duration,
-                                // float targetCPS, float tolerance,
                               System.Action success, System.Action<string> fail)
     {
         this.duration = duration;
-        // this.targetCPS = targetCPS;
-        // this.tolerance = tolerance;
         totalClicksNeeded = totalClicks;
 
         onSuccess = success;
@@ -125,14 +120,11 @@ public class Mix_Minigame : MonoBehaviour
     }
 
     private void Finish()
-    {
-        // float cps = clicks / duration;
-        
+    {        
         shakerPanel.anchoredPosition = shakerStartPos;
         shakeSpeed = 0f;
         active = false;
         
-        // if (cps < targetCPS - tolerance)
         if (clicks < totalClicksNeeded)
         {    
             StartCoroutine(RestartAfterDelay());
@@ -142,7 +134,6 @@ public class Mix_Minigame : MonoBehaviour
         if (mixText != null)
             mixText.gameObject.SetActive(false);
 
-        // if (cps > targetCPS + tolerance)
         if (clicks > totalClicksNeeded + tolerance)
         {
             onFail?.Invoke($"Too fast! No more than {tolerance} above the target!");

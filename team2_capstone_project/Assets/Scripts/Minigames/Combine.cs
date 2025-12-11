@@ -22,9 +22,6 @@ public class Combine : MonoBehaviour
   [SerializeField] private GameObject backButton; // reference to the back button
   [SerializeField] private GameObject clearButton; // reference to the clear button
   [SerializeField] private GameObject combineButton; // reference to the combine button
-  // [SerializeField] private Image ingredientInPanAnim; // reference to ingredient in pan under pan flip animation
-  // [SerializeField] private GameObject regularPan; // reference to the regular pan
-  // [SerializeField] private GameObject draggablePan; // reference to the pan that can be dragged around
 
   private void Awake()
   {
@@ -215,8 +212,6 @@ public class Combine : MonoBehaviour
     Mix_Minigame.Instance.StartMinigame(
       dish.totalClicks,
       dish.mixDuration,
-      // dish.targetClicksPerSecond,
-      // dish.tolerance,
       () =>
         {
           // success callback
