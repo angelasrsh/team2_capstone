@@ -3634,7 +3634,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.9528158, y: 0.10054036}
   m_AnchorMax: {x: 0.97, y: 0.8617236}
-  m_AnchoredPosition: {x: 2.1364746, y: -0.93795776}
+  m_AnchoredPosition: {x: 2.1364746, y: -0.9379883}
   m_SizeDelta: {x: -4.273, y: -17.712002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &455620941
@@ -23191,6 +23191,8 @@ MonoBehaviour:
   grid: {fileID: 993593750}
   redZone: {fileID: 161665452}
   itemsInChest: []
+  TutorialDialogueKey: Journal.Chest
+  hasPlayedTutorial: 0
 --- !u!135 &2136317494
 SphereCollider:
   m_ObjectHideFlags: 0
