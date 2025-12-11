@@ -89,6 +89,11 @@ public class Collectible_Object : Interactable_Object
         if (col != null) col.enabled = false;
         if (capsuleCol != null) capsuleCol.enabled = false;
 
+        // --- If any audio is playing, pause it ---
+        AudioSource audio = GetComponent<AudioSource>();
+        audio?.Pause();
+
         enabled = false;
+
     }
 }
