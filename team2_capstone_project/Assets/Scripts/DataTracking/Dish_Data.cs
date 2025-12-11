@@ -13,9 +13,10 @@ public class Dish_Data : Item_Data
   public Recipe recipe;
 
   // --- Mix Minigame Settings ---
-  public float mixDuration = 2f;      // how long the minigame lasts
-  public float targetClicksPerSecond = 8f; // player must average this CPS
-  public float tolerance = 2f;        // +- range allowed (optional)
+  public float mixDuration = 5f;      // how long the minigame lasts
+  // public float targetClicksPerSecond = 8f; // player must average this CPS
+  // public float tolerance = 2f;        // +- range allowed (optional)
+  public int totalClicks = 30;
 
 
   public enum Dishes
