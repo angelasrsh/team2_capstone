@@ -36,6 +36,7 @@ public class Collect_Ingredients_Quest_Step : Dialogue_Quest_Step
     private void ResourceAdd(Ingredient_Data ing)
     {
         checkRequirementsMet();
+        // FinishQuestStep();
     }
 
     private void OnPlayerSprint()
