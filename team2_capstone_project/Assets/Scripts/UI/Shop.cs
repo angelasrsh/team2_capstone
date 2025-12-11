@@ -19,6 +19,7 @@ public class Shop : MonoBehaviour
   [SerializeField] private TextMeshProUGUI shopkeeperText; // Shopkeeper's "dialogue" text
   [SerializeField] public List<Shop_Item> items; // assign 6 slots in inspector
   [SerializeField] public Shop_Database shopDatabase;
+  [SerializeField] private CustomerData satyrData;
 
   [Header("Shopkeeper Text Reactions")]
   [SerializeField] private string firstOpenText; // first open of the day
@@ -106,6 +107,11 @@ public class Shop : MonoBehaviour
 
     if (!firstOpen)
       shopkeeperText.text = otherOpenText;
+    else if (!Player_Progress.Instance.IsNPCUnlocked(satyrData.npcID))
+    {
+        Player_Progress.Instance.UnlockNPC(satyrData.npcID);
+        // Journal_Menu.Instance.PopulateNPCs();
+    }
 
     Game_Events_Manager.Instance.InShop(true);
   }
