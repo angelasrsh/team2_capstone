@@ -17,6 +17,11 @@ public class Chest : MonoBehaviour
     [SerializeField] private GameObject grid;
     [SerializeField] public RectTransform redZone; // only here so that drag_all can easily find redZone even when it's inactive
     [SerializeField] public List<Chest_Item> itemsInChest; // assign 18 slots in inspector
+    public string TutorialDialogueKey;
+
+    // Tracking for tutorial
+    public bool hasPlayedTutorial;
+
 
     
     [Header("Player Input Info")]
@@ -101,6 +106,16 @@ public class Chest : MonoBehaviour
         Debug.Log("Chest ui opened");
         // Notify draggables to allow drag when trash open
         OnChestOpenChanged?.Invoke(chestOpen);
+
+        // #if TUTORIAL_ENABLE
+        // Tutorial
+        if (!hasPlayedTutorial)
+        {
+            Dialogue_Manager dm = FindObjectOfType<Dialogue_Manager>();
+            dm.PlayScene(TutorialDialogueKey);
+            hasPlayedTutorial = true;
+        }
+        // #endif
     }
 
     private void CloseChestUI()
