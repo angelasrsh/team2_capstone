@@ -89,9 +89,14 @@ public class Collectible_Object : Interactable_Object
         if (col != null) col.enabled = false;
         if (capsuleCol != null) capsuleCol.enabled = false;
 
-        // --- If any audio is playing, pause it ---
-        AudioSource audio = GetComponent<AudioSource>();
-        audio?.Pause();
+        if (data.ingredientType == IngredientType.Uncut_Ficklegourd)
+        {
+            // --- If any audio is playing, pause it ---
+            AudioSource audio = GetComponent<AudioSource>();
+            audio?.Pause();
+
+            gameObject.GetComponent<Timed_Collectible>().isCollected = true;
+        }
 
         enabled = false;
 

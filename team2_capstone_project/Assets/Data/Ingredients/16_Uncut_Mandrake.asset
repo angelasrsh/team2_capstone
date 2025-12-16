@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Mandrake
   Amount: 0
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: 02586a092d4ae5f4eb6d16ea83b3c1e3, type: 3}
   tier: 0
   price: 0
   rarityWeight: 1
@@ -28,7 +28,9 @@ MonoBehaviour:
     overcookedEnd: 0
   description: Screams when you get close to it. Almost burst my eardrums catching
     this...
-  CutIngredientImages: []
+  CutIngredientImages:
+  - {fileID: 21300000, guid: 5a2c5dbcdc139e04ca4d3647cedfc405, type: 3}
+  - {fileID: 21300000, guid: d0175fd7a74d98442a219ada5c058e37, type: 3}
   usedInDishes: []
   makesIngredient:
   - ingredient: {fileID: 11400000, guid: 0aa8b2ec7009f0f47b0a5de844279080, type: 2}
@@ -37,4 +39,4 @@ MonoBehaviour:
   ingredientsNeeded: []
   ingredientType: 17
   CombinedCutPiecePrefab: {fileID: 0}
-  cutsRequired: 0
+  cutsRequired: 1

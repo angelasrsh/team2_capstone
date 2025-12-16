@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Minion
   m_EditorClassIdentifier: 
   npcID: 6
-  customerName: Minion
+  customerName: Toto
   overworldSprite: {fileID: -1496991264, guid: 0d22e2641a43f53488f12655351e3d18, type: 3}
   walkAnimatorController: {fileID: 9100000, guid: 3f67d4c6017a6e6438879cbe6bd5e907, type: 2}
   datable: 0
-  lore: 
+  lore: A minion that comes from a far away land where those with cannons are superior
+    for some odd reason...
   dialogClipSound: {fileID: 8300000, guid: 5656e9bcdb4af7e408ef02d75434e3dd, type: 3}
   pitchMin: 0.95
   pitchMax: 1.05
@@ -34,9 +35,15 @@ MonoBehaviour:
     portrait: {fileID: 21300000, guid: 3dbc5986fa31b144394c8bfacc1a73e7, type: 3}
   - emotion: 5
     portrait: {fileID: 21300000, guid: 3dbc5986fa31b144394c8bfacc1a73e7, type: 3}
-  favoriteDishes: []
-  neutralDishes: []
-  dislikedDishes: []
+  favoriteDishes:
+  - {fileID: 11400000, guid: dc41864eb9c4b804a86902d1e1e68ee7, type: 2}
+  - {fileID: 11400000, guid: 6027772cc3743e64d9acc12d85d3db55, type: 2}
+  - {fileID: 11400000, guid: 3fbcd05fd89c8684e8068a4df9504a46, type: 2}
+  neutralDishes:
+  - {fileID: 11400000, guid: 0833f41870d70c14c86836286f46e8f2, type: 2}
+  dislikedDishes:
+  - {fileID: 11400000, guid: c64e5753c27a7f1499958a0f420b36b8, type: 2}
+  - {fileID: 11400000, guid: 3b8de12a5fd59b644a9231e1e98a23e6, type: 2}
   Cutscene_50: {fileID: 0}
   Cutscene_100: {fileID: 0}
   Dialogue_25: []

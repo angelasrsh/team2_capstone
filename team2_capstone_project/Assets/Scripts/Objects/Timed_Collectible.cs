@@ -17,7 +17,7 @@ namespace Grimoire
 
         private SpriteRenderer spriteRenderer;
         private Color originalColor;
-        // private bool isCollected = false;
+        public bool isCollected = false;
 
         private void Awake()
         {
@@ -58,14 +58,26 @@ namespace Grimoire
             if (spriteRenderer != null)
                 spriteRenderer.color = originalColor;
 
-            if (explodeOnDestroy)
+            if (explodeOnDestroy && !isCollected)
             {
                 // Particle effect on destroy
-                var ps = GetComponentInChildren<ParticleSystem>();
-                if (ps != null)
-                    ps.Play();
+                // var ps = GetComponentInChildren<ParticleSystem>();
+                // if (ps != null)
+                //     ps.Play();
+                
+                // get the explosion animation
+                Transform animationTransform = gameObject.transform.Find("ExplosionAnimation");
+                animationTransform.gameObject.SetActive(true);
+                Animator animation = animationTransform.GetComponent<Animator>();
+                animation.SetTrigger("Explode");
 
-                yield return new WaitForSeconds(0.2f);
+                spriteRenderer.gameObject.SetActive(false);
+
+                // yield return new WaitForSeconds(0.2f);
+                yield return new WaitUntil(() =>
+                    animation.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f &&
+                    !animation.IsInTransition(0)
+                ); //fix later
             }
 
             Destroy(gameObject);
