@@ -107,6 +107,9 @@ public class Chest : MonoBehaviour
         // Notify draggables to allow drag when trash open
         OnChestOpenChanged?.Invoke(chestOpen);
 
+        // Pause player movement
+        player?.DisablePlayerMovement();
+
         // #if TUTORIAL_ENABLE
         // Tutorial
         if (!hasPlayedTutorial)
@@ -124,6 +127,9 @@ public class Chest : MonoBehaviour
         if (chestOpen)
             Game_Manager.Instance.UIManager.CloseUI();
         chestOpen = false;
+
+        // Allow player movement
+        player?.EnablePlayerMovement();
 
         // Notify draggables to disable drag when trash closed
         OnChestOpenChanged?.Invoke(chestOpen);

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Animations;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class Player_Controller : MonoBehaviour
 {
@@ -476,6 +477,8 @@ public class Player_Controller : MonoBehaviour
       if (moveAction != null)
           moveAction.Enable();
   }
+
+  public bool IsMovementDisabled() => movementLocked;  
 
   public void UpdatePlayerRoom(Room_Data.RoomID newRoomID)
   {

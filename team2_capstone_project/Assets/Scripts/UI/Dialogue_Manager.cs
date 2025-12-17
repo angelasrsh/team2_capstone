@@ -35,6 +35,7 @@ public class Dialogue_Manager : MonoBehaviour
     [HideInInspector] public enum DialogueState { Normal, Waiting }
     [HideInInspector] public DialogueState currentState = DialogueState.Normal;
     private InputAction talkAction;
+    private bool hasDisabledMovement = false;
     
 
     // Components    
@@ -234,6 +235,12 @@ public class Dialogue_Manager : MonoBehaviour
 
         Game_Events_Manager.Instance.BeginDialogueBox(dialogKeys[0]); // Only alerts with first dialogue in the list
 
+        if (playerOverworld != null && !playerOverworld.IsMovementDisabled())
+        {
+            playerOverworld.DisablePlayerMovement();
+            hasDisabledMovement = true;
+        }
+
         if (completedDialogKeys.Contains(dialogKeys[0]) || dialogQueue.Count > 0) // currently only checks first key in list
         {
             PlayNextDialog();
@@ -273,6 +280,12 @@ public class Dialogue_Manager : MonoBehaviour
     {
 
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
+
+        if (playerOverworld != null && !playerOverworld.IsMovementDisabled() && disablePlayerInput)
+        {
+            playerOverworld.DisablePlayerMovement();
+            hasDisabledMovement = true;
+        }
 
         if (completedDialogKeys.Contains(aDialogKey) || dialogQueue.Count > 0)
         {
@@ -376,6 +389,12 @@ public class Dialogue_Manager : MonoBehaviour
         // Tell Game events manager so we don't overlap the dialogue box
         Game_Events_Manager.Instance.BeginDialogueBox(aDialogKey);
 
+        if (playerOverworld != null && !playerOverworld.IsMovementDisabled())
+        {
+            playerOverworld.DisablePlayerMovement();
+            hasDisabledMovement = true;
+        }
+
         if (dialogQueue.Count > 0)
         {
             PlayNextDialog(forcedEmotion);
@@ -473,7 +492,10 @@ public class Dialogue_Manager : MonoBehaviour
         uiManager.ClearText();
         uiManager.HidePortrait();
         ResetDialogForKey(myDialogKey);
-        playerOverworld?.EnablePlayerMovement();
+        if (hasDisabledMovement) { // Only enable if this script was the one who disabled
+            playerOverworld?.EnablePlayerMovement();
+            hasDisabledMovement = false;
+        }
 
         onDialogComplete?.Invoke();
         Game_Events_Manager.Instance.EndDialogBox(myDialogKey); // Could probably merge with above
