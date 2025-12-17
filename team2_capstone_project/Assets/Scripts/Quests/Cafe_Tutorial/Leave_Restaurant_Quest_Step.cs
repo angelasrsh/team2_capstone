@@ -25,7 +25,7 @@ public class Leave_Restaurant_Quest_Step : Dialogue_Quest_Step
     {
         if (scene.name == "Bedroom")
         {
-            // Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Jelly_Drink);
+            Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Jelly_Drink);
             // Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Honey_Glazed_Eleonoras);
             // Player_Progress.Instance.UnlockDish(Dish_Data.Dishes.Boba_Milk_Drink);
 
