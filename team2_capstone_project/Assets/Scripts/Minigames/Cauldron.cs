@@ -65,9 +65,10 @@ public class Cauldron : MonoBehaviour
               allReqsSatisfied = false;
               break;
             }
+            ingredientInPot.Remove(req.ingredient);
           }
 
-          if (allReqsSatisfied)
+          if (allReqsSatisfied && ingredientInPot.Count == 0)
           {
             if (dish.recipe == Recipe.Cauldron)
             {
@@ -99,9 +100,10 @@ public class Cauldron : MonoBehaviour
               allReqsSatisfied = false;
               break;
             }
+            ingredientInPot.Remove(req.ingredient);
           }
 
-          if (allReqsSatisfied)
+          if (allReqsSatisfied && ingredientInPot.Count == 0)
           {
             if (ingrReq.method == Recipe.Cauldron)
             {
