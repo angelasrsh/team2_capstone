@@ -7,9 +7,69 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2443966350867547373, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5102334531260084179, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5440420565220662477, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529579715929, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529755810049, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529755810054, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559521, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559521, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559521, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559521, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559526, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559526, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a1e97a52fecc07847a3de4a2f2f1f276, type: 3}
+    - target: {fileID: 6176679529817559526, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559526, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679529817559526, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6176679530195543976, guid: be66885df4bc35842b319907556b2769, type: 3}
       propertyPath: m_Name
-      value: Help_Canvas
+      value: Help_Canvas_Foraging
       objectReference: {fileID: 0}
     - target: {fileID: 6176679530195543980, guid: be66885df4bc35842b319907556b2769, type: 3}
       propertyPath: m_Pivot.x
@@ -93,6 +153,61 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6176679530195543980, guid: be66885df4bc35842b319907556b2769, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6176679531407264696, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7576994162688426093, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7576994162688426093, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 8295951256474571766, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_text
+      value: '
+
+        Press ''Esc'' to pause the game
+
+
+        Hold ''Shift''
+        to sprint
+
+
+        Press ''I'' to see your inventory
+
+
+        Open and
+        close your journal with ''J''
+
+
+        Press ''Z'' or left click to speak
+        to characters and advance dialogue
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054979761824096350, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_text
+      value: 'Gather Ingredients!
+
+
+        Objective: Make sure you have ingredients
+        to cook
+
+
+        Gather ingredients by standing next to them and holding
+        ''E''
+
+
+        Use ''E'' to interact with the carriage and leave the area
+        once you are finished.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054979761824096350, guid: be66885df4bc35842b319907556b2769, type: 3}
+      propertyPath: m_fontStyle
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
