@@ -105,6 +105,9 @@ public class Day_Turnover_Manager : MonoBehaviour
     {
       ui.gameObject.SetActive(true);
     }
+
+    // Safety end tutorial
+    Player_Progress.Instance.SetGameplayTutorial(false);
   }
 
   public void SetCurrentDay(WeekDay newDay) => CurrentDay = newDay;
