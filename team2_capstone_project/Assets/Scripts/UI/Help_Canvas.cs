@@ -8,8 +8,9 @@ using UnityEngine.InputSystem;
 public class Help_Canvas : MonoBehaviour
 {
     [Header("UI Elements")]
-    public GameObject helpPanel;
-    public GameObject darkOverlay;
+    [SerializeField] private GameObject helpPanel;
+    [SerializeField] private GameObject darkOverlay;
+    [SerializeField] private GameObject buttonPanel;
 
 
     private bool isPaused = false;
@@ -66,6 +67,7 @@ public class Help_Canvas : MonoBehaviour
 
         helpPanel?.SetActive(true);
         darkOverlay?.SetActive(true);
+        buttonPanel?.SetActive(false);
         UI_Manager.Instance.PauseMenuState(true);
         isPaused = true;
 
@@ -79,6 +81,7 @@ public class Help_Canvas : MonoBehaviour
         Debug.Log("Resuming game...");
         helpPanel?.SetActive(false);
         darkOverlay?.SetActive(false);
+        buttonPanel?.SetActive(true);
         isPaused = false;
         UI_Manager.Instance.PauseMenuState(false);
 
