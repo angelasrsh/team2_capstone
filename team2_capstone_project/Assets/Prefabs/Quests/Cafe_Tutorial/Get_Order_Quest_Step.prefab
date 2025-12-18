@@ -44,11 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba8060a60e4ba942b46dc6589ccec7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textKey: Journal.Get_Order
-  textKeyPC: 
+  textKey: Journal.Get_Order2_Mobile
+  textKeyPC: Journal.Get_Order
+  repeatTextKey: 
+  repeatTextKeyPC: 
   postStepTextKey: 
   InstructionWaitTime: 0
-  PopupWaitTime: 10
+  RepeatPromptDelay: 10
   dm: {fileID: 0}
   customerToSpawn: {fileID: 11400000, guid: 6948a6b7da01dc545b67fe99a9a71dc1, type: 2}
   key: Elf.Get_Order_Asper
