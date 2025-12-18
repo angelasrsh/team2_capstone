@@ -21,6 +21,9 @@ public class Shop : MonoBehaviour
   [SerializeField] public Shop_Database shopDatabase;
   [SerializeField] private CustomerData satyrData;
 
+  [SerializeField] private Button closeShopButton;
+  private bool isMobile = false;
+
   [Header("Shopkeeper Text Reactions")]
   [SerializeField] private string firstOpenText; // first open of the day
   [SerializeField] private string otherOpenText; // text for 2nd time and onwards open
@@ -58,6 +61,20 @@ public class Shop : MonoBehaviour
     CloseShopUI(false);
     CreateShopItemCards();
     firstOpen = true;
+
+    if (Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld)
+      isMobile = true;
+    else
+      isMobile = false;
+
+// #if UNITY_EDITOR
+//       isMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
+// #endif
+
+    if (isMobile)
+      closeShopButton.gameObject.SetActive(true);
+    else
+      closeShopButton.gameObject.SetActive(false);
   }
 
   private void Update()
@@ -135,6 +152,11 @@ public class Shop : MonoBehaviour
           firstOpen = false;
 
     Game_Events_Manager.Instance.InShop(false);
+  }
+
+  public void CloseShopMobileButton()
+  {
+    CloseShopUI();
   }
 
   /// <summary>
