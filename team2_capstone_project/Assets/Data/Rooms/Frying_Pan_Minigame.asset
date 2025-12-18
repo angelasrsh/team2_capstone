@@ -14,10 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomID: 6
   isOverworldScene: 0
-  music: {fileID: 8300000, guid: 226b34f4a5a9d6f49b420750f134e23f, type: 3}
+  music: {fileID: 8300000, guid: d60a0730949ff73468e4f465b3a06592, type: 3}
   ambientSound: {fileID: 0}
   musicVolume: 0.1
   ambientVolume: 1
+  isOutdoorScene: 1
+  rainMusic: {fileID: 0}
+  rainMusicVolume: 1
+  rainAmbient: {fileID: 0}
+  rainAmbientVolume: 1
   exits:
   - exitingTo: 9
     spawnPointID: 3
