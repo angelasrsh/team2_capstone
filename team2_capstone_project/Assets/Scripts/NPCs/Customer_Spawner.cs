@@ -119,18 +119,13 @@ public class Customer_Spawner : MonoBehaviour
 
             Customer_Controller customer = Instantiate(customerPrefab, seat.position, Quaternion.identity);
             customer.Init(data, seat, Dish_Tool_Inventory.Instance, spawnSeated: true);
+            customer.RestoreFromState(cState);
 
             if (cState.isTutorialCustomer)
             {
                 customer.isTutorialCustomer = true;
                 Debug.Log("Restored tutorial customer properly.");
             }
-
-            if (cState.hasRequestedDish && !string.IsNullOrEmpty(cState.requestedDishName))
-                Debug.Log($"Restored {cState.customerName}'s requested dish: {cState.requestedDishName}");
-
-            if (cState.hasBeenServed)
-                customer.LeaveRestaurant();
 
             if (data.datable)
                 uniqueCustomersPresent.Add(data.customerName);

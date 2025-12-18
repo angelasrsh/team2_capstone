@@ -394,6 +394,40 @@ public class Customer_Controller : MonoBehaviour
 
     #endregion
 
+    public void RestoreFromState(Customer_State state)
+    {
+      isTutorialCustomer = state.isTutorialCustomer;
+
+      hasRequestedDish = state.hasRequestedDish;
+
+      if (state.hasRequestedDish)
+      {
+          requestedDish = Game_Manager.Instance.dishDatabase.GetDish(state.requestedDishType);
+
+          if (requestedDish != null)
+          {
+              if (thoughtBubble != null)
+              {
+                  thoughtBubble.SetActive(true);
+                  if (bubbleDishImage != null)
+                      bubbleDishImage.sprite = requestedDish.Image;
+              }
+
+              Debug.Log($"[Restore] {data.customerName} waiting for {requestedDish}");
+          }
+          else
+          {
+              Debug.LogWarning($"[Restore] Dish not found: {state.requestedDishType}");
+          }
+      }
+
+      if (state.hasBeenServed)
+      {
+          // Customer already finished — leave immediately
+          LeaveRestaurant();
+      }
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -867,7 +901,7 @@ public class Customer_Controller : MonoBehaviour
         {
             customerName = data.customerName,
             seatIndex = seatIndex, // use stored index
-            requestedDishName = requestedDish != null ? requestedDish.name : null,
+            requestedDishType = requestedDish != null ? requestedDish.dishType : Dish_Data.Dishes.None,
             hasRequestedDish = hasRequestedDish,
             hasBeenServed = (requestedDish == null && hasRequestedDish),
             isTutorialCustomer = this.isTutorialCustomer

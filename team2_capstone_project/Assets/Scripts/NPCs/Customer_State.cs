@@ -7,7 +7,8 @@ public class Customer_State
 {
     public string customerName;
     public int seatIndex;
-    public string requestedDishName;
+    // public string requestedDishName;
+    public Dish_Data.Dishes requestedDishType;
     public bool hasRequestedDish;
     public bool hasBeenServed;
     public bool isTutorialCustomer;

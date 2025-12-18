@@ -10,34 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
-  m_Name: 24_Steamed_Rice
+  m_Name: 27_Cooked_Phoenix_Wings
   m_EditorClassIdentifier: 
-  Name: Steamed Rice
-  Amount: 4
-  Image: {fileID: 21300000, guid: 38576297abbd3f0499ab103b339eb71a, type: 3}
+  Name: Cooked Phoenix Wings
+  Amount: 0
+  Image: {fileID: 21300000, guid: 00b1c83edaf46fe45b00ef1916c56ec5, type: 3}
   tier: 0
   price: 0
   rarityWeight: 1
   minSpawn: 0
-  maxSpawn: 0
+  maxSpawn: 5
   countsAs: []
   cookThresholds:
     rawEnd: 0
     almostEnd: 0
     cookedEnd: 0
     overcookedEnd: 0
-  description: Freshly steamed rice. Makes for an excellent side dish.
+  description: Phoenix Wings but cooked. It smells really nice.
   CutIngredientImages: []
   usedInDishes:
   - {fileID: 11400000, guid: 09f6a9dc39002d446a81168f0d6b7446, type: 2}
   makesIngredient: []
   ingredientsNeeded:
-  - ingredient: {fileID: 11400000, guid: 13c58c2175248304faa05f161914c5e4, type: 2}
+  - ingredient: {fileID: 11400000, guid: 30860409606e98540a14fb27e451f9f6, type: 2}
     amountRequired: 1
-    method: 1
-  - ingredient: {fileID: 11400000, guid: c5b2a46b578a60a468d0cb31729c2ab1, type: 2}
-    amountRequired: 1
-    method: 1
-  ingredientType: 25
+    method: 3
+  ingredientType: 28
   CombinedCutPiecePrefab: {fileID: 0}
   cutsRequired: 0

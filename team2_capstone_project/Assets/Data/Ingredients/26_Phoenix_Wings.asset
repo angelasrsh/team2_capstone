@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69d5f5d36cfbb5344a08325f058b043a, type: 3}
+  m_Name: 26_Phoenix_Wings
+  m_EditorClassIdentifier: 
+  Name: Phoenix Wings
+  Amount: 0
+  Image: {fileID: 21300000, guid: 3419b37bbd47cf14189ee7dbc61583b9, type: 3}
+  tier: 0
+  price: 100
+  rarityWeight: 1
+  minSpawn: 0
+  maxSpawn: 5
+  countsAs: []
+  cookThresholds:
+    rawEnd: 0.4
+    almostEnd: 0.5
+    cookedEnd: 0.7
+    overcookedEnd: 0.8
+  description: Supposedly a phoenix's wings. Not sure how Lennox managed to kill
+    a phoenix though...
+  CutIngredientImages: []
+  usedInDishes: []
+  makesIngredient:
+  - ingredient: {fileID: 11400000, guid: e1ba2026e6ed29641b3cd48859070c44, type: 2}
+    amountRequired: 1
+    method: 3
+  ingredientsNeeded: []
+  ingredientType: 27
+  CombinedCutPiecePrefab: {fileID: 0}
+  cutsRequired: 0

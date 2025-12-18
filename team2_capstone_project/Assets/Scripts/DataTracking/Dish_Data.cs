@@ -27,7 +27,9 @@ public class Dish_Data : Item_Data
     Honey_Jelly_Drink,
     Charcuterie_Board,
     Boba_Milk_Drink,
-    Honey_Glazed_Eleonoras
+    Honey_Glazed_Eleonoras,
+    Hot_Phoenix_Wings_With_Rice,
+    None
   }
 
   public List<Ingredient_Requirement> ingredientQuantities;

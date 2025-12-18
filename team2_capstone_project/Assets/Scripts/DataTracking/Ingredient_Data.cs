@@ -85,7 +85,9 @@ public enum IngredientType
   Cooked_Cut_Ficklegourd,
   PreWashed_Rice,
   Steamed_Rice,
-  Lost_Elven_Ring
+  Lost_Elven_Ring,
+  Phoenix_Wings,
+  Cooked_Phoenix_Wings
 }
 
 // public class CutLine
