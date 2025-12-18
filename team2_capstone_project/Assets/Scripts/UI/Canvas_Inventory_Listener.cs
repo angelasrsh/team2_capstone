@@ -16,6 +16,9 @@ public class Canvas_Inventory_Listener : MonoBehaviour
   private bool mobileOpenCalled = false;
   private bool mobileCloseCalled = false;
 
+  [SerializeField] private GameObject slotMobile1; // buttons for mobile to select slots
+  [SerializeField] private GameObject slotMobile2;
+
   // Set gameObject to the canvas this is on
   void Start()
   {
@@ -30,6 +33,12 @@ public class Canvas_Inventory_Listener : MonoBehaviour
 // #if UNITY_EDITOR
 //       isMobile = true; // comment this back in with the #if and #endif if you want to simulate mobile in editor
 // #endif
+
+    if (isMobile)
+    {
+      slotMobile1.SetActive(true);
+      slotMobile2.SetActive(true);
+    }
 
     if (playerInput != null)
     {
@@ -82,5 +91,15 @@ public class Canvas_Inventory_Listener : MonoBehaviour
   {
     mobileCloseCalled = !mobileCloseCalled;
     // Debug.Log("[Canvas_Inventory_Listener] MobileClosePressed called.");
+  }
+
+  public void SelectSlot1()
+  {
+    Dish_Tool_Inventory.Instance.SetSlotSelected(1);
+  }
+
+  public void SelectSlot2()
+  {
+    Dish_Tool_Inventory.Instance.SetSlotSelected(0);
   }
 }

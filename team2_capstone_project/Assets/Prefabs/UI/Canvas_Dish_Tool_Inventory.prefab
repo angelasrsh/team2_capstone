@@ -231,6 +231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38264500e9b10349919ca9a5709fc28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slotMobile1: {fileID: 8886638336938926088}
+  slotMobile2: {fileID: 5089510063707103224}
 --- !u!1 &4727499903888752733
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,6 +325,22 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: -1547044878149234192, guid: e17e99cf1873a6b449c73a3cc243a38e, type: 2}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8897850218780726703}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectSlot2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Canvas_Inventory_Listener, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7237542091441118891, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
       propertyPath: m_Name
       value: Hand_Inventory_Slot 1
@@ -413,6 +431,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+--- !u!1 &5089510063707103224 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5675569404827416149, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+  m_PrefabInstance: {fileID: 604113734500723117}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8272894122945087461 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8839729761662447176, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
@@ -433,6 +456,22 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: -1547044878149234192, guid: e17e99cf1873a6b449c73a3cc243a38e, type: 2}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8897850218780726703}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectSlot1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Canvas_Inventory_Listener, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6741458348435886218, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7237542091441118891, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
       propertyPath: m_Name
       value: Hand_Inventory_Slot
@@ -526,5 +565,10 @@ PrefabInstance:
 --- !u!224 &5709725762691168277 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8839729761662447176, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
+  m_PrefabInstance: {fileID: 3859587312820999773}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8886638336938926088 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5675569404827416149, guid: 002de296aa33f3245ada275e35537e4d, type: 3}
   m_PrefabInstance: {fileID: 3859587312820999773}
   m_PrefabAsset: {fileID: 0}
