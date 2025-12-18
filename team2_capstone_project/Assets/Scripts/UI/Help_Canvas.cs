@@ -18,9 +18,15 @@ public class Help_Canvas : MonoBehaviour
 
     private PlayerInput playerInput;
     private InputAction pauseAction;
+    private bool simulateMobile = false;
 
     private void Start()
     {
+        if (simulateMobile == true || Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld)
+        {
+        Destroy(this.gameObject);
+        return;
+        }
        
         playerInput = Game_Manager.Instance.GetComponent<PlayerInput>();
         if (playerInput == null)
