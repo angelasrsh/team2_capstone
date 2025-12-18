@@ -207,9 +207,12 @@ Journal.Chest = Drag items and dishes from your inventory ('I') into the chest t
 --- LINEAR TUTORIAL ---
 Journal.Bedroom = Good morning! It seems you've settled into this new home quickly; I'm sure it must be exciting to finally be running your own restaurant! (Press 'Z' to continue.)
 Journal.Bedroom = Let’s make it a success! Once you’re ready, let's move with WASD or arrow keys to the door on the right and go into the restaurant by opening the door with 'E.'
+Journal.Bedroom_Mobile = Good morning! It seems you've settled into this new home quickly; I'm sure it must be exciting to finally be running your own restaurant! (Tap to continue.)
+Journal.Bedroom_Mobile = Let’s make it a success! Once you’re ready, let's move with the joystick to the door on the right and go into the restaurant by opening the door with the interact button
+
 
 Journal.Open_Journal_PC = Looks like she's placed her order- One-Day Blinding Stew! To get started on your first dish, open your journal with 'J' and check the recipe.
-Journal.Open_Journal_Mobile = To get started on your first dish, open your journal by tapping <sprite name="travel-journal">. (Tap <sprite name="remove"> to close me afterwards.)
+Journal.Open_Journal_Mobile = To get started on your first dish, open your journal by tapping the icon in the top left. Tap the red X to close me afterwards.
 Journal.Click_Journal_Recipe = On the pink Dishes tab, find the recipe for One-Day Blinding Stew.
 Journal.Click_Journal_Recipe2 = Click the recipe to see how to make it.
 Journal.Click_Journal_Recipe_Text = Hmm… looks like we’ll need one fogshroom, one bone, and one fermented eye, and we'll need to chop and stew them. Let's see what you have!
@@ -218,30 +221,37 @@ Journal.Close_Journal_Mobile = (Tap <sprite name="remove"> to close me!)
 Journal.Harvest_PC = Time to gather ingredients! Approach a resource and hold 'E' to forage.
 Journal.Harvest_Mobile = Time to gather ingredients! Tap and hold the right-hand button to forage.
 Journal.Open_Inventory_PC = Press 'I' to check your inventory.
-Journal.Open_Inventory_Mobile = Tap <sprite name="backpack"> to open your inventory.
+Journal.Open_Inventory_Mobile = Tap the bag icon to open your inventory.
 Journal.Open_Inventory_Text = You have 12 slots, and each slot can hold up to 20 items.
 Journal.Close_Inventory_PC = (Press 'I' again to close your inventory.)
-Journal.Close_Inventory_Mobile = (Tap <sprite name="backpack"> again to close your inventory.)
+Journal.Close_Inventory_Mobile = (Tap the bag icon again to close your inventory.)
 Journal.Collect_Ingredients = Let's explore the area and gather everything we need! Each customer will order 1 dish from your chosen menu. Use the recipe and ingredient tab in your journal to make sure you have enough supplies!
 Journal.Collect_Ingredients = Some supplies- like milk and meat- will have to be bought instead of foraged. Check the ingredients tab to see what you can find out here, then look around.
 Journal.Collect_Ingredients = (You can hold 'Shift' to sprint!)
+Journal.Collect_Ingredients_Mobile = Some supplies- like milk and meat- will have to be bought instead of foraged. Check the ingredients tab to see what you can find out here, then look around.
 Journal.Leave_Foraging_Area = When you're done foraging, return to your restaurant using the carriage at the top left of the map.
 Journal.Leave_Foraging_Area = However, don't forget to explore! You might even find some new recipes hidden about somewhere.
 Journal.Talk_To_Satyr = This is Satyr's Shop! You can purchase ingredients that can't be found in this area to make new dishes.
 Journal.Cut_Enough_Items = Make sure you have a cut fogshroom and cut fermented eye! Cut them at the chopping board.
 
 Journal.Chopping_Instructions = Press 'J' to see your recipe and check what needs to be cut. Drop an uncut item (like an uncut fogshroom or eye) on the chopping board, drop the knife on top, then slice back and forth until it's cut!
+Journal.Chopping_Instructions_Mobile = Press the journal icon to see your recipe and check what needs to be cut. Drop an uncut item (like an uncut fogshroom or eye) on the chopping board, drop the knife on top, then slice back and forth until it's cut!
 Journal.Chopped_One_Thing = Nice job! When you've chopped both a fogshroom and an eye, press "Back" to exit.
 Journal.Frying_Pan_Instruction = Let's cook! Press 'J' to see your recipes. Then, drag an uncooked ingredient on the pan, click when the arrow reaches the green bar to flip it. Catch, then repeat on the other side!
+Journal.Frying_Pan_Instruction_Mobile = Let's cook! Press the journal icon to see your recipes. Then, drag an uncooked ingredient on the pan, click when the arrow reaches the green bar to flip it. Catch, then repeat on the other side!
 Journal.Combine_Minigame_Instruction = Press 'J' to see your recipe, place the right ingredients on the board, then press "Combine!" Position doesn't matter. ("Z" to close dialogue)
 Journal.Cooking_Minigame_Instruction = Check the recipe using 'J', drag ingredients in the cauldron, then stir continuously to make a dish!
 Journal.Cooking_Minigame_Instruction = Start by combining water and a bone to make bone broth. Then open your journal with "J" to see what comes next! ("Z" to close dialogue)
-Journal.Cooking_Minigame_Journal = If you get stuck, open your journal with "J" to see what to do!
+Journal.Combine_Minigame_Instruction_Mobile = Press the journal icon to see your recipe, place the right ingredients on the board, then press "Combine!" Position doesn't matter. (tap to close dialogue)
+Journal.Cooking_Minigame_Instruction_Mobile = Check the recipe using the journal icon, drag ingredients in the cauldron, then stir continuously to make a dish!
+Journal.Cooking_Minigame_Instruction_Mobile = Start by combining water and a bone to make bone broth. Then open your journal to see what comes next! (tap to close dialogue)
+Journal.Cooking_Minigame_Journal = If you get stuck, open your journal to see what to do!
 
 Elf.Get_Order_Asper = What's this? A new human trying to become a chef? Intriguing. 
 Journal.Get_Order_Asper = So she's a bit demanding, but this is as good a time as any to refresh your skills. Walk up and left click to take her order!
 Journal.Get_Order = Time to open for business! Speak to a customer to take their order by walking up to them and left clicking.
 Journal.Get_Order2 = To interact with someone, press 'Z' or left click a customer to see what they’d like to eat.
+Journal.Get_Order2_Mobile = To interact with someone, tap while near a customer to see what they’d like to eat.
 Journal.Go_To_Chopping_Board_Mobile = You have the ingredients. Remember the recipe diagram? It said to cut the fogshroom and eye, so let's go to the chopping board and interact with it to start preparing them.
 Journal.Go_To_Chopping_Board_PC = You have the ingredients. Remember the recipe diagram? It said to cut the fogshroom and eye, so let's go to the chopping board and press 'E' to start preparing them.
 Journal.Go_To_Cauldron = When you have a cut fogshroom and cut eye, go to the cauldron to cook them!

@@ -44,7 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e233f084c0f395459a66e23bc6e92db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textKey: Journal.Frying_Pan_Instruction
-  textKeyPC: 
+  textKey: Journal.Frying_Pan_Instruction_Mobile
+  textKeyPC: Journal.Frying_Pan_Instruction
+  repeatTextKey: 
+  repeatTextKeyPC: 
+  postStepTextKey: 
   InstructionWaitTime: 0
-  PopupWaitTime: 10
+  RepeatPromptDelay: 10
+  dm: {fileID: 0}
