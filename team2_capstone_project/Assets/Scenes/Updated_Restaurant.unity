@@ -477,7 +477,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1314772650510391983, guid: b829d292ca5332445917d75052476695, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0077
+      value: -0.01052
       objectReference: {fileID: 0}
     - target: {fileID: 1314772650510391983, guid: b829d292ca5332445917d75052476695, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4468,6 +4468,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 115242486592169591, guid: bf0bd11688fbed343a121f74c8ab9b78, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 4096
+      objectReference: {fileID: 0}
+    - target: {fileID: 1501217407124689817, guid: bf0bd11688fbed343a121f74c8ab9b78, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.74
+      objectReference: {fileID: 0}
+    - target: {fileID: 4056224308799823655, guid: bf0bd11688fbed343a121f74c8ab9b78, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 8992427507496874610, guid: bf0bd11688fbed343a121f74c8ab9b78, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -9260,6 +9272,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Audio_Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 2204574119547736745, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
+      propertyPath: orderServed
+      value: 
+      objectReference: {fileID: 8300000, guid: 68e8bf417324c314ea17519d786d28f9, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77211ff62f00a20449a90e1dc069a4c4, type: 3}
 --- !u!1001 &1197478956
@@ -14513,7 +14529,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 62f6ccd141d479a46b70baca06b19bbf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -47.7
+      value: -47.27
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 62f6ccd141d479a46b70baca06b19bbf, type: 3}
       propertyPath: m_LocalRotation.w
