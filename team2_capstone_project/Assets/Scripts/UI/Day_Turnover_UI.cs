@@ -50,6 +50,8 @@ public class Day_Turnover_UI : MonoBehaviour
         if (blackScreenFade != null)
             yield return blackScreenFade.StartCoroutine(blackScreenFade.BlackFadeIn());
 
+        summaryPanel.SetActive(true);
+
         // Clear existing entries
         foreach (Transform child in listParent)
             Destroy(child.gameObject);
@@ -71,15 +73,13 @@ public class Day_Turnover_UI : MonoBehaviour
             foreach (var kvp in data.customersServed)
                 AddEntry(null, kvp.Key, kvp.Value);
         }
-
-        summaryPanel.SetActive(true);
     }
 
     private void AddHeader(string text)
     {
         if (headerPrefab == null) return;
 
-        var go = Instantiate(headerPrefab, listParent);
+        var go = Instantiate(headerPrefab, listParent, false);
         var label = go.GetComponentInChildren<TextMeshProUGUI>();
         if (label != null) label.text = text;
     }
@@ -88,7 +88,7 @@ public class Day_Turnover_UI : MonoBehaviour
     {
         if (entryPrefab == null) return;
 
-        var go = Instantiate(entryPrefab, listParent);
+        var go = Instantiate(entryPrefab, listParent, false);
         var entryUI = go.GetComponent<Day_Summary_Entry_Prefab>();
 
         if (entryUI != null)
