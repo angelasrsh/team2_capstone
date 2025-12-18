@@ -22,6 +22,9 @@ public class Chest : MonoBehaviour
     // Tracking for tutorial
     public bool hasPlayedTutorial;
 
+    private bool isMobile = false;
+    [SerializeField] private Button chestCloseButton;
+
 
     
     [Header("Player Input Info")]
@@ -57,6 +60,15 @@ public class Chest : MonoBehaviour
             Debug.LogWarning("[Chest]: Chest UI is not set in inspector!");
         }
         redZone = GameObject.Find("ChestRedZone").GetComponent<RectTransform>();
+
+        if (Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld)
+          isMobile = true;
+        else
+          isMobile = false;
+
+        if (isMobile)
+          chestCloseButton.gameObject.SetActive(true);
+
         CreateChestSlots();
         CloseChestUI();
         
@@ -121,7 +133,7 @@ public class Chest : MonoBehaviour
         // #endif
     }
 
-    private void CloseChestUI()
+    public void CloseChestUI()
     {
         ChestUI.SetActive(false);
         if (chestOpen)

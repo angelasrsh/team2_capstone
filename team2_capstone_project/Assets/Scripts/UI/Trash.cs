@@ -12,10 +12,13 @@ public class Trash : MonoBehaviour
   public static event System.Action<bool> OnTrashOpenChanged;
   private bool isPlayerInRange = false;
   public bool trashOpen = false; 
+  private bool isMobile = false;
   [SerializeField] private GameObject trashUI;
   [SerializeField] private GameObject grid;
   [SerializeField] public RectTransform redZone; // only here so that drag_all can easily find redZone even when it's inactive
   [SerializeField] public List<Trash_Item> itemsInTrash; // assign 18 slots in inspector
+
+  [SerializeField] private Button trashCloseButton;
 
   [Header("Player Input Info")]
   private Player_Controller player;
@@ -41,6 +44,14 @@ public class Trash : MonoBehaviour
     {
       Debug.LogWarning("[Trash]: Trash UI is not set in inspector!");
     }
+
+    if (Application.isMobilePlatform || SystemInfo.deviceType == DeviceType.Handheld)
+      isMobile = true;
+    else
+      isMobile = false;
+
+    if (isMobile)
+      trashCloseButton.gameObject.SetActive(true);
 
     redZone = GameObject.Find("TrashRedZone").GetComponent<RectTransform>();
     CreateTrashSlots();
@@ -87,7 +98,7 @@ public class Trash : MonoBehaviour
     OnTrashOpenChanged?.Invoke(trashOpen);
   }
 
-  private void CloseTrashUI()
+  public void CloseTrashUI()
   {
     ClearTrash();
     trashUI.SetActive(false);
